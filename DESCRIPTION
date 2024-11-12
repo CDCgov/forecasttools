@@ -1,0 +1,57 @@
+Package: forecasttools
+Title: R toolbox for short-term infectious disease forecasting.
+Version: 0.0.0.9000
+Authors@R:
+    c(person("Dylan", "Morris",
+    email = "dylan@dylanhmorris.com",
+    role = c("aut", "cre")),
+    person("Samuel", "Brand",
+    email = "usi1@cdc.gov",
+    role = "aut"),
+    person("Kaitlyn", "Johnson",
+    email = "uox1@cdc.gov",
+    role = "ctb"))
+Description: A collection of tools for short-term forecasting within CFA Predict.
+License: Apache License (>= 2)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+    cli,
+    copula,
+    data.table,
+    dplyr,
+    fs,
+    gert,
+    ggplot2,
+    gridExtra,
+    httr,
+    hubData (>= 0.2.0),
+    jsonlite,
+    lubridate,
+    readr,
+    remotes,
+    soql,
+    stringr,
+    tibble,
+    tidybayes,
+    tidyselect
+Suggests:
+    httptest,
+    knitr,
+    kableExtra,
+    rmarkdown,
+    scoringutils (>= 1.2.2),
+    tidyr,
+    roxygen2,
+    usethis,
+    testthat,
+    rcmdcheck
+VignetteBuilder:
+    knitr
+URL: https://potential-engine-5mz851o.pages.github.io/
+Depends:
+    R (>= 2.10)
+LazyData: true
+Remotes:
+    hubverse-org/hubData

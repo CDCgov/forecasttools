@@ -1,0 +1,86 @@
+---
+title: "Scoring Flusight submissions using `scoringutils`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Scoring Flusight submissions using `scoringutils`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dev = "svg",
+  fig.ext = "svg",
+  fig.height = 16,
+  fig.width = 8
+)
+```
+
+```{r setup}
+library(forecasttools)
+library(scoringutils)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+```
+
+In this vignette, we use `forecasttools` to capture the current state of the FluSight forecast hub (see [here](https://github.com/cdcepi/FluSight-forecast-hub)), and then score the forecasts according to a [proper scoring rule](https://en.wikipedia.org/wiki/Scoring_rule). We do the scoring with [`scoringutils`](https://github.com/epiforecasts/scoringutils).
+
+### Generating a table of forecasts against truth data.
+
+First, we create a table of forecast predictions formatted to work with `scoringutils` functions using `create_table_for_scoring()`. Generally, we expect users to use `create_table_for_scoring()` with a local path to the forecast repository which updates from GitHub by default. In this case, we download the hub first.
+
+```{r}
+hub_url <- "https://github.com/cdcepi/FluSight-forecast-hub"
+hub_path <- tempdir()
+download_hub(
+  hub_url = hub_url,
+  hub_path = hub_path,
+  force = TRUE
+)
+
+forecast_and_target <- create_table_for_scoring(hub_path)
+```
+There are `r forecast_and_target$model |> unique() |> length()` different models that have been submitted to FluSight.
+
+```{r}
+forecast_and_target$model |> unique()
+```
+
+There are `r forecast_and_target$location_name |> unique() |> na.omit() |> length()` locations, either states or territories, which have been targets for forecasting.
+
+```{r}
+forecast_and_target$location_name |>
+  unique() |>
+  na.omit()
+```
+
+### Tabular scoring of forecasts
+
+`scoringutils` gives functions for creating summarized scores including: interval scores, skill relative to a chosen baseline, and coverage at different prediction quantiles. Here we show the scores for US overall forecasts by models for all forecasting dates so far.
+
+
+```{r}
+chosen_location <- "US"
+
+forecast_and_target |>
+  filter(location == chosen_location) |>
+  as_forecast_quantile(
+    observed = "true_value",
+    predicted = "prediction",
+    quantile_level = "quantile"
+  ) |>
+  score() |>
+  summarise_scores(
+    by = "model",
+    relative_skill = TRUE,
+    baseline = "FluSight-ensemble"
+  ) |>
+  summarise_scores(
+    fun = signif,
+    digits = 2
+  ) |>
+  kable()
+```

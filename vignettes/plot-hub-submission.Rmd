@@ -1,0 +1,102 @@
+---
+title: "Plotting hubverse formatted output"
+description: >
+   In this vignette you will learn how to use
+   `forecasttools` to make quick visualizations
+   of hubverse formatted output for spot-checking.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Plotting hubverse formatted output}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dev = "svg",
+  fig.ext = "svg",
+  fig.height = 5,
+  fig.width = 5
+)
+```
+
+
+After generating a hubverse formatted forecast, it is good to inspect the output to make sure that the results make sense. To help you, `forecasttools` provides convenience functions for making timeseries plots from hubverse-format output.
+
+First, let's load `forecasttools`.
+```{r, message = FALSE}
+library(forecasttools)
+```
+
+# Quantile timeseries
+Much hubverse formatted output is organized into quantiles. An easy spotcheck plot shows how these quantiles evolve over the forecast horizon. We can make it using the `plot_hubverse_quantiles()` function. There is only one mandatory argument: the path to a properly hubverse-formatted `.csv` file. Let's plot some inflenza forecasts submitted to the 2023-24 FluSight Challenge by the `cfarenewal-cfaepimlight` team for the 2024-04-06 reference date:
+
+```{r, message = FALSE, echo = c(2, 4)}
+# nolint start
+path_to_formatted_forecast <- "https://raw.githubusercontent.com/cdcepi/FluSight-forecast-hub/refs/heads/main/model-output/cfarenewal-cfaepimlight/2024-04-06-cfarenewal-cfaepimlight.csv"
+# nolint end
+plots <- plot_hubverse_quantiles(path_to_formatted_forecast)
+```
+
+`plot_hubverse_quantiles()` returns a list of all the plots generated. By default, the list names (keys) are US Postal Service style two-letter abbreviations. Let's look at the national plot:
+
+```{r}
+plots[["US"]]
+```
+
+We can also look at the plot for Colorado:
+
+```{r}
+plots[["CO"]]
+```
+
+Of course, you may not wish to generate plots for all locations in your hubverse-formatted file at once. `plot_hubverse_quantiles()` takes an optional `locations` argument that allows you to plot only a subset. For example, let's plot the ["Four Corners" states](https://en.wikipedia.org/wiki/Four_Corners):
+
+```{r, message = FALSE}
+four_corners <- plot_hubverse_quantiles(path_to_formatted_forecast,
+  locations = c("AZ", "CO", "NM", "UT")
+)
+
+## display New Mexico
+four_corners[["NM"]]
+```
+
+Many hubs provide "truth data" of observed values of the forecasting target, and so `plot_hubverse_quantiles()` optionally allows you to plot this alongside the forecast data. Since this truth data often goes back years, it is useful to set a cutoff using the `start_date` argument. Here, we'll start in  December 2023.
+
+```{r, message = FALSE, echo = c(2, 4:7)}
+# nolint start
+truth_data <- "https://raw.githubusercontent.com/cdcepi/FluSight-forecast-hub/04e884dce942dd3b8766aee3d8ff1c333b4fb6fa/target-data/target-hospital-admissions.csv"
+# nolint end
+plot_hubverse_quantiles(path_to_formatted_forecast,
+  locations = "US",
+  truth_data_path = truth_data,
+  start_date = "2023-12-01"
+)
+```
+
+The function provides some basic customization of line and point sizes and colors, via the `linesize`, `pointsize`, `forecast_linecolor`, `forecast_pointcolor`, `truth_pointcolor`, and `truth_linecolor` arguments. It also defaults to plotting a log10-scale y-axis, but this can be changed by passing a different string to `ytrans`; any valid value for the `transform = ` argument of [ggplot2::scale_y_continuous()] can be passed.
+
+```{r, message = FALSE}
+## plot forecast data in green, with smaller points and
+## lines, and plot on a linear scale
+my_custom_plot <- plot_hubverse_quantiles(path_to_formatted_forecast,
+  locations = "US",
+  truth_data_path = truth_data,
+  start_date = "2023-12-01",
+  forecast_linecolor = "darkgreen",
+  forecast_pointcolor = "darkgreen",
+  pointsize = 1,
+  linesize = 1,
+  ytrans = "identity"
+)
+my_custom_plot[["US"]]
+```
+
+For further customization, you can modify the resulting ggplot objects, as you would a regular ggplot. For example, we can convert the above plot to the classic ggplot2 theme.
+
+```{r, message = FALSE}
+library(ggplot2)
+my_custom_plot[["US"]] + theme_classic()
+```

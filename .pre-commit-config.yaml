@@ -1,0 +1,21 @@
+repos:
+#####
+# Basic file cleanliness
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+    - id: check-added-large-files
+      exclude: ^inst/extdata
+    - id: check-yaml
+    - id: check-toml
+    - id: end-of-file-fixer
+    - id: mixed-line-ending
+    - id: trailing-whitespace
+#####
+# R
+-   repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.4.3.9001
+    hooks:
+      - id: style-files
+      - id: deps-in-desc
+      - id: lintr

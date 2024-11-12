@@ -1,0 +1,261 @@
+---
+title: "Formatting output for Forecast Hub submission"
+description: >
+   In this vignette you will learn how to use
+   `forecasttools` to format your forecast output
+   for submission to a hubverse schema forecasting hub,
+   such as the FluSight Forecast Hub or the
+   COVID-19 Forecast Hub.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Formatting output for Forecast Hub submission}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dev = "svg",
+  fig.ext = "svg",
+  fig.height = 5,
+  fig.width = 5
+)
+```
+
+The [FluSight Forecast Hub](https://github.com/cdcepi/flusight-forecast-hub) and the [COVID-19 Forecast Hub](https://github.com/cdcgov/covid19-forecast-hub) both use the [`hubverse`](https://hubverse.io/) framework to accept forecast submissions from contributing teams. Many other infectious disease forecasting challenges use or are adopting the hubverse framework as well.
+
+FluSight and COVIDHub current accept submissions via [GitHub pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests). The submitted `model-output` `csv` files need to follow a specified formatting schema; the [FluSight](https://github.com/cdcepi/FluSight-forecast-hub/blob/main/model-output/README.md) and [COVIDHub](https://github.com/CDCgov/covid19-forecast-hub/blob/main/model-output/README.md) Github repos provide detailed descriptions.
+
+`forecasttools` provides functions to help you produce valid hubverse submissions from your forecast output. This vignette will show you how to use `forecasttools` to format forecast output for submission to a Hub.
+
+## An example forecast
+Let us suppose that we have some forecast output as tidy data. We'll use the `forecasttools::example_daily_forecast_flu` dataset here. It provides a set of 100 random draws from a 4000-draw posterior distribution of hospitalization trajectories forecast as of `2023-10-21`.
+
+```{r}
+library(dplyr)
+library(tibble)
+dat <- forecasttools::example_daily_forecast_flu
+dat
+```
+
+53 states and territories are represented, coded by a two-letter location code:
+```{r}
+dat |>
+  distinct(location) |>
+  pull()
+```
+
+This dataset is pre-formatted as [tidy data](https://tidyr.tidyverse.org/articles/tidy-data.html): each row represents exactly one observation (here, a given `.draw` from the posterior distribution of incident hospitalizations `hosp` for a given `date` and `location`.
+
+If you are not yet familiar with the concept of tidy data, we highly recommend reading [this introductory vignette](https://tidyr.tidyverse.org/articles/tidy-data.html). For an introduction to applying tidy data principles to managing Bayesian posterior distributions / MCMC output, we recommend [this vignette](https://mjskay.github.io/tidybayes/articles/tidybayes.html) from the excellent [`tidybayes`](https://mjskay.github.io/tidybayes/index.html) R package.
+
+## Hubverse submission format
+Forecast hubs that use `hubverse` expect submissions in a different format. Here's an example of an inflenza forecast from 2024-04-06 submitted to the 2023-24 FluSight Challenge by the `cfarenewal-cfaepimlight` team:
+
+```{r, message = FALSE, echo = c(1, 3, 5:7)}
+library(readr)
+# nolint start
+submit_path <- "https://raw.githubusercontent.com/cdcepi/FluSight-forecast-hub/refs/heads/main/model-output/cfarenewal-cfaepimlight/2024-04-06-cfarenewal-cfaepimlight.csv"
+# nolint end
+submission <- read_csv(submit_path)
+submission |>
+  print(width = 100)
+```
+
+## Overview of hubverse model output schema
+Let's talk through each of these columns. For additional details and guidance, consult [FluSight's model output schema](https://github.com/cdcepi/FluSight-forecast-hub/blob/main/model-output/README.md) and the [hubverse documentation page on model output formats](https://hubverse.io/en/latest/user-guide/model-output.html#formats-of-model-output).
+
+### `reference_date`
+The official "as of" date for the forecast, in [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) `YYYY-MM-DD` format. The reference date is *not* necessarily the due date for forecast submission. For FluSight and COVIDHub, it is instead the Saturday that ends the USA ["epidemiological week" or "epiweek"](https://www.cmmcp.org/mosquito-surveillance-data/pages/epi-week-calendars-2008-2023) that the forecast is due. You'll learn a bit more about the why and how of "epiweeks" later in this vignette.
+
+### `target`
+The quantity being forecast in the given row. Different Hubs accept forecasts of different quantities of interest. For example, in 2023-2024, FluSight had two targets:
+
+  * `wk inc flu hosp`: epiweekly incident hospitalizations (i.e. the total from Sunday through Saturday for each epiweek).
+
+  * `wk flu hosp rate change`: a discrete prediction of whether the hospitalization rate is projected to be stable, increase a little, increase a lot, decrease a little, or decrease a lot.
+
+The example forecast above contains forecasts for  `wk inc flu hosp` but not for `wk flu hosp rate change`.
+
+### `horizon`
+The forecast "horizon" relative to the `reference_date`, here in units of weeks ahead/behind. Flusight allows the following horizons: `-1, 0, 1, 2, 3`. A horizon of `-1` represents a "nowcast" of what the ultimately reported totals for the epiweek *before* the reference week will be after all backfill is accounted for.
+
+### `target_end_date`
+The Saturday ending the epiweek corresponding to the given `horizon`. So for example a horizon of `-1` from `2024-04-06` is `2024-03-30` and a horizon of `3` from `2024-04-06` is `2024-04-27`.
+
+### `location`
+The geographic region for which the forecast is being made. For FluSight, this is either a US state or territory or the United States as a whole. Locations are coded not as two-letter abbreviations but rather as two-digit legacy state FIPS codes, except for the national forecast, which is coded as `US`:
+```{r}
+submission |>
+  distinct(location) |>
+  pull()
+```
+To help you code things properly, `forecasttools` provides a lookup table called `forecasttools::hub_location_table`:
+```{r}
+forecasttools::hub_location_table
+```
+
+### `output_type`
+The type of forecast value the row contains.
+
+For quantile forecasts, this will be `'quantile'`: each row represents the value of of a particular quantile level for a particular `reference_date`, `target`, `location`, and `horizon`.
+
+For trend classification forecasts, it will typically be `'pmf'`, for "probability mass function", to indicate that the row represents the probability of a given trend (e.g. the probability of a `'large increase'`.)
+
+### `output_type_id`
+This column holds any needed information about what subclass of the `output type` the row contains. For `quantile`, it contains the **level of the quantile** (e.g. `0.01` for the 1st percentile, `0.5` for the median / 50th percentile, etc). For `pmf`, contains the **name of the category/event whose probability is being given** (e.g. `'stable'` or `'large decrease'`).
+
+### `value`
+This column contains the actual forecast value. For a `quantile` forecast of a hospitalizations `target`, this is the number of forecast hospitalizations for the given `location` and `horizon` at the given quantile level (specified in `output_type_id`)
+
+### An example
+Let's look at an abtirary row from the example submission above:
+```{r}
+submission[123, ] |>
+  print(width = 100)
+```
+This row says that for `location` `02` (Alaska, as you can confirm by consulting `forecasttools::us_location_table`), the `0.3` quantile (30th percentile) of the forecast predictive distribution for incident hospitalizations during the epiweek ending Saturday `2024-03-30` (a `-1` week forecast `horizon`) is `8`.
+
+## Getting your forecast into this format
+So you now have your nice tidy daily forecast, and you want to aggregate it into weekly quantiles and format it for hubverse submission. Let's look at our tidy forecast data again:
+
+```{r}
+dat
+```
+
+### Aggregate to epiweekly
+The first thing we need to do is aggregate it from a daily forecast to an (epi)weekly forecast. Because our data is tidy, we could use a split/apply/combine workflow.
+```{r}
+epiweekly <- dat |>
+  mutate(
+    epiweek = lubridate::epiweek(date),
+    epiyear = lubridate::epiyear(date)
+  ) |>
+  group_by(
+    epiweek,
+    epiyear,
+    .draw,
+    location
+  ) |>
+  filter(n() == 7) |> ## only use epiweeks for which we have all 7 days
+  summarise(weekly_hosp = sum(hosp))
+
+epiweekly
+```
+
+To save you typing and avoid mistakes (like forgetting that two different years can have the same epiweek) however, `forecasttools` provides a `daily_to_epiweekly()` function to automate and autocheck this process:
+```{r}
+library(forecasttools)
+epiweekly_forecasts <- dat |>
+  daily_to_epiweekly(
+    value_col = "hosp", ## column of values to aggregate to weekly
+    id_cols = c(".draw", "location"), ## column(s) that identify a trajectory
+    weekly_value_name = "weekly_hosp" ## what to name the output column
+  )
+epiweekly_forecasts
+```
+
+Notice we didn't have to specify that dates were found in the `date` column. This is because `daily_to_epiweekly` has default values for all of the required column names. They are:
+
+  * `value_col = "hosp"`
+  * `date_col = "date"`
+  * `id_cols = ".draw"`,
+  * `weekly_value_name = "weekly_value"`
+
+`daily_to_epiweekly` takes a flag called `strict` to determine whether to only use weeks for which we have all seven days. It defaults to `TRUE` if not set, which means that a similar step to the `filter(n() == 7)` in our manual code above gets applied. It also checks to make sure that no week contains **more** than 7 days. So failing to group by `location` as well as `.draw` throws an error:
+
+```{r, error = TRUE}
+epiweekly_forecasts <- dat |>
+  daily_to_epiweekly(
+    value_col = "hosp", ## column of values to aggregate to weekly
+    id_cols = ".draw", ## column(s) that identify a trajectory
+    weekly_value_name = "weekly_hosp" ## what to name the output column
+  )
+```
+
+### Compute the needed posterior quantiles
+Now we compute our forecast quantiles from our table of `epiweekly_forecasts`. Again, we could to this manually:
+```{r}
+flusight_quantile_levels <- c(0.01, 0.025, seq(0.05, 0.95, 0.05), 0.975, 0.99)
+
+quant_summary <- epiweekly_forecasts |>
+  dplyr::group_by(epiweek, epiyear, location) |>
+  dplyr::reframe(
+    quant_values = quantile(
+      weekly_hosp,
+      probs = flusight_quantile_levels
+    ),
+    quant_levels = flusight_quantile_levels
+  )
+
+quant_summary
+```
+
+`forecasttools` provides a `trajectories_to_quantiles()` function to automate this process.
+
+```{r}
+quant_summary <- epiweekly_forecasts |>
+  trajectories_to_quantiles(
+    timepoint_cols = c("epiweek", "epiyear"),
+    id_cols = "location",
+    value_col = "weekly_hosp"
+  )
+
+quant_summary
+```
+
+> #### Warning: order matters for proagating uncertainty; first compute, then summarize!
+> People are sometimes tempted to compute weekly quantiles from daily forecasts by first computing daily quantiles and then summing those daily quantiles to get weekly ones. This is typically **not** what you want, and it is **not** equivalent to first aggregating to the week and then computing quantiles.
+>
+> Why not? It does not capture all the ways in which Monday's predicted value and Tuesday's predicted value might _co-vary_.  In general, we wish to [_propagate uncertainty_](https://en.wikipedia.org/wiki/Propagation_of_uncertainty) in a principled manner.
+>
+> For handling samples from a posterior distribution, this typically means computing any transformations / functions of our sampled parameters--such as a weekly hospitalization total computed from daily values---and only _then_ summarizing. Specifically, we compute the transformations "draw-wise" (that is, one computation for each MCMC draw), so that the Monday value from draw number 1 gets added to the Tuesday value for draw number 1, the Monday value for draw number 2 gets added to the Tuesday value for draw number 2, etc.
+
+### Format output for Hub submission
+First, we need to convert state abbreviations to the the two-character location codes that most US-based hubs expect. We could use a SQL-style workflow with `forecasttools::us_location_table`:
+```{r}
+manual_rename <- quant_summary |>
+  rename(state = location) |>
+  inner_join(
+    forecasttools::us_location_table |> select(
+      state = short_name,
+      location = location_code
+    ),
+    by = "state"
+  )
+manual_rename
+```
+
+To save you typing, `forecasttools` provides a `us_loc_abbr_to_code()` function (as well as its inverse, `us_loc_code_to_abbr()`):
+```{r}
+quant_summary <- quant_summary |>
+  mutate(location = us_loc_abbr_to_code(location))
+
+quant_summary
+```
+
+Now, we need to add the other required hubverse columns, select only the time horizons of interest, and so on. `forecasttools` provides a `get_hubverse_table()` function to do this for a given forecast `reference_date` and `target` name. Here, we'll use `2023-10-21` and `wk inc flu hosp`. `get_hubverse_table()` is configurable, but for convenience it is designed to accept `trajectories_to_quantiles()` output like our `quant_summary` tibble by default:
+
+```{r}
+flusight_table <- quant_summary |>
+  get_hubverse_table(
+    "2023-10-21",
+    "wk inc flu hosp"
+  )
+
+flusight_table |> print(width = 100)
+```
+
+### Write the formatted output to `.csv`
+FluSight and COVIDHub currently take submissions as comma-separated values (`.csv`) files. We can now write our table to `.csv` with base `write.csv()` or `readr::write_csv()`:
+
+```{r}
+example_output_path <- file.path(
+  tempdir(),
+  "2023-10-23-example-team-example-model.csv"
+)
+flusight_table |>
+  readr::write_csv(example_output_path)
+```

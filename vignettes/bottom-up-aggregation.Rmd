@@ -1,0 +1,137 @@
+---
+title: "Bottom-up aggregation from base forecasts to US forecasts"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Bottom-up aggregation from base forecasts to US forecasts}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dev = "svg",
+  fig.ext = "svg",
+  fig.height = 5,
+  fig.width = 5
+)
+```
+
+# Copula structure for forecasting US hospitalizations from independent state forecasts
+
+Its common to make inference on multiple states independently (up to possibly shared priors). This approach is convenient because it reduces the high dimensional problem of making joint inferences on all states into an embarrasingly parallel problem of making a marginal inference on each state. However, we lose dependency structure between states that can affect the quality of the forecasting for the aggregation level; that is the whole US.
+
+In this note, we'll use Copula theory to try to repair this problem in a post-processing step for the _base forecasts_ for each state. In this terminology a _base forecast_ is a forecast for a state from a marginal inference on the state under the independence (conditional on choice of priors) assumption.
+
+Lets denote the national numbers of people hospitalised in any future week $w = 1, 2,...,T$ is the sum of people hospitalised in each state/territory $s = 1,\dots, S$:
+
+$$H_{US, w} = \sum_{s = 1}^S H_{s,w}.$$
+
+[Skalar's theorem](https://en.wikipedia.org/wiki/Copula_(probability_theory)#Sklar's_theorem) gives that we can represent the multi-variate weekly forecast distribution for the states across the weeks ahead $w = 1, 2,..., T$:
+
+$$
+H(h_{1,1},h_{1,2},...,h_{S,T}) = P(H_{1, 1} \leq h_{1,1}, H_{1, 2} \leq h_{1,2},...,H_{S, T} \leq h_{s,T})
+$$
+
+$$
+= C(F_{1,1}(h_{1,1}), F_{1,2}(h_{1,2}), \dots , F_{S,T}(h_{S,T})).
+$$
+
+With the _marginal_ cdfs $F_{s,w}(h_{s,w}) = P(H_{s, w} \leq h_{s,w})$ and a copula (i.e. a cumulative distribution on a multivariate $[0,1]^n$ random vector where $n$ is the number of states) $C$. We aim to find a reasonable approximation to $C$ so that sampling from the trajectories of independent state forecasts can be done in a way which optimizes the forecast skill of $H_{US, w}$ over the weeks forecast.
+
+__The propostions/assumptions in this note:__
+1. That the independent state forecasts form a set of reasonable approximations to the marginal forecast distribution of each state.
+2. Rather than sampling at the weekly marginals for every state, I assume that we can sample according the overall number of another generated quantity over all weeks forecast and return a weekly trajectory. This effectively assumes that the correlation structure between states forecast underlying the national forecast is only between overall numbers of this generated quantity rather than more complicated possibilities (e.g time series oscillations).
+2. That a reasonable approximation for the copula $C$ is a Gaussian copula with the covariance matrix,
+
+$$\Sigma_{i,j} = \delta_{ij} + (1 - \delta_{ij}) \rho.$$
+## Aggregation for an example forecast
+First, I get the `forecasttools` example.
+```{r setup}
+library(forecasttools)
+library(copula)
+library(ggplot2)
+
+example_base_forecasts <- forecasttools::example_daily_forecast_flu
+head(example_base_forecasts)
+```
+Then, define the Gaussian copula as described above, making sure that the dimension of the copula matches that of the number of base forecast locations. I choose $\rho = 0.5$.
+```{r}
+ndims <- length(unique(example_base_forecasts$location))
+rho <- 0.5
+cp <- copula::normalCopula(rho, dim = ndims)
+```
+The copula sampling steps are done by the `bottom_up_aggregation` function. The generated quantity that we use for ranked sampling doesn't _have_ to be the same as the quantity being aggregated but in this case we'll specify hospitalisations as both the quantity to be aggregates and the ranking quantity. The name of the location that is being aggregated _for_ is the `"US"`.
+
+```{r}
+ndraws <- 1000 # Number of bottom-up samples
+
+agg_forecast_tbl <-
+  forecasttools::bottom_up_aggregation(
+    example_base_forecasts,
+    cp,
+    ndraws,
+    draw_col = ".draw",
+    date_col = "date",
+    value_to_aggregate_col = "hosp",
+    rank_quantity_col = "hosp",
+    location_col = "location",
+    aggregated_location_col = "US"
+  )
+
+head(agg_forecast_tbl)
+```
+
+### Comparison of simple aggregation and copula ranked sampling
+
+A simple aggregation technique could be to sum over forecast states by forecast draw and date, then treat the spread of forecast draws for each date as the predictive distribution for the whole US. The copula sampling on ranked generated quantities also treats the spread of forecast draws as the predictive distribution for the whole US.
+
+We compare the mean and median forecasts below.
+
+```{r,fig.cap="Mean (lines) and median (points) aggregated forecasts."}
+summed_base_forecasts <- example_base_forecasts |>
+  dplyr::group_by(.draw, date) |>
+  dplyr::summarise(
+    summmed_forecast = sum(hosp)
+  ) |>
+  dplyr::ungroup() |>
+  dplyr::group_by(date) |>
+  dplyr::summarise(
+    agg_median_pred = median(summmed_forecast),
+    agg_mean_pred = mean(summmed_forecast)
+  ) |>
+  dplyr::mutate(agg_location = "US") |>
+  dplyr::mutate(group = "simple")
+
+rank_sampled_agg_forecasts <- agg_forecast_tbl |>
+  dplyr::group_by(date) |>
+  dplyr::summarise(
+    agg_median_pred = median(forecast),
+    agg_mean_pred = mean(forecast)
+  ) |>
+  dplyr::mutate(group = "copula")
+
+combined_forecasting <- dplyr::bind_rows(
+  summed_base_forecasts,
+  rank_sampled_agg_forecasts
+)
+
+comparison_plot <- ggplot(data = combined_forecasting) +
+  geom_line(aes(x = date, y = agg_mean_pred, color = group)) +
+  geom_point(aes(x = date, y = agg_median_pred, color = group)) +
+  ylab("Daily hosp") +
+  ggtitle("Comparison between simple and copula sample ranked agg.
+          for US forecasts")
+comparison_plot
+```
+
+Note that the _mean_ forecasts will be similar, _although differences between the means will tend to have the same sign at each time point because copula samples by rank_.
+
+This is because the marginal copula sample for each state $i$ is $U_i \sim \text{Uniform}[0,1]$. Therefore, the marginal expected forecast at week $w$ and state $i$ is unchanged compared to simple sampling, and the linearity of the expectation operator means that the average forecast is the same using either method:
+
+$$E[H_{US, w}] = \sum_{s = 1}^S E[H_{s,w}].$$
+
+However, the median is _not_ a linear operator so the correlation structure between states induced by using the copula rank sampling affects the statistic. The difference between mean and median is higher for copula rank sampling compared to simple sampling. The reason is that the US aggregated forecast distribution will be more highly dispersed for copula rank sampling due to the positive correlation structure induced by sampling from positively correlated ranks. This can be understood mathematically,
+
+$$\text{var}[H_{US, w}] = \sum_{s = 1}^S \text{var}[H_{s,w}] + 2 \sum_{s< s'} \text{cov}[H_{s,w}H_{s',w}] \geq \sum_{s = 1}^S \text{var}[H_{s,w}].$$
