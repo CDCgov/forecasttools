@@ -18,6 +18,7 @@ You can also install `forecasttools` using the `remotes` R package (which itself
 
 ``` r
 remotes::install_github('cdcgov/forecasttools')
+
 ```
 
 ## Documentation and vignettes
