@@ -13,7 +13,7 @@ bottom_up_aggregation(
   value_to_aggregate_col = "hosp",
   rank_quantity_col = "hosp",
   location_col = "location",
-  aggregated_location_col = "US"
+  aggregated_location_name = "aggregate"
 )
 }
 \arguments{
@@ -34,6 +34,9 @@ aggregation on.}
 pair on.}
 
 \item{location_col}{String name of the location column.}
+
+\item{aggregated_location_name}{Name for the aggregated location.
+Default \code{"aggregate"}.}
 }
 \value{
 A tibble of 1,..., \code{ndraws} aggregated forecasts.
