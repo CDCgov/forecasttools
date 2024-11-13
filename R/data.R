@@ -11,7 +11,8 @@
 #'   \item{short_name}{2-character location abbreviation}
 #'   \item{long_name}{Full name of the location}
 #' }
-#' @source <https://www2.census.gov/geo/docs/reference/state.txt>, us_location_table.R
+#' @source <https://www2.census.gov/geo/docs/reference/state.txt>
+#' @source data-raw/us_location_table.R
 "us_location_table"
 
 #' An example daily-resolution set of forecast trajectories for influenza.
