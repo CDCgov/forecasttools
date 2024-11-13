@@ -4,19 +4,19 @@
 \name{forecasttools-package}
 \alias{forecasttools}
 \alias{forecasttools-package}
-\title{forecasttools: R toolbox for short-term infectious disease forecasting.}
+\title{forecasttools: R toolbox for short-term infectious disease forecasting}
 \description{
 A collection of tools for short-term forecasting within CFA Predict.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://potential-engine-5mz851o.pages.github.io/}
+  \item \url{https://cdcgov.github.io/forecasttools}
 }
 
 }
 \author{
-\strong{Maintainer}: Dylan Morris \email{dylan@dylanhmorris.com}
+\strong{Maintainer}: Dylan Morris \email{dzl1@cdc.gov}
 
 Authors:
 \itemize{
