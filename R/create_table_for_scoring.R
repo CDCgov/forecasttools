@@ -72,7 +72,7 @@ gather_hub_forecast_data <- function(hub_path) {
 #' size for the states.
 #'
 #' @param hub_path Local path to forecast hub.
-#' @param local_dirname The local path to the data file for
+#' @param local_datapath The local path to the data file for
 #' location data relative to forecast hub directory.
 #' Defaults to expected path in the FluSight forecast hub.
 #'
