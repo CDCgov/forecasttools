@@ -76,7 +76,7 @@ plot_hubverse_quantiles(path_to_formatted_forecast,
 )
 ```
 
-The function provides some basic customization of line and point sizes and colors, via the `linesize`, `pointsize`, `forecast_linecolor`, `forecast_pointcolor`, `truth_pointcolor`, and `truth_linecolor` arguments. It also defaults to plotting a log10-scale y-axis, but this can be changed by passing a different string to `ytrans`; any valid value for the `transform = ` argument of [ggplot2::scale_y_continuous()] can be passed.
+The function provides some basic customization of line and point sizes and colors, via the `linesize`, `pointsize`, `forecast_linecolor`, `forecast_pointcolor`, `truth_pointcolor`, and `truth_linecolor` arguments. It also defaults to plotting a log10-scale y-axis, but this can be changed by passing a different string to `ytrans`; any valid value for the `transform = ` argument of `ggplot2::scale_y_continuous()` can be passed.
 
 ```{r, message = FALSE}
 ## plot forecast data in green, with smaller points and
