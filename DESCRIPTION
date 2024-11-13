@@ -1,9 +1,9 @@
 Package: forecasttools
-Title: R toolbox for short-term infectious disease forecasting.
+Title: R toolbox for short-term infectious disease forecasting
 Version: 0.0.0.9000
 Authors@R:
     c(person("Dylan", "Morris",
-    email = "dylan@dylanhmorris.com",
+    email = "dzl1@cdc.gov",
     role = c("aut", "cre")),
     person("Samuel", "Brand",
     email = "usi1@cdc.gov",
@@ -31,6 +31,7 @@ Imports:
     lubridate,
     readr,
     remotes,
+    rlang,
     soql,
     stringr,
     tibble,
@@ -41,7 +42,7 @@ Suggests:
     knitr,
     kableExtra,
     rmarkdown,
-    scoringutils (>= 1.2.2),
+    scoringutils (>= 2.0.0),
     tidyr,
     roxygen2,
     usethis,
@@ -49,7 +50,7 @@ Suggests:
     rcmdcheck
 VignetteBuilder:
     knitr
-URL: https://potential-engine-5mz851o.pages.github.io/
+URL: https://cdcgov.github.io/forecasttools
 Depends:
     R (>= 2.10)
 LazyData: true
