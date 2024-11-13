@@ -2,10 +2,10 @@
 #' `target_end_date` values for the given reference
 #' date and set of horizons.
 #'
-#' @param reference_date FluSight forecasting reference date
+#' @param reference_date hub forecasting reference date
 #' @param horizons Vector of forecast horizons to include,
 #' in weeks ahead of the `reference_date`.
-#' Default -1:3 (FluSight 2023/24 horizons).
+#' Default -1:3 (FluSight and Covidhub 2024/25 horizons).
 #' @return a [`tibble`][tibble::tibble] with columns `reference_date`,
 #' `horizon`, `target_end_date`,
 #' `epiweek`, and `epiyear`.
@@ -47,7 +47,7 @@ target_end_dates_from_horizons <- function(reference_date,
 #' Default `'epiyear'`.
 #' @param horizons Vector of forecast horizons to include,
 #' in weeks ahead of the `reference_date`.
-#' Default -1:3 (FluSight 2023/24 horizons).
+#' Default -1:3 (FluSight and Covidhub 2024/25 horizons).
 #' @param reference_dow Which day of the week should the reference_date
 #' be, as an integer? Default 7 (the last day of the week), which
 #' with the default value of `week_start` will be Saturday, i.e.
