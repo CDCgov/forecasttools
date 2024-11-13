@@ -9,6 +9,6 @@
 ^\.pre-commit-config\.yaml$
 ^doc$
 ^Meta$
-.vscode/*
-.lintr
-.secrets.baseline
+^.vscode$
+^.lintr$
+^.secrets.baseline$
