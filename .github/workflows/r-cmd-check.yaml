@@ -18,13 +18,13 @@ jobs:
       with:
         r-version: ${{matrix.r-version}}
         use-public-rspm: true
-    - name: "Set up dependencies for wwinference"
+    - name: "Set up dependencies for forecasttools"
       uses: r-lib/actions/setup-r-dependencies@v2
       with:
         needs: check
     - name: "Check forecastools package"
       uses: r-lib/actions/check-r-package@v2
       with:
-        error-on: '"error"'
+        error-on: '"warning"'
         build_args: 'c("--no-manual", "--no-build-vignettes")'
         args: 'c("--no-manual", "--as-cran", "--ignore-vignettes")'

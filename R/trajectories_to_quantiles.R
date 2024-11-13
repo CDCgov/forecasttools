@@ -10,7 +10,7 @@
 #' @param trajectories tidy data frame or tibble
 #' of trajectories
 #' @param quantiles quantiles to output for each
-#' timepoint (default the FluSight 2023 quantiles:
+#' timepoint (default the FluSight/COVIDHub 2024-25 quantiles:
 #' `c(0.01, 0.025, seq(0.05, 0.95, 0.05), 0.975, 0.99)`
 #' @param timepoint_cols name of the column(s) in`trajectories`
 #' that identifies unique timepoints. Default `timepoint`.

@@ -208,7 +208,8 @@ sample_aggregated_trajectories <- function(base_forecasts,
 #' @param rank_quantity_col String name of column to rank draw/location
 #' pair on.
 #' @param location_col String name of the location column.
-#'
+#' @param aggregated_location_name Name for the aggregated location.
+#' Default `"aggregate"`.
 #' @return A tibble of 1,..., `ndraws` aggregated forecasts.
 #' @export
 bottom_up_aggregation <- function(base_forecasts,
@@ -219,7 +220,7 @@ bottom_up_aggregation <- function(base_forecasts,
                                   value_to_aggregate_col = "hosp",
                                   rank_quantity_col = "hosp",
                                   location_col = "location",
-                                  aggregated_location_col = "US") {
+                                  aggregated_location_name = "aggregate") {
   validate_base_forecasts(base_forecasts,
     cp,
     draw_col = draw_col,
@@ -262,7 +263,7 @@ bottom_up_aggregation <- function(base_forecasts,
           value_to_aggregate_col
         )
       sample_trajectory[[draw_col]] <- i
-      sample_trajectory[[location_col]] <- aggregated_location_col
+      sample_trajectory[[location_col]] <- aggregated_location_name
       return(sample_trajectory)
     }
   ) |>

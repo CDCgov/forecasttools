@@ -12,7 +12,7 @@ gather_location_data(
 \arguments{
 \item{hub_path}{Local path to forecast hub.}
 
-\item{local_dirname}{The local path to the data file for
+\item{local_datapath}{The local path to the data file for
 location data relative to forecast hub directory.
 Defaults to expected path in the FluSight forecast hub.}
 }

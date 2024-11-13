@@ -21,7 +21,7 @@ trajectories_to_quantiles(
 of trajectories}
 
 \item{quantiles}{quantiles to output for each
-timepoint (default the FluSight 2023 quantiles:
+timepoint (default the FluSight/COVIDHub 2024-25 quantiles:
 \code{c(0.01, 0.025, seq(0.05, 0.95, 0.05), 0.975, 0.99)}}
 
 \item{timepoint_cols}{name of the column(s) in\code{trajectories}

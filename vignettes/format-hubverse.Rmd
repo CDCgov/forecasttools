@@ -92,9 +92,9 @@ submission |>
   distinct(location) |>
   pull()
 ```
-To help you code things properly, `forecasttools` provides a lookup table called `forecasttools::hub_location_table`:
+To help you code things properly, `forecasttools` provides a lookup table called `forecasttools::us_location_table`:
 ```{r}
-forecasttools::hub_location_table
+forecasttools::us_location_table
 ```
 
 ### `output_type`

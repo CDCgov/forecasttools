@@ -51,7 +51,7 @@ Default \code{'epiyear'}.}
 
 \item{horizons}{Vector of forecast horizons to include,
 in weeks ahead of the \code{reference_date}.
-Default -1:3 (FluSight 2023/24 horizons).}
+Default -1:3 (FluSight and Covidhub 2024/25 horizons).}
 
 \item{reference_dow}{Which day of the week should the reference_date
 be, as an integer? Default 7 (the last day of the week), which

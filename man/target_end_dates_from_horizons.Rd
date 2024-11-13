@@ -9,11 +9,11 @@ date and set of horizons.}
 target_end_dates_from_horizons(reference_date, horizons = -1:3)
 }
 \arguments{
-\item{reference_date}{FluSight forecasting reference date}
+\item{reference_date}{hub forecasting reference date}
 
 \item{horizons}{Vector of forecast horizons to include,
 in weeks ahead of the \code{reference_date}.
-Default -1:3 (FluSight 2023/24 horizons).}
+Default -1:3 (FluSight and Covidhub 2024/25 horizons).}
 }
 \value{
 a \code{\link[tibble:tibble]{tibble}} with columns \code{reference_date},
