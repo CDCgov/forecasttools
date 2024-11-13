@@ -69,7 +69,7 @@ filter_for_scoring <- function(forecasts_and_targets,
       "Filtering out locations not in {locations}"
     )
 
-    loc_codes <- forecasttools::loc_abbr_to_flusight_code(
+    loc_codes <- us_loc_abbr_to_code(
       locations
     )
     to_score <- to_score |>
