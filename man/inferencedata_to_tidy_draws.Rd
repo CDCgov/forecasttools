@@ -7,10 +7,12 @@
 inferencedata_to_tidy_draws(idata)
 }
 \arguments{
-\item{idata}{InferenceData DataFrame (the result of calling arviz.InferenceData.to_dataframe in Python)}
+\item{idata}{InferenceData DataFrame (the result of calling
+arviz.InferenceData.to_dataframe in Python)}
 }
 \value{
-A nested tibble, with columns group and data. Each element of data is a tidy_draws data frame
+A nested tibble, with columns group and data. Each element of data is
+a tidy_draws data frame
 }
 \description{
 Convert InferenceData DataFrame to nested tibble of tidy_draws

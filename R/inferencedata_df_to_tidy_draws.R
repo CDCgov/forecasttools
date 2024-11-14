@@ -8,7 +8,9 @@ format_split_text <- function(x, concat_char = "|") {
     bracket_contents <- non_group[-1] |>
       stringr::str_replace_all("\\s", "_") |>
       stringr::str_c(collapse = ",")
-    formatted_text <- glue::glue("{group}{concat_char}{pre_bracket}[{bracket_contents}]")
+    formatted_text <- glue::glue(
+      "{group}{concat_char}{pre_bracket}[{bracket_contents}]"
+    )
   }
   formatted_text
 }
@@ -25,9 +27,11 @@ idata_names_to_tidy_names <- function(column_names) {
 
 #' Convert InferenceData DataFrame to nested tibble of tidy_draws
 #'
-#' @param idata InferenceData DataFrame (the result of calling arviz.InferenceData.to_dataframe in Python)
+#' @param idata InferenceData DataFrame (the result of calling
+#' arviz.InferenceData.to_dataframe in Python)
 #'
-#' @return A nested tibble, with columns group and data. Each element of data is a tidy_draws data frame
+#' @return A nested tibble, with columns group and data. Each element of data is
+#' a tidy_draws data frame
 #' @export
 
 inferencedata_to_tidy_draws <- function(idata) {
@@ -36,8 +40,10 @@ inferencedata_to_tidy_draws <- function(idata) {
       .chain = chain,
       .iteration = draw
     ) |>
-    dplyr::rename_with(idata_names_to_tidy_names, .cols = -tidyselect::starts_with(".")) |>
-    dplyr::mutate(dplyr::across(c(.chain, .iteration), \(x) as.integer(x + 1))) |>
+    dplyr::rename_with(idata_names_to_tidy_names,
+                       .cols = -tidyselect::starts_with(".")) |>
+    dplyr::mutate(dplyr::across(c(.chain, .iteration),
+                                \(x) as.integer(x + 1))) |>
     dplyr::mutate(
       .draw = tidybayes:::draw_from_chain_and_iteration_(.chain, .iteration),
       .after = .iteration
@@ -48,7 +54,9 @@ inferencedata_to_tidy_draws <- function(idata) {
     ) |>
     dplyr::group_by(group) |>
     tidyr::nest() |>
-    dplyr::mutate(data = purrr::map(data, \(x) tidyr::drop_na(x) |>
-      tidyr::pivot_wider(names_from = name) |>
-      tidybayes::tidy_draws()))
+    dplyr::mutate(data = purrr::map(data, \(x) {
+      tidyr::drop_na(x) |>
+        tidyr::pivot_wider(names_from = name) |>
+        tidybayes::tidy_draws()
+    }))
 }
