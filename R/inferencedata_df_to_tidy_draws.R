@@ -41,9 +41,12 @@ inferencedata_to_tidy_draws <- function(idata) {
       .iteration = draw
     ) |>
     dplyr::rename_with(idata_names_to_tidy_names,
-                       .cols = -tidyselect::starts_with(".")) |>
-    dplyr::mutate(dplyr::across(c(.chain, .iteration),
-                                \(x) as.integer(x + 1))) |>
+      .cols = -tidyselect::starts_with(".")
+    ) |>
+    dplyr::mutate(dplyr::across(
+      c(.chain, .iteration),
+      \(x) as.integer(x + 1)
+    )) |>
     dplyr::mutate(
       .draw = tidybayes:::draw_from_chain_and_iteration_(.chain, .iteration),
       .after = .iteration
