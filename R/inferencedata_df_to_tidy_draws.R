@@ -15,14 +15,34 @@ format_split_text <- function(x, concat_char = "|") {
   formatted_text
 }
 
+#' Convert InferenceData column names to tidy column names
+#'
+#' InferenceData column names for scalar variables are of the form
+#' `"('group', 'var_name')"`, while column names for array variables are of the
+#'  form `"('group', 'var_name[i,j]', 'i_name', 'j_name')"`.
+#'  This function converts these column names to a format that is useful for
+#'  creating tidy_draws data frames.
+#'  `"('group', 'var_name')"` becomes `"group|var_name"`
+#'  `"('group', 'var_name[i,j]', 'i_name', 'j_name')"` becomes
+#'  `"group|var_name[i_name, j_name]"`
+#'
+#' @param column_names A character vector of InferenceData column names
+#'
+#' @return A character vector of tidy column names
+#' @examples
+#' idata_names_to_tidy_names(c(
+#'   "('group', 'var_name')",
+#'   "group|var_name[i_name, j_name]"
+#' ))
 idata_names_to_tidy_names <- function(column_names) {
   column_names |>
     stringr::str_remove_all("^\\(|\\)$") |>
+    # remove opening and closing parentheses
     stringr::str_split(", ") |>
     purrr::map(\(x) stringr::str_remove_all(x, "^\\'|\\'$")) |>
-    purrr::map(\(x) stringr::str_remove_all(x, '\\"')) |>
-    purrr::map(format_split_text) |>
-    purrr::map_chr(\(x) stringr::str_c(x, collapse = "|"))
+    # remove opening and closing quotes
+    purrr::map(\(x) stringr::str_remove_all(x, '\\"')) |> # remove double quotes
+    purrr::map_chr(format_split_text) # reformat groups and brackets
 }
 
 #' Convert InferenceData DataFrame to nested tibble of tidy_draws
