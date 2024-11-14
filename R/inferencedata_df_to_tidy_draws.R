@@ -8,42 +8,42 @@
 #' @examples
 inferencedata_to_tidy_draws <- function(idata) {
   idata |>
-    rename(
+    dplyr::rename(
       .chain = chain,
       .iteration = draw
     ) |>
-    rename_with(function(colnames) {
+    dplyr::rename_with(function(colnames) {
       colnames |>
-        str_remove_all("^\\(|\\)$") |>
-        str_split(", ") |>
-        map(\(x) str_remove_all(x, "^\\'|\\'$")) |>
-        map(\(x) str_remove_all(x, '\\"')) |>
-        map(\(x) {
+        stringr::str_remove_all("^\\(|\\)$") |>
+        stringr::str_split(", ") |>
+        purrr::map(\(x) stringr::str_remove_all(x, "^\\'|\\'$")) |>
+        purrr::map(\(x) stringr::str_remove_all(x, '\\"')) |>
+        purrr::map(\(x) {
           if (length(x) == 3) {
-            x[2] <- str_replace(
+            x[2] <- stringr::str_replace(
               string = x[2],
               pattern = "(?<=\\[).+(?=\\])",
-              replacement = str_replace_all(x[3], "\\s", "_")
+              replacement = stringr::str_replace_all(x[3], "\\s", "_")
             )
             # white space not allowed in dimension names
             x <- x[-3]
           }
           x
         }) |>
-        map_chr(\(x) str_c(x, collapse = ","))
-    }, .cols = -starts_with(".")) |>
-    mutate(across(c(.chain, .iteration), \(x) as.integer(x + 1))) |>
-    mutate(
+        purrr::map_chr(\(x) stringr::str_c(x, collapse = ","))
+    }, .cols = -tidyselect::starts_with(".")) |>
+    dplyr::mutate(dplyr::across(c(.chain, .iteration), \(x) as.integer(x + 1))) |>
+    dplyr::mutate(
       .draw = tidybayes:::draw_from_chain_and_iteration_(.chain, .iteration),
       .after = .iteration
     ) |>
-    pivot_longer(-starts_with("."),
+    tidyr::pivot_longer(-starts_with("."),
       names_sep = ",",
       names_to = c("group", "name")
     ) |>
-    group_by(group) |>
-    nest() |>
-    mutate(data = map(data, \(x) drop_na(x) |>
-      pivot_wider(names_from = name) |>
-      tidy_draws()))
+    dplyr::group_by(group) |>
+    tidyr::nest() |>
+    dplyr::mutate(data = purrr::map(data, \(x) tidyr::drop_na(x) |>
+      tidyr::pivot_wider(names_from = name) |>
+      tidybayes::tidy_draws()))
 }
