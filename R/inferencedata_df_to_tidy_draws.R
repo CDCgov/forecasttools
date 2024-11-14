@@ -6,7 +6,6 @@
 #' @export
 #'
 #' @examples
-
 inferencedata_to_tidy_draws <- function(idata) {
   idata |>
     rename(
@@ -44,5 +43,7 @@ inferencedata_to_tidy_draws <- function(idata) {
     ) |>
     group_by(group) |>
     nest() |>
-    mutate(data = map(data, \(x) pivot_wider(x, names_from = name) |> tidy_draws()))
+    mutate(data = map(data, \(x) drop_na(x) |>
+      pivot_wider(names_from = name) |>
+      tidy_draws()))
 }
