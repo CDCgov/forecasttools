@@ -35,7 +35,7 @@
 
 #' Example InferenceData DataFrame
 #'
-#' An InferenceData Dataframe with 
+#' An InferenceData Dataframe with
 #'
 #' @format ## `ex_inferencedata_dataframe`
 #' A data frame with 40 rows and 20 columns:

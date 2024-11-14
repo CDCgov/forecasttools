@@ -1,7 +1,7 @@
 # originally genereated from this python code:
 # import arviz as az
 # import numpy as np
-# 
+#
 # datadict = {
 #   "a": np.random.randn(2, 10),
 #   "b": np.random.randn(2, 10, 2),
@@ -13,15 +13,15 @@
 #   "b1": ["troll shore", "drawn"],
 # }
 # dims = {"b": ["b1"], "c": ["c1", "c2"]}
-# 
+#
 # dataset = az.convert_to_inference_data(datadict, coords=coords, dims=dims)
-# 
+#
 # dataset.add_groups(
 #   {"predictions": {"obs": np.random.randn(4, 10, 3)}},
 #   dims={"obs": ["d"]},
 #   coords={"d": ["woken", "awash", "inter ought"]},
 # )
-# 
+#
 # dataset.to_dataframe().to_csv("dataset.csv", index=False)
 
 
@@ -281,6 +281,6 @@ ex_inferencedata_dataframe <- tibble::tibble(
   )
 
 usethis::use_data(ex_inferencedata_dataframe,
-                  overwrite = TRUE,
-                  ascii = TRUE
+  overwrite = TRUE,
+  ascii = TRUE
 )

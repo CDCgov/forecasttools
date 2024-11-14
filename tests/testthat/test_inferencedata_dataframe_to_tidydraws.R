@@ -4,7 +4,7 @@ testthat::test_that("inferencedata_to_tidy_draws converts data correctly", {
 
   testthat::expect_setequal(colnames(result), c("group", "data"))
   testthat::expect_setequal(result$group, c("posterior", "predictions"))
-  
+
   testthat::expect_equal(
     colnames(result$data[[1]]),
     c(
@@ -15,7 +15,7 @@ testthat::test_that("inferencedata_to_tidy_draws converts data correctly", {
       "c[excel_stake,stair]"
     )
   )
-  
+
   testthat::expect_equal(
     colnames(result$data[[2]]),
     c(
