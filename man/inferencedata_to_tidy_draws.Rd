@@ -2,7 +2,7 @@
 % Please edit documentation in R/inferencedata_df_to_tidy_draws.R
 \name{inferencedata_to_tidy_draws}
 \alias{inferencedata_to_tidy_draws}
-\title{Convert InferenceData DataFrame to nest tidy_draws}
+\title{Convert InferenceData DataFrame to nested tibble of tidy_draws}
 \usage{
 inferencedata_to_tidy_draws(idata)
 }
@@ -13,5 +13,5 @@ inferencedata_to_tidy_draws(idata)
 A nested tibble, with columns group and data. Each element of data is a tidy_draws data frame
 }
 \description{
-Convert InferenceData DataFrame to nest tidy_draws
+Convert InferenceData DataFrame to nested tibble of tidy_draws
 }
