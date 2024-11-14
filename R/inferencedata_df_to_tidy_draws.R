@@ -1,3 +1,28 @@
+format_split_text <- function(x, concat_char = "|") {
+  group <- x[1]
+  non_group <- x[-1]
+  pre_bracket <- stringr::str_extract(non_group[1], "^.*(?=\\[)")
+  if (is.na(pre_bracket)) {
+    formatted_text <- glue::glue("{group}{concat_char}{non_group}")
+  } else {
+    bracket_contents <- non_group[-1] |>
+      stringr::str_replace_all("\\s", "_") |>
+      stringr::str_c(collapse = ",")
+    formatted_text <- glue::glue("{group}{concat_char}{pre_bracket}[{bracket_contents}]")
+  }
+  formatted_text
+}
+
+idata_names_to_tidy_names <- function(column_names) {
+  column_names |>
+    stringr::str_remove_all("^\\(|\\)$") |>
+    stringr::str_split(", ") |>
+    purrr::map(\(x) stringr::str_remove_all(x, "^\\'|\\'$")) |>
+    purrr::map(\(x) stringr::str_remove_all(x, '\\"')) |>
+    purrr::map(format_split_text) |>
+    purrr::map_chr(\(x) stringr::str_c(x, collapse = "|"))
+}
+
 #' Convert InferenceData DataFrame to nested tibble of tidy_draws
 #'
 #' @param idata InferenceData DataFrame (the result of calling arviz.InferenceData.to_dataframe in Python)
@@ -12,33 +37,14 @@ inferencedata_to_tidy_draws <- function(idata) {
       .chain = chain,
       .iteration = draw
     ) |>
-    dplyr::rename_with(function(colnames) {
-      colnames |>
-        stringr::str_remove_all("^\\(|\\)$") |>
-        stringr::str_split(", ") |>
-        purrr::map(\(x) stringr::str_remove_all(x, "^\\'|\\'$")) |>
-        purrr::map(\(x) stringr::str_remove_all(x, '\\"')) |>
-        purrr::map(\(x) {
-          if (length(x) == 3) {
-            x[2] <- stringr::str_replace(
-              string = x[2],
-              pattern = "(?<=\\[).+(?=\\])",
-              replacement = stringr::str_replace_all(x[3], "\\s", "_")
-            )
-            # white space not allowed in dimension names
-            x <- x[-3]
-          }
-          x
-        }) |>
-        purrr::map_chr(\(x) stringr::str_c(x, collapse = ","))
-    }, .cols = -tidyselect::starts_with(".")) |>
+    dplyr::rename_with(idata_names_to_tidy_names, .cols = -tidyselect::starts_with(".")) |>
     dplyr::mutate(dplyr::across(c(.chain, .iteration), \(x) as.integer(x + 1))) |>
     dplyr::mutate(
       .draw = tidybayes:::draw_from_chain_and_iteration_(.chain, .iteration),
       .after = .iteration
     ) |>
     tidyr::pivot_longer(-starts_with("."),
-      names_sep = ",",
+      names_sep = "\\|",
       names_to = c("group", "name")
     ) |>
     dplyr::group_by(group) |>
