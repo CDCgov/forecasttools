@@ -9,9 +9,10 @@ testthat::test_that("inferencedata_to_tidy_draws converts data correctly", {
     colnames(result$data[[1]]),
     c(
       ".chain", ".iteration", ".draw", "a", "b[troll_shore]", "b[drawn]",
-      "c[surly,media]", "c[surly,scant_scrap]", "c[surly,meter]", "c[surly,stair]",
-      "c[noble,media]", "c[noble,scant_scrap]", "c[noble,meter]", "c[noble,stair]",
-      "c[excel_stake,media]", "c[excel_stake,scant_scrap]", "c[excel_stake,meter]",
+      "c[surly,media]", "c[surly,scant_scrap]", "c[surly,meter]",
+      "c[surly,stair]", "c[noble,media]", "c[noble,scant_scrap]",
+      "c[noble,meter]", "c[noble,stair]", "c[excel_stake,media]",
+      "c[excel_stake,scant_scrap]", "c[excel_stake,meter]",
       "c[excel_stake,stair]"
     )
   )
