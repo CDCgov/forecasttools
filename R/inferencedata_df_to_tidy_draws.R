@@ -65,7 +65,7 @@ inferencedata_to_tidy_draws <- function(idata) {
     ) |>
     dplyr::mutate(dplyr::across(
       c(.chain, .iteration),
-      \(x) as.integer(x + 1)
+      \(x) as.integer(x + 1) # convert to 1-indexed
     )) |>
     dplyr::mutate(
       .draw = tidybayes:::draw_from_chain_and_iteration_(.chain, .iteration),
