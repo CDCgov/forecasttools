@@ -30,7 +30,7 @@ format_split_text <- function(x, concat_char = "|") {
 #'
 #' @return A character vector of tidy column names
 #' @examples
-#' idata_names_to_tidy_names(c(
+#' forecasttools:::idata_names_to_tidy_names(c(
 #'   "('group', 'var_name')",
 #'   "group|var_name[i_name, j_name]"
 #' ))

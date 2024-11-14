@@ -23,7 +23,7 @@ creating tidy_draws data frames.
 \code{"group|var_name[i_name, j_name]"}
 }
 \examples{
-idata_names_to_tidy_names(c(
+forecasttools:::idata_names_to_tidy_names(c(
   "('group', 'var_name')",
   "group|var_name[i_name, j_name]"
 ))
