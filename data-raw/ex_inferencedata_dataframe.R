@@ -277,7 +277,6 @@ ex_inferencedata_dataframe <- tibble::tibble(
       delim = ","
     ) |>
       structure(class = "col_spec"),
-    problems = constructive::.xptr("0x6000000a6400"),
     class = c("spec_tbl_df", "tbl_df", "tbl", "data.frame")
   )
 
