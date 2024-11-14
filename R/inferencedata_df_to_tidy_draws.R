@@ -29,8 +29,7 @@ idata_names_to_tidy_names <- function(column_names) {
 #'
 #' @return A nested tibble, with columns group and data. Each element of data is a tidy_draws data frame
 #' @export
-#'
-#' @examples
+
 inferencedata_to_tidy_draws <- function(idata) {
   idata |>
     dplyr::rename(
