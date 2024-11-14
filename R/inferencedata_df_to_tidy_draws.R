@@ -1,4 +1,4 @@
-#' Convert InferenceData DataFrame to nest tidy_draws
+#' Convert InferenceData DataFrame to nested tibble of tidy_draws
 #'
 #' @param idata InferenceData DataFrame (the result of calling arviz.InferenceData.to_dataframe in Python)
 #'
