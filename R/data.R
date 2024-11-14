@@ -33,11 +33,11 @@
 #' @source data-raw/example_daily_forecast_flu.R
 "example_daily_forecast_flu"
 
-#' Eight Schools InferenceData DataFrame
+#' Example InferenceData DataFrame
 #'
-#' A subset of data from ArviZ's centered_eight dataset
+#' An InferenceData Dataframe with 
 #'
-#' @format ## `centered_eight`
-#' A data frame with 8 rows and 62 columns:
-#' @source <https://github.com/arviz-devs/arviz/blob/main/arviz/data/example_data/code/centered_eight/centered_eight.ipynb>
-"centered_eight"
+#' @format ## `ex_inferencedata_dataframe`
+#' A data frame with 40 rows and 20 columns:
+#' @source <data-raw/ex_inferencedata_dataframe.R>
+"ex_inferencedata_dataframe"
