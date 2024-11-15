@@ -57,11 +57,11 @@ update_hub <- function(hub_path) {
 gather_hub_forecast_data <- function(hub_path) {
   hub_connection <- hubData::connect_hub(hub_path)
   forecasts <- hub_connection |>
-    dplyr::filter(output_type == "quantile") |>
-    dplyr::filter(horizon >= 0) |>
-    dplyr::rename(prediction = value) |>
-    dplyr::rename(forecast_date = reference_date) |>
-    dplyr::rename(quantile = output_type_id) |>
+    dplyr::filter(.data$output_type == "quantile") |>
+    dplyr::filter(.data$horizon >= 0) |>
+      dplyr::rename("prediction" = "value",
+                    "forecast_date" = "reference_date",
+                    "quantile" = "output_type_id") |>
     dplyr::collect()
   return(forecasts)
 }
