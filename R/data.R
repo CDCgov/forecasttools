@@ -32,3 +32,12 @@
 #' }
 #' @source data-raw/example_daily_forecast_flu.R
 "example_daily_forecast_flu"
+
+#' Example InferenceData DataFrame
+#'
+#' An InferenceData Dataframe with
+#'
+#' @format ## `ex_inferencedata_dataframe`
+#' A data frame with 40 rows and 20 columns:
+#' @source <data-raw/ex_inferencedata_dataframe.R>
+"ex_inferencedata_dataframe"
