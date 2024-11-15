@@ -115,7 +115,7 @@ gather_target_data <- function(hub_path,
   if (truth_data_path |> fs::file_exists()) {
     target_data <-
       readr::read_csv(truth_data_path) |>
-      dplyr::rename(true_value = value)
+      dplyr::rename("true_value" = "value")
     return(target_data)
   } else {
     cfl <- truth_data_path
@@ -150,19 +150,19 @@ create_table_for_scoring <- function(hub_path) {
       target_end_date == date
     )
   ) |>
-    dplyr::rename(model = model_id) |>
-    dplyr::mutate(target_end_date = as.Date(target_end_date)) |>
-    dplyr::mutate(quantile = as.numeric(quantile)) |>
+    dplyr::rename("model" = "model_id") |>
+    dplyr::mutate("target_end_date" = as.Date(.data$target_end_date)) |>
+    dplyr::mutate("quantile" = as.numeric(.data$quantile)) |>
     dplyr::select(
-      forecast_date,
-      target_end_date,
-      horizon,
-      location,
-      quantile,
-      prediction,
-      location_name,
-      true_value,
-      model
+      "forecast_date",
+      "target_end_date",
+      "horizon",
+      "location",
+      "quantile",
+      "prediction",
+      "location_name",
+      "true_value",
+      "model"
     )
 
   return(forecasts_and_targets)
