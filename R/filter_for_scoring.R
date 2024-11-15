@@ -39,7 +39,7 @@ filter_for_scoring <- function(forecasts_and_targets,
       "Filtering out forecasts without corresponding truth data..."
     )
     to_score <- to_score |>
-      dplyr::filter(!is.na(true_value))
+      dplyr::filter(!is.na(.data$true_value))
   }
 
   # filter forecasts to score
@@ -48,21 +48,21 @@ filter_for_scoring <- function(forecasts_and_targets,
       "Filtering out forecast dates before {min_forecast_date}"
     )
     to_score <- to_score |>
-      dplyr::filter(forecast_date >= as.Date(!!min_forecast_date))
+      dplyr::filter(.data$forecast_date >= as.Date(!!min_forecast_date))
   }
   if (!is.null(max_forecast_date)) {
     cli::cli_inform(
       "Filtering out forecast dates after {max_forecast_date}"
     )
     to_score <- to_score |>
-      dplyr::filter(forecast_date <= as.Date(!!max_forecast_date))
+      dplyr::filter(.data$forecast_date <= as.Date(!!max_forecast_date))
   }
   if (!is.null(horizons)) {
     cli::cli_inform(
       "Filtering out horizons not in {horizons}"
     )
     to_score <- to_score |>
-      dplyr::filter(horizon %in% c(!!horizons))
+      dplyr::filter(.data$horizon %in% c(!!horizons))
   }
   if (!is.null(locations)) {
     cli::cli_inform(
@@ -73,14 +73,14 @@ filter_for_scoring <- function(forecasts_and_targets,
       locations
     )
     to_score <- to_score |>
-      dplyr::filter(location %in% c(!!loc_codes))
+      dplyr::filter(.data$location %in% c(!!loc_codes))
   }
   if (!is.null(models)) {
     cli::cli_inform(
       "Filtering out models not in {models}"
     )
     to_score <- to_score |>
-      dplyr::filter(model %in% c(!!models))
+      dplyr::filter(.data$model %in% c(!!models))
   }
 
   return(to_score)
