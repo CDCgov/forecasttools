@@ -146,9 +146,9 @@ create_table_for_scoring <- function(hub_path) {
     forecasts_only,
     target_data,
     by = dplyr::join_by(
-      location == location,
-      target_end_date == date
-    )
+      "location" == "location",
+      "target_end_date" == "date"
+      )
   ) |>
     dplyr::rename("model" = "model_id") |>
     dplyr::mutate("target_end_date" = as.Date(.data$target_end_date)) |>
