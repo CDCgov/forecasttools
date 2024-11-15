@@ -66,17 +66,17 @@ daily_to_epiweekly <- function(tidy_daily_trajectories,
 
   grouped_df <- tidy_daily_trajectories |>
     dplyr::mutate(
-      epiweek = lubridate::epiweek(.data[[!!date_col]]),
-      epiyear = lubridate::epiyear(.data[[!!date_col]])
+      "epiweek" = lubridate::epiweek(.data[[!!date_col]]),
+      "epiyear" = lubridate::epiyear(.data[[!!date_col]])
     ) |>
     dplyr::group_by(
-      epiweek,
-      epiyear,
+      .data$epiweek,
+      .data$epiyear,
       dplyr::across(tidyselect::all_of(!!id_cols))
     )
 
   n_elements <- grouped_df |>
-    dplyr::summarise(n_elements = dplyr::n()) |>
+    dplyr::summarise("n_elements" = dplyr::n()) |>
     dplyr::pull()
 
   ## check that no weeks have more than
