@@ -50,13 +50,13 @@ env_id <- Sys.getenv("NHSN_API_KEY_ID")
 env_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
 
 if (env_id == "") {
-  Sys.setenv("NHSN_API_KEY_ID") <- my_api_key_id
+  Sys.setenv("NHSN_API_KEY_ID" = my_api_key_id)
 } else {
   my_api_key_id <- env_id
 }
 
 if (env_secret == "") {
-  Sys.setenv("NHSN_API_KEY_SECRET") <- my_api_key_secret
+  Sys.setenv("NHSN_API_KEY_SECRET" = my_api_key_secret)
 } else {
   my_api_key_secret <- env_secret
 }
