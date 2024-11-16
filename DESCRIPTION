@@ -25,11 +25,14 @@ Imports:
     ggplot2,
     glue,
     gridExtra,
+    httr,
     hubData (>= 0.2.0),
+    jsonlite,
     lubridate,
     purrr,
     readr,
     rlang,
+    soql,
     stringr,
     tibble,
     tidyselect
@@ -44,7 +47,8 @@ Suggests:
     roxygen2,
     usethis,
     testthat,
-    rcmdcheck
+    rcmdcheck,
+    httptest
 VignetteBuilder:
     knitr
 URL: https://cdcgov.github.io/forecasttools
