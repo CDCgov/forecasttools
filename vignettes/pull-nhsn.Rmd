@@ -36,14 +36,30 @@ Yyou can increase by setting the `limit` argument of `pull_nhsn()` a larger valu
 
 We'll provide the `api_key_id` and `api_key_secret` arguments explicitly. If you omit those (and valid values can't be found in the default environment variables), `forecasttools` will warn you that the data request will be lower priority and less polite.
 
-```{r, eval = FALSE}
+```{r}
 my_api_key_id <- "<YOUR API KEY ID HERE>"
 my_api_key_secret <- "<YOUR API KEY SECRET HERE>"
 ```
 
 ```{r, include = FALSE}
-my_api_key_id <- Sys.getenv("NHSN_API_KEY_ID")
-my_api_key_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
+# silently reconcile env var secrets and mock var secrets
+# so that the vignette works as expected with both mock
+# and real requests provided that real requests are made with
+# real secrets (and mock requests do not require real secrets).
+env_id <- Sys.getenv("NHSN_API_KEY_ID")
+env_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
+
+if (env_id == "") {
+  Sys.setenv("NHSN_API_KEY_ID" = my_api_key_id)
+} else {
+  my_api_key_id <- env_id
+}
+
+if (env_secret == "") {
+  Sys.setenv("NHSN_API_KEY_SECRET" = my_api_key_secret)
+} else {
+  my_api_key_secret <- env_secret
+}
 ```
 
 ```{r}
