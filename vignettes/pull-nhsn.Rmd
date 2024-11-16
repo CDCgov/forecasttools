@@ -42,8 +42,10 @@ my_api_key_secret <- "<YOUR API KEY SECRET HERE>"
 ```
 
 ```{r, include = FALSE}
-my_api_key_id <- Sys.getenv("NHSN_API_KEY_ID")
-my_api_key_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
+env_id <- Sys.getenv("NHSN_API_KEY_ID")
+env_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
+my_api_key_id <- if (env_id != "") env_id else my_api_key_id
+my_api_key_secret <- if (env_secret != "") env_secret else my_api_key_secret
 ```
 
 ```{r}
