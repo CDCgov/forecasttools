@@ -59,9 +59,11 @@ gather_hub_forecast_data <- function(hub_path) {
   forecasts <- hub_connection |>
     dplyr::filter(.data$output_type == "quantile") |>
     dplyr::filter(.data$horizon >= 0) |>
-      dplyr::rename("prediction" = "value",
-                    "forecast_date" = "reference_date",
-                    "quantile" = "output_type_id") |>
+    dplyr::rename(
+      "prediction" = "value",
+      "forecast_date" = "reference_date",
+      "quantile" = "output_type_id"
+    ) |>
     dplyr::collect()
   return(forecasts)
 }
@@ -148,7 +150,7 @@ create_table_for_scoring <- function(hub_path) {
     by = dplyr::join_by(
       "location" == "location",
       "target_end_date" == "date"
-      )
+    )
   ) |>
     dplyr::rename("model" = "model_id") |>
     dplyr::mutate("target_end_date" = as.Date(.data$target_end_date)) |>
