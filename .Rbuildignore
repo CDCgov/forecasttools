@@ -1,6 +1,12 @@
 ^renv$
 ^renv\.lock$
 ^LICENSE\.md$
+^DISCLAIMER\.md$
+^CONTRIBUTING\.md$
+^open_practices\.md$
+^rules_of_behavior\.md$
+^code-of-conduct\.md$
+^thanks\.md$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$

@@ -13,7 +13,9 @@ A tibble with 58 rows and 3 columns:
 }
 }
 \source{
-\url{https://www2.census.gov/geo/docs/reference/state.txt}, us_location_table.R
+\url{https://www2.census.gov/geo/docs/reference/state.txt}
+
+data-raw/us_location_table.R
 }
 \usage{
 us_location_table
