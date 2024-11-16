@@ -1,0 +1,101 @@
+---
+title: "Retrieving NHSN hospital respiratory data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Retrieving NHSN hospital respiratory data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+httptest::start_vignette("pull-nhsn")
+```
+
+In this vignette you will learn how use `forecasttools` to pull data from the [National Healthcare Safety Network (NHSN)](https://www.cdc.gov/nhsn/index.html) [Weekly Hospital Respiratory Data (HRD)](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/ua7e-t2fy/about_data) dataset. This dataset contains counts of epiweekly influenza and COVID-19 hospital admissions by U.S. state, among other quantities.
+
+We will use the [Socrata Open Data API (SODA)](https://dev.socrata.com/) API endpoint on [data.cdc.gov](https://data.cdc.gov). `data.cdc.gov` also provides a [browser view of the data](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/ua7e-t2fy) with links to download data (e.g. as `.csv` or `.tsv` files), but when building pipelines, we wish to operate programmatically.
+
+
+## API Key
+First, you'll want to go to `data.cdc.gov` and request an API token. This is not strictly required, but it is generally considered polite, and it will speed up your data requests (the polite get served first!).
+
+To request a token, navigate to [`data.cdc.gov`'s developer settings page](https://data.cdc.gov/profile/edit/developer_settings). You will be prompted to log in. If you have CDC credentials, you can use those. Otherwise, you can [sign up for an account](https://data.cdc.gov/signup) with Tyler Data and Insights (the contractor that manages `data.cdc.gov`). Once logged in, navigate to the [developer settings page](https://data.cdc.gov/profile/edit/developer_settings), click the "Create new API key" button and follow the prompts.
+
+Make sure to record your secret key somewhere safe but _not_ tracked by Git (e.g. a `.gitignore`-ed `secrets.toml` file.
+
+One place to store secrets is as [environment variables](https://en.wikipedia.org/wiki/Environment_variable). If you don't provide one explicitly, `pull_nhsn()` looks for a valid NHSN API key ID in an environment variable named `NHSN_API_KEY_ID` and a corresponding secret in an environment variable named `NHSN_API_KEY_SECRET`.
+
+## Getting all the data
+Our workhorse function for getting NHSN data is called simply `pull_nhsn()`. If you provide it with no arguments, it will simply fetch you the entire dataset as a `tibble::tibble()`, up to the specified maximum number of rows (default 10,0000).
+
+Yyou can increase by setting the `limit` argument of `pull_nhsn()` a larger value. To protect you against accidentally pulling incomplete datasets, `pull_nhsn()` errors by default if the number of rows retrieved hits the `limit`. You can suppress that error by setting `error_on_limit = FALSE`.
+
+We'll provide the `api_key_id` and `api_key_secret` arguments explicitly. If you omit those (and valid values can't be found in the default environment variables), `forecasttools` will warn you that the data request will be lower priority and less polite.
+
+```{r, eval = FALSE}
+my_api_key_id <- "<YOUR API KEY ID HERE>"
+my_api_key_secret <- "<YOUR API KEY SECRET HERE>"
+```
+
+```{r, include = FALSE}
+my_api_key_id <- Sys.getenv("NHSN_API_KEY_ID")
+my_api_key_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
+```
+
+```{r}
+library(forecasttools)
+library(dplyr)
+all_data <- pull_nhsn(
+    limit = 1000,
+    api_key_id = my_api_key_id,
+    api_key_secret = my_api_key_secret,
+    error_on_limit = FALSE
+)
+
+all_data
+```
+
+## Getting only relevant rows and columns
+This is a huge table, and it can take a fair amount of time to download. We can speed things up by only requesting a subset of the data via a "query". These queries are a way to ask `data.cdc.gov` only for the rows and columns we care about, which will speed up our download.
+
+To automate repetitive tasks, there are pre-defined ways to apply some common queries.
+
+### Date limits
+`pull_nhsn()` takes `start_date` and `end_date` arguments. If these are defined, it will query the dataset for only rows that fall between those dates, inclusive
+
+### Column limits
+`pull_nhsn()` takes a `columns` argument, which defaults to `NULL`. If `columns` is `NULL`, `pull_nhsn()` pulls all columns. Otherwise, it pulls the columns `jurisdiction`, `weekendingdate`, and any columns enumerated in `columns`.
+
+### An example
+As an example, let's pull only epiweekly incident influenza hospitalizations between 1 Jan 2023 and 31 December 2023, inclusive. Here, we'll let `pull_nhsn()` look for an API key and secret in our environment variables.
+
+```{r}
+influenza_2023 <- pull_nhsn(
+  columns = c("totalconfflunewadm"),
+  start_date = "2023-01-01",
+  end_date = "2023-12-31"
+)
+
+influenza_2023
+```
+
+By default, `pull_nhsn()` returns its output sorted first by `jurisdiction`, then by `weekendingdate`. You can configure this differently via the `order_by` keyword argument.
+
+```{r}
+influenza_by_date <- pull_nhsn(
+  columns = c("totalconfflunewadm"),
+  start_date = "2023-01-01",
+  end_date = "2023-12-31",
+  order_by=c("weekendingdate", "jurisdiction")
+)
+
+influenza_by_date
+```
+
+```{r, include=FALSE}
+httptest::end_vignette()
+```

@@ -40,7 +40,19 @@ download_hub(
   hub_path = hub_path,
   force = TRUE
 )
+```
 
+```{r, include = FALSE}
+## use a specific commit to future-proof the vignette
+gert::git_branch_create(
+	branch = "flu-scoring-vignette-temp",
+	repo = hub_path,
+	force = FALSE,
+	checkout = TRUE,
+	ref = "6ae6919")
+```
+
+```{r}
 forecast_and_target <- create_table_for_scoring(hub_path)
 ```
 There are `r forecast_and_target$model |> unique() |> length()` different models that have been submitted to FluSight.

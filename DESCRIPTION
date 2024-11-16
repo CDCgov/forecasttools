@@ -30,6 +30,7 @@ Imports:
     purrr,
     readr,
     rlang,
+    soql,
     stringr,
     tibble,
     tidyselect
@@ -44,7 +45,8 @@ Suggests:
     roxygen2,
     usethis,
     testthat,
-    rcmdcheck
+    rcmdcheck,
+    httptest
 VignetteBuilder:
     knitr
 URL: https://cdcgov.github.io/forecasttools
