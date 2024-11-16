@@ -45,11 +45,12 @@ download_hub(
 ```{r, include = FALSE}
 ## use a specific commit to future-proof the vignette
 gert::git_branch_create(
-	branch = "flu-scoring-vignette-temp",
-	repo = hub_path,
-	force = FALSE,
-	checkout = TRUE,
-	ref = "6ae6919")
+  branch = "flu-scoring-vignette-temp",
+  repo = hub_path,
+  force = FALSE,
+  checkout = TRUE,
+  ref = "6ae6919"
+)
 ```
 
 ```{r}

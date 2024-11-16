@@ -21,16 +21,16 @@ pull_nhsn(
 }
 \arguments{
 \item{api_endpoint}{API endpoint to
-use. Defaults to the HTTPS:// JSON Socrata
+use. Defaults to the \verb{https:}/\code{.json} Socrata
 endpoint for NHSN COVID, Influenza, and RSV
 data on \href{https://data.cdc.gov}{\code{data.cdc.gov}}, namely
-\url{https://data.cdc.gov/resource/ua7e-t2fy.json}}
+\href{https://data.cdc.gov/resource/ua7e-t2fy.json}{\code{data.cdc.gov/resource/ua7e-t2fy.json} }}
 
 \item{api_key_id}{Key ID of an API key to use
 when querying the dataset. Not required,
 but polite and reduces throttling.
 You can create one at
-\url{https://data.cdc.gov/profile/edit/developer_settings}.
+\href{https://data.cdc.gov/profile/edit/developer_settings}{\code{data.cdc.gov/profile/edit/developer_settings} }.
 Defaults to the value of the environment variable
 \code{NHSN_API_KEY_ID}, if any.}
 

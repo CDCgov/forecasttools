@@ -6,15 +6,17 @@
 #' public API endpoint.
 #'
 #' @param api_endpoint API endpoint to
-#' use. Defaults to the HTTPS:// JSON Socrata
+#' use. Defaults to the `https:`/`.json` Socrata
 #' endpoint for NHSN COVID, Influenza, and RSV
 #' data on [`data.cdc.gov`](https://data.cdc.gov), namely
-#' [`https://data.cdc.gov/resource/ua7e-t2fy.json`](https://data.cdc.gov/resource/ua7e-t2fy.json)
+#' [`data.cdc.gov/resource/ua7e-t2fy.json`
+#' ](https://data.cdc.gov/resource/ua7e-t2fy.json)
 #' @param api_key_id Key ID of an API key to use
 #' when querying the dataset. Not required,
 #' but polite and reduces throttling.
 #' You can create one at
-#' [`https://data.cdc.gov/profile/edit/developer_settings`](https://data.cdc.gov/profile/edit/developer_settings).
+#' [`data.cdc.gov/profile/edit/developer_settings`
+#' ](https://data.cdc.gov/profile/edit/developer_settings).
 #' Defaults to the value of the environment variable
 #' `NHSN_API_KEY_ID`, if any.
 #' @param api_key_secret Associated key secret
@@ -57,8 +59,10 @@ pull_nhsn <- function(api_endpoint =
                       end_date = NULL,
                       columns = NULL,
                       jurisdictions = NULL,
-                      order_by = c("jurisdiction",
-                                   "weekendingdate"),
+                      order_by = c(
+                        "jurisdiction",
+                        "weekendingdate"
+                      ),
                       desc = FALSE,
                       limit = 1e5,
                       error_on_limit = TRUE,
@@ -77,11 +81,11 @@ pull_nhsn <- function(api_endpoint =
 
   socrata_url <- as.character(query)
 
-  api_key_id <- if(is.null(api_key_id)) "" else api_key_id
-  api_key_secret <- if(is.null(api_key_secret)) "" else api_key_secret
-  
+  api_key_id <- if (is.null(api_key_id)) "" else api_key_id
+  api_key_secret <- if (is.null(api_key_secret)) "" else api_key_secret
+
   credentials <- (
-      api_key_id != "" &
+    api_key_id != "" &
       api_key_secret != ""
   )
 
@@ -177,8 +181,10 @@ nhsn_soda_query <- function(api_endpoint,
                             columns = NULL,
                             jurisdictions = NULL,
                             limit = 1e5,
-                            order_by = c("jurisdiction",
-                                         "weekendingdate"),
+                            order_by = c(
+                              "jurisdiction",
+                              "weekendingdate"
+                            ),
                             desc = FALSE,
                             ...) {
   query <- soql::soql() |>

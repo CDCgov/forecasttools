@@ -17,7 +17,7 @@ httptest::start_vignette("pull-nhsn")
 
 In this vignette you will learn how use `forecasttools` to pull data from the [National Healthcare Safety Network (NHSN)](https://www.cdc.gov/nhsn/index.html) [Weekly Hospital Respiratory Data (HRD)](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/ua7e-t2fy/about_data) dataset. This dataset contains counts of epiweekly influenza and COVID-19 hospital admissions by U.S. state, among other quantities.
 
-We will use the [Socrata Open Data API (SODA)](https://dev.socrata.com/) API endpoint on [data.cdc.gov](https://data.cdc.gov). `data.cdc.gov` also provides a [browser view of the data](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/ua7e-t2fy) with links to download data (e.g. as `.csv` or `.tsv` files), but when building pipelines, we wish to operate programmatically.
+We will use the [Socrata Open Data API (SODA)](https://dev.socrata.com/) API endpoint on [`data.cdc.gov`](https://data.cdc.gov). `data.cdc.gov` also provides a [browser view of the data](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/ua7e-t2fy) with links to download data (e.g. as `.csv` or `.tsv` files), but when building pipelines, we wish to operate programmatically.
 
 
 ## API Key
@@ -50,10 +50,10 @@ my_api_key_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
 library(forecasttools)
 library(dplyr)
 all_data <- pull_nhsn(
-    limit = 1000,
-    api_key_id = my_api_key_id,
-    api_key_secret = my_api_key_secret,
-    error_on_limit = FALSE
+  limit = 1000,
+  api_key_id = my_api_key_id,
+  api_key_secret = my_api_key_secret,
+  error_on_limit = FALSE
 )
 
 all_data
@@ -90,7 +90,7 @@ influenza_by_date <- pull_nhsn(
   columns = c("totalconfflunewadm"),
   start_date = "2023-01-01",
   end_date = "2023-12-31",
-  order_by=c("weekendingdate", "jurisdiction")
+  order_by = c("weekendingdate", "jurisdiction")
 )
 
 influenza_by_date
