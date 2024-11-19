@@ -10,6 +10,9 @@ Authors@R:
     role = "aut"),
     person("Kaitlyn", "Johnson",
     email = "uox1@cdc.gov",
+    role = "ctb"),
+    person("Damon", "Bayer",
+    email = "xum8@cdc.gov",
     role = "ctb"))
 Description: A collection of tools for short-term forecasting within CFA Predict.
 License: Apache License (>= 2)

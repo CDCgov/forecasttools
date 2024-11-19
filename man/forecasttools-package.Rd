@@ -26,6 +26,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Kaitlyn Johnson \email{uox1@cdc.gov} [contributor]
+  \item Damon Bayer \email{xum8@cdc.gov} [contributor]
 }
 
 }
