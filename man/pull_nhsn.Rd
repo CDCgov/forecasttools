@@ -5,7 +5,7 @@
 \title{Pull NHSN data from \code{data.cdc.gov}}
 \usage{
 pull_nhsn(
-  api_endpoint = "https://data.cdc.gov/resource/ua7e-t2fy.json",
+  api_endpoint = "https://data.cdc.gov/resource/mpgq-jmmr.json",
   api_key_id = Sys.getenv("NHSN_API_KEY_ID"),
   api_key_secret = Sys.getenv("NHSN_API_KEY_SECRET"),
   start_date = NULL,
@@ -22,9 +22,9 @@ pull_nhsn(
 \arguments{
 \item{api_endpoint}{API endpoint to
 use. Defaults to the \verb{https:}/\code{.json} Socrata
-endpoint for NHSN COVID, Influenza, and RSV
+endpoint for NHSN COVID, Influenza, and RSV Wednesday release of
 data on \href{https://data.cdc.gov}{\code{data.cdc.gov}}, namely
-\href{https://data.cdc.gov/resource/ua7e-t2fy.json}{\code{data.cdc.gov/resource/ua7e-t2fy.json} }}
+\href{https://data.cdc.gov/resource/mpgq-jmmr.json}{\code{data.cdc.gov/resource/mpgq-jmmr.json} }}
 
 \item{api_key_id}{Key ID of an API key to use
 when querying the dataset. Not required,
