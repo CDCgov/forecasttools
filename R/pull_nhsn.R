@@ -7,10 +7,10 @@
 #'
 #' @param api_endpoint API endpoint to
 #' use. Defaults to the `https:`/`.json` Socrata
-#' endpoint for NHSN COVID, Influenza, and RSV
+#' endpoint for NHSN COVID, Influenza, and RSV Wednesday release of
 #' data on [`data.cdc.gov`](https://data.cdc.gov), namely
-#' [`data.cdc.gov/resource/ua7e-t2fy.json`
-#' ](https://data.cdc.gov/resource/ua7e-t2fy.json)
+#' [`data.cdc.gov/resource/mpgq-jmmr.json`
+#' ](https://data.cdc.gov/resource/mpgq-jmmr.json)
 #' @param api_key_id Key ID of an API key to use
 #' when querying the dataset. Not required,
 #' but polite and reduces throttling.
@@ -52,7 +52,7 @@
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
 pull_nhsn <- function(api_endpoint =
-                        "https://data.cdc.gov/resource/ua7e-t2fy.json",
+                        "https://data.cdc.gov/resource/mpgq-jmmr.json",
                       api_key_id = Sys.getenv("NHSN_API_KEY_ID"),
                       api_key_secret = Sys.getenv("NHSN_API_KEY_SECRET"),
                       start_date = NULL,
