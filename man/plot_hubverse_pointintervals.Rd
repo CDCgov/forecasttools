@@ -18,6 +18,9 @@ plot_hubverse_pointintervals(
 \arguments{
 \item{hubverse_table}{Hubverse table, as a \code{\link[tibble:tibble]{tibble}}}
 
+\item{horizons}{horizons to plot, as a vector of integers. If \code{NULL},
+plot all available, each in its own facet. Default \code{NULL}.}
+
 \item{point_estimate_quantile}{Quantile to plot as the point estimate.
 Default \code{0.5}, the median.}
 
@@ -27,23 +30,20 @@ the interval. Default \code{0.025}.}
 \item{upper_limit_quantile}{Quantile to plot as the upper bound of
 the interval. Default \code{0.975}.}
 
-\item{location_output_format}{how to code locations in the output plot.
-Permitted formats are \code{"abbr"} (state/territory
-or nation two letter USPS abbreviation), \code{"hub"} (
-legacy 2-digit FIPS code for states and territories, \code{US}
-#' for the USA as a whole), and \code{"long_name"} (full English
-jurisdiction names). Default \code{"abbr"}.}
-
-\item{horizon}{horizons to plot, as a vector of integers. If \code{NULL},
-plot all available, each in its own facet. Default \code{NULL}.}
-
-\item{location_column_format}{format of the hubverse table
+\item{location_input_format}{Format of the hubverse table
 \code{location} column.
 Permitted formats are \code{"abbr"} (state/territory
 or nation two letter USPS abbreviation), \code{"hub"} (
 legacy 2-digit FIPS code for states and territories, \code{US}
 for the USA as a whole), and \code{"long_name"} (full English
 jurisdiction names; not recommended). Default \code{"hub"}.}
+
+\item{location_output_format}{How to code locations in the output plot.
+Permitted formats are \code{"abbr"} (state/territory
+or nation two letter USPS abbreviation), \code{"hub"} (
+legacy 2-digit FIPS code for states and territories, \code{US}
+#' for the USA as a whole), and \code{"long_name"} (full English
+jurisdiction names). Default \code{"abbr"}.}
 }
 \value{
 A ggplot2 plot of the forecasts as pointintervals

@@ -2,7 +2,7 @@
 #' as pointintervals
 #'
 #' @param hubverse_table Hubverse table, as a [`tibble`][tibble::tibble()]
-#' @param horizon horizons to plot, as a vector of integers. If `NULL`,
+#' @param horizons horizons to plot, as a vector of integers. If `NULL`,
 #' plot all available, each in its own facet. Default `NULL`.
 #' @param point_estimate_quantile Quantile to plot as the point estimate.
 #' Default `0.5`, the median.
@@ -10,14 +10,14 @@
 #' the interval. Default `0.025`.
 #' @param upper_limit_quantile Quantile to plot as the upper bound of
 #' the interval. Default `0.975`.
-#' @param location_column_format format of the hubverse table
+#' @param location_input_format Format of the hubverse table
 #' `location` column.
 #' Permitted formats are `"abbr"` (state/territory
 #' or nation two letter USPS abbreviation), `"hub"` (
 #' legacy 2-digit FIPS code for states and territories, `US`
 #' for the USA as a whole), and `"long_name"` (full English
 #' jurisdiction names; not recommended). Default `"hub"`.
-#' @param location_output_format how to code locations in the output plot.
+#' @param location_output_format How to code locations in the output plot.
 #' Permitted formats are `"abbr"` (state/territory
 #' or nation two letter USPS abbreviation), `"hub"` (
 #' legacy 2-digit FIPS code for states and territories, `US`
