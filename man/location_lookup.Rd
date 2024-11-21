@@ -15,17 +15,17 @@ location_lookup(
 \arguments{
 \item{location_vector}{vector of location values}
 
-\item{location_output_format}{Return only this column of the
-output table, if it is provided. Otherwise return the whole
-table. Default \code{NULL} (return all columns).
+\item{location_input_format}{format in which the location
+vector is coded.
+Permitted formats are \code{"abbr"} (state/territory
 or nation two letter USPS abbreviation), \code{"hub"}
 (legacy 2-digit FIPS code for states and territories, \code{US}
 for the USA as a whole), and \code{"long_name"} (full English
 name for jurisdiction).}
 
-\item{location_format}{format in which the location
-vector is coded.
-Permitted formats are \code{"abbr"} (state/territory
+\item{location_output_format}{Return only this column of the
+output table, if it is provided. Otherwise return the whole
+table. Default \code{NULL} (return all columns).
 or nation two letter USPS abbreviation), \code{"hub"}
 (legacy 2-digit FIPS code for states and territories, \code{US}
 for the USA as a whole), and \code{"long_name"} (full English

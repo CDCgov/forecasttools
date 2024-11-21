@@ -83,7 +83,7 @@ to_location_table_column <- function(location_format) {
 #' corresponding to a given location vector
 #' and format, with repeats possible
 #' @param location_vector vector of location values
-#' @param location_format format in which the location
+#' @param location_input_format format in which the location
 #' vector is coded.
 #' Permitted formats are `"abbr"` (state/territory
 #' or nation two letter USPS abbreviation), `"hub"`
