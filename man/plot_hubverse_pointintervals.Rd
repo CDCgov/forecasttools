@@ -18,6 +18,15 @@ plot_hubverse_pointintervals(
 \arguments{
 \item{hubverse_table}{Hubverse table, as a \code{\link[tibble:tibble]{tibble}}}
 
+\item{point_estimate_quantile}{Quantile to plot as the point estimate.
+Default \code{0.5}, the median.}
+
+\item{lower_limit_quantile}{Quantile to plot as the lower bound of
+the interval. Default \code{0.025}.}
+
+\item{upper_limit_quantile}{Quantile to plot as the upper bound of
+the interval. Default \code{0.975}.}
+
 \item{location_output_format}{how to code locations in the output plot.
 Permitted formats are \code{"abbr"} (state/territory
 or nation two letter USPS abbreviation), \code{"hub"} (
@@ -27,16 +36,6 @@ jurisdiction names). Default \code{"abbr"}.}
 
 \item{horizon}{horizons to plot, as a vector of integers. If \code{NULL},
 plot all available, each in its own facet. Default \code{NULL}.}
-
-\item{locations}{set of locations to plot. If NULL,
-all locations are plotted. Otherwise, a vector
-of location values to plot, as USPS-style
-abbreviations (e.g. \verb{c("US", "AL", "AK"}),
-US hubverse submission location codes (
-e.g. \code{c("US", 01, 02)}), or full English
-jurisdiction names
-(e.g. \verb{c("United States, "Alabama", "Alaska")}.
-Default \code{NULL}.}
 
 \item{location_column_format}{format of the hubverse table
 \code{location} column.
