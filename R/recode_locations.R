@@ -83,7 +83,6 @@ to_location_table_column <- function(location_format) {
 #' corresponding to a given location vector
 #' and format, with repeats possible
 #' @param location_vector vector of location values
-#' @param location_format how the vector is coded.
 #' @param location_format format in which the location
 #' vector is coded.
 #' Permitted formats are `"abbr"` (state/territory
@@ -91,21 +90,37 @@ to_location_table_column <- function(location_format) {
 #' (legacy 2-digit FIPS code for states and territories, `US`
 #' for the USA as a whole), and `"long_name"` (full English
 #' name for jurisdiction).
-#' @return the rows of the [us_location_table]
+#' @param location_output_format Return only this column of the
+#' output table, if it is provided. Otherwise return the whole
+#' table. Default `NULL` (return all columns).
+#  Permitted formats are `"abbr"` (state/territory
+#' or nation two letter USPS abbreviation), `"hub"`
+#' (legacy 2-digit FIPS code for states and territories, `US`
+#' for the USA as a whole), and `"long_name"` (full English
+#' name for jurisdiction).
+#' @return the corresponding rows of the [us_location_table]
 #' matching the location vector, with repeats possible.
 #' @export
 location_lookup <- function(location_vector,
-                            location_format) {
+                            location_input_format,
+                            location_output_format = NULL) {
   ## coerce location vector to character
   ## (handles case of just states with no US,
   ## by FIPS, which R will default to treating
   ## as numeric)
   location_vector <- as.character(location_vector)
-  join_key <- to_location_table_column(location_format)
+  join_key <- to_location_table_column(location_input_format)
   locs <- tibble::tibble({{ join_key }} := !!location_vector) |>
     dplyr::inner_join(forecasttools::us_location_table,
       by = join_key
     )
 
-  return(locs)
+  if (is.null(location_output_format)) {
+    result <- locs
+  } else {
+    output_column <- to_location_table_column(location_output_format)
+    result <- locs[[output_column]]
+  }
+
+  return(result)
 }

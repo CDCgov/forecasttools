@@ -25,6 +25,7 @@ Imports:
     dplyr,
     fs,
     gert,
+    ggdist,
     ggplot2,
     glue,
     gridExtra,
