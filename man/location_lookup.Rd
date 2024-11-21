@@ -6,21 +6,33 @@
 corresponding to the entries of a given
 vector.}
 \usage{
-location_lookup(location_vector, location_format)
+location_lookup(
+  location_vector,
+  location_input_format,
+  location_output_format = NULL
+)
 }
 \arguments{
 \item{location_vector}{vector of location values}
 
-\item{location_format}{format in which the location
+\item{location_input_format}{format in which the location
 vector is coded.
 Permitted formats are \code{"abbr"} (state/territory
 or nation two letter USPS abbreviation), \code{"hub"}
 (legacy 2-digit FIPS code for states and territories, \code{US}
 for the USA as a whole), and \code{"long_name"} (full English
 name for jurisdiction).}
+
+\item{location_output_format}{Return only this column of the
+output table, if it is provided. Otherwise return the whole
+table. Default \code{NULL} (return all columns).
+or nation two letter USPS abbreviation), \code{"hub"}
+(legacy 2-digit FIPS code for states and territories, \code{US}
+for the USA as a whole), and \code{"long_name"} (full English
+name for jurisdiction).}
 }
 \value{
-the rows of the \link{us_location_table}
+the corresponding rows of the \link{us_location_table}
 matching the location vector, with repeats possible.
 }
 \description{

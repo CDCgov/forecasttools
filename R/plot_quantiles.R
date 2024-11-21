@@ -169,12 +169,12 @@ plot_hubverse_quantiles_loc <- function(location,
       ggplot2::scale_y_continuous(
         trans = ytrans
       ) +
-      ggplot2::theme_minimal(base_size = 15) +
       ggplot2::labs(
         y = target_name,
         x = "Date"
       ) +
-      ggplot2::ggtitle(plot_title)
+      ggplot2::ggtitle(plot_title) +
+      theme_forecasttools()
 
   )
 
