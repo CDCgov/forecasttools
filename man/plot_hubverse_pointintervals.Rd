@@ -2,8 +2,8 @@
 % Please edit documentation in R/plot_hubverse_pointinterval.R
 \name{plot_hubverse_pointintervals}
 \alias{plot_hubverse_pointintervals}
-\title{Plot a set of hubverse-formatted forecast
-as a set of pointintervals.}
+\title{Plot a table of hubverse-formatted forecasts
+as pointintervals}
 \usage{
 plot_hubverse_pointintervals(
   hubverse_table,
@@ -50,6 +50,6 @@ jurisdiction names; not recommended). Default \code{"hub"}.}
 A ggplot2 plot of the forecasts as pointintervals
 }
 \description{
-Plot a set of hubverse-formatted forecast
-as a set of pointintervals.
+Plot a table of hubverse-formatted forecasts
+as pointintervals
 }

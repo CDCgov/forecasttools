@@ -1,5 +1,5 @@
-#' Plot a set of hubverse-formatted forecast
-#' as a set of pointintervals.
+#' Plot a table of hubverse-formatted forecasts
+#' as pointintervals
 #'
 #' @param hubverse_table Hubverse table, as a [`tibble`][tibble::tibble()]
 #' @param horizon horizons to plot, as a vector of integers. If `NULL`,
