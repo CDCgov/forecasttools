@@ -2,8 +2,7 @@
 % Please edit documentation in R/theme_forecasttools.R
 \name{theme_forecasttools}
 \alias{theme_forecasttools}
-\title{forecasttools ggplot2 theme, built
-on top of \code{\link[ggplot2:ggtheme]{ggplot2::theme_minimal()}}}
+\title{forecasttools ggplot2 theme.}
 \usage{
 theme_forecasttools(...)
 }
@@ -15,6 +14,5 @@ The theme, which can be added to a ggplot
 object.
 }
 \description{
-forecasttools ggplot2 theme, built
-on top of \code{\link[ggplot2:ggtheme]{ggplot2::theme_minimal()}}
+Built on top of \code{\link[ggplot2:ggtheme]{ggplot2::theme_minimal()}}
 }
