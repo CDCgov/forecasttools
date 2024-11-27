@@ -25,6 +25,10 @@ testthat::test_that("inferencedata_to_tidy_draws converts data correctly", {
     )
   )
 
-  testthat::expect_no_error(spread_draws(result$data[[1]], a, b[x], c[y, z]))
-  testthat::expect_no_error(spread_draws(result$data[[2]], obs[a]))
+  testthat::expect_no_error(
+    tidybayes::spread_draws(result$data[[1]], a, b[x], c[y, z])
+  )
+  testthat::expect_no_error(
+    tidybayes::spread_draws(result$data[[2]], obs[a])
+  )
 })
