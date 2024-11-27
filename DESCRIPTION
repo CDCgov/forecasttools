@@ -36,6 +36,7 @@ Imports:
     purrr,
     readr,
     rlang,
+    scales,
     soql,
     stringr,
     tibble,
