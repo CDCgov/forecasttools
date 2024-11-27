@@ -12,6 +12,8 @@ A collection of tools for short-term forecasting within CFA Predict.
 Useful links:
 \itemize{
   \item \url{https://cdcgov.github.io/forecasttools}
+  \item \url{https://github.com/CDCgov/forecasttools}
+  \item Report bugs at \url{https://github.com/CDCgov/forecasttools/issues}
 }
 
 }

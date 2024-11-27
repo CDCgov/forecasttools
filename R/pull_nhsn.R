@@ -128,29 +128,11 @@ pull_nhsn <- function(api_endpoint =
   return(df)
 }
 
-#' Return a [soql::soql_where()] construct
-#' for a given column being in a list of values
-#'
-#' @param soql_list A `soql` query object, which
-#' can be piped in. If one hasn't been
-#' created yet, use or pipe in [soql::soql()].
-#' @param column The column to filter on
-#' @param match_values A vector of values that column
-#' must match
-#' @return A new soql object with the filter added,
-#' for use in other functions.
-#' @export
-soql_is_in <- function(soql_list, column, match_values) {
-  query <- stringr::str_glue(
-    "{column}='{match_values}'"
-  ) |>
-    paste(collapse = " OR ")
-  return(soql::soql_where(soql_list, query))
-}
 
 #' Construct a Socrata open data
-#' API (SODA) query for the NSHN
-#' dataset
+#' API (SODA) query for the NHSN Hospital Respiratory
+#' Data set.
+#'
 #' @param api_endpoint Base API endpoint URL to use
 #' when constructing the query.
 #' @param start_date Pull only rows with dates
@@ -187,41 +169,24 @@ nhsn_soda_query <- function(api_endpoint,
                             ),
                             desc = FALSE,
                             ...) {
+  cols <- if (!is.null(columns)) {
+    c("jurisdiction", "weekendingdate", columns)
+  } else {
+    NULL
+  }
+
   query <- soql::soql() |>
-    soql::soql_add_endpoint(api_endpoint)
-
-  if (!is.null(columns)) {
-    query <- query |>
-      soql::soql_select(paste(
-        unique(
-          c("jurisdiction", "weekendingdate", columns)
-        ),
-        collapse = ","
-      ))
-  }
-
-  if (!is.null(start_date)) {
-    query <- query |>
-      soql::soql_where(
-        stringr::str_glue("weekendingdate >= '{start_date}'")
-      )
-  }
-
-  if (!is.null(end_date)) {
-    query <- query |>
-      soql::soql_where(
-        stringr::str_glue("weekendingdate <= '{end_date}'")
-      )
-  }
-
-  if (!is.null(jurisdictions)) {
-    query <- query |>
-      soql_is_in(
-        "jurisdiction", jurisdictions
-      )
-  }
-
-  query <- query |>
+    soql::soql_add_endpoint(api_endpoint) |>
+    soql_nullable_select(cols) |>
+    soql_nullable_where(
+      "weekendingdate", ">=", start_date
+    ) |>
+    soql_nullable_where(
+      "weekendingdate", "<=", end_date
+    ) |>
+    soql_nullable_is_in(
+      "jurisdiction", jurisdictions
+    ) |>
     soql::soql_order(
       paste(unique(order_by),
         collapse = ","
