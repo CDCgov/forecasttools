@@ -3,7 +3,7 @@ prism_colors <- list(
     "Very Low" = "#D7F2ED",
     "Low" = "#B8E5AC",
     "Moderate" = "#FEA82F",
-    "High" = "#F05C54",
+    "High" = "#F45B53",
     "Very High" = "#A03169"
   ),
   na_color = "#EBEBEB",
