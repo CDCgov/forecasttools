@@ -13,7 +13,7 @@ Authors@R:
     role = "ctb"),
     person("Damon", "Bayer",
     email = "xum8@cdc.gov",
-    role = "ctb"))
+    role = "aut"))
 Description: A collection of tools for short-term forecasting within CFA Predict.
 License: Apache License (>= 2)
 Encoding: UTF-8
