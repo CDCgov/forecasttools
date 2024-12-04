@@ -19,8 +19,10 @@ scale_colour_prism(...)
 Prism color scale
 }
 \examples{
-ex_dat <- data.frame(x = 1:6, y = 1:6,
-z = c("Minimal", "Low", "Moderate", "High", "Very High", NA))
+ex_dat <- data.frame(
+  x = 1:6, y = 1:6,
+  z = c("Very Low", "Low", "Moderate", "High", "Very High", NA)
+)
 # Basic plot
 ex_dat |>
   ggplot2::ggplot(ggplot2::aes(x, y, color = z)) +
