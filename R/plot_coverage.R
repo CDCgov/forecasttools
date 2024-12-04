@@ -56,21 +56,21 @@ plot_coverage_by_date <- function(scored,
       y = .data[[coverage_col]],
     )
   ) +
-    geom_hline(yintercept = coverage_level) +
-    geom_point(size = 3) +
-    geom_line(linewidth = 2) +
-    scale_y_continuous(
+    ggplot2::geom_hline(yintercept = coverage_level) +
+    ggplot2::geom_point(size = 3) +
+    ggplot2::geom_line(linewidth = 2) +
+    ggplot2::scale_y_continuous(
       transform = ytransform,
       labels = ylabels
     ) +
-    coord_cartesian(ylim = c(0, 1))
+    ggplot2::coord_cartesian(ylim = c(0, 1))
 
   ## facet wrap if one or many group cols, facet grid
   ## if exactly two
   if (length(group_cols) == 1 || length(group_cols > 2)) {
-    fig <- fig + facet_wrap(group_cols)
+    fig <- fig + ggplot2::facet_wrap(group_cols)
   } else if (length(group_cols) == 2) {
-    fig <- fig + facet_grid(reformulate(
+    fig <- fig + ggplot2::facet_grid(reformulate(
       group_cols[1], group_cols[2]
     ))
   }
