@@ -1,6 +1,6 @@
 prism_colors <- list(
-  risk_levels = c(
-    "Minimal" = "#D7F2ED",
+  activity_levels = c(
+    "Very Low" = "#D7F2ED",
     "Low" = "#B8E5AC",
     "Moderate" = "#FEA82F",
     "High" = "#F05C54",
@@ -12,8 +12,8 @@ prism_colors <- list(
 
 
 prism_levels <- factor(
-  c(names(prism_colors$risk_levels), NA),
-  levels = c(names(prism_colors$risk_levels), NA),
+  c(names(prism_colors$activity_levels), NA),
+  levels = c(names(prism_colors$activity_levels), NA),
   ordered = TRUE,
   exclude = NULL
 )
@@ -28,7 +28,7 @@ prism_levels <- factor(
 #' @examples
 #' ex_dat <- data.frame(
 #'   x = 1:6, y = 1:6,
-#'   z = c("Minimal", "Low", "Moderate", "High", "Very High", NA)
+#'   z = c("Very Low", "Low", "Moderate", "High", "Very High", NA)
 #' )
 #' # Basic plot
 #' ex_dat |>
@@ -52,7 +52,7 @@ prism_levels <- factor(
 #'   scale_color_prism()
 scale_fill_prism <- function(...) {
   ggplot2::scale_fill_manual(
-    values = prism_colors$risk_levels,
+    values = prism_colors$activity_levels,
     na.value = prism_colors$na_color,
     breaks = levels(prism_levels),
     na.translate = TRUE,
@@ -65,7 +65,7 @@ scale_fill_prism <- function(...) {
 #' @rdname scale_prism
 scale_color_prism <- function(...) {
   ggplot2::scale_color_manual(
-    values = prism_colors$risk_levels,
+    values = prism_colors$activity_levels,
     na.value = prism_colors$na_color,
     breaks = levels(prism_levels),
     na.translate = TRUE,
