@@ -12,10 +12,8 @@ thresholds <- readr::read_tsv(
   show_col_types = FALSE
 )
 
-## transform thresholds from percentage to proprotion
-## and store as ordered named vectors in named 3D array
-
-prism_thresholds <- thresholds |>
+## Transform thresholds from percentage to proprotion
+prop_thresholds <- thresholds |>
   dplyr::transmute(
     disease,
     location = state_abb,
@@ -25,22 +23,30 @@ prism_thresholds <- thresholds |>
     prop_high = perc_level_high / 100,
     prop_very_high = perc_level_very_high / 100,
     prop_upper_bound = 1
-  ) |>
+  )
+
+## Transform thresholds from flat table to
+## multi-dimensional array, via a nested list.
+##
+## Method for conversion to multi-dim array:
+## 1. Transform the long-form tabular data to a
+## nested named list (via nest() and deframe())
+## 2. Transform the nested named list to a multi-dimensional
+## array with dimension names (via simplify2array() and unlist())
+## 3. Order and name the dimensions of that array.
+
+thresholds_nested_list <- prop_thresholds |>
   tidyr::nest(breaks = dplyr::starts_with("prop_")) |>
-  dplyr::mutate(
-    breaks =
-      purrr::map(
-        breaks,
-        \(x) unlist(x, use.names = TRUE)
-      )
-  ) |>
   tidyr::nest(loc_breaks = c(location, breaks)) |>
   tibble::deframe() |>
-  purrr::map(deframe) |>
-  simplify2array(higher = FALSE) |>
-  apply(c(1, 2), unlist) |>
-  aperm(c(2, 3, 1))
+  purrr::map(deframe) # yields a nested list of tibbles
 
+prism_thresholds <- thresholds_nested_list |>
+  simplify2array() |> # yields a 2D array of length-1 tibbles
+  apply(1:2, unlist) |> # yields a 3D array
+  aperm(c(2, 3, 1)) # reorders 3D array dimensions to be
+# as desired
+## label 3D array dimensions
 names(dimnames(prism_thresholds)) <- c("location", "disease", "breaks")
 
 
