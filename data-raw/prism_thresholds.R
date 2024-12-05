@@ -25,15 +25,15 @@ prop_thresholds <- thresholds |>
     prop_upper_bound = 1
   )
 
-## Transform thresholds from flat table to
-## multi-dimensional array, via a nested list.
-##
-## Method for conversion to multi-dim array:
-## 1. Transform the long-form tabular data to a
-## nested named list (via nest() and deframe())
-## 2. Transform the nested named list to a multi-dimensional
-## array with dimension names (via simplify2array() and unlist())
-## 3. Order and name the dimensions of that array.
+#' Transform thresholds from flat table to
+#' multi-dimensional array, via a nested list.
+#'
+#' Method for conversion to multi-dim array:
+#' 1. Transform the long-form tabular data to a
+#' nested named list (via nest() and deframe())
+#' 2. Transform the nested named list to a multi-dimensional
+#' array with dimension names (via simplify2array() and unlist())
+#' 3. Order and name the dimensions of that array.
 
 thresholds_nested_list <- prop_thresholds |>
   tidyr::nest(breaks = dplyr::starts_with("prop_")) |>
@@ -44,11 +44,9 @@ thresholds_nested_list <- prop_thresholds |>
 prism_thresholds <- thresholds_nested_list |>
   simplify2array() |> # yields a 2D array of length-1 tibbles
   apply(1:2, unlist) |> # yields a 3D array
-  aperm(c(2, 3, 1)) # reorders 3D array dimensions to be
-# as desired
-## label 3D array dimensions
-names(dimnames(prism_thresholds)) <- c("location", "disease", "breaks")
+  aperm(c(2, 3, 1)) # orders 3D array dimensions as desired
 
+names(dimnames(prism_thresholds)) <- c("location", "disease", "breaks")
 
 usethis::use_data(prism_thresholds,
   overwrite = TRUE
