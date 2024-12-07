@@ -57,11 +57,13 @@ update_hub <- function(hub_path) {
 gather_hub_forecast_data <- function(hub_path) {
   hub_connection <- hubData::connect_hub(hub_path)
   forecasts <- hub_connection |>
-    dplyr::filter(output_type == "quantile") |>
-    dplyr::filter(horizon >= 0) |>
-    dplyr::rename(prediction = value) |>
-    dplyr::rename(forecast_date = reference_date) |>
-    dplyr::rename(quantile = output_type_id) |>
+    dplyr::filter(.data$output_type == "quantile") |>
+    dplyr::filter(.data$horizon >= 0) |>
+    dplyr::rename(
+      "prediction" = "value",
+      "forecast_date" = "reference_date",
+      "quantile" = "output_type_id"
+    ) |>
     dplyr::collect()
   return(forecasts)
 }
@@ -115,7 +117,7 @@ gather_target_data <- function(hub_path,
   if (truth_data_path |> fs::file_exists()) {
     target_data <-
       readr::read_csv(truth_data_path) |>
-      dplyr::rename(true_value = value)
+      dplyr::rename("true_value" = "value")
     return(target_data)
   } else {
     cfl <- truth_data_path
@@ -146,23 +148,23 @@ create_table_for_scoring <- function(hub_path) {
     forecasts_only,
     target_data,
     by = dplyr::join_by(
-      location == location,
-      target_end_date == date
+      "location" == "location",
+      "target_end_date" == "date"
     )
   ) |>
-    dplyr::rename(model = model_id) |>
-    dplyr::mutate(target_end_date = as.Date(target_end_date)) |>
-    dplyr::mutate(quantile = as.numeric(quantile)) |>
+    dplyr::rename("model" = "model_id") |>
+    dplyr::mutate("target_end_date" = as.Date(.data$target_end_date)) |>
+    dplyr::mutate("quantile" = as.numeric(.data$quantile)) |>
     dplyr::select(
-      forecast_date,
-      target_end_date,
-      horizon,
-      location,
-      quantile,
-      prediction,
-      location_name,
-      true_value,
-      model
+      "forecast_date",
+      "target_end_date",
+      "horizon",
+      "location",
+      "quantile",
+      "prediction",
+      "location_name",
+      "true_value",
+      "model"
     )
 
   return(forecasts_and_targets)

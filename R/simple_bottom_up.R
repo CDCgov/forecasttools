@@ -94,10 +94,10 @@ count_trajectories <- function(base_forecasts,
                                location_col,
                                date_col) {
   number_of_sampled_trajs <- base_forecasts |>
-    dplyr::group_by(.data[[location_col]], .data[[date_col]]) |>
-    dplyr::summarise(n_sample_trajs = dplyr::n()) |>
+    dplyr::group_by(.data[[!!location_col]], .data[[!!date_col]]) |>
+    dplyr::summarise("n_sample_trajs" = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::select(dplyr::all_of(location_col), n_sample_trajs) |>
+    dplyr::select(dplyr::all_of(!!location_col), "n_sample_trajs") |>
     dplyr::distinct()
   return(number_of_sampled_trajs)
 }
