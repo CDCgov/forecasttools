@@ -26,8 +26,8 @@ nullable_comparison <- function(a,
 }
 
 
-#' Construct a [soql::soql_where()] component of a SOQL query
-#' programmatically with no filtering if `where_value` is `NULL`.
+#' Add a [soql::soql_where()] statement to a SOQL query,
+#' or return the original query if `where_value` is  `NULL`.
 #'
 #' @param soql_list A `soql` query object, which
 #' can be piped in. If one hasn't been
@@ -61,10 +61,12 @@ soql_nullable_where <- function(soql_list,
 }
 
 
-#' Return a [soql::soql_where()] construct
-#' for a given column being in a vector of `match_values`,
-#' with no filtering  if the vector of `match_values` is
-#' `NULL`.
+#' Add an "is in" statement to a SOQL query, or return the original
+#' query if `match_values` is  `NULL`.
+#'
+#' An is in statement is a [soql::soql_where()] statement
+#' that requires the values of a given column to match one of the
+#' entries of a vector of `match_values`.
 #'
 #' @param soql_list A `soql` query object, which
 #' can be piped in. If one hasn't been
@@ -86,8 +88,16 @@ soql_nullable_is_in <- function(soql_list, column, match_values) {
   }
 }
 
+#' Add a [soql::soql_select()] statement to a query
+#' to select a set of columns `columns`, or return
+#' the original query if `columns` is `NULL`.
 #'
-#'
+#' @param soql_list A `soql` query object, which
+#' can be piped in. If one hasn't been
+#' created yet, use or pipe in [soql::soql()].
+#' @param columns The columns to select, or `NULL`.
+#' @return A new [soql::soql()] object with the selection statement
+#' added, or the input object if `columns` is `NULL`.
 soql_nullable_select <- function(soql_list, columns) {
   return(
     if (!is.null(columns)) {
