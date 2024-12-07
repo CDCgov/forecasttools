@@ -12,6 +12,28 @@
 #' @param b Second set of values for the comparison, or `NULL`.
 #' @return A logical vector. Equivalent to `b {comparison_operator} a`
 #' if `b` is not `NULL` and to `TRUE` if `b` is `NULL`.
+#' #'
+#' @examples
+#'
+#' x <- 6
+#' nullable_comparison(5, ">", x)
+#'
+#' x <- NULL
+#' nullable_comparison(5, ">", x)
+#'
+#' df <- tibble::tibble(y = 1:6)
+#' x <- 3
+#' df |> dplyr::filter(
+#'   nullable_comparison(y, ">", !!x),
+#'   y < 5
+#' )
+#' x <- NULL
+#' df |> dplyr::filter(
+#'   nullable_comparison(y, ">", !!x),
+#'   y < 5
+#' )
+#'
+#' @export
 nullable_comparison <- function(a,
                                 comparison_operator,
                                 b) {
@@ -40,6 +62,7 @@ nullable_comparison <- function(a,
 #' for no filtering.
 #' @return A new [soql::soql()] object with the filter added, or
 #' simply the input object if `where_value` is `NULL`.
+#' @export
 soql_nullable_where <- function(soql_list,
                                 column,
                                 comparison_operator,
@@ -76,6 +99,7 @@ soql_nullable_where <- function(soql_list,
 #' must match, or `NULL` for no filtering.
 #' @return A new [soql::soql()] object with the filter added,
 #' or simply the input object if `match_value` is `NULL`.
+#' @export
 soql_nullable_is_in <- function(soql_list, column, match_values) {
   if (is.null(match_values)) {
     return(soql_list)
@@ -98,6 +122,7 @@ soql_nullable_is_in <- function(soql_list, column, match_values) {
 #' @param columns The columns to select, or `NULL`.
 #' @return A new [soql::soql()] object with the selection statement
 #' added, or the input object if `columns` is `NULL`.
+#' @export
 soql_nullable_select <- function(soql_list, columns) {
   return(
     if (!is.null(columns)) {
