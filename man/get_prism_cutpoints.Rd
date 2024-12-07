@@ -16,8 +16,9 @@ an array of those values.}
 A location two-letter abbreviation as in the \code{short_name}
 column of \link{us_location_table}, or an array
 of such abbreviations.}
-
-\item{The}{cutpoints, as a single vector or array of vectors.}
+}
+\value{
+The cutpoints, as a single vector or array of vectors.
 }
 \description{
 Get PRISM activity level cutpoints for a given

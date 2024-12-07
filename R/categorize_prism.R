@@ -8,7 +8,7 @@
 #' A location two-letter abbreviation as in the `short_name`
 #' column of [forecasttools::us_location_table], or an array
 #' of such abbreviations.
-#' @param The cutpoints, as a single vector or array of vectors.
+#' @return The cutpoints, as a single vector or array of vectors.
 #'
 #' @examples
 #' get_prism_cutpoints("Influenza", "WA")
