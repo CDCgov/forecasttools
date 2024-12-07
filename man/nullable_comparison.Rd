@@ -20,8 +20,30 @@ as a string, e.g. \code{"=="}, \code{">="} \code{"\%in\%"}.}
 \value{
 A logical vector. Equivalent to \verb{b \{comparison_operator\} a}
 if \code{b} is not \code{NULL} and to \code{TRUE} if \code{b} is \code{NULL}.
+#'
 }
 \description{
 Useful for letting \code{NULL} reflect "all values"
 if \code{\link[dplyr:filter]{dplyr::filter()}} calls. Internal function.
+}
+\examples{
+
+x <- 6
+nullable_comparison(5, ">", x)
+
+x <- NULL
+nullable_comparison(5, ">", x)
+
+df <- tibble::tibble(y = 1:6)
+x <- 3
+df |> dplyr::filter(
+  nullable_comparison(y, ">", !!x),
+  y < 5
+)
+x <- NULL
+df |> dplyr::filter(
+  nullable_comparison(y, ">", !!x),
+  y < 5
+)
+
 }
