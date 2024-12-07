@@ -21,7 +21,7 @@ We will use the [Socrata Open Data API (SODA)](https://dev.socrata.com/) API end
 
 
 ## API Key
-First, you'll want to go to `data.cdc.gov` and request an API token. This is not strictly required, but it is generally considered polite, and it will speed up your data requests (the polite get served first!).
+First, you'll want to go to [`data.cdc.gov`](https://data.cdc.gov/) and request an API token. This is not strictly required, but it is generally considered polite, and it will speed up your data requests (the polite get served first!).
 
 To request a token, navigate to [`data.cdc.gov`'s developer settings page](https://data.cdc.gov/profile/edit/developer_settings). You will be prompted to log in. If you have CDC credentials, you can use those. Otherwise, you can [sign up for an account](https://data.cdc.gov/signup) with Tyler Data and Insights (the contractor that manages `data.cdc.gov`). Once logged in, navigate to the [developer settings page](https://data.cdc.gov/profile/edit/developer_settings), click the "Create new API key" button and follow the prompts.
 
@@ -32,7 +32,7 @@ One place to store secrets is as [environment variables](https://en.wikipedia.or
 ## Getting all the data
 Our workhorse function for getting NHSN data is called simply `pull_nhsn()`. If you provide it with no arguments, it will simply fetch you the entire dataset as a `tibble::tibble()`, up to the specified maximum number of rows (default 10,0000).
 
-Yyou can increase by setting the `limit` argument of `pull_nhsn()` a larger value. To protect you against accidentally pulling incomplete datasets, `pull_nhsn()` errors by default if the number of rows retrieved hits the `limit`. You can suppress that error by setting `error_on_limit = FALSE`.
+You can increase by setting the `limit` argument of `pull_nhsn()` a larger value. To protect you against accidentally pulling incomplete datasets, `pull_nhsn()` errors by default if the number of rows retrieved hits the `limit`. You can suppress that error by setting `error_on_limit = FALSE`.
 
 We'll provide the `api_key_id` and `api_key_secret` arguments explicitly. If you omit those (and valid values can't be found in the default environment variables), `forecasttools` will warn you that the data request will be lower priority and less polite.
 
