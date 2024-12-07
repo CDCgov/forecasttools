@@ -3,8 +3,8 @@
 \name{nhsn_soda_query}
 \alias{nhsn_soda_query}
 \title{Construct a Socrata open data
-API (SODA) query for the NSHN
-dataset}
+API (SODA) query for the NHSN Hospital Respiratory
+Data set.}
 \usage{
 nhsn_soda_query(
   api_endpoint,
@@ -55,6 +55,6 @@ the query as \code{\link[soql:soql]{soql::soql()}} output
 }
 \description{
 Construct a Socrata open data
-API (SODA) query for the NSHN
-dataset
+API (SODA) query for the NHSN Hospital Respiratory
+Data set.
 }

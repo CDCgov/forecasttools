@@ -32,6 +32,23 @@ filter_for_scoring <- function(forecasts_and_targets,
                                models = NULL) {
   to_score <- forecasts_and_targets
 
+  loc_codes <- if (!is.null(locations)) {
+    us_loc_abbr_to_code(locations)
+  } else {
+    NULL
+  }
+  min_forecast_date <- if (!is.null(min_forecast_date)) {
+    as.Date(min_forecast_date)
+  } else {
+    NULL
+  }
+
+  max_forecast_date <- if (!is.null(max_forecast_date)) {
+    as.Date(max_forecast_date)
+  } else {
+    NULL
+  }
+
   ## strip NA values from
   ## not yet scored tables
   if ("true_value" %in% names(to_score)) {
@@ -39,49 +56,22 @@ filter_for_scoring <- function(forecasts_and_targets,
       "Filtering out forecasts without corresponding truth data..."
     )
     to_score <- to_score |>
-      dplyr::filter(!is.na(true_value))
+      dplyr::filter(!is.na(.data$true_value))
   }
 
-  # filter forecasts to score
-  if (!is.null(min_forecast_date)) {
-    cli::cli_inform(
-      "Filtering out forecast dates before {min_forecast_date}"
+  to_score <- to_score |>
+    dplyr::filter(
+      nullable_comparison(
+        .data$forecast_date, ">=",
+        !!min_forecast_date
+      ),
+      nullable_comparison(
+        .data$forecast_date, "<=",
+        !!max_forecast_date
+      ),
+      nullable_comparison(.data$horizon, "%in%", !!horizons),
+      nullable_comparison(.data$location, "%in%", !!loc_codes),
+      nullable_comparison(.data$model, "%in%", !!models)
     )
-    to_score <- to_score |>
-      dplyr::filter(forecast_date >= as.Date(!!min_forecast_date))
-  }
-  if (!is.null(max_forecast_date)) {
-    cli::cli_inform(
-      "Filtering out forecast dates after {max_forecast_date}"
-    )
-    to_score <- to_score |>
-      dplyr::filter(forecast_date <= as.Date(!!max_forecast_date))
-  }
-  if (!is.null(horizons)) {
-    cli::cli_inform(
-      "Filtering out horizons not in {horizons}"
-    )
-    to_score <- to_score |>
-      dplyr::filter(horizon %in% c(!!horizons))
-  }
-  if (!is.null(locations)) {
-    cli::cli_inform(
-      "Filtering out locations not in {locations}"
-    )
-
-    loc_codes <- us_loc_abbr_to_code(
-      locations
-    )
-    to_score <- to_score |>
-      dplyr::filter(location %in% c(!!loc_codes))
-  }
-  if (!is.null(models)) {
-    cli::cli_inform(
-      "Filtering out models not in {models}"
-    )
-    to_score <- to_score |>
-      dplyr::filter(model %in% c(!!models))
-  }
-
   return(to_score)
 }
