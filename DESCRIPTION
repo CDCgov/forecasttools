@@ -20,6 +20,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports:
+    checkmate,
     cli,
     copula,
     dplyr,
@@ -53,7 +54,8 @@ Suggests:
     usethis,
     testthat,
     rcmdcheck,
-    httptest
+    httptest,
+    withr
 VignetteBuilder:
     knitr
 URL: https://cdcgov.github.io/forecasttools, https://github.com/CDCgov/forecasttools
