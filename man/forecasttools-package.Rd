@@ -23,12 +23,12 @@ Useful links:
 Authors:
 \itemize{
   \item Samuel Brand \email{usi1@cdc.gov}
+  \item Damon Bayer \email{xum8@cdc.gov}
 }
 
 Other contributors:
 \itemize{
   \item Kaitlyn Johnson \email{uox1@cdc.gov} [contributor]
-  \item Damon Bayer \email{xum8@cdc.gov} [contributor]
 }
 
 }
