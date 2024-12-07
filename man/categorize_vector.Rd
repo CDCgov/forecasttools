@@ -18,15 +18,18 @@ categorize_vector(
 \arguments{
 \item{values}{Vector of values to categorize.}
 
-\item{break_sets}{list of vectors of category
-breakpoints, one for each entry of \code{values},
-or a single set of category breakpoints to use
-for all \code{values}.}
+\item{break_sets}{sets of category breakpoints,
+with one set for each entry of \code{values}, as a list of
+numeric vectors. Alternatively, a single set of category
+breakpoints to use for all values, as a one-entry list
+containing a single numeric vector.}
 
-\item{label_sets}{list of vectors of labels to associate
-with the the corresponding breakpoints in \code{break_sets},
-one for each entry of \code{break_sets} or a single set of
-labels to use for all \code{break_sets}.}
+\item{label_sets}{sets of labels to associate,
+with the corresponding breakpoints in \code{break_sets},
+with one set for each entry of \code{values}, as a list of
+character vectors. Alternatively, a single set of labels
+to use for all values, as a one-entry list containing a
+single character vector.}
 
 \item{include.lowest}{Passed to \code{\link[base:cut]{base::cut()}}. Default \code{TRUE}.}
 
