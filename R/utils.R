@@ -27,9 +27,7 @@ nullable_comparison <- function(a,
 
 
 #' Construct a [soql::soql_where()] component of a SOQL query
-#' programmatically if and only if the `where_value` is not `NULL`.
-#'
-#' If the where_value is `NULL`, return all rows.
+#' programmatically with no filtering if `where_value` is `NULL`.
 #'
 #' @param soql_list A `soql` query object, which
 #' can be piped in. If one hasn't been
@@ -37,7 +35,9 @@ nullable_comparison <- function(a,
 #' @param column column name for the [soql::soql_where()] component
 #' of the query, as a string.
 #' @param comparison_operator comparison operator for the
-#' [soql::soql_where()] component of the query, as
+#' [soql::soql_where()] component of the query, as a string.
+#' @param where_value A value for the comparison, or `NULL`
+#' for no filtering.
 #' @return A new [soql::soql()] object with the filter added, or
 #' simply the input object if `where_value` is `NULL`.
 soql_nullable_where <- function(soql_list,
@@ -63,15 +63,15 @@ soql_nullable_where <- function(soql_list,
 
 #' Return a [soql::soql_where()] construct
 #' for a given column being in a vector of `match_values`,
-#' or no addition filter if the vector of `match_values`
-#' is `NULL`.
+#' with no filtering  if the vector of `match_values` is
+#' `NULL`.
 #'
 #' @param soql_list A `soql` query object, which
 #' can be piped in. If one hasn't been
 #' created yet, use or pipe in [soql::soql()].
 #' @param column The column to filter on
 #' @param match_values A vector of values that column
-#' must match, or NULL to add no filter on that column.
+#' must match, or `NULL` for no filtering.
 #' @return A new [soql::soql()] object with the filter added,
 #' or simply the input object if `match_value` is `NULL`.
 soql_nullable_is_in <- function(soql_list, column, match_values) {

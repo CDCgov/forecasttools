@@ -3,7 +3,7 @@
 \name{soql_nullable_where}
 \alias{soql_nullable_where}
 \title{Construct a \code{\link[soql:soql_queries]{soql::soql_where()}} component of a SOQL query
-programmatically if and only if the \code{where_value} is not \code{NULL}.}
+programmatically with no filtering if \code{where_value} is \code{NULL}.}
 \usage{
 soql_nullable_where(soql_list, column, comparison_operator, where_value)
 }
@@ -16,12 +16,16 @@ created yet, use or pipe in \code{\link[soql:soql]{soql::soql()}}.}
 of the query, as a string.}
 
 \item{comparison_operator}{comparison operator for the
-\code{\link[soql:soql_queries]{soql::soql_where()}} component of the query, as}
+\code{\link[soql:soql_queries]{soql::soql_where()}} component of the query, as a string.}
+
+\item{where_value}{A value for the comparison, or \code{NULL}
+for no filtering.}
 }
 \value{
 A new \code{\link[soql:soql]{soql::soql()}} object with the filter added, or
 simply the input object if \code{where_value} is \code{NULL}.
 }
 \description{
-If the where_value is \code{NULL}, return all rows.
+Construct a \code{\link[soql:soql_queries]{soql::soql_where()}} component of a SOQL query
+programmatically with no filtering if \code{where_value} is \code{NULL}.
 }

@@ -4,8 +4,8 @@
 \alias{soql_nullable_is_in}
 \title{Return a \code{\link[soql:soql_queries]{soql::soql_where()}} construct
 for a given column being in a vector of \code{match_values},
-or no addition filter if the vector of \code{match_values}
-is \code{NULL}.}
+with no filtering  if the vector of \code{match_values} is
+\code{NULL}.}
 \usage{
 soql_nullable_is_in(soql_list, column, match_values)
 }
@@ -17,7 +17,7 @@ created yet, use or pipe in \code{\link[soql:soql]{soql::soql()}}.}
 \item{column}{The column to filter on}
 
 \item{match_values}{A vector of values that column
-must match, or NULL to add no filter on that column.}
+must match, or \code{NULL} for no filtering.}
 }
 \value{
 A new \code{\link[soql:soql]{soql::soql()}} object with the filter added,
@@ -26,6 +26,6 @@ or simply the input object if \code{match_value} is \code{NULL}.
 \description{
 Return a \code{\link[soql:soql_queries]{soql::soql_where()}} construct
 for a given column being in a vector of \code{match_values},
-or no addition filter if the vector of \code{match_values}
-is \code{NULL}.
+with no filtering  if the vector of \code{match_values} is
+\code{NULL}.
 }
