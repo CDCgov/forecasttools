@@ -1,10 +1,10 @@
-#' Get PRISM activity level cutpoints for a given
-#' disease and location
+#' Get PRISM activity level cutpoints for given
+#' diseases and locations
 #'
-#' @param disease disease(s) for which to return the cutpoints.
+#' @param diseases disease(s) for which to return the cutpoints.
 #' One of `"ARI"`, `"COVID-19"`, `"Influenza"`, or `"RSV"`, or
 #' an array of those values.
-#' @param location location(s) for which to return the cutpoints.
+#' @param locations location(s) for which to return the cutpoints.
 #' A location two-letter abbreviation as in the `short_name`
 #' column of [forecasttools::us_location_table], or an array
 #' of such abbreviations.
@@ -17,18 +17,18 @@
 #'
 #' get_prism_cutpoints(c("ARI", "RSV"), c("US", "WA"))
 #' @export
-get_prism_cutpoints <- function(disease, location) {
+get_prism_cutpoints <- function(diseases, locations) {
   checkmate::assert_names(
-    disease,
+    diseases,
     subset.of =
       dimnames(forecasttools::prism_thresholds)$disease,
     what = "disease"
   )
   checkmate::assert_names(
-    location,
+    locations,
     subset.of =
       dimnames(forecasttools::prism_thresholds)$location,
     what = "location"
   )
-  return(forecasttools::prism_thresholds[location, disease, ])
+  return(forecasttools::prism_thresholds[locations, diseases, ])
 }
