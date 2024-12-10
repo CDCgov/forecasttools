@@ -2,32 +2,37 @@
 % Please edit documentation in R/categorize_prism.R
 \name{get_prism_cutpoints}
 \alias{get_prism_cutpoints}
-\title{Get PRISM activity level cutpoints for a given
-disease and location}
+\title{Get PRISM activity level cutpoints for given
+diseases and locations}
 \usage{
-get_prism_cutpoints(disease, location)
+get_prism_cutpoints(locations, diseases)
 }
 \arguments{
-\item{disease}{disease(s) for which to return the cutpoints.
-One of \code{"ARI"}, \code{"COVID-19"}, \code{"Influenza"}, or \code{"RSV"}, or
-an array of those values.}
-
-\item{location}{location(s) for which to return the cutpoints.
+\item{locations}{location(s) for which to return the cutpoints.
 A location two-letter abbreviation as in the \code{short_name}
 column of \link{us_location_table}, or an array
 of such abbreviations.}
+
+\item{diseases}{disease(s) for which to return the cutpoints.
+One of \code{"ARI"}, \code{"COVID-19"}, \code{"Influenza"}, or \code{"RSV"}, or
+an array of those values.}
 }
 \value{
 The cutpoints, as a single vector or array of vectors.
 }
 \description{
-Get PRISM activity level cutpoints for a given
-disease and location
+Get PRISM activity level cutpoints for given
+diseases and locations
+}
+\details{
+Note that if both \code{locations} and \code{diseases} are vectors,
+the result will be a 3-dimensional array whose first dimension
+is location, second is disease, and third is the cutpoints.
 }
 \examples{
-get_prism_cutpoints("Influenza", "WA")
+get_prism_cutpoints("WA", "Influenza")
 
-get_prism_cutpoints("COVID-19", c("US", "WA"))
+get_prism_cutpoints(c("US", "WA"), "COVID-19")
 
-get_prism_cutpoints(c("ARI", "RSV"), c("US", "WA"))
+get_prism_cutpoints(c("US", "WA"), c("ARI", "RSV"))
 }

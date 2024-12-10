@@ -10,14 +10,18 @@
 #' of such abbreviations.
 #' @return The cutpoints, as a single vector or array of vectors.
 #'
+#' @details Note that if both `locations` and `diseases` are vectors,
+#' the result will be a 3-dimensional array whose first dimension
+#' is location, second is disease, and third is the cutpoints.
+#'
 #' @examples
-#' get_prism_cutpoints("Influenza", "WA")
+#' get_prism_cutpoints("WA", "Influenza")
 #'
-#' get_prism_cutpoints("COVID-19", c("US", "WA"))
+#' get_prism_cutpoints(c("US", "WA"), "COVID-19")
 #'
-#' get_prism_cutpoints(c("ARI", "RSV"), c("US", "WA"))
+#' get_prism_cutpoints(c("US", "WA"), c("ARI", "RSV"))
 #' @export
-get_prism_cutpoints <- function(diseases, locations) {
+get_prism_cutpoints <- function(locations, diseases) {
   checkmate::assert_names(
     diseases,
     subset.of =
