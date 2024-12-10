@@ -12,7 +12,7 @@ testthat::test_that(paste0(
   purrr::pmap(
     locs_diseases,
     \(locations, diseases) {
-      result <- get_prism_cutpoints(diseases, locations)
+      result <- get_prism_cutpoints(locations, diseases)
       expected <- forecasttools::prism_thresholds[
         locations, diseases,
       ]
@@ -69,7 +69,7 @@ testthat::test_that(paste0(
   )
 
   purrr::map(test_cases, \(x) {
-    result <- get_prism_cutpoints(x$diseases, x$locations)
+    result <- get_prism_cutpoints(x$locations, x$diseases)
     testthat::expect_equal(result, x$expected)
   })
 })
