@@ -1,4 +1,4 @@
-testthat::test_that(paste0(
+test_that(paste0(
   "get_prism_cutpoints() works identically ",
   "to a manual read from the table "
 ), {
@@ -16,12 +16,12 @@ testthat::test_that(paste0(
       expected <- forecasttools::prism_thresholds[
         locations, diseases,
       ]
-      testthat::expect_equal(result, expected)
+      expect_equal(result, expected)
     }
   )
 })
 
-testthat::test_that(paste0(
+test_that(paste0(
   "get_prism_cutpoints() gives the expected ",
   "values for particular examples"
 ), {
@@ -35,9 +35,9 @@ testthat::test_that(paste0(
         c(
           0, 0,
           0.00339654, 0.002146614,
-          0.01923233, 0.02071169,
-          0.03506812, 0.03927676,
-          0.05090390, 0.05784183,
+          0.019232328, 0.020711687,
+          0.035068116, 0.03927676,
+          0.050903904, 0.057841833,
           1, 1
         ),
         dim = c(2, 6),
@@ -70,6 +70,6 @@ testthat::test_that(paste0(
 
   purrr::map(test_cases, \(x) {
     result <- get_prism_cutpoints(x$locations, x$diseases)
-    testthat::expect_equal(result, x$expected)
+    expect_equal(result, x$expected)
   })
 })
