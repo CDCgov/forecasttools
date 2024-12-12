@@ -5,9 +5,9 @@
 #' (e.g. as created by [get_hubverse_table()])
 #' and an observed data table with location, date, and value columns.
 #' The column names in the observed data table can be configured;
-#' defaults are `"location"`, `"reference_date"`, and
+#' defaults are `"location"`, `"date"`, and
 #' `"value"`, respectively (i.e. direct correspondence with
-#' standard hubverse format).
+#' standard hub target data tables).
 #'
 #' @param hubverse_quantile_table quantile forecasts,
 #' as a hubverse-format [`tibble`][tibble::tibble()] produced by
@@ -21,7 +21,7 @@
 #' Default `"location"`
 #' @param obs_date_column Name of the column containing
 #' date values in the `observed` table, as a string.
-#' Default `"reference_date"`
+#' Default `"date"`
 #' @return A [`data.table`][data.table::data.table()] for scoring,
 #' as the output of [scoringutils::as_forecast_quantile()].
 #' @export
@@ -29,7 +29,7 @@ quantile_table_to_scoreable <- function(hubverse_quantile_table,
                                         observation_table,
                                         obs_value_column = "value",
                                         obs_location_column = "location",
-                                        obs_date_column = "reference_date") {
+                                        obs_date_column = "date") {
   obs <- observation_table |>
     dplyr::select(
       location = .data[[obs_location_column]],
