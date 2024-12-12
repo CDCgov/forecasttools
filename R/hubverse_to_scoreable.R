@@ -38,6 +38,10 @@ quantile_table_to_scoreable <- function(hubverse_quantile_table,
     )
 
   scoreable <- hubverse_quantile_table |>
+    dplyr::filter(.data$output_type == "quantile") |>
+    dplyr::mutate(
+      output_type_id = as.numeric(.data$output_type_id)
+    ) |>
     dplyr::inner_join(obs,
       by = c(
         "location",
