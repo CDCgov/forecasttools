@@ -1,8 +1,8 @@
 ---
-title: "Scoring Flusight submissions using `scoringutils`"
+title: "Scoring Flusight submissions using scoringutils"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Scoring Flusight submissions using `scoringutils`}
+  %\VignetteIndexEntry{Scoring Flusight submissions using scoringutils}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, echo = FALSE}
+```{r setup, results = "hide"}
 library(forecasttools)
 library(scoringutils)
 library(dplyr)
