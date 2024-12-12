@@ -54,7 +54,7 @@ gert::git_branch_create(
 ```
 
 ```{r}
-forecast_and_target <- create_table_for_scoring(hub_path)
+forecast_and_target <- hub_to_scoreable_quantiles(hub_path)
 ```
 There are `r forecast_and_target$model |> unique() |> length()` different models that have been submitted to FluSight.
 
@@ -80,11 +80,6 @@ chosen_location <- "US"
 
 forecast_and_target |>
   filter(location == chosen_location) |>
-  as_forecast_quantile(
-    observed = "true_value",
-    predicted = "prediction",
-    quantile_level = "quantile"
-  ) |>
   score() |>
   summarise_scores(
     by = "model",
