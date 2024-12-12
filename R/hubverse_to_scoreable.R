@@ -64,7 +64,7 @@ quantile_table_to_scoreable <- function(hubverse_quantile_table,
 #' @param hub_path Local path to hubverse-style
 #' forecast hub.
 #' @param ... keyword arguments passed to
-#' [hub_quant_table_to_scoreable()].
+#' [quantile_table_to_scoreable()].
 #' @return Scoreable table, as the output of
 #' [scoringutils::as_forecast_quantile()].
 #' @export

@@ -10,7 +10,7 @@ quantile_table_to_scoreable(
   observation_table,
   obs_value_column = "value",
   obs_location_column = "location",
-  obs_date_column = "reference_date"
+  obs_date_column = "date"
 )
 }
 \arguments{
@@ -30,7 +30,7 @@ Default \code{"location"}}
 
 \item{obs_date_column}{Name of the column containing
 date values in the \code{observed} table, as a string.
-Default \code{"reference_date"}}
+Default \code{"date"}}
 }
 \value{
 A \code{\link[data.table:data.table]{data.table}} for scoring,
@@ -41,7 +41,7 @@ Expects quantile forecast output in hubverse format
 (e.g. as created by \code{\link[=get_hubverse_table]{get_hubverse_table()}})
 and an observed data table with location, date, and value columns.
 The column names in the observed data table can be configured;
-defaults are \code{"location"}, \code{"reference_date"}, and
+defaults are \code{"location"}, \code{"date"}, and
 \code{"value"}, respectively (i.e. direct correspondence with
-standard hubverse format).
+standard hub target data tables).
 }
