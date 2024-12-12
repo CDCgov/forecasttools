@@ -1,8 +1,8 @@
 ---
-title: "Scoring Flusight submissions using `scoringutils`"
+title: "Scoring Flusight submissions using scoringutils"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Scoring Flusight submissions using `scoringutils`}
+  %\VignetteIndexEntry{Scoring Flusight submissions using scoringutils}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, messages = "hide"}
 library(forecasttools)
 library(scoringutils)
 library(dplyr)
@@ -30,7 +30,7 @@ In this vignette, we use `forecasttools` to capture the current state of the Flu
 
 ### Generating a table of forecasts against truth data.
 
-First, we create a table of forecast predictions formatted to work with `scoringutils` functions using `create_table_for_scoring()`. Generally, we expect users to use `create_table_for_scoring()` with a local path to the forecast repository which updates from GitHub by default. In this case, we download the hub first.
+First, we create a table of forecast predictions formatted to work with `scoringutils` functions using `hub_to_scoreable_quantiles()`. Generally, we expect users to use `hub_to_scoreable_quantiles()` with a local path to the forecast repository which updates from GitHub by default. In this case, we download the hub first.
 
 ```{r}
 hub_url <- "https://github.com/cdcepi/FluSight-forecast-hub"
@@ -54,44 +54,43 @@ gert::git_branch_create(
 ```
 
 ```{r}
-forecast_and_target <- create_table_for_scoring(hub_path)
+forecast_and_target <- hub_to_scoreable_quantiles(hub_path)
 ```
-There are `r forecast_and_target$model |> unique() |> length()` different models that have been submitted to FluSight.
+There are `r forecast_and_target$model_id |> unique() |> length()` different models that have been submitted to FluSight.
 
 ```{r}
-forecast_and_target$model |> unique()
+unique(forecast_and_target$model_id)
 ```
 
-There are `r forecast_and_target$location_name |> unique() |> na.omit() |> length()` locations, either states or territories, which have been targets for forecasting.
+There are `r forecast_and_target$location |> unique() |> na.omit() |> length()` locations, either states or territories, for which there are available fforecasts. They are stored as two-digit codes, but can re-code them as the more familiar USPS-style two-letter abbreviations via `us_loc_code_to_abbr()`:
 
 ```{r}
-forecast_and_target$location_name |>
-  unique() |>
-  na.omit()
+unique(forecast_and_target$location)
+
+forecast_and_target <- forecast_and_target |>
+  mutate(location = us_loc_code_to_abbr(location))
+
+unique(forecast_and_target$location)
 ```
 
 ### Tabular scoring of forecasts
 
-`scoringutils` gives functions for creating summarized scores including: interval scores, skill relative to a chosen baseline, and coverage at different prediction quantiles. Here we show the scores for US overall forecasts by models for all forecasting dates so far.
+`scoringutils` provides various forecast evaluation metrics including interval scores, skill relative to a chosen baseline, and coverage at different prediction quantiles. Here we show the metrics for US overall forecasts by model for all forecast dates so far, rounding to two significant figures
 
 
 ```{r}
 chosen_location <- "US"
 
 forecast_and_target |>
-  filter(location == chosen_location) |>
-  as_forecast_quantile(
-    observed = "true_value",
-    predicted = "prediction",
-    quantile_level = "quantile"
-  ) |>
+  filter(location == !!chosen_location) |>
   score() |>
   summarise_scores(
-    by = "model",
+    by = "model_id",
     relative_skill = TRUE,
     baseline = "FluSight-ensemble"
   ) |>
   summarise_scores(
+    by = "model_id",
     fun = signif,
     digits = 2
   ) |>
