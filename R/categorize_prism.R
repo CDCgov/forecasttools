@@ -7,12 +7,8 @@
 #' @param locations location(s) for which to return the cutpoints.
 #' A location two-letter abbreviation as in the `short_name`
 #' column of [forecasttools::us_location_table], or an array
-#' of such abbreviations.
-#' @return The cutpoints, as a single vector or array of vectors.
-#'
-#' @details Note that if both `locations` and `diseases` are vectors,
-#' the result will be a 3-dimensional array whose first dimension
-#' is location, second is disease, and third is the cutpoints.
+#' of those abbreviations.
+#' @return The cutpoints, as an ordered list of vectors.
 #'
 #' @examples
 #' get_prism_cutpoints("WA", "Influenza")
@@ -34,5 +30,46 @@ get_prism_cutpoints <- function(locations, diseases) {
       dimnames(forecasttools::prism_thresholds)$location,
     what = "location"
   )
-  return(forecasttools::prism_thresholds[locations, diseases, ])
+
+  return(purrr::map2(locations, diseases, \(x, y) {
+    forecasttools::prism_thresholds[x, y, ]
+  }))
+}
+
+
+
+#' Categorize a vector of values into PRISM
+#' activity level bins.
+#'
+#' @param values values to categorize
+#' @param locations vector of locations of length equal to
+#' `values` or a single location for all `values`.
+#' @param diseases vector of diseases of length equal to
+#' `values` or a single disease for all `values`.
+#' @param prism_bin_names Bin names for the PRISM bins.
+#' in order from lowest to highest. Must be a vector of
+#' length 5. `list(prism_bin_names)` will be passed as the
+#' `label_sets` argument to [categorize_vector()].
+#' Defaults to the standard PRISM bin names in title case:
+#' `c("Very Low", "Low", "Moderate", "High", "Very High")`.
+#' @return A factor vector equal in length to `values` of
+#' the categories, as the output of [categorize_vector()].
+#' @export
+categorize_prism <- function(values,
+                             locations,
+                             diseases,
+                             prism_bin_names = c(
+                               "Very Low",
+                               "Low",
+                               "Moderate",
+                               "High",
+                               "Very High"
+                             )) {
+  cutpoints <- get_prism_cutpoints(locations, diseases)
+
+  return(categorize_vector(
+    values,
+    break_sets = cutpoints,
+    label_sets = list(prism_bin_names)
+  ))
 }
