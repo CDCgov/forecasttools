@@ -1,8 +1,8 @@
-#' Join hubverse forecast to observed data to
-#' create a `scoringutils`-ready quantile forecast table.
+#' Join hubverse quantile forecasts to observed data to
+#' create a `scoringutils`-ready table.
 #'
-#' Expects forecast output in hubverse format (
-#' e.g. as created by [get_hubverse_table()])
+#' Expects quantile forecast output in hubverse format
+#' (e.g. as created by [get_hubverse_table()])
 #' and an observed data table with location, date, and value columns.
 #' The column names in the observed data table can be configured;
 #' defaults are `"location"`, `"reference_date"`, and
@@ -25,11 +25,11 @@
 #' @return A [`data.table`][data.table::data.table()] for scoring,
 #' as the output of [scoringutils::as_forecast_quantile()].
 #' @export
-hub_quantiles_to_scoreable <- function(hubverse_quantile_table,
-                                       observation_table,
-                                       obs_value_column = "value",
-                                       obs_location_column = "location",
-                                       obs_date_column = "reference_date") {
+quantile_table_to_scoreable <- function(hubverse_quantile_table,
+                                        observation_table,
+                                        obs_value_column = "value",
+                                        obs_location_column = "location",
+                                        obs_date_column = "reference_date") {
   obs <- observation_table |>
     dplyr::select(
       location = .data[[obs_location_column]],
@@ -37,7 +37,7 @@ hub_quantiles_to_scoreable <- function(hubverse_quantile_table,
       observed = .data[[obs_value_column]]
     )
 
-  scoreable_table <- hubverse_quantile_table |>
+  scoreable <- hubverse_quantile_table |>
     dplyr::inner_join(obs,
       by = c(
         "location",
@@ -50,7 +50,7 @@ hub_quantiles_to_scoreable <- function(hubverse_quantile_table,
       quantile_level = "output_type_id"
     )
 
-  return(scoreable_table)
+  return(scoreable)
 }
 
 
@@ -64,7 +64,7 @@ hub_quantiles_to_scoreable <- function(hubverse_quantile_table,
 #' @param hub_path Local path to hubverse-style
 #' forecast hub.
 #' @param ... keyword arguments passed to
-#' [hub_quantiles_to_scoreable()].
+#' [hub_quant_table_to_scoreable()].
 #' @return Scoreable table, as the output of
 #' [scoringutils::as_forecast_quantile()].
 #' @export
@@ -72,7 +72,7 @@ hub_to_scoreable_quantiles <- function(hub_path,
                                        ...) {
   quantile_forecasts <- gather_hub_quantile_forecasts(hub_path)
   target_data <- gather_hub_target_data(hub_path)
-  scoreable <- hub_quantiles_to_scoreable(
+  scoreable <- quantile_table_to_scoreable(
     quantile_forecasts,
     target_data,
     ...

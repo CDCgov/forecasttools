@@ -13,7 +13,7 @@ hub_to_scoreable_quantiles(hub_path, ...)
 forecast hub.}
 
 \item{...}{keyword arguments passed to
-\code{\link[=hub_quantiles_to_scoreable]{hub_quantiles_to_scoreable()}}.}
+\code{\link[=hub_quant_table_to_scoreable]{hub_quant_table_to_scoreable()}}.}
 }
 \value{
 Scoreable table, as the output of
