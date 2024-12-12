@@ -82,7 +82,7 @@ forecast_and_target |>
   filter(location == chosen_location) |>
   score() |>
   summarise_scores(
-    by = "model",
+    by = "model_id",
     relative_skill = TRUE,
     baseline = "FluSight-ensemble"
   ) |>
