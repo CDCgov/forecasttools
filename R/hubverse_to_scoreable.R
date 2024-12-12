@@ -53,3 +53,31 @@ hub_quantiles_to_scoreable <-
 
     return(scoreable_table)
   }
+
+
+#' Create a table for scoring hub model
+#' quantile forecasts from a local copy of
+#' a hub.
+#'
+#' Requires a local version of the
+#' forecast hub at `hub_path`.
+#'
+#' @param hub_path Local path to hubverse-style
+#' forecast hub.
+#' @param ... keyword arguments passed to
+#' [hub_quantiles_to_scoreable()].
+#' @return Scoreable table, as the output of
+#' [scoringutils::as_forecast_quantile()].
+#' @export
+hub_to_scoreable_quantiles <- function(hub_path,
+                                       ...) {
+  quantile_forecasts <- gather_hub_quantile_forecasts(hub_path)
+  target_data <- gather_hub_target_data(hub_path)
+  scoreable <- hub_quantiles_to_scoreable(
+    quantile_forecasts,
+    target_data,
+    ...
+  )
+
+  return(scoreable)
+}
