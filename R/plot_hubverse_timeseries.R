@@ -263,24 +263,15 @@ plot_hubverse_file_quantiles <- function(forecast_file_path,
 
   forecast_data <- forecast_data |>
     dplyr::filter(
-      nullable_comparison(
-        .data$target_end_date, ">=", !!start_date
-      ),
-      nullable_comparison(
-        .data$target_end_date, "<=", !!end_date
-      )
+      nullable_comparison(.data$target_end_date, ">=", !!start_date),
+      nullable_comparison(.data$target_end_date, "<=", !!end_date)
     )
 
   obs_data <- obs_data |>
     dplyr::filter(
-      nullable_comparison(
-        .data$date, ">=", as.Date(!!start_date)
-      ),
-      nullable_comparison(
-        .data$date, "<=", as.Date(!!end_date)
-      )
+      nullable_comparison(.data$date, ">=", !!start_date),
+      nullable_comparison(.data$date, "<=", !!end_date)
     )
-
 
   if (is.null(locations)) {
     locations <- forecast_data |>
