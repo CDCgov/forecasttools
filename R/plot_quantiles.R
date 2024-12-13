@@ -274,6 +274,8 @@ plot_hubverse_quantiles <- function(forecast_data_path,
                                     obs_linecolor = "black",
                                     obs_pointcolor = "black",
                                     autotitle = TRUE) {
+  start_date <- if (!is.null(start_date)) as.Date(start_date) else NULL
+  end_date <- if (!is.null(end_date)) as.Date(end_date) else NULL
   hubverse_cols <- readr::cols(
     reference_date = readr::col_date(),
     target = readr::col_character(),
@@ -313,10 +315,10 @@ plot_hubverse_quantiles <- function(forecast_data_path,
   forecast_data <- forecast_data |>
     dplyr::filter(
       nullable_comparison(
-        .data$target_end_date, ">=", as.Date(!!start_date)
+        .data$target_end_date, ">=", !!start_date
       ),
       nullable_comparison(
-        .data$target_end_date, "<=", as.Date(!!end_date)
+        .data$target_end_date, "<=", !!end_date
       )
     )
 
