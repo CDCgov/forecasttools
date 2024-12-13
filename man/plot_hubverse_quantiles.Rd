@@ -19,8 +19,8 @@ plot_hubverse_quantiles(
   pointsize = 4,
   forecast_linecolor = "darkblue",
   forecast_pointcolor = "darkblue",
-  truth_linecolor = "black",
-  truth_pointcolor = "black",
+  obs_linecolor = "black",
+  obs_pointcolor = "black",
   autotitle = TRUE
 )
 }
@@ -44,14 +44,14 @@ only the forecast quantiles will be plotted. Default \code{NULL}.}
 
 \item{start_date}{first date to plot. If NULL, defaults
 to the earliest date found between the forecast timeseries (
-obtained from \code{forecast_data_path}) and the truth
-data timeseries (obtained from \code{truth_data_path}, if
+obtained from \code{forecast_data_path}) and the observed
+data timeseries (obtained from \code{observed_data_path}, if
 provided). Default NULL.}
 
 \item{end_date}{final date to plot. If NULL, defaults
 to the latest date found between the forecast timeseries (
-obtained from \code{forecast_data_path}) and the truth
-data timeseries (obtained from \code{truth_data_path}, if
+obtained from \code{forecast_data_path}) and the observed
+data timeseries (obtained from \code{observed_data_path}, if
 provided). Default NULL.}
 
 \item{location_input_format}{format of the provided location
@@ -79,18 +79,18 @@ Default \code{"darkblue"}.}
 \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting forecasts.
 Default \code{"darkblue"}.}
 
+\item{obs_linecolor}{\code{color} parameter passed to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}
+for plotting observed data. Default \code{"black"}.}
+
+\item{obs_pointcolor}{\code{color} parameter passed to
+\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting observed data. Default \code{"black"}.}
+
 \item{autotitle}{Generate a title for the individual
 plots from the hubverse \code{reference_date} and the location
 name? Boolean, default \code{TRUE}.}
 
 \item{y_transform}{axis transform passed as the \code{transform}
 argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default \code{"log10"}.}
-
-\item{obs_linecolor}{\code{color} parameter passed to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}
-for plotting observed data. Default \code{"black"}.}
-
-\item{obs_pointcolor}{\code{color} parameter passed to
-\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting observed data. Default \code{"black"}.}
 }
 \value{
 a list of ggplot objects of the plots created,

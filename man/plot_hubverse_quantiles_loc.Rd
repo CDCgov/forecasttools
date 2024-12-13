@@ -15,8 +15,8 @@ plot_hubverse_quantiles_loc(
   pointsize = 4,
   forecast_linecolor = "darkblue",
   forecast_pointcolor = "darkblue",
-  observed_linecolor = "black",
-  observed_pointcolor = "black",
+  obs_linecolor = "black",
+  obs_pointcolor = "black",
   target_name = NULL,
   autotitle = TRUE
 )
@@ -55,6 +55,14 @@ Default \code{"darkblue"}.}
 \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting forecasts.
 Default \code{"darkblue"}.}
 
+\item{obs_linecolor}{\code{color} parameter passed to
+\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}} for plotting observed data.
+Default \code{"black"}.}
+
+\item{obs_pointcolor}{\code{color} parameter passed to
+\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting observed data.
+Default \code{"black"}.}
+
 \item{target_name}{Name of the forecast target,
 for labeling the plot y-axis. Default \code{NULL},
 in which case a value from the \code{target} column
@@ -63,14 +71,6 @@ in \code{forecast_data} will be used.}
 \item{autotitle}{Boolean. Generate an automatic
 title for the plot from the location name
 and reference date? Default \code{TRUE}.}
-
-\item{obs_linecolor}{\code{color} parameter passed to
-\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}} for plotting observed data.
-Default \code{"black"}.}
-
-\item{obs_pointcolor}{\code{color} parameter passed to
-\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting observed data.
-Default \code{"black"}.}
 }
 \value{
 the plot as a ggplot object
