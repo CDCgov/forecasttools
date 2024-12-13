@@ -313,10 +313,10 @@ plot_hubverse_quantiles <- function(forecast_data_path,
   forecast_data <- forecast_data |>
     dplyr::filter(
       nullable_comparison(
-        .data$date, ">=", as.Date(!!start_date)
+        .data$target_end_date, ">=", as.Date(!!start_date)
       ),
       nullable_comparison(
-        .data$date, "<=", as.Date(!!end_date)
+        .data$target_end_date, "<=", as.Date(!!end_date)
       )
     )
 
