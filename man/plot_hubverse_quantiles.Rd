@@ -14,7 +14,7 @@ plot_hubverse_quantiles(
   end_date = NULL,
   location_input_format = "abbr",
   location_output_format = "abbr",
-  ytrans = "log10",
+  y_transform = "log10",
   linewidth = 2,
   pointsize = 4,
   forecast_linecolor = "darkblue",
@@ -65,6 +65,9 @@ jurisdiction names; not recommended). Default \code{"abbr"}.}
 entries of the output list. Accepts the same string
 keys as \code{location_input_format}.}
 
+\item{y_transform}{axis transform passed as the \code{transform}
+argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default \code{"log10"}.}
+
 \item{linewidth}{\code{linewidth} parameter passed to
 \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}. Default \code{2}.}
 
@@ -88,9 +91,6 @@ for plotting observed data. Default \code{"black"}.}
 \item{autotitle}{Generate a title for the individual
 plots from the hubverse \code{reference_date} and the location
 name? Boolean, default \code{TRUE}.}
-
-\item{y_transform}{axis transform passed as the \code{transform}
-argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default \code{"log10"}.}
 }
 \value{
 a list of ggplot objects of the plots created,
