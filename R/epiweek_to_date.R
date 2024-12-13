@@ -62,7 +62,7 @@ get_epiweek_start <- function(epiweek_standard) {
 #'  week, starts on Monday). Not case-sensitive.
 #' Default `"USA"`.
 #' @return The first date of the epiyear,
-#' as a [`'lubridate::date`][lubridate::date()] object
+#' as a [`lubridate::date`][lubridate::date()] object
 #' @export
 epiyear_first_date <- function(epiyear,
                                epiweek_standard = "USA") {
