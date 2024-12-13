@@ -1,44 +1,44 @@
-#' Plot a timeseries of quantiles
+#' Plot a timeseries of quantiles.
 #'
-#' @param data timeseries of quantiles as tidy data,
-#' with one row per timepoint per quantile level
-#' @param time_column name of the column in `data`
-#' containing timepoints
-#' @param observation_column name of the column
-#' in data containing observed values at the
-#' given quantile levels
-#' @param quantile_level_column name of the column
-#' in `data` giving the quantile level (e.g.
-#' `0.01` for the 0.01 quantile / 1st percentile)
-#' @param linesize `size` parameter passed to [ggplot2::geom_line()].
-#' Default 2.
-#' @param pointsize `size` parameter passed to [ggplot2::geom_point()]
-#' Default 4.
-#' @param linecolor `color` parameter passed to [ggplot2::geom_line()].
-#' Default `"darkblue"`.
-#' @param pointcolor `color` parameter passed to [ggplot2::geom_point()]
-#' Default `"darkblue"`.
-#' @return the resultant plot, as a ggplot object.
+#' @param data Timeseries of quantiles as tidy data,
+#' with one row per timepoint per quantile level.
+#' @param time_column Name of the column in `data`
+#' containing timepoint values, as a string.
+#' @param value_column Name of the column
+#' in data containing the timeseries values at the
+#' given quantile levels, as a string.
+#' @param quantile_level_column Name of the column in `data`
+#' containing indicating which quantile level the row contains,
+#' as a string.
+#' @param linewidth `linewidth` parameter passed to
+#' [ggplot2::geom_line()]. Default `2`.
+#' @param pointsize `size` parameter passed to
+#' [ggplot2::geom_point()] Default `4`.
+#' @param linecolor `color` parameter passed to
+#' [ggplot2::geom_line()]. Default `"darkblue"`.
+#' @param pointcolor `color` parameter passed to
+#' [ggplot2::geom_point()] Default `"darkblue"`.
+#' @return The plot, as a ggplot object.
 #' @export
-plot_forecast_quantiles <- function(data,
-                                    time_column,
-                                    observation_column,
-                                    quantile_level_column,
-                                    linesize = 2,
-                                    pointsize = 4,
-                                    pointcolor = "darkblue",
-                                    linecolor = "darkblue") {
+plot_quantile_timeseries <- function(data,
+                                     time_column,
+                                     value_column,
+                                     quantile_level_column,
+                                     linewidth = 2,
+                                     pointsize = 4,
+                                     pointcolor = "darkblue",
+                                     linecolor = "darkblue") {
   return(ggplot2::ggplot(
     mapping = ggplot2::aes(
-      x = {{ time_column }},
-      y = {{ observation_column }},
-      group = {{ quantile_level_column }},
-      alpha = 1 - abs({{ quantile_level_column }} - 0.5)
+      x = .data[[time_column]],
+      y = .data[[value_column]],
+      group = .data[[quantile_level_column]],
+      alpha = 1 - abs(.data[[quantile_level_column]] - 0.5)
     ),
     data = data
   ) +
     ggplot2::geom_line(
-      size = linesize,
+      linewidth = linewidth,
       color = linecolor
     ) +
     ggplot2::geom_point(
@@ -60,7 +60,7 @@ plot_forecast_quantiles <- function(data,
 #' @param location location to plot
 #' @param forecast_data hubverse format quantile
 #' forecast data, as a [`tibble`][tibble::tibble].
-#' @param truth_data hubverse format truth data,
+#' @param observed_data observed data,
 #' as a [`tibble`][tibble::tibble].
 #' @param location_format format of the provided location.
 #' Permitted formats are `"abbr"` (state/territory
@@ -68,24 +68,25 @@ plot_forecast_quantiles <- function(data,
 #' legacy 2-digit FIPS code for states and territories, `US`
 #' for the USA as a whole), and `"long_name"` (full English
 #' jurisdiction names; not recommended). Default `"abbr"`.
-#' @param ytrans axis transform passed to
-#' [ggplot2::scale_y_continuous()]. Default `'log10'`.
-#' @param linesize `size` parameter passed to
-#' [ggplot2::geom_line()]. Default 2.
+#' @param y_transform axis transform passed as the
+#' `transform` argument to [ggplot2::scale_y_continuous()].
+#' Default `"log10"`.
+#' @param linewidth `linewidth` parameter passed to
+#' [ggplot2::geom_line()]. Default `2`.
 #' @param pointsize `size` parameter passed to
-#' [ggplot2::geom_point()]. Default 4.
+#' [ggplot2::geom_point()]. Default `4`.
 #' @param forecast_linecolor `color` parameter passed to
 #' [ggplot2::geom_line()] for plotting forecasts.
-#' Default "darkblue".
+#' Default `"darkblue"`.
 #' @param forecast_pointcolor `color` parameter passed to
 #' [ggplot2::geom_point()] for plotting forecasts.
-#' Default "darkblue".
-#' @param truth_linecolor `color` parameter passed to
-#' [ggplot2::geom_line()] for plotting truth data.
-#' Default "black".
-#' @param truth_pointcolor `color` parameter passed to
-#' [ggplot2::geom_point()] for plotting truth data.
-#' Default "black".
+#' Default `"darkblue"`.
+#' @param obs_linecolor `color` parameter passed to
+#' [ggplot2::geom_line()] for plotting observed data.
+#' Default `"black"`.
+#' @param obs_pointcolor `color` parameter passed to
+#' [ggplot2::geom_point()] for plotting observed data.
+#' Default `"black"`.
 #' @param target_name Name of the forecast target,
 #' for labeling the plot y-axis. Default `NULL`,
 #' in which case a value from the `target` column
@@ -97,15 +98,15 @@ plot_forecast_quantiles <- function(data,
 #' @export
 plot_hubverse_quantiles_loc <- function(location,
                                         forecast_data,
-                                        truth_data,
+                                        observed_data,
                                         location_format = "abbr",
-                                        ytrans = "log10",
-                                        linesize = 2,
+                                        y_transform = "log10",
+                                        linewidth = 2,
                                         pointsize = 4,
                                         forecast_linecolor = "darkblue",
                                         forecast_pointcolor = "darkblue",
-                                        truth_linecolor = "black",
-                                        truth_pointcolor = "black",
+                                        observed_linecolor = "black",
+                                        observed_pointcolor = "black",
                                         target_name = NULL,
                                         autotitle = TRUE) {
   loc_table <- location_lookup(location, location_format)
@@ -115,7 +116,7 @@ plot_hubverse_quantiles_loc <- function(location,
       output_type == "quantile"
     ) |>
     dplyr::rename("date" = "target_end_date")
-  loc_truth <- truth_data |>
+  loc_obs <- observed_data |>
     dplyr::filter(location == !!loc_table$location_code)
 
 
@@ -133,50 +134,48 @@ plot_hubverse_quantiles_loc <- function(location,
     target_name <- loc_data$target[1]
   }
 
-  plot <- (
-    plot_forecast_quantiles(
-      loc_data,
-      date,
-      value,
-      output_type_id,
-      linesize = linesize,
+  plot <- loc_data |>
+    plot_timeseries_quantiles(
+      time_column = "date",
+      value_column = "value",
+      quantile_level_column = "output_type_id",
+      linewidth = linewidth,
       pointsize = pointsize,
       linecolor = forecast_linecolor,
       pointcolor = forecast_pointcolor
     ) +
-      ggplot2::geom_line(
-        data = loc_truth,
-        mapping = ggplot2::aes(
-          x = date,
-          y = value
-        ),
-        alpha = 1,
-        size = linesize,
-        color = truth_linecolor,
-        inherit.aes = FALSE
-      ) +
-      ggplot2::geom_point(
-        data = loc_truth,
-        mapping = ggplot2::aes(
-          x = date,
-          y = value
-        ),
-        alpha = 1,
-        size = pointsize,
-        color = truth_pointcolor,
-        inherit.aes = FALSE
-      ) +
-      ggplot2::scale_y_continuous(
-        trans = ytrans
-      ) +
-      ggplot2::labs(
-        y = target_name,
-        x = "Date"
-      ) +
-      ggplot2::ggtitle(plot_title) +
-      theme_forecasttools()
+    ggplot2::geom_line(
+      data = loc_obs,
+      mapping = ggplot2::aes(
+        x = .data$date,
+        y = .data$value
+      ),
+      alpha = 1,
+      linewidth = linewidth,
+      color = obs_linecolor,
+      inherit.aes = FALSE
+    ) +
+    ggplot2::geom_point(
+      data = loc_obs,
+      mapping = ggplot2::aes(
+        x = .data$date,
+        y = .data$value
+      ),
+      alpha = 1,
+      size = pointsize,
+      color = obs_pointcolor,
+      inherit.aes = FALSE
+    ) +
+    ggplot2::scale_y_continuous(
+      transform = y_transform
+    ) +
+    ggplot2::labs(
+      y = target_name,
+      x = "Date"
+    ) +
+    ggplot2::ggtitle(plot_title) +
+    theme_forecasttools()
 
-  )
 
   return(plot)
 }
@@ -216,9 +215,9 @@ plot_hubverse_quantiles_loc <- function(location,
 #' legacy 2-digit FIPS code for states and territories, `US`
 #' for the USA as a whole), and `"long_name"` (full English
 #' jurisdiction names; not recommended). Default `"abbr"`.
-#' @param truth_data_path path to hubverse formatted truth data
-#' to plot alongside the forecast quantiles. If NULL,
-#' only the forecast quantiles will be plotted. Default NULL.
+#' @param observed_data_path path to observed data
+#' to plot alongside the forecast quantiles. If `NULL`,
+#' only the forecast quantiles will be plotted. Default `NULL`.
 #' @param start_date first date to plot. If NULL, defaults
 #' to the earliest date found between the forecast timeseries (
 #' obtained from `forecast_data_path`) and the truth
@@ -238,37 +237,37 @@ plot_hubverse_quantiles_loc <- function(location,
 #' @param location_output_format Location format for naming the
 #' entries of the output list. Accepts the same string
 #' keys as `location_input_format`.
-#' @param ytrans axis transform passed to
-#' [ggplot2::scale_y_continuous()]. Default `'log10'`.
-#' @param linesize `size` parameter passed to
-#' [ggplot2::geom_line()]. Default 2.
+#' @param y_transform axis transform passed as the `transform`
+#' argument to [ggplot2::scale_y_continuous()]. Default `"log10"`.
+#' @param linewidth `linewidth` parameter passed to
+#' [ggplot2::geom_line()]. Default `2`.
 #' @param pointsize `size` parameter passed to
-#' [ggplot2::geom_point()]. Default 4.
+#' [ggplot2::geom_point()]. Default `4`.
 #' @param forecast_linecolor `color` parameter
 #' passed to [ggplot2::geom_line()] for plotting forecasts.
 #' Default `"darkblue"`.
 #' @param forecast_pointcolor `color` parameter passed to
 #' [ggplot2::geom_point()] for plotting forecasts.
-#' Default "darkblue".
-#' @param truth_linecolor `color` parameter passed to [ggplot2::geom_line()]
-#' for plotting truth data. Default `"black"`.
-#' @param truth_pointcolor `color` parameter passed to [ggplot2::geom_point()]
-#' for plotting truth data. Default `"black"`.
-#' @param autotitle Boolean. Generate a title for the individual
+#' Default `"darkblue"`.
+#' @param obs_linecolor `color` parameter passed to [ggplot2::geom_line()]
+#' for plotting observed data. Default `"black"`.
+#' @param obs_pointcolor `color` parameter passed to
+#' [ggplot2::geom_point()] for plotting observed data. Default `"black"`.
+#' @param autotitle Generate a title for the individual
 #' plots from the hubverse `reference_date` and the location
-#' name? Default `TRUE`.
+#' name? Boolean, default `TRUE`.
 #' @return a list of ggplot objects of the plots created,
 #' one for each location
 #' @export
 plot_hubverse_quantiles <- function(forecast_data_path,
                                     locations = NULL,
-                                    truth_data_path = NULL,
+                                    observed_data_path = NULL,
                                     start_date = NULL,
                                     end_date = NULL,
                                     location_input_format = "abbr",
                                     location_output_format = "abbr",
                                     ytrans = "log10",
-                                    linesize = 2,
+                                    linewidth = 2,
                                     pointsize = 4,
                                     forecast_linecolor = "darkblue",
                                     forecast_pointcolor = "darkblue",
@@ -294,22 +293,43 @@ plot_hubverse_quantiles <- function(forecast_data_path,
     ) |>
     dplyr::mutate(output_type_id = as.numeric(output_type_id))
 
-  if (!is.null(truth_data_path)) {
-    truth_cols <- readr::cols_only(
+  if (!is.null(observed_data_path)) {
+    observed_cols <- readr::cols_only(
       date = readr::col_date(),
       location = readr::col_character(),
       value = readr::col_double()
     )
-    truth_data <- readr::read_csv(truth_data_path,
-      col_types = truth_cols
+    obs_data <- readr::read_csv(observed_data_path,
+      col_types = observed_cols
     )
   } else {
-    truth_data <- tibble::tibble(
+    obs_data <- tibble::tibble(
       date = as.Date(numeric(0)),
       location = character(0),
       value = numeric(0)
     )
   }
+
+  forecast_data <- forecast_data |>
+    dplyr::filter(
+      nullable_comparison(
+        .data$date, ">=", as.Date(!!start_date)
+      ),
+      nullable_comparison(
+        .data$date, "<=", as.Date(!!end_date)
+      )
+    )
+
+  obs_data <- obs_data |>
+    dplyr::filter(
+      nullable_comparison(
+        .data$date, ">=", as.Date(!!start_date)
+      ),
+      nullable_comparison(
+        .data$date, "<=", as.Date(!!end_date)
+      )
+    )
+
 
   if (is.null(locations)) {
     locations <- forecast_data |>
@@ -321,40 +341,29 @@ plot_hubverse_quantiles <- function(forecast_data_path,
     loc_table <- location_lookup(locations, location_input_format)
   }
 
-
-  if (!is.null(start_date)) {
-    truth_data <- truth_data |>
-      dplyr::filter(date >= as.Date(!!start_date))
-    forecast_data <- forecast_data |>
-      dplyr::filter(target_end_date >= as.Date(!!start_date))
-  }
-
-  if (!is.null(end_date)) {
-    truth_data <- truth_data |>
-      dplyr::filter(date <= as.Date(!!end_date))
-    forecast_data <- forecast_data |>
-      dplyr::filter(target_end_date <= as.Date(!!end_date))
-  }
-
   location_vector <- loc_table |>
-    dplyr::pull(!!to_location_table_column(location_output_format))
+    dplyr::pull(!!to_location_table_column(location_output_format)) |>
+    purrr::set_names()
 
-  result <- lapply(
+  list_of_plots <- purrr::map(
     location_vector,
-    plot_hubverse_quantiles_loc,
-    forecast_data = forecast_data,
-    truth_data = truth_data,
-    location_format = location_output_format,
-    ytrans = ytrans,
-    linesize = linesize,
-    pointsize = pointsize,
-    forecast_pointcolor = forecast_pointcolor,
-    forecast_linecolor = forecast_linecolor,
-    truth_pointcolor = truth_pointcolor,
-    truth_linecolor = truth_linecolor,
-    autotitle = autotitle
+    \(loc) {
+      plot_hubverse_quantiles_loc(
+        loc,
+        forecast_data = forecast_data,
+        observed_data = obs_data,
+        location_format = location_output_format,
+        y_transform = y_transform,
+        linewidth = linewidth,
+        pointsize = pointsize,
+        forecast_pointcolor = forecast_pointcolor,
+        forecast_linecolor = forecast_linecolor,
+        obs_pointcolor = obs_pointcolor,
+        obs_linecolor = obs_linecolor,
+        autotitle = autotitle
+      )
+    }
   )
-  names(result) <- location_vector
 
-  return(result)
+  return(list_of_plots)
 }

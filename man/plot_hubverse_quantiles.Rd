@@ -9,13 +9,13 @@ locations.}
 plot_hubverse_quantiles(
   forecast_data_path,
   locations = NULL,
-  truth_data_path = NULL,
+  observed_data_path = NULL,
   start_date = NULL,
   end_date = NULL,
   location_input_format = "abbr",
   location_output_format = "abbr",
   ytrans = "log10",
-  linesize = 2,
+  linewidth = 2,
   pointsize = 4,
   forecast_linecolor = "darkblue",
   forecast_pointcolor = "darkblue",
@@ -38,9 +38,9 @@ jurisdiction names
 (e.g. \verb{c("United States, "Alabama", "Alaska")}.
 Default \code{NULL}.}
 
-\item{truth_data_path}{path to hubverse formatted truth data
-to plot alongside the forecast quantiles. If NULL,
-only the forecast quantiles will be plotted. Default NULL.}
+\item{observed_data_path}{path to observed data
+to plot alongside the forecast quantiles. If \code{NULL},
+only the forecast quantiles will be plotted. Default \code{NULL}.}
 
 \item{start_date}{first date to plot. If NULL, defaults
 to the earliest date found between the forecast timeseries (
@@ -65,14 +65,11 @@ jurisdiction names; not recommended). Default \code{"abbr"}.}
 entries of the output list. Accepts the same string
 keys as \code{location_input_format}.}
 
-\item{ytrans}{axis transform passed to
-\code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default \code{'log10'}.}
-
-\item{linesize}{\code{size} parameter passed to
-\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}. Default 2.}
+\item{linewidth}{\code{linewidth} parameter passed to
+\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}. Default \code{2}.}
 
 \item{pointsize}{\code{size} parameter passed to
-\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}. Default 4.}
+\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}. Default \code{4}.}
 
 \item{forecast_linecolor}{\code{color} parameter
 passed to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}} for plotting forecasts.
@@ -80,17 +77,20 @@ Default \code{"darkblue"}.}
 
 \item{forecast_pointcolor}{\code{color} parameter passed to
 \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting forecasts.
-Default "darkblue".}
+Default \code{"darkblue"}.}
 
-\item{truth_linecolor}{\code{color} parameter passed to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}
-for plotting truth data. Default \code{"black"}.}
-
-\item{truth_pointcolor}{\code{color} parameter passed to \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}
-for plotting truth data. Default \code{"black"}.}
-
-\item{autotitle}{Boolean. Generate a title for the individual
+\item{autotitle}{Generate a title for the individual
 plots from the hubverse \code{reference_date} and the location
-name? Default \code{TRUE}.}
+name? Boolean, default \code{TRUE}.}
+
+\item{y_transform}{axis transform passed as the \code{transform}
+argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default \code{"log10"}.}
+
+\item{obs_linecolor}{\code{color} parameter passed to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}
+for plotting observed data. Default \code{"black"}.}
+
+\item{obs_pointcolor}{\code{color} parameter passed to
+\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting observed data. Default \code{"black"}.}
 }
 \value{
 a list of ggplot objects of the plots created,

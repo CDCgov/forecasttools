@@ -8,15 +8,15 @@ location.}
 plot_hubverse_quantiles_loc(
   location,
   forecast_data,
-  truth_data,
+  observed_data,
   location_format = "abbr",
-  ytrans = "log10",
-  linesize = 2,
+  y_transform = "log10",
+  linewidth = 2,
   pointsize = 4,
   forecast_linecolor = "darkblue",
   forecast_pointcolor = "darkblue",
-  truth_linecolor = "black",
-  truth_pointcolor = "black",
+  observed_linecolor = "black",
+  observed_pointcolor = "black",
   target_name = NULL,
   autotitle = TRUE
 )
@@ -27,7 +27,7 @@ plot_hubverse_quantiles_loc(
 \item{forecast_data}{hubverse format quantile
 forecast data, as a \code{\link[tibble:tibble]{tibble}}.}
 
-\item{truth_data}{hubverse format truth data,
+\item{observed_data}{observed data,
 as a \code{\link[tibble:tibble]{tibble}}.}
 
 \item{location_format}{format of the provided location.
@@ -37,30 +37,23 @@ legacy 2-digit FIPS code for states and territories, \code{US}
 for the USA as a whole), and \code{"long_name"} (full English
 jurisdiction names; not recommended). Default \code{"abbr"}.}
 
-\item{ytrans}{axis transform passed to
-\code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default \code{'log10'}.}
+\item{y_transform}{axis transform passed as the
+\code{transform} argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.
+Default \code{"log10"}.}
 
-\item{linesize}{\code{size} parameter passed to
-\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}. Default 2.}
+\item{linewidth}{\code{linewidth} parameter passed to
+\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}. Default \code{2}.}
 
 \item{pointsize}{\code{size} parameter passed to
-\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}. Default 4.}
+\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}. Default \code{4}.}
 
 \item{forecast_linecolor}{\code{color} parameter passed to
 \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}} for plotting forecasts.
-Default "darkblue".}
+Default \code{"darkblue"}.}
 
 \item{forecast_pointcolor}{\code{color} parameter passed to
 \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting forecasts.
-Default "darkblue".}
-
-\item{truth_linecolor}{\code{color} parameter passed to
-\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}} for plotting truth data.
-Default "black".}
-
-\item{truth_pointcolor}{\code{color} parameter passed to
-\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting truth data.
-Default "black".}
+Default \code{"darkblue"}.}
 
 \item{target_name}{Name of the forecast target,
 for labeling the plot y-axis. Default \code{NULL},
@@ -70,6 +63,14 @@ in \code{forecast_data} will be used.}
 \item{autotitle}{Boolean. Generate an automatic
 title for the plot from the location name
 and reference date? Default \code{TRUE}.}
+
+\item{obs_linecolor}{\code{color} parameter passed to
+\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}} for plotting observed data.
+Default \code{"black"}.}
+
+\item{obs_pointcolor}{\code{color} parameter passed to
+\code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting observed data.
+Default \code{"black"}.}
 }
 \value{
 the plot as a ggplot object
