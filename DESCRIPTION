@@ -51,7 +51,7 @@ Suggests:
     tidyr,
     roxygen2,
     usethis,
-    testthat,
+    testthat (>= 3.0.0),
     rcmdcheck,
     httptest
 VignetteBuilder:
@@ -63,3 +63,4 @@ LazyData: true
 Remotes:
     hubverse-org/hubData
 BugReports: https://github.com/CDCgov/forecasttools/issues
+Config/testthat/edition: 3

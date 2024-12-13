@@ -4,13 +4,13 @@ schema <- tidyr::crossing(
   day_of_week = 1:7
 )
 
-testthat::test_that(paste0(
+test_that(paste0(
   "epiweek_to_date() function's internal ",
   "validation passes for USA epiweeks for ",
   "every epiweek in 1:52 for every epiyear ",
   "in 1800:2200, for every day of the epiweek"
 ), {
-  testthat::expect_no_error(
+  expect_no_error(
     with_usa_dates <- schema |>
       dplyr::mutate(
         date = forecasttools::epiweek_to_date(
@@ -24,13 +24,13 @@ testthat::test_that(paste0(
   )
 })
 
-testthat::test_that(paste0(
+test_that(paste0(
   "epiweek_to_date() function's internal ",
   "validation passes for ISO (epi)weeks for ",
   "every epiweek in 1:52 for every epiyear ",
   "in 1800:2200, for every day of the epiweek"
 ), {
-  testthat::expect_no_error(
+  expect_no_error(
     with_iso_dates <- schema |>
       dplyr::mutate(
         date = forecasttools::epiweek_to_date(
@@ -45,14 +45,14 @@ testthat::test_that(paste0(
 })
 
 
-testthat::test_that(paste0(
+test_that(paste0(
   "epiweek_to_date() function's internal ",
   "validation fails if you try to get the ",
   "start of an epiweek that doesn't exist ",
   "but passes if you get a valid epiweek"
 ), {
   ## 2020 had an epiweek 53
-  testthat::expect_no_error(
+  expect_no_error(
     forecasttools::epiweek_to_date(
       53,
       2020,
@@ -62,7 +62,7 @@ testthat::test_that(paste0(
   )
 
   ## 2021 did not
-  testthat::expect_error(
+  expect_error(
     forecasttools::epiweek_to_date(
       53,
       2021,
@@ -72,7 +72,7 @@ testthat::test_that(paste0(
   )
 
   ## a single failure should raise an error
-  testthat::expect_error(
+  expect_error(
     forecasttools::epiweek_to_date(
       53,
       c(2020, 2021),
@@ -83,7 +83,7 @@ testthat::test_that(paste0(
 
   ## but the validation should be vectorized
   ## and succeed accordingly
-  testthat::expect_no_error(
+  expect_no_error(
     forecasttools::epiweek_to_date(
       c(53, 52),
       c(2020, 2021),
