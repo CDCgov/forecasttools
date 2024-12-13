@@ -10,7 +10,7 @@ test_that(paste0(
   "every epiweek in 1:52 for every epiyear ",
   "in 1800:2200, for every day of the epiweek"
 ), {
-  expect_no_error(
+  expect_no_warning(
     with_usa_dates <- schema |>
       dplyr::mutate(
         date = epiweek_to_date(
@@ -30,7 +30,7 @@ test_that(paste0(
   "every epiweek in 1:52 for every epiyear ",
   "in 1800:2200, for every day of the epiweek"
 ), {
-  expect_no_error(
+  expect_no_warning(
     with_iso_dates <- schema |>
       dplyr::mutate(
         date = epiweek_to_date(
