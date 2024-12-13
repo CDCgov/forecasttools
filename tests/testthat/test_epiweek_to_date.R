@@ -13,7 +13,7 @@ test_that(paste0(
   expect_no_error(
     with_usa_dates <- schema |>
       dplyr::mutate(
-        date = forecasttools::epiweek_to_date(
+        date = epiweek_to_date(
           epiweek,
           epiyear,
           epiweek_standard = "USA",
@@ -33,7 +33,7 @@ test_that(paste0(
   expect_no_error(
     with_iso_dates <- schema |>
       dplyr::mutate(
-        date = forecasttools::epiweek_to_date(
+        date = epiweek_to_date(
           epiweek,
           epiyear,
           epiweek_standard = "ISO",
@@ -53,7 +53,7 @@ test_that(paste0(
 ), {
   ## 2020 had an epiweek 53
   expect_no_error(
-    forecasttools::epiweek_to_date(
+    epiweek_to_date(
       53,
       2020,
       epiweek_standard = "USA",
@@ -63,7 +63,7 @@ test_that(paste0(
 
   ## 2021 did not
   expect_error(
-    forecasttools::epiweek_to_date(
+    epiweek_to_date(
       53,
       2021,
       epiweek_standard = "USA",
@@ -73,7 +73,7 @@ test_that(paste0(
 
   ## a single failure should raise an error
   expect_error(
-    forecasttools::epiweek_to_date(
+    epiweek_to_date(
       53,
       c(2020, 2021),
       epiweek_standard = "USA",
@@ -84,7 +84,7 @@ test_that(paste0(
   ## but the validation should be vectorized
   ## and succeed accordingly
   expect_no_error(
-    forecasttools::epiweek_to_date(
+    epiweek_to_date(
       c(53, 52),
       c(2020, 2021),
       epiweek_standard = "USA",
