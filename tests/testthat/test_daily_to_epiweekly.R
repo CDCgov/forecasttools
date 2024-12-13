@@ -31,7 +31,37 @@ test_that(
       weekly_value_name = "weekly_hosp"
     )
 
-    expect_equal(expected, result)
+    expect_equal(result, expected)
+
+    ## should be different with partial weeks
+    ## included
+    expected_with_partial <- dat |>
+      dplyr::mutate(
+        epiweek = lubridate::epiweek(date),
+        epiyear = lubridate::epiyear(date)
+      ) |>
+      dplyr::group_by(
+        epiweek,
+        epiyear,
+        .draw,
+        location
+      ) |>
+      dplyr::summarise(
+        weekly_hosp = sum(hosp),
+        .groups = "drop"
+      )
+
+    expect_true(nrow(result) < nrow(expected_with_partial))
+
+    result_with_partial <- daily_to_epiweekly(
+      dat,
+      value_col = "hosp",
+      id_cols = c(".draw", "location"),
+      weekly_value_name = "weekly_hosp",
+      strict = FALSE
+    )
+
+    expect_equal(result_with_partial, expected_with_partial)
   }
 )
 
