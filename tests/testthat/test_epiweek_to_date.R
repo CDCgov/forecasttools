@@ -11,15 +11,12 @@ test_that(paste0(
   "in 1800:2200, for every day of the epiweek"
 ), {
   expect_no_warning(
-    dplyr::mutate(
-      schema,
-      date = epiweek_to_date(
-        epiweek,
-        epiyear,
-        epiweek_standard = "USA",
-        day_of_week = day_of_week,
-        validate = TRUE
-      )
+    epiweek_to_date(
+      schema$epiweek,
+      schema$epiyear,
+      epiweek_standard = "USA",
+      day_of_week = schema$day_of_week,
+      validate = TRUE
     )
   )
 })
@@ -31,15 +28,12 @@ test_that(paste0(
   "in 1800:2200, for every day of the epiweek"
 ), {
   expect_no_warning(
-    dplyr::mutate(
-      schema,
-      date = epiweek_to_date(
-        epiweek,
-        epiyear,
-        epiweek_standard = "ISO",
-        day_of_week = day_of_week,
-        validate = TRUE
-      )
+    epiweek_to_date(
+      schema$epiweek,
+      schema$epiyear,
+      epiweek_standard = "ISO",
+      day_of_week = schema$day_of_week,
+      validate = TRUE
     )
   )
 })
