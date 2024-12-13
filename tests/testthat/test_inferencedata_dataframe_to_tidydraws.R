@@ -1,11 +1,11 @@
-testthat::test_that("inferencedata_to_tidy_draws converts data correctly", {
+test_that("inferencedata_to_tidy_draws converts data correctly", {
   data("ex_inferencedata_dataframe")
   result <- inferencedata_to_tidy_draws(ex_inferencedata_dataframe)
 
-  testthat::expect_setequal(colnames(result), c("group", "data"))
-  testthat::expect_setequal(result$group, c("posterior", "predictions"))
+  expect_setequal(colnames(result), c("group", "data"))
+  expect_setequal(result$group, c("posterior", "predictions"))
 
-  testthat::expect_equal(
+  expect_equal(
     colnames(result$data[[1]]),
     c(
       ".chain", ".iteration", ".draw", "a", "b[troll_shore]", "b[drawn]",
@@ -17,7 +17,7 @@ testthat::test_that("inferencedata_to_tidy_draws converts data correctly", {
     )
   )
 
-  testthat::expect_equal(
+  expect_equal(
     colnames(result$data[[2]]),
     c(
       ".chain", ".iteration", ".draw", "obs[woken]", "obs[awash]",
@@ -25,10 +25,10 @@ testthat::test_that("inferencedata_to_tidy_draws converts data correctly", {
     )
   )
 
-  testthat::expect_no_error(
+  expect_no_error(
     tidybayes::spread_draws(result$data[[1]], a, b[x], c[y, z])
   )
-  testthat::expect_no_error(
+  expect_no_error(
     tidybayes::spread_draws(result$data[[2]], obs[a])
   )
 })

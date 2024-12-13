@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, messages = "hide"}
+```{r setup, message = FALSE}
 library(forecasttools)
 library(scoringutils)
 library(dplyr)

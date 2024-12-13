@@ -31,16 +31,16 @@ library(forecasttools)
 ```
 
 # Quantile timeseries
-Much hubverse formatted output is organized into quantiles. An easy spotcheck plot shows how these quantiles evolve over the forecast horizon. We can make it using the `plot_hubverse_quantiles()` function. There is only one mandatory argument: the path to a properly hubverse-formatted `.csv` file. Let's plot some inflenza forecasts submitted to the 2023-24 FluSight Challenge by the `cfarenewal-cfaepimlight` team for the 2024-04-06 reference date:
+Much hubverse formatted output is organized into quantiles. An easy spotcheck plot shows how these quantiles evolve over the forecast horizon. We can make it using the `plot_hubverse_file_quantiles()` function. There is only one mandatory argument: the path to a properly hubverse-formatted `.csv` file. Let's plot some inflenza forecasts submitted to the 2023-24 FluSight Challenge by the `cfarenewal-cfaepimlight` team for the 2024-04-06 reference date:
 
 ```{r, message = FALSE, echo = c(2, 4)}
 # nolint start
 path_to_formatted_forecast <- "https://raw.githubusercontent.com/cdcepi/FluSight-forecast-hub/refs/heads/main/model-output/cfarenewal-cfaepimlight/2024-04-06-cfarenewal-cfaepimlight.csv"
 # nolint end
-plots <- plot_hubverse_quantiles(path_to_formatted_forecast)
+plots <- plot_hubverse_file_quantiles(path_to_formatted_forecast)
 ```
 
-`plot_hubverse_quantiles()` returns a list of all the plots generated. By default, the list names (keys) are US Postal Service style two-letter abbreviations. Let's look at the national plot:
+`plot_hubverse_file_quantiles()` returns a list of all the plots generated. By default, the list names (keys) are US Postal Service style two-letter abbreviations. Let's look at the national plot:
 
 ```{r}
 plots[["US"]]
@@ -52,10 +52,10 @@ We can also look at the plot for Colorado:
 plots[["CO"]]
 ```
 
-Of course, you may not wish to generate plots for all locations in your hubverse-formatted file at once. `plot_hubverse_quantiles()` takes an optional `locations` argument that allows you to plot only a subset. For example, let's plot the ["Four Corners" states](https://en.wikipedia.org/wiki/Four_Corners):
+Of course, you may not wish to generate plots for all locations in your hubverse-formatted file at once. `plot_hubverse_file_quantiles()` takes an optional `locations` argument that allows you to plot only a subset. For example, let's plot the ["Four Corners" states](https://en.wikipedia.org/wiki/Four_Corners):
 
 ```{r, message = FALSE}
-four_corners <- plot_hubverse_quantiles(path_to_formatted_forecast,
+four_corners <- plot_hubverse_file_quantiles(path_to_formatted_forecast,
   locations = c("AZ", "CO", "NM", "UT")
 )
 
@@ -63,33 +63,34 @@ four_corners <- plot_hubverse_quantiles(path_to_formatted_forecast,
 four_corners[["NM"]]
 ```
 
-Many hubs provide "truth data" of observed values of the forecasting target, and so `plot_hubverse_quantiles()` optionally allows you to plot this alongside the forecast data. Since this truth data often goes back years, it is useful to set a cutoff using the `start_date` argument. Here, we'll start in  December 2023.
+Many hubs provide "target data" or "truth data" of observed values of the forecasting target, and so `plot_hubverse_file_quantiles()` optionally allows you to plot this alongside the forecast data. Since this target data often goes back years, it is useful to set a cutoff using the `start_date` argument. Here, we'll start in  December 2023.
 
 ```{r, message = FALSE, echo = c(2, 4:7)}
 # nolint start
-truth_data <- "https://raw.githubusercontent.com/cdcepi/FluSight-forecast-hub/04e884dce942dd3b8766aee3d8ff1c333b4fb6fa/target-data/target-hospital-admissions.csv"
+target_data_path <- "https://raw.githubusercontent.com/cdcepi/FluSight-forecast-hub/04e884dce942dd3b8766aee3d8ff1c333b4fb6fa/target-data/target-hospital-admissions.csv"
 # nolint end
-plot_hubverse_quantiles(path_to_formatted_forecast,
+plot_hubverse_file_quantiles(path_to_formatted_forecast,
   locations = "US",
-  truth_data_path = truth_data,
+  observed_data_path = target_data_path,
   start_date = "2023-12-01"
 )
 ```
 
-The function provides some basic customization of line and point sizes and colors, via the `linesize`, `pointsize`, `forecast_linecolor`, `forecast_pointcolor`, `truth_pointcolor`, and `truth_linecolor` arguments. It also defaults to plotting a log10-scale y-axis, but this can be changed by passing a different string to `ytrans`; any valid value for the `transform = ` argument of `ggplot2::scale_y_continuous()` can be passed.
+The function provides some basic customization of plotted lines and points via the `linewidth`, `pointsize`, `forecast_linecolor`, `forecast_pointcolor`, `obs_pointcolor`, and `obs_linecolor` arguments. It also defaults to plotting on a log10-scale y-axis, but this can be changed by passing a different string to `y_transform`; any valid value for the `transform = ` argument of `ggplot2::scale_y_continuous()` can be passed.
 
 ```{r, message = FALSE}
 ## plot forecast data in green, with smaller points and
 ## lines, and plot on a linear scale
-my_custom_plot <- plot_hubverse_quantiles(path_to_formatted_forecast,
+my_custom_plot <- plot_hubverse_file_quantiles(
+  path_to_formatted_forecast,
   locations = "US",
-  truth_data_path = truth_data,
+  observed_data_path = target_data_path,
   start_date = "2023-12-01",
   forecast_linecolor = "darkgreen",
   forecast_pointcolor = "darkgreen",
   pointsize = 1,
-  linesize = 1,
-  ytrans = "identity"
+  linewidth = 1,
+  y_transform = "identity"
 )
 my_custom_plot[["US"]]
 ```
