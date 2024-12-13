@@ -90,7 +90,7 @@ my_custom_plot <- plot_hubverse_file_quantiles(
   forecast_pointcolor = "darkgreen",
   pointsize = 1,
   linewidth = 1,
-  ytrans = "identity"
+  y_transform = "identity"
 )
 my_custom_plot[["US"]]
 ```
