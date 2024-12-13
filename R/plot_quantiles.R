@@ -105,8 +105,8 @@ plot_hubverse_quantiles_loc <- function(location,
                                         pointsize = 4,
                                         forecast_linecolor = "darkblue",
                                         forecast_pointcolor = "darkblue",
-                                        observed_linecolor = "black",
-                                        observed_pointcolor = "black",
+                                        obs_linecolor = "black",
+                                        obs_pointcolor = "black",
                                         target_name = NULL,
                                         autotitle = TRUE) {
   loc_table <- location_lookup(location, location_format)
@@ -220,13 +220,13 @@ plot_hubverse_quantiles_loc <- function(location,
 #' only the forecast quantiles will be plotted. Default `NULL`.
 #' @param start_date first date to plot. If NULL, defaults
 #' to the earliest date found between the forecast timeseries (
-#' obtained from `forecast_data_path`) and the truth
-#' data timeseries (obtained from `truth_data_path`, if
+#' obtained from `forecast_data_path`) and the observed
+#' data timeseries (obtained from `observed_data_path`, if
 #' provided). Default NULL.
 #' @param end_date final date to plot. If NULL, defaults
 #' to the latest date found between the forecast timeseries (
-#' obtained from `forecast_data_path`) and the truth
-#' data timeseries (obtained from `truth_data_path`, if
+#' obtained from `forecast_data_path`) and the observed
+#' data timeseries (obtained from `observed_data_path`, if
 #' provided). Default NULL.
 #' @param location_input_format format of the provided location
 #' vector. Permitted formats are `"abbr"` (state/territory
@@ -271,8 +271,8 @@ plot_hubverse_quantiles <- function(forecast_data_path,
                                     pointsize = 4,
                                     forecast_linecolor = "darkblue",
                                     forecast_pointcolor = "darkblue",
-                                    truth_linecolor = "black",
-                                    truth_pointcolor = "black",
+                                    obs_linecolor = "black",
+                                    obs_pointcolor = "black",
                                     autotitle = TRUE) {
   hubverse_cols <- readr::cols(
     reference_date = readr::col_date(),
