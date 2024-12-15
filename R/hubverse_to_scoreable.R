@@ -42,7 +42,7 @@ quantile_table_to_scoreable <- function(hubverse_quantile_table,
     dplyr::mutate(
       output_type_id = as.numeric(.data$output_type_id)
     ) |>
-    dplyr::inner_join(obs,
+    dplyr::full_join(obs,
       by = c(
         "location",
         "target_end_date"
