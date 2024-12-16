@@ -42,6 +42,13 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
                                     obs_date_column = "date",
                                     obs_value_name = "observed",
                                     join = "full") {
+  join_funcs <- list(
+    "full" = dplyr::full_join,
+    "left" = dplyr::left_join,
+    "right" = dplyr::right_join,
+    "inner" = dplyr::inner_join
+  )
+
   obs <- observation_table |>
     dplyr::select(
       location = .data[[obs_location_column]],
