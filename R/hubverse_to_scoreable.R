@@ -1,4 +1,68 @@
-#' Join hubverse quantile forecasts to observed data to
+#' Join hubverse forecasts to observed data
+#'
+#' Expects forecast output in hubverse format (e.g. as created by
+#' [get_hubverse_table()]) and an observed data table with location,
+#' date, and value columns. The names of these columns the observed
+#' data table can be configured; defaults are `"location"`, `"date"`,
+#' and `"value"`, respectively (direct correspondence with
+#' standard Hub "target data" tables).
+#' @param hubverse_forecast_table Forecasts, as a hubverse-format
+#' [`tibble`][tibble::tibble()], for instance as produced by
+#' [get_hubverse_table()], with columns including `target_end_date`,
+#' and `location`.
+#' @param observation_table observations, as a [`tibble`][tibble::tibble()].
+#' @param obs_value_column Name of the column containing
+#' observed values in the `observed` table, as a string.
+#' Default `"value"`
+#' @param obs_location_column Name of the column containing
+#' location values in the `observed` table, as a string.
+#' Default `"location"`
+#' @param obs_date_column Name of the column containing
+#' date values in the `observed` table, as a string.
+#' Default `"date"`
+#' @param obs_value_name Name for the column of observed values
+#' in the resulting table (since `"value"` clashes with the forecast
+#' value column in a standard hubverse table. Default `"observed"`.
+#' @param join Which SQL-style [`dplyr` mutating join][dplyr::mutate-joins]
+#' function to use when joining the tables. Options are `"full"`
+#' (for [dplyr::full_join()], `"left"` ([dplyr::left_join()]),
+#' `"right"` [dplyr::right_join()], and `"inner"` [dplyr::inner_join()].
+#' In the join, the hubverse forecast table is the left table
+#' (`x`) and the observation table is the right table (`y`).
+#' Default `"full"` (i.e. keep all forecasts and observations,
+#' even if some forecasts do not have a corresponding observation or
+#' some observations do not have a corresponding forecast).
+#' @return A [`tibble`][tibble::tibble()] with the observed values
+#' added.
+#' @export
+hubverse_table_with_obs <- function(hubverse_forecast_table,
+                                    observation_table,
+                                    obs_value_column = "value",
+                                    obs_location_column = "location",
+                                    obs_date_column = "date",
+                                    obs_value_name = "observed",
+                                    join = "full") {
+  obs <- observation_table |>
+    dplyr::select(
+      location = .data[[obs_location_column]],
+      target_end_date = .data[[obs_date_column]],
+      !!obs_value_name := .data[[obs_value_column]]
+    )
+
+  checkmate::assert_names(join, subset.of = names(join_funcs))
+  checkmate::assert_names(obs_value_name,
+    disjunct.from = names(hubverse_forecast_table)
+  )
+  join_func <- join_funcs[[join]]
+
+  return(join_func(
+    hubverse_forecast_table,
+    obs,
+    by = c("location", "target_end_date")
+  ))
+}
+
+
 #' create a `scoringutils`-ready table.
 #'
 #' Expects quantile forecast output in hubverse format
@@ -10,8 +74,10 @@
 #' standard hub target data tables).
 #'
 #' @param hubverse_quantile_table quantile forecasts,
-#' as a hubverse-format [`tibble`][tibble::tibble()] produced by
-#' `target_end_date`, `value`, and `horizon`
+#' as a hubverse-format [`tibble`][tibble::tibble()], e.g.
+#' as produced by [get_hubverse_table()], with columns including
+#' `location`, `target_end_date`, `output_type`, `output_type_id`,
+#' and `value`.
 #' @param observation_table observations, as a [`tibble`][tibble::tibble()].
 #' @param obs_value_column Name of the column containing
 #' observed values in the `observed` table, as a string.
@@ -30,23 +96,17 @@ quantile_table_to_scoreable <- function(hubverse_quantile_table,
                                         obs_value_column = "value",
                                         obs_location_column = "location",
                                         obs_date_column = "date") {
-  obs <- observation_table |>
-    dplyr::select(
-      location = .data[[obs_location_column]],
-      target_end_date = .data[[obs_date_column]],
-      observed = .data[[obs_value_column]]
-    )
-
   scoreable <- hubverse_quantile_table |>
+    hubverse_table_with_obs(observation_table,
+      obs_value_column,
+      obs_location_column,
+      obs_date_column,
+      obs_value_name = "observed",
+      join = "inner"
+    ) |>
     dplyr::filter(.data$output_type == "quantile") |>
     dplyr::mutate(
       output_type_id = as.numeric(.data$output_type_id)
-    ) |>
-    dplyr::full_join(obs,
-      by = c(
-        "location",
-        "target_end_date"
-      )
     ) |>
     scoringutils::as_forecast_quantile(
       predicted = "value",
