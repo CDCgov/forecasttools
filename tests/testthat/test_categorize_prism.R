@@ -13,9 +13,9 @@ test_that(paste0(
     locs_diseases,
     \(locations, diseases) {
       result <- get_prism_cutpoints(locations, diseases)
-      expected <- forecasttools::prism_thresholds[
+      expected <- list(forecasttools::prism_thresholds[
         locations, diseases,
-      ]
+      ])
       expect_equal(result, expected)
     }
   )
@@ -31,39 +31,35 @@ test_that(paste0(
         "Influenza"
       ),
       locations = c("US", "MA"),
-      expected = array(
+      expected = list(
         c(
-          0, 0,
-          0.00339654, 0.002146614,
-          0.019232328, 0.020711687,
-          0.035068116, 0.03927676,
-          0.050903904, 0.057841833,
-          1, 1
+          prop_lower_bound = 0,
+          prop_low = 0.00339654,
+          prop_moderate = 0.019232328,
+          prop_high = 0.035068116,
+          prop_very_high = 0.050903904,
+          prop_upper_bound = 1
         ),
-        dim = c(2, 6),
-        dimnames = list(
-          location = c("US", "MA"),
-          breaks = c(
-            "prop_lower_bound",
-            "prop_low",
-            "prop_moderate",
-            "prop_high",
-            "prop_very_high",
-            "prop_upper_bound"
-          )
+        c(
+          prop_lower_bound = 0,
+          prop_low = 0.002146614,
+          prop_moderate = 0.020711687,
+          prop_high = 0.03927676,
+          prop_very_high = 0.057841833,
+          prop_upper_bound = 1
         )
       ),
       list(
         diseases = "RSV",
         locations = "UT",
-        expected = c(
+        expected = list(c(
           prop_lower_bound = 0,
           prop_low = 0.0004531255,
           prop_moderate = 0.0088554939,
           prop_high = 0.0172578623,
           prop_very_high = 0.0256602307,
           prop_upper_bound = 1
-        )
+        ))
       )
     )
   )
