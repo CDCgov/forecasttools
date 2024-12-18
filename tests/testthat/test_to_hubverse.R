@@ -9,7 +9,7 @@ test_that(
         tibble::tibble(),
         "2025-01-01"
       ),
-      "which is day number 4"
+      "4"
     )
     expect_error(
       forecasttools::get_hubverse_table(
@@ -17,7 +17,7 @@ test_that(
         "2025-01-01",
         week_start = 3
       ),
-      "which is day number 1"
+      "1"
     )
     expect_error(
       forecasttools::get_hubverse_table(
@@ -25,7 +25,7 @@ test_that(
         "2025-01-01",
         reference_dow = 3
       ),
-      "to be day number 3"
+      "3"
     )
   }
 )

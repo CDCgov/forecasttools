@@ -41,3 +41,25 @@
 #' A data frame with 40 rows and 20 columns:
 #' @source <data-raw/ex_inferencedata_dataframe.R>
 "ex_inferencedata_dataframe"
+
+#' PRISM respiratory virus activity level thresholds
+#'
+#' A multi-dimensional array with PRISM
+#' respiratory virus activity level thresholds.
+#' Dimensions, in order, are `location`,
+#' `disease`, and `breaks`.
+#'
+#' Values of `disease` are `Influenza`, `COVID-19`,
+#' `RSV`, and `ARI` (acute respiratory infections).
+#'
+#' Values of `breaks` are `prop_lower_bound`,
+#' `prop_low`, `prop_moderate`, `prop_high`,
+#' `prop_very_high`, and `prop_upper_bound`.
+#'
+#' Values of `location` are US jurisdictions
+#' and the United States as a whole, using
+#' USPS two-letter codes (the values of `short_name`)
+#' in [us_location_table].
+#'
+#' @source <data-raw/prism_thresholds.R>
+"prism_thresholds"
