@@ -18,7 +18,7 @@ Default \code{"USA"}.}
 }
 \value{
 The first date of the epiyear,
-as a \code{\link[lubridate:date]{'lubridate::date}} object
+as a \code{\link[lubridate:date]{lubridate::date}} object
 }
 \description{
 For the ISO, the epidemiological year

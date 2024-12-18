@@ -1,17 +1,17 @@
-testthat::test_that(
+test_that(
   paste0(
     "get_hubverse_table errors if reference date ",
     "is the wrong day of the week"
   ),
   {
-    testthat::expect_error(
+    expect_error(
       forecasttools::get_hubverse_table(
         tibble::tibble(),
         "2025-01-01"
       ),
       "4"
     )
-    testthat::expect_error(
+    expect_error(
       forecasttools::get_hubverse_table(
         tibble::tibble(),
         "2025-01-01",
@@ -19,7 +19,7 @@ testthat::test_that(
       ),
       "1"
     )
-    testthat::expect_error(
+    expect_error(
       forecasttools::get_hubverse_table(
         tibble::tibble(),
         "2025-01-01",
