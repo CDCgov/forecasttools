@@ -23,10 +23,11 @@
 #' @param obs_value_name Name for the column of observed values
 #' in the resulting table (since `"value"` clashes with the forecast
 #' value column in a standard hubverse table. Default `"observed"`.
-#' @param join Which SQL-style [`dplyr` mutating join][dplyr::mutate-joins]
+#' @param join Which SQL-style `dplyr` [mutating join][dplyr::mutate-joins]
 #' function to use when joining the tables. Options are `"full"`
-#' (for [dplyr::full_join()], `"left"` ([dplyr::left_join()]),
-#' `"right"` [dplyr::right_join()], and `"inner"` [dplyr::inner_join()].
+#' (for [dplyr::full_join()]), `"left"` ([dplyr::left_join()]),
+#' `"right"` ([dplyr::right_join()]), and `"inner"`
+#' ([dplyr::inner_join()]).
 #' In the join, the hubverse forecast table is the left table
 #' (`x`) and the observation table is the right table (`y`).
 #' Default `"full"` (i.e. keep all forecasts and observations,

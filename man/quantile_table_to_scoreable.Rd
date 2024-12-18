@@ -2,8 +2,7 @@
 % Please edit documentation in R/hubverse_to_scoreable.R
 \name{quantile_table_to_scoreable}
 \alias{quantile_table_to_scoreable}
-\title{Join hubverse quantile forecasts to observed data to
-create a \code{scoringutils}-ready table.}
+\title{create a \code{scoringutils}-ready table.}
 \usage{
 quantile_table_to_scoreable(
   hubverse_quantile_table,
@@ -15,8 +14,10 @@ quantile_table_to_scoreable(
 }
 \arguments{
 \item{hubverse_quantile_table}{quantile forecasts,
-as a hubverse-format \code{\link[tibble:tibble]{tibble}} produced by
-\code{target_end_date}, \code{value}, and \code{horizon}}
+as a hubverse-format \code{\link[tibble:tibble]{tibble}}, e.g.
+as produced by \code{\link[=get_hubverse_table]{get_hubverse_table()}}, with columns including
+\code{location}, \code{target_end_date}, \code{output_type}, \code{output_type_id},
+and \code{value}.}
 
 \item{observation_table}{observations, as a \code{\link[tibble:tibble]{tibble}}.}
 
