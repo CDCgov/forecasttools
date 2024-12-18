@@ -11,23 +11,18 @@ get_prism_cutpoints(locations, diseases)
 \item{locations}{location(s) for which to return the cutpoints.
 A location two-letter abbreviation as in the \code{short_name}
 column of \link{us_location_table}, or an array
-of such abbreviations.}
+of those abbreviations.}
 
 \item{diseases}{disease(s) for which to return the cutpoints.
 One of \code{"ARI"}, \code{"COVID-19"}, \code{"Influenza"}, or \code{"RSV"}, or
 an array of those values.}
 }
 \value{
-The cutpoints, as a single vector or array of vectors.
+The cutpoints, as an ordered list of vectors.
 }
 \description{
 Get PRISM activity level cutpoints for given
 diseases and locations
-}
-\details{
-Note that if both \code{locations} and \code{diseases} are vectors,
-the result will be a 3-dimensional array whose first dimension
-is location, second is disease, and third is the cutpoints.
 }
 \examples{
 get_prism_cutpoints("WA", "Influenza")
