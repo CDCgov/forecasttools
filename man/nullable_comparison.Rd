@@ -20,11 +20,10 @@ as a string, e.g. \code{"=="}, \code{">="} \code{"\%in\%"}.}
 \value{
 A logical vector. Equivalent to \verb{b \{comparison_operator\} a}
 if \code{b} is not \code{NULL} and to \code{TRUE} if \code{b} is \code{NULL}.
-#'
 }
 \description{
-Useful for letting \code{NULL} reflect "all values"
-if \code{\link[dplyr:filter]{dplyr::filter()}} calls. Internal function.
+Useful for letting \verb{x \{comparison\} NULL} mean "match all values"
+in calls to \code{\link[dplyr:filter]{dplyr::filter()}} and similar functions.
 }
 \examples{
 

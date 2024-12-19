@@ -1,14 +1,13 @@
 #' Aggregate a daily timeseries to epiweekly
 #'
-#' Given a set of daily timeseries /
-#' time trajectories in
-#' tidy long-form format (i.e. with
-#' one row per day per trajectory,
-#' with a `.draws` or other trajectory id column),
+#' Given a set of daily timeseries / time trajectories in
+#' tidy long-form format (i.e. with one row per day
+#' per trajectory, with one or more columns that uniquely
+#' identify individual trajectories (e.g. a `trajectory_id` column),
 #' aggregate it to the scale of epiweeks.
 #'
-#' This requires a `date` column that is a set
-#' of timepoints coercible to dates.
+#' This requires a column containing a set of timepoints
+#' coercible to dates.
 #'
 #' @param tidy_daily_trajectories tibble of trajectories,
 #' with dates, trajectory ids, and observeable values to
@@ -19,8 +18,8 @@
 #' Default `"date"`.
 #' @param id_cols name(s) of the column(s)
 #' that uniquely identify a single timeseries
-#' (e.g. a single posterior trajectory).
-#' Default `".draw"` (as the output of
+#' (e.g. a single location timeseries or a single
+#' posterior trajectory). Default `".draw"` (as the output of
 #' [tidybayes::spread_draws()]).
 #' @param weekly_value_name name to use for the output coluqmn
 #' containing weekly trajectory values. Default `"weekly_value"`.
@@ -104,7 +103,7 @@ daily_to_epiweekly <- function(tidy_daily_trajectories,
 
   df <- grouped_df |>
     dplyr::summarise(
-      {{ weekly_value_name }} := sum(.data[[!!value_col]])
+      !!weekly_value_name := sum(.data[[!!value_col]])
     ) |>
     dplyr::ungroup()
 
