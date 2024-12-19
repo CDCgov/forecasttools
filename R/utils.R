@@ -3,8 +3,8 @@
 #' returning a single `TRUE` if `b` is
 #' `NULL`.
 #'
-#' Useful for letting `NULL` reflect "all values"
-#' if [dplyr::filter()] calls. Internal function.
+#' Useful for letting `x {comparison} NULL` mean "match all values"
+#' in calls to [dplyr::filter()] and similar functions.
 #'
 #' @param a First set of values for the comparison
 #' @param comparison_operator Comparison operator for the comparison,
@@ -12,7 +12,7 @@
 #' @param b Second set of values for the comparison, or `NULL`.
 #' @return A logical vector. Equivalent to `b {comparison_operator} a`
 #' if `b` is not `NULL` and to `TRUE` if `b` is `NULL`.
-#' #'
+#'
 #' @examples
 #'
 #' x <- 6

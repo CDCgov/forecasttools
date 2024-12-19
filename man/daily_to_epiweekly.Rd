@@ -26,8 +26,8 @@ Default \code{"date"}.}
 
 \item{id_cols}{name(s) of the column(s)
 that uniquely identify a single timeseries
-(e.g. a single posterior trajectory).
-Default \code{".draw"} (as the output of
+(e.g. a single location timeseries or a single
+posterior trajectory). Default \code{".draw"} (as the output of
 \code{\link[tidybayes:spread_draws]{tidybayes::spread_draws()}}).}
 
 \item{weekly_value_name}{name to use for the output coluqmn
@@ -41,14 +41,13 @@ If \code{FALSE}, allow partial weeks. Default \code{TRUE}.}
 tibble of aggregated epiweekly trajectories.
 }
 \description{
-Given a set of daily timeseries /
-time trajectories in
-tidy long-form format (i.e. with
-one row per day per trajectory,
-with a \code{.draws} or other trajectory id column),
+Given a set of daily timeseries / time trajectories in
+tidy long-form format (i.e. with one row per day
+per trajectory, with one or more columns that uniquely
+identify individual trajectories (e.g. a \code{trajectory_id} column),
 aggregate it to the scale of epiweeks.
 }
 \details{
-This requires a \code{date} column that is a set
-of timepoints coercible to dates.
+This requires a column containing a set of timepoints
+coercible to dates.
 }
