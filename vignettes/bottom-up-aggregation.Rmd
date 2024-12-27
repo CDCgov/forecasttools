@@ -46,7 +46,9 @@ __The propostions/assumptions in this note:__
 2. That a reasonable approximation for the copula $C$ is a Gaussian copula with the covariance matrix,
 
 $$\Sigma_{i,j} = \delta_{ij} + (1 - \delta_{ij}) \rho.$$
+
 ## Aggregation for an example forecast
+
 First, I get the `forecasttools` example.
 ```{r setup}
 library(forecasttools)
