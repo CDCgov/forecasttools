@@ -34,7 +34,7 @@ create_observation_data <- function(
 
 
 testthat::test_that(paste0(
-  "quantile_table_to_scoreable works as expected ",
+  "quantile_table_to_scorable works as expected ",
   "with valid inputs"
 ), {
   forecast <- create_hubverse_table(
@@ -56,13 +56,13 @@ testthat::test_that(paste0(
     location = c("loc1", "loc2")
   )
 
-  scoreable <- quantile_table_to_scoreable(
+  scorable <- quantile_table_to_scorable(
     forecast,
     observed,
     obs_date_column = "reference_date"
   )
-  expect_true(scoringutils::is_forecast_quantile(scoreable))
-  expect_setequal(forecast$location, scoreable$location)
+  expect_true(scoringutils::is_forecast_quantile(scorable))
+  expect_setequal(forecast$location, scorable$location)
 })
 
 
@@ -86,7 +86,7 @@ testthat::test_that("score_hubverse handles missing location data", {
     location = c("loc1")
   )
 
-  result <- quantile_table_to_scoreable(
+  result <- quantile_table_to_scorable(
     forecast, observed,
     obs_date_column = "reference_date"
   )
@@ -96,7 +96,7 @@ testthat::test_that("score_hubverse handles missing location data", {
 
 
 testthat::test_that(paste0(
-  "quantile_table_to_scoreable ",
+  "quantile_table_to_scorable ",
   "handles zero length forecast table"
 ), {
   forecast <- tibble::tibble(
@@ -119,7 +119,7 @@ testthat::test_that(paste0(
   )
 
   expect_error(
-    result <- quantile_table_to_scoreable(
+    result <- quantile_table_to_scorable(
       forecast, observed,
       obs_date_column = "reference_date"
     ),
