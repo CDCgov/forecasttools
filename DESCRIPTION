@@ -8,12 +8,15 @@ Authors@R:
     person("Samuel", "Brand",
     email = "usi1@cdc.gov",
     role = "aut"),
-    person("Kaitlyn", "Johnson",
-    email = "uox1@cdc.gov",
-    role = "ctb"),
     person("Damon", "Bayer",
     email = "xum8@cdc.gov",
-    role = "aut"))
+    role = "aut"),
+    person("Subekshya", "Bidari",
+    email = "zib2@cdc.gov",
+    role = "ctb"),
+    person("Kaitlyn", "Johnson",
+    email = "uox1@cdc.gov",
+    role = "ctb"))
 Description: A collection of tools for short-term forecasting within CFA Predict.
 License: Apache License (>= 2)
 Encoding: UTF-8
