@@ -52,9 +52,9 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
 
   obs <- observation_table |>
     dplyr::select(
-      location = .data[[obs_location_column]],
-      target_end_date = .data[[obs_date_column]],
-      !!obs_value_name := .data[[obs_value_column]]
+      location = !!obs_location_column,
+      target_end_date = !!obs_date_column,
+      !!obs_value_name := !!obs_value_column
     )
 
   checkmate::assert_names(join, subset.of = names(join_funcs))
