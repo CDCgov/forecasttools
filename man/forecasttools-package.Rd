@@ -28,6 +28,7 @@ Authors:
 
 Other contributors:
 \itemize{
+  \item Subekshya Bidari \email{zib2@cdc.gov} [contributor]
   \item Kaitlyn Johnson \email{uox1@cdc.gov} [contributor]
 }
 

@@ -52,9 +52,9 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
 
   obs <- observation_table |>
     dplyr::select(
-      location = .data[[obs_location_column]],
-      target_end_date = .data[[obs_date_column]],
-      !!obs_value_name := .data[[obs_value_column]]
+      location = !!obs_location_column,
+      target_end_date = !!obs_date_column,
+      !!obs_value_name := !!obs_value_column
     )
 
   checkmate::assert_names(join, subset.of = names(join_funcs))
@@ -99,12 +99,12 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
 #' @return A [`data.table`][data.table::data.table()] for scoring,
 #' as the output of [scoringutils::as_forecast_quantile()].
 #' @export
-quantile_table_to_scoreable <- function(hubverse_quantile_table,
-                                        observation_table,
-                                        obs_value_column = "value",
-                                        obs_location_column = "location",
-                                        obs_date_column = "date") {
-  scoreable <- hubverse_quantile_table |>
+quantile_table_to_scorable <- function(hubverse_quantile_table,
+                                       observation_table,
+                                       obs_value_column = "value",
+                                       obs_location_column = "location",
+                                       obs_date_column = "date") {
+  scorable <- hubverse_quantile_table |>
     hubverse_table_with_obs(observation_table,
       obs_value_column,
       obs_location_column,
@@ -122,7 +122,7 @@ quantile_table_to_scoreable <- function(hubverse_quantile_table,
       quantile_level = "output_type_id"
     )
 
-  return(scoreable)
+  return(scorable)
 }
 
 
@@ -136,19 +136,19 @@ quantile_table_to_scoreable <- function(hubverse_quantile_table,
 #' @param hub_path Local path to hubverse-style
 #' forecast hub.
 #' @param ... keyword arguments passed to
-#' [quantile_table_to_scoreable()].
-#' @return Scoreable table, as the output of
+#' [quantile_table_to_scorable()].
+#' @return Scorable table, as the output of
 #' [scoringutils::as_forecast_quantile()].
 #' @export
-hub_to_scoreable_quantiles <- function(hub_path,
-                                       ...) {
+hub_to_scorable_quantiles <- function(hub_path,
+                                      ...) {
   quantile_forecasts <- gather_hub_quantile_forecasts(hub_path)
   target_data <- gather_hub_target_data(hub_path)
-  scoreable <- quantile_table_to_scoreable(
+  scorable <- quantile_table_to_scorable(
     quantile_forecasts,
     target_data,
     ...
   )
 
-  return(scoreable)
+  return(scorable)
 }

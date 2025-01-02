@@ -30,7 +30,7 @@ In this vignette, we use `forecasttools` to capture the current state of the Flu
 
 ### Generating a table of forecasts against truth data.
 
-First, we create a table of forecast predictions formatted to work with `scoringutils` functions using `hub_to_scoreable_quantiles()`. Generally, we expect users to use `hub_to_scoreable_quantiles()` with a local path to the forecast repository which updates from GitHub by default. In this case, we download the hub first.
+First, we create a table of forecast predictions formatted to work with `scoringutils` functions using `hub_to_scorable_quantiles()`. Generally, we expect users to use `hub_to_scorable_quantiles()` with a local path to the forecast repository which updates from GitHub by default. In this case, we download the hub first.
 
 ```{r}
 hub_url <- "https://github.com/cdcepi/FluSight-forecast-hub"
@@ -54,7 +54,7 @@ gert::git_branch_create(
 ```
 
 ```{r}
-forecast_and_target <- hub_to_scoreable_quantiles(hub_path)
+forecast_and_target <- hub_to_scorable_quantiles(hub_path)
 ```
 There are `r forecast_and_target$model_id |> unique() |> length()` different models that have been submitted to FluSight.
 
