@@ -96,6 +96,10 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
 #' @param obs_date_column Name of the column containing
 #' date values in the `observed` table, as a string.
 #' Default `"date"`
+#' @param quantile_tol Round quantile level values to this many
+#' decimal places, to avoid problems with floating point number
+#' equality comparisons. Passed as the `digits` argument to
+#' [base::round()]. Default 10.
 #' @return A [`data.table`][data.table::data.table()] for scoring,
 #' as the output of [scoringutils::as_forecast_quantile()].
 #' @export
@@ -103,7 +107,8 @@ quantile_table_to_scorable <- function(hubverse_quantile_table,
                                        observation_table,
                                        obs_value_column = "value",
                                        obs_location_column = "location",
-                                       obs_date_column = "date") {
+                                       obs_date_column = "date",
+                                       quantile_tol = 10) {
   scorable <- hubverse_quantile_table |>
     hubverse_table_with_obs(observation_table,
       obs_value_column,
@@ -114,7 +119,8 @@ quantile_table_to_scorable <- function(hubverse_quantile_table,
     ) |>
     dplyr::filter(.data$output_type == "quantile") |>
     dplyr::mutate(
-      output_type_id = as.numeric(.data$output_type_id)
+      output_type_id = as.numeric(.data$output_type_id) |>
+        round(digits = !!quantile_tol)
     ) |>
     scoringutils::as_forecast_quantile(
       predicted = "value",
