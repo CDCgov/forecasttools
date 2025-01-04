@@ -9,7 +9,8 @@ quantile_table_to_scorable(
   observation_table,
   obs_value_column = "value",
   obs_location_column = "location",
-  obs_date_column = "date"
+  obs_date_column = "date",
+  quantile_tol = 10
 )
 }
 \arguments{
@@ -32,6 +33,11 @@ Default \code{"location"}}
 \item{obs_date_column}{Name of the column containing
 date values in the \code{observed} table, as a string.
 Default \code{"date"}}
+
+\item{quantile_tol}{Round quantile level values to this many
+decimal places, to avoid problems with floating point number
+equality comparisons. Passed as the \code{digits} argument to
+\code{\link[base:Round]{base::round()}}. Default 10.}
 }
 \value{
 A \code{\link[data.table:data.table]{data.table}} for scoring,
