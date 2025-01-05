@@ -1,4 +1,4 @@
-#' Plot predictive medians and prediction
+#' Plot median predictions and prediction
 #' intervals against observed data by forecast date.
 #'
 #' @param scorable_table quantile table with observations,

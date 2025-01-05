@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_predicted_observed.R
 \name{plot_pred_obs_by_forecast_date}
 \alias{plot_pred_obs_by_forecast_date}
-\title{Plot predictive medians and prediction
+\title{Plot median predictions and prediction
 intervals against observed data by forecast date.}
 \usage{
 plot_pred_obs_by_forecast_date(
@@ -97,6 +97,6 @@ quantile level values in the \code{quantile_level_col} column of
 The plot, as a \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} object.
 }
 \description{
-Plot predictive medians and prediction
+Plot median predictions and prediction
 intervals against observed data by forecast date.
 }

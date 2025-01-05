@@ -68,7 +68,7 @@ submission |>
 Let's talk through each of these columns. For additional details and guidance, consult [FluSight's model output schema](https://github.com/cdcepi/FluSight-forecast-hub/blob/main/model-output/README.md) and the [hubverse documentation page on model output formats](https://hubverse.io/en/latest/user-guide/model-output.html#formats-of-model-output).
 
 ### `reference_date`
-The official "as of" date for the forecast, in [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) `YYYY-MM-DD` format. The reference date is *not* necessarily the due date for forecast submission. For FluSight and COVIDHub, it is instead the Saturday that ends the USA ["epidemiological week" or "epiweek"](https://www.cmmcp.org/mosquito-surveillance-data/pages/epi-week-calendars-2008-2023) that the forecast is due. You'll learn a bit more about the why and how of "epiweeks" later in this vignette.
+The official "as of" date for the forecast, in [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) `YYYY-MM-DD` format. The reference date is *not* necessarily the due date for forecast submission. For FluSight and COVIDHub, it is instead the Saturday that ends the USA ["epidemiological week" or "epiweek"](https://www.cmmcp.org/mosquito-surveillance-data/pages/epi-week-calendars-2008-2024) that the forecast is due. You'll learn a bit more about the why and how of "epiweeks" later in this vignette.
 
 ### `target`
 The quantity being forecast in the given row. Different Hubs accept forecasts of different quantities of interest. For example, in 2023-2024, FluSight had two targets:
