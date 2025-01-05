@@ -41,6 +41,8 @@ get_prism_cutpoints <- function(locations, diseases) {
 #' Categorize a vector of values into PRISM
 #' activity level bins.
 #'
+#' Uses [categorize_vector()] and [get_prism_cutpoints()].
+#'
 #' @param values values to categorize
 #' @param locations vector of locations of length equal to
 #' `values` or a single location for all `values`.
@@ -52,8 +54,8 @@ get_prism_cutpoints <- function(locations, diseases) {
 #' `label_sets` argument to [categorize_vector()].
 #' Defaults to the standard PRISM bin names in title case:
 #' `c("Very Low", "Low", "Moderate", "High", "Very High")`.
-#' @return A factor vector equal in length to `values` of
-#' the categories, as the output of [categorize_vector()].
+#' @return A factor vector of category labels, equal in length
+#' to the input vector `values`.
 #' @export
 categorize_prism <- function(values,
                              locations,

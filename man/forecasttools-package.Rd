@@ -4,15 +4,15 @@
 \name{forecasttools-package}
 \alias{forecasttools}
 \alias{forecasttools-package}
-\title{forecasttools: R toolbox for short-term infectious disease forecasting}
+\title{forecasttools: R Toolbox for Short-Term Infectious Disease Forecasting}
 \description{
 A collection of tools for short-term forecasting within CFA Predict.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://cdcgov.github.io/forecasttools}
-  \item \url{https://github.com/CDCgov/forecasttools}
+  \item \url{https://cdcgov.github.io/forecasttools/}
+  \item \url{https://github.com/CDCgov/forecasttools/}
   \item Report bugs at \url{https://github.com/CDCgov/forecasttools/issues}
 }
 

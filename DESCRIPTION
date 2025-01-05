@@ -1,5 +1,5 @@
 Package: forecasttools
-Title: R toolbox for short-term infectious disease forecasting
+Title: R Toolbox for Short-Term Infectious Disease Forecasting
 Version: 0.0.0.9000
 Authors@R:
     c(person("Dylan", "Morris",
@@ -61,7 +61,7 @@ Suggests:
     withr
 VignetteBuilder:
     knitr
-URL: https://cdcgov.github.io/forecasttools, https://github.com/CDCgov/forecasttools
+URL: https://cdcgov.github.io/forecasttools/, https://github.com/CDCgov/forecasttools/
 Depends:
     R (>= 2.10)
 LazyData: true
