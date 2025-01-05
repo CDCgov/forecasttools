@@ -4,7 +4,7 @@
 \name{forecasttools-package}
 \alias{forecasttools}
 \alias{forecasttools-package}
-\title{forecasttools: R toolbox for short-term infectious disease forecasting}
+\title{forecasttools: R Toolbox for Short-Term Infectious Disease Forecasting}
 \description{
 A collection of tools for short-term forecasting within CFA Predict.
 }
