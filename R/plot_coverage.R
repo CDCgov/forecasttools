@@ -24,9 +24,10 @@
 #' date. These will become facets in the output ggplot. Default
 #' `c("target", "horizon")` (i.e. group by forecasting target and
 #' forecast horizon.
-#' @param ytransform transform for the y axis, a string. Passed
+#' @param y_transform transform for the y axis, a string. Passed
 #' as the `transform` argument to [ggplot2::scale_y_continuous()].
-#' @param ylabels labeling scheme for the y axis. Passed as
+#' Default `"identity"`.
+#' @param y_labels labeling scheme for the y axis. Passed as
 #' the `labels` argument to [ggplot2::scale_y_continuous()]. Default
 #' [scales::label_percent()].
 #' @return A ggplot of the empirical coverage.
@@ -36,8 +37,8 @@ plot_coverage_by_date <- function(scored,
                                   coverage_col = NULL,
                                   date_col = "reference_date",
                                   group_cols = c("target", "horizon"),
-                                  ytransform = "identity",
-                                  ylabels = scales::label_percent()) {
+                                  y_transform = "identity",
+                                  y_labels = scales::label_percent()) {
   if (is.null(coverage_col)) {
     coverage_col <-
       glue::glue("interval_coverage_{coverage_level * 100}")
@@ -60,8 +61,8 @@ plot_coverage_by_date <- function(scored,
     ggplot2::geom_point(size = 3) +
     ggplot2::geom_line(linewidth = 2) +
     ggplot2::scale_y_continuous(
-      transform = ytransform,
-      labels = ylabels
+      transform = y_transform,
+      labels = y_labels
     ) +
     ggplot2::coord_cartesian(ylim = c(0, 1))
 
