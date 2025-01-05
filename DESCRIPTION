@@ -1,5 +1,5 @@
 Package: forecasttools
-Title: R toolbox for short-term infectious disease forecasting
+Title: R Toolbox for Short-Term Infectious Disease Forecasting
 Version: 0.0.0.9000
 Authors@R:
     c(person("Dylan", "Morris",
