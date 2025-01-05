@@ -23,7 +23,7 @@ remotes::install_github('cdcgov/forecasttools')
 
 ## Documentation and vignettes
 
-You should be able to view documentation and package vignettes at [`cdcgov.github.io/forecasttools`](https://cdcgov.github.io/forecasttools).
+You should be able to view documentation and package vignettes at [`cdcgov.github.io/forecasttools`](https://cdcgov.github.io/forecasttools/).
 
 
 ## Contacts
@@ -67,9 +67,9 @@ and [Code of Conduct](code-of-conduct.md).
 For more information about CDC's privacy policy, please visit [https://www.cdc.gov/other/privacy.html](https://www.cdc.gov/other/privacy.html).
 
 ## Contributing Standard Notice
-Anyone is encouraged to contribute to the repository by [forking](https://help.github.com/articles/fork-a-repo)
+Anyone is encouraged to contribute to the repository by [forking](https://docs.github.com/articles/fork-a-repo)
 and submitting a pull request. (If you are new to GitHub, you might start with a
-[basic tutorial](https://help.github.com/articles/set-up-git).) By contributing
+[basic tutorial](https://docs.github.com/articles/set-up-git).) By contributing
 to this project, you grant a world-wide, royalty-free, perpetual, irrevocable,
 non-exclusive, transferable license to all users under the terms of the
 [Apache Software License v2](https://www.apache.org/licenses/LICENSE-2.0.html) or
