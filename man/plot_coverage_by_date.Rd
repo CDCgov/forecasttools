@@ -11,8 +11,8 @@ plot_coverage_by_date(
   coverage_col = NULL,
   date_col = "reference_date",
   group_cols = c("target", "horizon"),
-  ytransform = "identity",
-  ylabels = scales::label_percent()
+  y_transform = "identity",
+  y_labels = scales::label_percent()
 )
 }
 \arguments{
@@ -44,10 +44,11 @@ date. These will become facets in the output ggplot. Default
 \code{c("target", "horizon")} (i.e. group by forecasting target and
 forecast horizon.}
 
-\item{ytransform}{transform for the y axis, a string. Passed
-as the \code{transform} argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.}
+\item{y_transform}{transform for the y axis, a string. Passed
+as the \code{transform} argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.
+Default \code{"identity"}.}
 
-\item{ylabels}{labeling scheme for the y axis. Passed as
+\item{y_labels}{labeling scheme for the y axis. Passed as
 the \code{labels} argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default
 \code{\link[scales:label_percent]{scales::label_percent()}}.}
 }
