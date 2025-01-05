@@ -4,15 +4,38 @@
 #' @param scorable_table quantile table with observations,
 #' as the output of [scoringutils::as_forecast_quantile()],
 #' or as a table coercible to a `scoringutils`-ready quantile
-#' forecast via [scoringutils::as_forecast_quantile()].
+#' forecast via [scoringutils::as_forecast_quantile()]. Must
+#' contain the median (0.5) quantile and the endpoint quantiles
+#' for the central prediction interval specified in
+#' `prediction_interval_width`.
 #' @param horizons Forecast horizons to plot. If `NULL`, plot all
 #' available horizons. Default `NULL`.
+#' @param prediction_interval_width Width of the (central) prediction
+#' interval to plot around the median. Must correspond to quantiles
+#' available in `scorable_table`. Default `0.95` (plot the range from
+#' quantile `0.025` to quantile `0.975`).
 #' @param forecast_date_col Name of the column in `scorable_table`
 #' giving the forecast date or forecast reference date.
 #' Default `"reference_date"` (as in hubverse schema).
 #' @param target_date_col Name of the column in `scorable_table`
 #' giving the forecast target date for a given prediction.
 #' Default `"target_end_date"` (as in hubverse schema).
+#' @param predicted_col Name of the column in `scorable_table`
+#' giving the predicted values. Default `"predicted"` (as in
+#' the output of [scoringutils::as_forecast_quantile()]. Passed
+#' as the `predicted` argument to [scoringutils::as_forecast_quantile()].
+#' @param observed_col Name of the column in `scorable_table`
+#' giving the observed values. Default `"observed"` (as in
+#' the output of [scoringutils::as_forecast_quantile()]. Passed
+#' as the `observed` argument to [scoringutils::as_forecast_quantile()].
+#' @param quantile_level_col Name of the column in `scorable_table`
+#' giving the quantile level for a given row. Default `"quantile_level"`
+#' (as in the output of [scoringutils::as_forecast_quantile()].
+#' Passed as the `quantile_level` argument to
+#' [scoringutils::as_forecast_quantile()].
+#' @param horizon_col Name of the column in `scorable_table` containing
+#' the forecast horizon for a given row. Default `"horizon"` (as in
+#' hubverse schema).
 #' @param facet_columns Columns in `scorable_table` by which to
 #' facet the resulting plot. Will always facet by `forecast_date_col`.
 #' If `NULL`, facet by all the columns that make up the `scoringutils`
@@ -20,9 +43,24 @@
 #' except for `target_date_col` and `horizon`. This means that, by default,
 #' two distinct predictions for a given target date and horizon should
 #' not be visualized on the same facet.
+#' @param x_label Label for the x axis in the plot. Default
+#' `"Date"`.
+#' @param y_label Label for the y axis in the plot. Default
+#' `"Target"`.
+#' @param y_transform Transformation for the y axis in the plot.
+#' Passed as the `transform` argument to [ggplot2::scale_y_continuous()]
+#' Default `"log10"`.
+#' @param quantile_tol Round quantile level values to this many
+#' decimal places, to avoid problems with floating point number
+#' equality comparisons. Affects both the target quantile level
+#' values determined from `prediction_interval_width` and the
+#' quantile level values in the `quantile_level_col` column of
+#' `scorable_table`. Passed as the `digits` argument to
+#' [base::round()]. Default 10.
 #' @return The plot, as a [ggplot2::ggplot()] object.
 plot_pred_obs_by_forecast_date <- function(scorable_table,
                                            horizons = NULL,
+                                           prediction_interval_width = 0.95,
                                            forecast_date_col =
                                              "reference_date",
                                            target_date_col =
@@ -34,7 +72,6 @@ plot_pred_obs_by_forecast_date <- function(scorable_table,
                                            quantile_level_col =
                                              "quantile_level",
                                            horizon_col = "horizon",
-                                           prediction_interval_width = 0.95,
                                            facet_columns = NULL,
                                            x_label = "Date",
                                            y_label = "Target",
@@ -64,9 +101,9 @@ plot_pred_obs_by_forecast_date <- function(scorable_table,
   ## compute needed predictive quantiles
   lower_ci <- (1 - prediction_interval_width) / 2
   upper_ci <- 1 - lower_ci
-  quantiles_to_plot <- round(c(lower_ci, 0.5, upper_ci),
-    digits = quantile_tol
-  )
+  quantiles_to_plot <- c(lower_ci, 0.5, upper_ci) |>
+    round(digits = quantile_tol)
+
   checkmate::assert_subset(quantiles_to_plot,
     scorable_table$quantile_level,
     .var.name = "Quantiles to plot"
@@ -76,6 +113,12 @@ plot_pred_obs_by_forecast_date <- function(scorable_table,
   facet_columns <- unique(c(forecast_date_col, facet_columns))
 
   to_plot <- to_plot |>
+    dplyr::mutate(
+      quantile_level =
+        round(.data$quantile_level,
+          digits = quantile_tol
+        )
+    ) |>
     dplyr::filter(.data$quantile_level %in% !!quantiles_to_plot) |>
     dplyr::mutate(q_rank = dplyr::dense_rank(.data$quantile_level))
 
