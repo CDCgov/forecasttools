@@ -12,3 +12,4 @@
 ^.vscode$
 ^.lintr$
 ^.secrets.baseline$
+^cran-comments\.md$
