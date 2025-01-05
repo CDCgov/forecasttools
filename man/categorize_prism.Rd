@@ -29,10 +29,9 @@ Defaults to the standard PRISM bin names in title case:
 \code{c("Very Low", "Low", "Moderate", "High", "Very High")}.}
 }
 \value{
-A factor vector equal in length to \code{values} of
-the categories, as the output of \code{\link[=categorize_vector]{categorize_vector()}}.
+A factor vector of category labels, equal in length
+to the input vector \code{values}.
 }
 \description{
-Categorize a vector of values into PRISM
-activity level bins.
+Uses \code{\link[=categorize_vector]{categorize_vector()}} and \code{\link[=get_prism_cutpoints]{get_prism_cutpoints()}}.
 }

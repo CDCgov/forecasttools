@@ -2,19 +2,19 @@
 % Please edit documentation in R/plot_predicted_observed.R
 \name{plot_pred_obs_by_forecast_date}
 \alias{plot_pred_obs_by_forecast_date}
-\title{Plot predictive medians and prediction
+\title{Plot median predictions and prediction
 intervals against observed data by forecast date.}
 \usage{
 plot_pred_obs_by_forecast_date(
   scorable_table,
   horizons = NULL,
+  prediction_interval_width = 0.95,
   forecast_date_col = "reference_date",
   target_date_col = "target_end_date",
   predicted_col = "predicted",
   observed_col = "observed",
   quantile_level_col = "quantile_level",
   horizon_col = "horizon",
-  prediction_interval_width = 0.95,
   facet_columns = NULL,
   x_label = "Date",
   y_label = "Target",
@@ -26,10 +26,18 @@ plot_pred_obs_by_forecast_date(
 \item{scorable_table}{quantile table with observations,
 as the output of \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}},
 or as a table coercible to a \code{scoringutils}-ready quantile
-forecast via \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}.}
+forecast via \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}. Must
+contain the median (0.5) quantile and the endpoint quantiles
+for the central prediction interval specified in
+\code{prediction_interval_width}.}
 
 \item{horizons}{Forecast horizons to plot. If \code{NULL}, plot all
 available horizons. Default \code{NULL}.}
+
+\item{prediction_interval_width}{Width of the (central) prediction
+interval to plot around the median. Must correspond to quantiles
+available in \code{scorable_table}. Default \code{0.95} (plot the range from
+quantile \code{0.025} to quantile \code{0.975}).}
 
 \item{forecast_date_col}{Name of the column in \code{scorable_table}
 giving the forecast date or forecast reference date.
@@ -39,6 +47,26 @@ Default \code{"reference_date"} (as in hubverse schema).}
 giving the forecast target date for a given prediction.
 Default \code{"target_end_date"} (as in hubverse schema).}
 
+\item{predicted_col}{Name of the column in \code{scorable_table}
+giving the predicted values. Default \code{"predicted"} (as in
+the output of \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}. Passed
+as the \code{predicted} argument to \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}.}
+
+\item{observed_col}{Name of the column in \code{scorable_table}
+giving the observed values. Default \code{"observed"} (as in
+the output of \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}. Passed
+as the \code{observed} argument to \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}.}
+
+\item{quantile_level_col}{Name of the column in \code{scorable_table}
+giving the quantile level for a given row. Default \code{"quantile_level"}
+(as in the output of \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}.
+Passed as the \code{quantile_level} argument to
+\code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}.}
+
+\item{horizon_col}{Name of the column in \code{scorable_table} containing
+the forecast horizon for a given row. Default \code{"horizon"} (as in
+hubverse schema).}
+
 \item{facet_columns}{Columns in \code{scorable_table} by which to
 facet the resulting plot. Will always facet by \code{forecast_date_col}.
 If \code{NULL}, facet by all the columns that make up the \code{scoringutils}
@@ -46,11 +74,29 @@ If \code{NULL}, facet by all the columns that make up the \code{scoringutils}
 except for \code{target_date_col} and \code{horizon}. This means that, by default,
 two distinct predictions for a given target date and horizon should
 not be visualized on the same facet.}
+
+\item{x_label}{Label for the x axis in the plot. Default
+\code{"Date"}.}
+
+\item{y_label}{Label for the y axis in the plot. Default
+\code{"Target"}.}
+
+\item{y_transform}{Transformation for the y axis in the plot.
+Passed as the \code{transform} argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}
+Default \code{"log10"}.}
+
+\item{quantile_tol}{Round quantile level values to this many
+decimal places, to avoid problems with floating point number
+equality comparisons. Affects both the target quantile level
+values determined from \code{prediction_interval_width} and the
+quantile level values in the \code{quantile_level_col} column of
+\code{scorable_table}. Passed as the \code{digits} argument to
+\code{\link[base:Round]{base::round()}}. Default 10.}
 }
 \value{
 The plot, as a \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} object.
 }
 \description{
-Plot predictive medians and prediction
+Plot median predictions and prediction
 intervals against observed data by forecast date.
 }
