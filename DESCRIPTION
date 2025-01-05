@@ -61,7 +61,7 @@ Suggests:
     withr
 VignetteBuilder:
     knitr
-URL: https://cdcgov.github.io/forecasttools, https://github.com/CDCgov/forecasttools
+URL: https://cdcgov.github.io/forecasttools/, https://github.com/CDCgov/forecasttools/
 Depends:
     R (>= 2.10)
 LazyData: true
