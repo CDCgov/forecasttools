@@ -6,11 +6,26 @@
 quantile forecasts from a local copy of
 a hub.}
 \usage{
-hub_to_scorable_quantiles(hub_path, ...)
+hub_to_scorable_quantiles(
+  hub_path,
+  target_data_rel_path = NULL,
+  target_data_file_format = NULL,
+  ...
+)
 }
 \arguments{
 \item{hub_path}{Local path to hubverse-style
 forecast hub.}
+
+\item{target_data_rel_path}{Path to the target data
+file within the hub, relative to the Hub root.
+Passed to \code{\link[=gather_hub_target_data]{gather_hub_target_data()}}. Default \code{NULL}
+*use the \code{\link[=gather_hub_target_data]{gather_hub_target_data()}} default.)}
+
+\item{target_data_file_format}{File format for
+target data file. If \code{NULL}, will be inferred
+from \code{target_data_rel_path} (see \code{\link[=read_tabular_data]{read_tabular_data()}}.
+Default \code{NULL}.}
 
 \item{...}{keyword arguments passed to
 \code{\link[=quantile_table_to_scorable]{quantile_table_to_scorable()}}.}
