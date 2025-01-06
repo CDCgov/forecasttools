@@ -159,7 +159,8 @@ hub_to_scorable_quantiles <- function(hub_path,
                                       target_data_file_format = NULL,
                                       ...) {
   quantile_forecasts <- gather_hub_quantile_forecasts(hub_path)
-  target_data <- gather_hub_target_data(hub_path,
+  target_data <- gather_hub_target_data(
+    hub_path,
     target_data_rel_path =
       target_data_rel_path,
     file_format =

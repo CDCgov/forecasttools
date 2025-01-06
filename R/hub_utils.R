@@ -63,7 +63,7 @@ gather_hub_quantile_forecasts <- function(hub_path) {
 #' Gather location data from a forecast hub.
 #'
 #' @param hub_path Local path to forecast hub.
-#' @param location_file The path to the data file for
+#' @param location_file_rel_path The path to the data file for
 #' location data relative to forecast hub directory.
 #' Defaults to expected path in the FluSight forecast hub.
 #' @param file_format Format of the target data file to read.
@@ -74,13 +74,13 @@ gather_hub_quantile_forecasts <- function(hub_path) {
 #' @return Table of location data.
 #' @export
 gather_hub_location_data <- function(hub_path,
-                                     location_file =
+                                     location_file_rel_path =
                                        fs::path(
                                          "auxiliary-data",
                                          "locations.csv"
                                        ),
                                      file_format = NULL) {
-  location_data_path <- fs::path(hub_path, location_file)
+  location_data_path <- fs::path(hub_path, location_file_rel_path)
   if (fs::file_exists(location_data_path)) {
     location_data <- read_tabular_file(location_data_path,
       file_format = file_format
@@ -113,7 +113,7 @@ gather_hub_target_data <- function(hub_path,
                                      "target-hospital-admissions.csv"
                                    ),
                                    file_format = NULL) {
-  target_data_path <- fs::path(hub_path, local_datapath)
+  target_data_path <- fs::path(hub_path, target_data_rel_path)
   if (fs::file_exists(target_data_path)) {
     target_data <- read_tabular_file(target_data_path,
       file_format = file_format
