@@ -6,15 +6,22 @@
 \usage{
 gather_hub_location_data(
   hub_path,
-  location_file = fs::path("auxiliary-data", "locations.csv")
+  location_file_rel_path = fs::path("auxiliary-data", "locations.csv"),
+  file_format = NULL
 )
 }
 \arguments{
 \item{hub_path}{Local path to forecast hub.}
 
-\item{location_file}{The path to the data file for
+\item{location_file_rel_path}{The path to the data file for
 location data relative to forecast hub directory.
 Defaults to expected path in the FluSight forecast hub.}
+
+\item{file_format}{Format of the target data file to read.
+Passed to \code{\link[=read_tabular_file]{read_tabular_file()}}
+One of \code{"tsv"}, \code{"csv"}, \code{"parquet"}. If \code{NULL},
+will be inferred from the file extension. Default
+\code{NULL}.}
 }
 \value{
 Table of location data.

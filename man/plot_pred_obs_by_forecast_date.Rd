@@ -110,7 +110,7 @@ scoringutils::example_quantile |>
   ) |>
   plot_pred_obs_by_forecast_date(
     forecast_date_col = "forecast_date",
-    facet_columns = ""  # facet only by forecast date
+    facet_columns = "" # facet only by forecast date
   )
 
 }

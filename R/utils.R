@@ -137,3 +137,44 @@ soql_nullable_select <- function(soql_list, columns) {
     }
   )
 }
+
+
+#' Read a tabular file to a tibble, inferring
+#' format from the file extension if it is not
+#' specified.
+#'
+#' @param path_to_file Path to the file to read.
+#' @param file_format Format of the file to read.
+#' One of `"tsv"`, `"csv"`, `"parquet"`. If `NULL`,
+#' will be inferred from the file extension. Default
+#' `NULL`.
+#' @param ... Additional keyword arguments passed to the
+#' file reader function, which will be one of
+#' [readr::read_csv()], [readr::read_tsv()], and
+#' [arrow::read_parquet()], depending on the `file_format`.
+#' @return The result of reading in the file, as a
+#' [`tibble`][tibble::tibble()].
+#' @export
+read_tabular_file <- function(path_to_file,
+                              file_format = NULL,
+                              ...) {
+  if (is.null(file_format)) {
+    file_format <- fs::path_ext(path_to_file)
+  }
+
+  file_format <- tolower(file_format)
+
+  file_readers <- c(
+    "tsv" = readr::read_tsv,
+    "csv" = readr::read_csv,
+    "parquet" = arrow::read_parquet
+  )
+
+  checkmate::assert_names(file_format,
+    subset.of = names(file_readers)
+  )
+
+  file_reader <- file_readers[[file_format]]
+
+  return(file_reader(path_to_file, ...))
+}
