@@ -73,7 +73,8 @@ If \code{NULL}, facet by all the columns that make up the \code{scoringutils}
 "forecast unit", as determined by \code{\link[scoringutils:get_forecast_unit]{scoringutils::get_forecast_unit()}},
 except for \code{target_date_col} and \code{horizon}. This means that, by default,
 two distinct predictions for a given target date and horizon should
-not be visualized on the same facet.}
+not be visualized on the same facet. To facet \emph{only} by the forecast date
+column, pass that column name again, or pass \code{""}.}
 
 \item{x_label}{Label for the x axis in the plot. Default
 \code{"Date"}.}
@@ -102,12 +103,14 @@ intervals against observed data by forecast date.
 }
 \examples{
 scoringutils::example_quantile |>
-   dplyr::filter(
-     location == "IT",
-     target_type == "Cases",
-     model == "EuroCOVIDhub-ensemble"
-   ) |>
-plot_pred_obs_by_forecast_date(
-   forecast_date_col = "forecast_date")
+  dplyr::filter(
+    location == "IT",
+    target_type == "Cases",
+    model == "EuroCOVIDhub-ensemble"
+  ) |>
+  plot_pred_obs_by_forecast_date(
+    forecast_date_col = "forecast_date",
+    facet_columns = ""  # facet only by forecast date
+  )
 
 }

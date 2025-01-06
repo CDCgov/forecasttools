@@ -42,7 +42,8 @@
 #' "forecast unit", as determined by [scoringutils::get_forecast_unit()],
 #' except for `target_date_col` and `horizon`. This means that, by default,
 #' two distinct predictions for a given target date and horizon should
-#' not be visualized on the same facet.
+#' not be visualized on the same facet. To facet _only_ by the forecast date
+#' column, pass that column name again, or pass `""`.
 #' @param x_label Label for the x axis in the plot. Default
 #' `"Date"`.
 #' @param y_label Label for the y axis in the plot. Default
@@ -68,7 +69,8 @@
 #'     model == "EuroCOVIDhub-ensemble"
 #'   ) |>
 #'   plot_pred_obs_by_forecast_date(
-#'     forecast_date_col = "forecast_date"
+#'     forecast_date_col = "forecast_date",
+#'     facet_columns = "" # facet only by forecast date
 #'   )
 #'
 plot_pred_obs_by_forecast_date <- function(scorable_table,
@@ -123,7 +125,8 @@ plot_pred_obs_by_forecast_date <- function(scorable_table,
   )
 
 
-  facet_columns <- unique(c(forecast_date_col, facet_columns))
+  facet_columns <- unique(c(forecast_date_col, facet_columns)) |>
+    purrr::discard(~ .x == "")
 
   to_plot <- to_plot |>
     dplyr::mutate(
