@@ -34,7 +34,7 @@ First, we create a table of forecast predictions formatted to work with `scoring
 
 ```{r}
 hub_url <- "https://github.com/cdcepi/FluSight-forecast-hub"
-hub_path <- fs::path(tempdir(), "flusight-hub")
+hub_path <- fs::path(withr::local_tempdir(), "flusight-hub")
 download_hub(
   hub_url = hub_url,
   hub_path = hub_path,
