@@ -100,3 +100,14 @@ The plot, as a \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} object.
 Plot median predictions and prediction
 intervals against observed data by forecast date.
 }
+\examples{
+scoringutils::example_quantile |>
+   dplyr::filter(
+     location == "IT",
+     target_type == "Cases",
+     model == "EuroCOVIDhub-ensemble"
+   ) |>
+plot_pred_obs_by_forecast_date(
+   forecast_date_col = "forecast_date")
+
+}
