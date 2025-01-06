@@ -141,15 +141,30 @@ quantile_table_to_scorable <- function(hubverse_quantile_table,
 #'
 #' @param hub_path Local path to hubverse-style
 #' forecast hub.
+#' @param target_data_rel_path Path to the target data
+#' file within the hub, relative to the Hub root.
+#' Passed to [gather_hub_target_data()]. Default `NULL`
+#' *use the [gather_hub_target_data()] default.)
+#' @param target_data_file_format File format for
+#' target data file. If `NULL`, will be inferred
+#' from `target_data_rel_path` (see [read_tabular_data()].
+#' Default `NULL`.
 #' @param ... keyword arguments passed to
 #' [quantile_table_to_scorable()].
 #' @return Scorable table, as the output of
 #' [scoringutils::as_forecast_quantile()].
 #' @export
 hub_to_scorable_quantiles <- function(hub_path,
+                                      target_data_rel_path = NULL,
+                                      target_data_file_format = NULL,
                                       ...) {
   quantile_forecasts <- gather_hub_quantile_forecasts(hub_path)
-  target_data <- gather_hub_target_data(hub_path)
+  target_data <- gather_hub_target_data(hub_path,
+    target_data_rel_path =
+      target_data_rel_path,
+    file_format =
+      target_data_file_format
+  )
   scorable <- quantile_table_to_scorable(
     quantile_forecasts,
     target_data,

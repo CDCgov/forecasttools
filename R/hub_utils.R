@@ -66,7 +66,11 @@ gather_hub_quantile_forecasts <- function(hub_path) {
 #' @param location_file The path to the data file for
 #' location data relative to forecast hub directory.
 #' Defaults to expected path in the FluSight forecast hub.
-#'
+#' @param file_format Format of the target data file to read.
+#' Passed to [read_tabular_file()]
+#' One of `"tsv"`, `"csv"`, `"parquet"`. If `NULL`,
+#' will be inferred from the file extension. Default
+#' `NULL`.
 #' @return Table of location data.
 #' @export
 gather_hub_location_data <- function(hub_path,
@@ -74,37 +78,51 @@ gather_hub_location_data <- function(hub_path,
                                        fs::path(
                                          "auxiliary-data",
                                          "locations.csv"
-                                       )) {
+                                       ),
+                                     file_format = NULL) {
   location_data_path <- fs::path(hub_path, location_file)
-  if (location_data_path |> fs::file_exists()) {
-    location_data <- readr::read_csv(location_data_path)
+  if (fs::file_exists(location_data_path)) {
+    location_data <- read_tabular_file(location_data_path,
+      file_format = file_format
+    )
     return(location_data)
   } else {
     cfl <- location_data_path
-    cli::cli_alert_danger("Cannot find location data file at {.path {cfl}}.")
+    cli::cli_abort(
+      "Cannot find location data file at {.path {cfl}}."
+    )
   }
 }
 
 #' Gather target truth data from a forecast hub.
 #'
 #' @param hub_path Local path to hub.
-#' @param local_datapath The local path to the truth data file for
-#' relative to forecast hub directory.
-#' Defaults to expected path in the FluSight forecast hub.
-#'
-#' @return Table of target truth data
+#' @param target_data_rel_path The path to the target
+#' data file relative to forecast hub root directory.
+#' Defaults to the path in the FluSight Forecast Hub.
+#' @param file_format Format of the target data file to read.
+#' Passed to [read_tabular_file()]
+#' One of `"tsv"`, `"csv"`, `"parquet"`. If `NULL`,
+#' will be inferred from the file extension. Default
+#' `NULL`.
+#' @return Table of target data
 #' @export
 gather_hub_target_data <- function(hub_path,
-                                   local_datapath = fs::path(
+                                   target_data_rel_path = fs::path(
                                      "target-data",
                                      "target-hospital-admissions.csv"
-                                   )) {
-  truth_data_path <- fs::path(hub_path, local_datapath)
-  if (truth_data_path |> fs::file_exists()) {
-    target_data <- readr::read_csv(truth_data_path)
+                                   ),
+                                   file_format = NULL) {
+  target_data_path <- fs::path(hub_path, local_datapath)
+  if (fs::file_exists(target_data_path)) {
+    target_data <- read_tabular_file(target_data_path,
+      file_format = file_format
+    )
     return(target_data)
   } else {
-    cfl <- truth_data_path
-    cli::cli_alert_danger("Cannot find truth data file at {.path {cfl}}.")
+    cfl <- target_data_path
+    cli::cli_abort(
+      "Cannot find target data file at {.path {target_data_path}}."
+    )
   }
 }
