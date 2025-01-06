@@ -81,17 +81,18 @@ gather_hub_location_data <- function(hub_path,
                                        ),
                                      file_format = NULL) {
   location_data_path <- fs::path(hub_path, location_file_rel_path)
-  if (fs::file_exists(location_data_path)) {
-    location_data <- read_tabular_file(location_data_path,
-      file_format = file_format
-    )
-    return(location_data)
-  } else {
+  if (!fs::file_exists(location_data_path)) {
     cfl <- location_data_path
     cli::cli_abort(
       "Cannot find location data file at {.path {cfl}}."
     )
   }
+
+  location_data <- read_tabular_file(location_data_path,
+    file_format = file_format
+  )
+
+  return(location_data)
 }
 
 #' Gather target truth data from a forecast hub.
@@ -114,15 +115,15 @@ gather_hub_target_data <- function(hub_path,
                                    ),
                                    file_format = NULL) {
   target_data_path <- fs::path(hub_path, target_data_rel_path)
-  if (fs::file_exists(target_data_path)) {
-    target_data <- read_tabular_file(target_data_path,
-      file_format = file_format
-    )
-    return(target_data)
-  } else {
+  if (!fs::file_exists(target_data_path)) {
     cfl <- target_data_path
     cli::cli_abort(
       "Cannot find target data file at {.path {target_data_path}}."
     )
   }
+
+  target_data <- read_tabular_file(target_data_path,
+    file_format = file_format
+  )
+  return(target_data)
 }
