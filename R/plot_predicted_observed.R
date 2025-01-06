@@ -58,6 +58,19 @@
 #' `scorable_table`. Passed as the `digits` argument to
 #' [base::round()]. Default 10.
 #' @return The plot, as a [ggplot2::ggplot()] object.
+#' @export
+#'
+#' @examples
+#' scoringutils::example_quantile |>
+#'   dplyr::filter(
+#'     location == "IT",
+#'     target_type == "Cases",
+#'     model == "EuroCOVIDhub-ensemble"
+#'   ) |>
+#'   plot_pred_obs_by_forecast_date(
+#'     forecast_date_col = "forecast_date"
+#'   )
+#'
 plot_pred_obs_by_forecast_date <- function(scorable_table,
                                            horizons = NULL,
                                            prediction_interval_width = 0.95,
