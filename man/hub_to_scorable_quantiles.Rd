@@ -8,7 +8,7 @@ a hub.}
 \usage{
 hub_to_scorable_quantiles(
   hub_path,
-  target_data_rel_path = NULL,
+  target_data_rel_path = fs::path("target-data", "target-hospital-admissions.csv"),
   target_data_file_format = NULL,
   ...
 )
@@ -19,8 +19,8 @@ forecast hub.}
 
 \item{target_data_rel_path}{Path to the target data
 file within the hub, relative to the Hub root.
-Passed to \code{\link[=gather_hub_target_data]{gather_hub_target_data()}}. Default \code{NULL}
-*use the \code{\link[=gather_hub_target_data]{gather_hub_target_data()}} default.)}
+Defaults to the path in the FluSight Forecast Hub.
+Passed to \code{\link[=gather_hub_target_data]{gather_hub_target_data()}}.}
 
 \item{target_data_file_format}{File format for
 target data file. If \code{NULL}, will be inferred
