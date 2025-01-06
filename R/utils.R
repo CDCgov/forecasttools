@@ -178,3 +178,33 @@ read_tabular_file <- function(path_to_file,
 
   return(file_reader(path_to_file, ...))
 }
+
+
+#' Get the quantile bounds of a central probability
+#' interval.
+#'
+#' @param interval_width width of the interval.
+#' A number between 0 and 1, inclusive.
+#' @param round_to round the bounds of the interval
+#' to this many decimal places. Passed to [base::round()].
+#' Default `10`.
+#' @return The interval bounds, as a numeric vector of length 2.
+#' @export
+#'
+#' @examples
+#'
+#' central_interval_bounds(0.95)
+#'
+#' central_interval_bounds(0.5)
+#'
+central_interval_bounds <- function(interval_width,
+                                    round_to = 10) {
+  checkmate::assert_double(interval_width,
+    lower = 0,
+    upper = 1
+  )
+  lower <- (1 - prediction_interval_width) / 2
+  upper <- 1 - lower
+
+  return(round(c(lower, upper), digits = round_to))
+}

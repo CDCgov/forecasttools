@@ -114,10 +114,14 @@ plot_pred_obs_by_forecast_date <- function(scorable_table,
   to_plot <- tibble::as_tibble(scorable_table)
 
   ## compute needed predictive quantiles
-  lower_ci <- (1 - prediction_interval_width) / 2
-  upper_ci <- 1 - lower_ci
-  quantiles_to_plot <- c(lower_ci, 0.5, upper_ci) |>
-    round(digits = quantile_tol)
+
+  quantiles_to_plot <- c(
+    0.5,
+    central_interval_bounds(
+      prediction_interval_width,
+      round_to = quantile_tol
+    )
+  )
 
   checkmate::assert_subset(quantiles_to_plot,
     scorable_table$quantile_level,
