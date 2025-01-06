@@ -147,7 +147,7 @@ quantile_table_to_scorable <- function(hubverse_quantile_table,
 #' *use the [gather_hub_target_data()] default.)
 #' @param target_data_file_format File format for
 #' target data file. If `NULL`, will be inferred
-#' from `target_data_rel_path` (see [read_tabular_data()].
+#' from `target_data_rel_path` (see [read_tabular_file()].
 #' Default `NULL`.
 #' @param ... keyword arguments passed to
 #' [quantile_table_to_scorable()].

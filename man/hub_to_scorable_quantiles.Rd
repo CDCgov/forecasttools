@@ -24,7 +24,7 @@ Passed to \code{\link[=gather_hub_target_data]{gather_hub_target_data()}}. Defau
 
 \item{target_data_file_format}{File format for
 target data file. If \code{NULL}, will be inferred
-from \code{target_data_rel_path} (see \code{\link[=read_tabular_data]{read_tabular_data()}}.
+from \code{target_data_rel_path} (see \code{\link[=read_tabular_file]{read_tabular_file()}}.
 Default \code{NULL}.}
 
 \item{...}{keyword arguments passed to
