@@ -70,7 +70,7 @@
 #'   ) |>
 #'   plot_pred_obs_by_forecast_date(
 #'     forecast_date_col = "forecast_date",
-#'     facet_columns = "" # facet only by forecast_date
+#'     facet_columns = ""
 #'   )
 #'
 plot_pred_obs_by_forecast_date <- function(scorable_table,
