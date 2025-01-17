@@ -14,6 +14,9 @@ Authors@R:
     person("Subekshya", "Bidari",
     email = "zib2@cdc.gov",
     role = "ctb"),
+    person("Adam", "Howes",
+    email = "xwg3@cdc.gov",
+    role = "ctb"),
     person("Kaitlyn", "Johnson",
     email = "uox1@cdc.gov",
     role = "ctb"))
