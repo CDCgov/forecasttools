@@ -19,10 +19,18 @@
 #' @param id_cols name(s) of the column(s)
 #' that uniquely identify a single timeseries
 #' (e.g. a single location timeseries or a single
-#' posterior trajectory). Default `".draw"` (as the output of
-#' [tidybayes::spread_draws()]).
+#' posterior trajectory). Default `".draw"`
+#' (as the output of [tidybayes::spread_draws()]).
 #' @param weekly_value_name name to use for the output coluqmn
 #' containing weekly trajectory values. Default `"weekly_value"`.
+#' @param with_epiweek_start_date Annotate the result with a column giving the
+#' epiweek start date? Boolean, default `FALSE`.
+#' @param with_epiweek_end_date Annotate the result with a column giving the
+#' epiweek end date? Boolean, default `FALSE`.
+#' @param epiweek_start_date_name Name to use for the column reporting the
+#' epiweek start date. Default `"epiweek_start_date"`.
+#' @param epiweek_end_date_name Name to use for the column reporting the
+#' epiweek end date. Default `"epiweek_end_date"`.
 #' @param strict Boolean. If `TRUE` only aggregate an epiweek
 #' if all seven days are represented in the trajectory.
 #' If `FALSE`, allow partial weeks. Default `TRUE`.
@@ -33,6 +41,10 @@ daily_to_epiweekly <- function(tidy_daily_trajectories,
                                date_col = "date",
                                id_cols = ".draw",
                                weekly_value_name = "weekly_value",
+                               with_epiweek_start_date = FALSE,
+                               with_epiweek_end_date = FALSE,
+                               epiweek_start_date_name = "epiweek_start_date",
+                               epiweek_end_date_name = "epiweek_end_date",
                                strict = TRUE) {
   if (!(value_col %in% names(tidy_daily_trajectories))) {
     cli::cli_abort(
@@ -106,6 +118,21 @@ daily_to_epiweekly <- function(tidy_daily_trajectories,
       !!weekly_value_name := sum(.data[[!!value_col]])
     ) |>
     dplyr::ungroup()
+
+  if (with_epiweek_start_date) {
+    df <- df |> with_epidate(
+      epidate_name = epiweek_start_date_name,
+      epiweek_standard = "USA"
+    )
+  }
+  if (with_epiweek_end_date) {
+    df <- df |> with_epidate(
+      epidate_name = epiweek_end_date_name,
+      day_of_week = 7,
+      epiweek_standard = "USA"
+    )
+  }
+
 
   return(df)
 }

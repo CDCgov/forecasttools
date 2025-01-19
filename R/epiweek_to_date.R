@@ -170,3 +170,40 @@ epiweek_to_date <- function(epiweek,
 
   return(candidates)
 }
+
+#' Annotate a dataframe with epiweek and epiyear
+#' columns with an epidate column.
+#'
+#' @param df data frame to annotate.
+#' @param epiweek_col Name of the column containing epiweek values.
+#' Default `"epiweek"`.
+#' @param epiyear_col Name of the column containing epiyear values.
+#' Default `"epiyear"`.
+#' @param epidate_name Name for the output column containing the
+#' associated "epidates". Default `"epidate"`.
+#' @param day_of_week Which day of the epidemiological week to use
+#' for the epidate. 1-indexed. Passed to [epiweek_to_date()].
+#' Default 1 (start date of the epiweek).
+#' @param epiweek_standard Which epiweek standard to use. Passed
+#' to [epiweek_to_date()]. Default `"USA"`.
+#' @param validate Validate the result by
+#' passing it back to [lubridate::epiweek()]
+#' and [lubridate::epiyear()]? Boolean,
+#' default `TRUE`. Passed to [epiweek_to_date()].
+#' @return The data frame annotated with the epidate column.
+#' @export
+with_epidate <- function(df,
+                         epiweek_col = "epiweek",
+                         epiyear_col = "epiyear",
+                         epidate_name = "epidate",
+                         day_of_week = 1,
+                         epiweek_standard = "USA",
+                         validate = TRUE) {
+  return(df |> dplyr::mutate(!!epidate_name := epiweek_to_date(
+    .data[[epiweek_col]],
+    .data[[epiyear_col]],
+    day_of_week = day_of_week,
+    epiweek_standard = epiweek_standard,
+    validate = validate
+  )))
+}
