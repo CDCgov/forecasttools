@@ -86,3 +86,55 @@ test_that(paste0(
     )
   )
 })
+
+some_epiweeks <- tidyr::crossing(
+  epiweek = 1:52,
+  epiyear = 1800:2200
+)
+
+test_that(
+  paste0(
+    "with_epidate() behaves identically to manual use of ",
+    "epiweek_to_date() in dplyr::mutate()"
+  ),
+  {
+    result <- some_epiweeks |> with_epidate()
+    expected <- some_epiweeks |>
+      dplyr::mutate(
+        epidate = epiweek_to_date(
+          .data$epiweek,
+          .data$epiyear,
+          day_of_week = 1,
+          epiweek_standard = "USA"
+        )
+      )
+    expect_equal(result, expected)
+
+    result <- some_epiweeks |> with_epidate(day_of_week = 5)
+    expected <- some_epiweeks |>
+      dplyr::mutate(
+        epidate = epiweek_to_date(
+          .data$epiweek,
+          .data$epiyear,
+          day_of_week = 5,
+          epiweek_standard = "USA"
+        )
+      )
+    expect_equal(result, expected)
+
+    result <- some_epiweeks |> with_epidate(
+      day_of_week = 7,
+      epidate_name = "epiweek_end_date"
+    )
+    expected <- some_epiweeks |>
+      dplyr::mutate(
+        epiweek_end_date = epiweek_to_date(
+          .data$epiweek,
+          .data$epiyear,
+          day_of_week = 7,
+          epiweek_standard = "USA"
+        )
+      )
+    expect_equal(result, expected)
+  }
+)

@@ -10,6 +10,10 @@ daily_to_epiweekly(
   date_col = "date",
   id_cols = ".draw",
   weekly_value_name = "weekly_value",
+  with_epiweek_start_date = FALSE,
+  with_epiweek_end_date = FALSE,
+  epiweek_start_date_name = "epiweek_start_date",
+  epiweek_end_date_name = "epiweek_end_date",
   strict = TRUE
 )
 }
@@ -27,11 +31,23 @@ Default \code{"date"}.}
 \item{id_cols}{name(s) of the column(s)
 that uniquely identify a single timeseries
 (e.g. a single location timeseries or a single
-posterior trajectory). Default \code{".draw"} (as the output of
-\code{\link[tidybayes:spread_draws]{tidybayes::spread_draws()}}).}
+posterior trajectory). Default \code{".draw"}
+(as the output of \code{\link[tidybayes:spread_draws]{tidybayes::spread_draws()}}).}
 
 \item{weekly_value_name}{name to use for the output coluqmn
 containing weekly trajectory values. Default \code{"weekly_value"}.}
+
+\item{with_epiweek_start_date}{Annotate the result with a column giving the
+epiweek start date? Boolean, default \code{FALSE}.}
+
+\item{with_epiweek_end_date}{Annotate the result with a column giving the
+epiweek end date? Boolean, default \code{FALSE}.}
+
+\item{epiweek_start_date_name}{Name to use for the column reporting the
+epiweek start date. Default \code{"epiweek_start_date"}.}
+
+\item{epiweek_end_date_name}{Name to use for the column reporting the
+epiweek end date. Default \code{"epiweek_end_date"}.}
 
 \item{strict}{Boolean. If \code{TRUE} only aggregate an epiweek
 if all seven days are represented in the trajectory.

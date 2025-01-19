@@ -1,8 +1,14 @@
 dat <- forecasttools::example_daily_forecast_flu
 
+mini_dat <- dat |>
+  dplyr::filter(
+    .data$date <= lubridate::ymd("2023-10-28"),
+    .data$location %in% c("NM", "SD")
+  )
+
 test_that(
   paste0(
-    "daily_to_epiweekly works identically to a ",
+    "daily_to_epiweekly works identically to a manual approach",
     "on the example data (unit test based on the ",
     "example in the hubverse formatting vignette)."
   ),
@@ -89,5 +95,89 @@ test_that(paste0(
       weekly_value_name = "weekly_hosp"
     ),
     regexp = "repeated values"
+  )
+})
+
+test_that(paste0(
+  "daily_to_epiweekly() optionally annotates ",
+  "results with epiweek start and/or end dates"
+), {
+  result <- daily_to_epiweekly(
+    mini_dat,
+    value_col = "hosp",
+    id_cols = c(".draw", "location"),
+    weekly_value_name = "weekly_hosp",
+    with_epiweek_start_date = FALSE,
+    with_epiweek_end_date = FALSE
+  )
+  expect_gt(nrow(result), 1)
+  checkmate::expect_names(names(result),
+    disjunct.from = c("epiweek_start_date", "epiweek_end_date")
+  )
+
+  result <- daily_to_epiweekly(
+    mini_dat,
+    value_col = "hosp",
+    id_cols = c(".draw", "location"),
+    weekly_value_name = "weekly_hosp",
+    with_epiweek_start_date = TRUE,
+    with_epiweek_end_date = TRUE
+  )
+  expect_gt(nrow(result), 1)
+
+  checkmate::expect_names(names(result),
+    must.include = c("epiweek_start_date", "epiweek_end_date")
+  )
+  expect_equal(
+    lubridate::wday(result$epiweek_start_date, week_start = 7),
+    rep(1, length(result$epiweek_start_date))
+  )
+  expect_equal(
+    lubridate::wday(result$epiweek_end_date, week_start = 7),
+    rep(7, length(result$epiweek_start_date))
+  )
+
+  result <- daily_to_epiweekly(
+    mini_dat,
+    value_col = "hosp",
+    id_cols = c(".draw", "location"),
+    weekly_value_name = "weekly_hosp",
+    with_epiweek_start_date = FALSE,
+    with_epiweek_end_date = TRUE
+  )
+  expect_gt(nrow(result), 1)
+  checkmate::expect_names(names(result),
+    must.include = "epiweek_end_date",
+    disjunct.from = "epiweek_start_date"
+  )
+  result <- daily_to_epiweekly(
+    mini_dat,
+    value_col = "hosp",
+    id_cols = c(".draw", "location"),
+    weekly_value_name = "weekly_hosp",
+    with_epiweek_start_date = TRUE,
+    with_epiweek_end_date = FALSE,
+  )
+  expect_gt(nrow(result), 1)
+  checkmate::expect_names(names(result),
+    must.include = "epiweek_start_date",
+    disjunct.from = "epiweek_end_date"
+  )
+
+  ## names should be configurable
+  result <- daily_to_epiweekly(
+    mini_dat,
+    value_col = "hosp",
+    id_cols = c(".draw", "location"),
+    weekly_value_name = "weekly_hosp",
+    with_epiweek_start_date = TRUE,
+    with_epiweek_end_date = TRUE,
+    epiweek_end_date_name = "enddate",
+    epiweek_start_date_name = "startdate"
+  )
+  expect_gt(nrow(result), 1)
+  checkmate::expect_names(names(result),
+    must.include = c("startdate", "enddate"),
+    disjunct.from = c("epiweek_start_date", "epiweek_end_date")
   )
 })
