@@ -46,7 +46,9 @@ trajectories_to_quantiles <- function(trajectories,
                                       id_cols = NULL) {
   grouped_df <- trajectories |>
     dplyr::rename(value_col = !!value_col) |>
-    dplyr::group_by(.data[[c(timepoint_cols, id_cols)]])
+    dplyr::group_by(
+      dplyr::across(dplyr::all_of(c(timepoint_cols, id_cols)))
+    )
 
   quant_df <- grouped_df |>
     dplyr::reframe(
