@@ -145,10 +145,6 @@ quantile_table_to_scorable <- function(hubverse_quantile_table,
 #' file within the hub, relative to the Hub root.
 #' Defaults to the path in the FluSight Forecast Hub.
 #' Passed to [gather_hub_target_data()].
-#' @param target_data_file_format File format for
-#' target data file. If `NULL`, will be inferred
-#' from `target_data_rel_path` (see [read_tabular_file()].
-#' Default `NULL`.
 #' @param ... keyword arguments passed to
 #' [quantile_table_to_scorable()].
 #' @return Scorable table, as the output of
@@ -160,15 +156,12 @@ hub_to_scorable_quantiles <-
              "target-data",
              "target-hospital-admissions.csv"
            ),
-           target_data_file_format = NULL,
            ...) {
     quantile_forecasts <- gather_hub_quantile_forecasts(hub_path)
     target_data <- gather_hub_target_data(
       hub_path,
       target_data_rel_path =
-        target_data_rel_path,
-      file_format =
-        target_data_file_format
+        target_data_rel_path
     )
     scorable <- quantile_table_to_scorable(
       quantile_forecasts,

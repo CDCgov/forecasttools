@@ -6,8 +6,7 @@
 \usage{
 gather_hub_target_data(
   hub_path,
-  target_data_rel_path = fs::path("target-data", "target-hospital-admissions.csv"),
-  file_format = NULL
+  target_data_rel_path = fs::path("target-data", "target-hospital-admissions.csv")
 )
 }
 \arguments{
@@ -16,12 +15,6 @@ gather_hub_target_data(
 \item{target_data_rel_path}{The path to the target
 data file relative to forecast hub root directory.
 Defaults to the path in the FluSight Forecast Hub.}
-
-\item{file_format}{Format of the target data file to read.
-Passed to \code{\link[=read_tabular_file]{read_tabular_file()}}
-One of \code{"tsv"}, \code{"csv"}, \code{"parquet"}. If \code{NULL},
-will be inferred from the file extension. Default
-\code{NULL}.}
 }
 \value{
 Table of target data

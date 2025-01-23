@@ -3,21 +3,15 @@
 \name{read_tabular_file}
 \alias{read_tabular_file}
 \alias{write_tabular_file}
-\title{Read from or write to tabular files, inferring
-format from the file extension if it is not
-specified.}
+\title{Read from or write to tabular files, with
+file format inferred from the file extension.}
 \usage{
-read_tabular_file(path_to_file, file_format = NULL, ...)
+read_tabular_file(path_to_file, ...)
 
-write_tabular_file(table, path_to_file, file_format = NULL, ...)
+write_tabular_file(table, path_to_file, ...)
 }
 \arguments{
 \item{path_to_file}{Path to the file to read/write.}
-
-\item{file_format}{Format of the file to read.
-One of \code{"tsv"}, \code{"csv"}, \code{"parquet"}. If \code{NULL},
-will be inferred from the file extension. Default
-\code{NULL}.}
 
 \item{...}{Additional keyword arguments passed to the
 file reader/writer function, which will be one of
@@ -36,7 +30,6 @@ Nothing, saving the table as a side
 effect.
 }
 \description{
-Read from or write to tabular files, inferring
-format from the file extension if it is not
-specified.
+Write a table to a tabular file, with
+format inferred from the file extension.
 }

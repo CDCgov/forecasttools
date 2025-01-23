@@ -101,19 +101,13 @@ gather_hub_location_data <- function(hub_path,
 #' @param target_data_rel_path The path to the target
 #' data file relative to forecast hub root directory.
 #' Defaults to the path in the FluSight Forecast Hub.
-#' @param file_format Format of the target data file to read.
-#' Passed to [read_tabular_file()]
-#' One of `"tsv"`, `"csv"`, `"parquet"`. If `NULL`,
-#' will be inferred from the file extension. Default
-#' `NULL`.
 #' @return Table of target data
 #' @export
 gather_hub_target_data <- function(hub_path,
                                    target_data_rel_path = fs::path(
                                      "target-data",
                                      "target-hospital-admissions.csv"
-                                   ),
-                                   file_format = NULL) {
+                                   )) {
   target_data_path <- fs::path(hub_path, target_data_rel_path)
   if (!fs::file_exists(target_data_path)) {
     cfl <- target_data_path
@@ -122,8 +116,6 @@ gather_hub_target_data <- function(hub_path,
     )
   }
 
-  target_data <- read_tabular_file(target_data_path,
-    file_format = file_format
-  )
+  target_data <- read_tabular_file(target_data_path)
   return(target_data)
 }
