@@ -116,23 +116,23 @@ get_hubverse_table <- function(quantile_forecasts,
       )
     ) |>
     dplyr::select(
-      reference_date,
-      target,
-      horizon,
-      target_end_date,
-      location,
-      output_type,
-      output_type_id,
-      value
+      "reference_date",
+      "target",
+      "horizon",
+      "target_end_date",
+      "location",
+      "output_type",
+      "output_type_id",
+      "value"
     ) |>
     dplyr::arrange(
-      location,
-      reference_date,
-      target,
-      horizon,
-      target_end_date,
-      output_type,
-      output_type_id
+      .data$location,
+      .data$reference_date,
+      .data$target,
+      .data$horizon,
+      .data$target_end_date,
+      .data$output_type,
+      .data$output_type_id
     )
   return(output_table)
 }
