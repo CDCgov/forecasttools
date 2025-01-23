@@ -37,7 +37,7 @@
 nullable_comparison <- function(a,
                                 comparison_operator,
                                 b) {
-  comparison_func <- getFunction(comparison_operator)
+  comparison_func <- methods::getFunction(comparison_operator)
   return(
     if (!is.null(b)) {
       comparison_func(a, b)
