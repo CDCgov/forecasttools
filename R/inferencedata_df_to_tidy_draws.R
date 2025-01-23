@@ -72,7 +72,7 @@ inferencedata_to_tidy_draws <- function(idata) {
         .data$.chain,
         .data$.iteration
       ),
-      .after = .data$.iteration
+      .after = ".iteration"
     ) |>
     tidyr::pivot_longer(-tidyselect::starts_with("."),
       names_sep = "\\|",
@@ -82,7 +82,7 @@ inferencedata_to_tidy_draws <- function(idata) {
     tidyr::nest() |>
     dplyr::mutate(data = purrr::map(.data$data, \(x) {
       tidyr::drop_na(x) |>
-        tidyr::pivot_wider(names_from = .data$name) |>
+        tidyr::pivot_wider(names_from = "name") |>
         tidybayes::tidy_draws()
     }))
 }
