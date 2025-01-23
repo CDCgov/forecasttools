@@ -81,8 +81,8 @@ daily_to_epiweekly <- function(tidy_daily_trajectories,
       epiyear = lubridate::epiyear(.data[[!!date_col]])
     ) |>
     dplyr::group_by(
-      epiweek,
-      epiyear,
+      .data$epiweek,
+      .data$epiyear,
       dplyr::across(tidyselect::all_of(!!id_cols))
     )
 
