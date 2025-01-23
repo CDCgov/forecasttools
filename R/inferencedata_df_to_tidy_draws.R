@@ -74,7 +74,7 @@ inferencedata_to_tidy_draws <- function(idata) {
       ),
       .after = .data$.iteration
     ) |>
-    tidyr::pivot_longer(-starts_with("."),
+    tidyr::pivot_longer(-tidyselect::starts_with("."),
       names_sep = "\\|",
       names_to = c("group", "name")
     ) |>
