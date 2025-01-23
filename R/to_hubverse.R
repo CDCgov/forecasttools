@@ -15,10 +15,10 @@ target_end_dates_from_horizons <- function(reference_date,
   return(tibble::tibble(
     reference_date = reference_date,
     horizon = horizons,
-    target_end_date = lubridate::ymd(reference_date) +
+    target_end_date = lubridate::ymd(.data$reference_date) +
       lubridate::weeks(horizons),
-    epiweek = lubridate::epiweek((target_end_date)),
-    epiyear = lubridate::epiyear((target_end_date))
+    epiweek = lubridate::epiweek((.data$target_end_date)),
+    epiyear = lubridate::epiyear((.data$target_end_date))
   ))
 }
 
