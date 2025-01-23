@@ -103,7 +103,7 @@ get_hubverse_table <- function(quantile_forecasts,
       epiyear = {{ epiyear_col }},
       quantile_level = {{ quantile_level_col }}
     ) |>
-    dplyr::filter(!(location %in% !!excluded_locations))
+    dplyr::filter(!(.data$location %in% !!excluded_locations))
 
   output_table <- dplyr::inner_join(targets,
     quants,
@@ -111,7 +111,7 @@ get_hubverse_table <- function(quantile_forecasts,
   ) |>
     dplyr::mutate(
       output_type = "quantile",
-      output_type_id = round(quantile_level,
+      output_type_id = round(.data$quantile_level,
         digits = 4
       )
     ) |>
