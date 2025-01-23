@@ -1,4 +1,4 @@
-yformat_split_text <- function(x, concat_char = "|") {
+format_split_text <- function(x, concat_char = "|") {
   group <- x[1]
   non_group <- x[-1]
   pre_bracket <- stringr::str_extract(non_group[1], "^.*(?=\\[)")
