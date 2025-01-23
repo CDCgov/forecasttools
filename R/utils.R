@@ -139,28 +139,22 @@ soql_nullable_select <- function(soql_list, columns) {
 }
 
 
-#' Read a tabular file to a tibble, inferring
-#' format from the file extension if it is not
-#' specified.
+#' Read from or write to tabular files, with
+#' file format inferred from the file extension.
 #'
-#' @param path_to_file Path to the file to read.
-#' @param file_format Format of the file to read.
-#' One of `"tsv"`, `"csv"`, `"parquet"`. If `NULL`,
-#' will be inferred from the file extension. Default
-#' `NULL`.
+#' @param path_to_file Path to the file to read/write.
 #' @param ... Additional keyword arguments passed to the
-#' file reader function, which will be one of
-#' [readr::read_csv()], [readr::read_tsv()], and
-#' [arrow::read_parquet()], depending on the `file_format`.
+#' file reader/writer function, which will be one of
+#' [readr::read_csv()] / [readr::write_csv()],
+#' [readr::read_tsv()] / [readr::write_tsv()], and
+#' [arrow::read_parquet()] / [arrow::write_parquet()],
+#' depending on the `file_format`.
 #' @return The result of reading in the file, as a
 #' [`tibble`][tibble::tibble()].
 #' @export
 read_tabular_file <- function(path_to_file,
-                              file_format = NULL,
                               ...) {
-  if (is.null(file_format)) {
-    file_format <- fs::path_ext(path_to_file)
-  }
+  file_format <- fs::path_ext(path_to_file)
 
   file_format <- tolower(file_format)
 
@@ -177,4 +171,33 @@ read_tabular_file <- function(path_to_file,
   file_reader <- file_readers[[file_format]]
 
   return(file_reader(path_to_file, ...))
+}
+
+#' @rdname read_tabular_file
+#'
+#' @description Write a table to a tabular file, with
+#' format inferred from the file extension.
+#'
+#' @param table Table to save, passed to the writer function.
+#' @return Nothing, saving the table as a side
+#' effect.
+#' @export
+write_tabular_file <- function(table,
+                               path_to_file,
+                               ...) {
+  file_format <- fs::path_ext(path_to_file)
+
+  file_writers <- c(
+    "tsv" = readr::write_tsv,
+    "csv" = readr::write_csv,
+    "parquet" = arrow::write_parquet
+  )
+
+  checkmate::assert_names(file_format,
+    subset.of = names(file_writers)
+  )
+
+  file_writer <- file_writers[[file_format]]
+
+  file_writer(table, path_to_file, ...)
 }

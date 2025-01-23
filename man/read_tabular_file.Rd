@@ -2,31 +2,34 @@
 % Please edit documentation in R/utils.R
 \name{read_tabular_file}
 \alias{read_tabular_file}
-\title{Read a tabular file to a tibble, inferring
-format from the file extension if it is not
-specified.}
+\alias{write_tabular_file}
+\title{Read from or write to tabular files, with
+file format inferred from the file extension.}
 \usage{
-read_tabular_file(path_to_file, file_format = NULL, ...)
+read_tabular_file(path_to_file, ...)
+
+write_tabular_file(table, path_to_file, ...)
 }
 \arguments{
-\item{path_to_file}{Path to the file to read.}
-
-\item{file_format}{Format of the file to read.
-One of \code{"tsv"}, \code{"csv"}, \code{"parquet"}. If \code{NULL},
-will be inferred from the file extension. Default
-\code{NULL}.}
+\item{path_to_file}{Path to the file to read/write.}
 
 \item{...}{Additional keyword arguments passed to the
-file reader function, which will be one of
-\code{\link[readr:read_delim]{readr::read_csv()}}, \code{\link[readr:read_delim]{readr::read_tsv()}}, and
-\code{\link[arrow:read_parquet]{arrow::read_parquet()}}, depending on the \code{file_format}.}
+file reader/writer function, which will be one of
+\code{\link[readr:read_delim]{readr::read_csv()}} / \code{\link[readr:write_delim]{readr::write_csv()}},
+\code{\link[readr:read_delim]{readr::read_tsv()}} / \code{\link[readr:write_delim]{readr::write_tsv()}}, and
+\code{\link[arrow:read_parquet]{arrow::read_parquet()}} / \code{\link[arrow:write_parquet]{arrow::write_parquet()}},
+depending on the \code{file_format}.}
+
+\item{table}{Table to save, passed to the writer function.}
 }
 \value{
 The result of reading in the file, as a
 \code{\link[tibble:tibble]{tibble}}.
+
+Nothing, saving the table as a side
+effect.
 }
 \description{
-Read a tabular file to a tibble, inferring
-format from the file extension if it is not
-specified.
+Write a table to a tabular file, with
+format inferred from the file extension.
 }
