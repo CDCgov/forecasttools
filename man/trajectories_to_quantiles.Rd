@@ -17,15 +17,15 @@ trajectories_to_quantiles(
 )
 }
 \arguments{
-\item{trajectories}{tidy data frame or tibble
+\item{trajectories}{Tidy data frame or tibble
 of trajectories}
 
-\item{quantiles}{quantiles to output for each
+\item{quantiles}{Quantiles to output for each
 timepoint (default the FluSight/COVIDHub 2024-25 quantiles:
 \code{c(0.01, 0.025, 1:19/20, 0.975, 0.99)}}
 
-\item{timepoint_cols}{name of the column(s) in\code{trajectories}
-that identifies unique timepoints. Default \code{timepoint}.}
+\item{timepoint_cols}{Name(s) of the column(s) in\code{trajectories}
+that identifies unique timepoints. Default \code{"timepoint"}.}
 
 \item{value_col}{name of the column in \code{trajectories}
 with the trajectory values (for which we wish to

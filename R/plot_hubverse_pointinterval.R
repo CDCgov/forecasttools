@@ -62,9 +62,9 @@ plot_hubverse_pointintervals <- function(hubverse_table,
     dplyr::pull("location")
 
   pivoted <- pivoted |>
-    dplyr::mutate("location" = factor(
-      location,
-      levels = loc_levels,
+    dplyr::mutate(location = factor(
+      .data$location,
+      levels = !!loc_levels,
       ordered = TRUE
     ))
 

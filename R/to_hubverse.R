@@ -15,10 +15,10 @@ target_end_dates_from_horizons <- function(reference_date,
   return(tibble::tibble(
     reference_date = reference_date,
     horizon = horizons,
-    target_end_date = lubridate::ymd(reference_date) +
+    target_end_date = lubridate::ymd(.data$reference_date) +
       lubridate::weeks(horizons),
-    epiweek = lubridate::epiweek((target_end_date)),
-    epiyear = lubridate::epiyear((target_end_date))
+    epiweek = lubridate::epiweek((.data$target_end_date)),
+    epiyear = lubridate::epiyear((.data$target_end_date))
   ))
 }
 
@@ -103,7 +103,7 @@ get_hubverse_table <- function(quantile_forecasts,
       epiyear = {{ epiyear_col }},
       quantile_level = {{ quantile_level_col }}
     ) |>
-    dplyr::filter(!(location %in% !!excluded_locations))
+    dplyr::filter(!(.data$location %in% !!excluded_locations))
 
   output_table <- dplyr::inner_join(targets,
     quants,
@@ -111,28 +111,28 @@ get_hubverse_table <- function(quantile_forecasts,
   ) |>
     dplyr::mutate(
       output_type = "quantile",
-      output_type_id = round(quantile_level,
+      output_type_id = round(.data$quantile_level,
         digits = 4
       )
     ) |>
     dplyr::select(
-      reference_date,
-      target,
-      horizon,
-      target_end_date,
-      location,
-      output_type,
-      output_type_id,
-      value
+      "reference_date",
+      "target",
+      "horizon",
+      "target_end_date",
+      "location",
+      "output_type",
+      "output_type_id",
+      "value"
     ) |>
     dplyr::arrange(
-      location,
-      reference_date,
-      target,
-      horizon,
-      target_end_date,
-      output_type,
-      output_type_id
+      .data$location,
+      .data$reference_date,
+      .data$target,
+      .data$horizon,
+      .data$target_end_date,
+      .data$output_type,
+      .data$output_type_id
     )
   return(output_table)
 }

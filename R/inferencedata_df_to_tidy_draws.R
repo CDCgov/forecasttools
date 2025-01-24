@@ -57,29 +57,32 @@ idata_names_to_tidy_names <- function(column_names) {
 inferencedata_to_tidy_draws <- function(idata) {
   idata |>
     dplyr::rename(
-      .chain = chain,
-      .iteration = draw
+      .chain = "chain",
+      .iteration = "draw"
     ) |>
     dplyr::rename_with(idata_names_to_tidy_names,
       .cols = -tidyselect::starts_with(".")
     ) |>
     dplyr::mutate(dplyr::across(
-      c(.chain, .iteration),
+      c(".chain", ".iteration"),
       \(x) as.integer(x + 1) # convert to 1-indexed
     )) |>
     dplyr::mutate(
-      .draw = tidybayes:::draw_from_chain_and_iteration_(.chain, .iteration),
-      .after = .iteration
+      .draw = tidybayes:::draw_from_chain_and_iteration_(
+        .data$.chain,
+        .data$.iteration
+      ),
+      .after = ".iteration"
     ) |>
-    tidyr::pivot_longer(-starts_with("."),
+    tidyr::pivot_longer(-tidyselect::starts_with("."),
       names_sep = "\\|",
       names_to = c("group", "name")
     ) |>
-    dplyr::group_by(group) |>
+    dplyr::group_by(.data$group) |>
     tidyr::nest() |>
-    dplyr::mutate(data = purrr::map(data, \(x) {
+    dplyr::mutate(data = purrr::map(.data$data, \(x) {
       tidyr::drop_na(x) |>
-        tidyr::pivot_wider(names_from = name) |>
+        tidyr::pivot_wider(names_from = "name") |>
         tidybayes::tidy_draws()
     }))
 }

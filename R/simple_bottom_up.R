@@ -97,8 +97,7 @@ count_trajectories <- function(base_forecasts,
     dplyr::group_by(.data[[location_col]], .data[[date_col]]) |>
     dplyr::summarise(n_sample_trajs = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::select(dplyr::all_of(location_col), n_sample_trajs) |>
-    dplyr::distinct()
+    dplyr::distinct(.data[[location_col]], .data$n_sample_trajs)
   return(number_of_sampled_trajs)
 }
 
@@ -125,7 +124,9 @@ rank_sampled_trajectories <- function(base_forecasts,
     dplyr::summarise(mean_rank_quantity = mean(.data[[rank_quantity_col]])) |>
     dplyr::ungroup() |>
     dplyr::group_by(.data[[location_col]]) |>
-    dplyr::mutate(rank = rank(mean_rank_quantity, ties.method = "first")) |>
+    dplyr::mutate(rank = rank(.data$mean_rank_quantity,
+      ties.method = "first"
+    )) |>
     dplyr::arrange(.data[[location_col]], rank) |>
     dplyr::ungroup()
   return(ranked_base_forecasts)
@@ -183,11 +184,11 @@ sample_aggregated_trajectories <- function(base_forecasts,
                                            value_to_aggregate_col) {
   sampled_forecasts <- samples |>
     dplyr::left_join(number_of_sampled_trajs, by = location_col) |>
-    dplyr::mutate(rank_draw = ceiling(u * n_sample_trajs)) |>
-    dplyr::select(rank_draw, dplyr::all_of(location_col)) |>
+    dplyr::mutate(rank_draw = ceiling(.data$u * .data$n_sample_trajs)) |>
+    dplyr::select("rank_draw", dplyr::all_of(location_col)) |>
     dplyr::right_join(ranked_base_forecasts, by = location_col) |>
     dplyr::group_by(.data[[location_col]]) |>
-    dplyr::slice(dplyr::first(rank_draw)) |>
+    dplyr::slice(dplyr::first(.data$rank_draw)) |>
     dplyr::ungroup() |>
     dplyr::inner_join(base_forecasts, by = c(draw_col, location_col)) |>
     dplyr::group_by(.data[[date_col]]) |>

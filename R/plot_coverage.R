@@ -71,7 +71,7 @@ plot_coverage_by_date <- function(scored,
   if (length(group_cols) == 1 || length(group_cols > 2)) {
     fig <- fig + ggplot2::facet_wrap(group_cols)
   } else if (length(group_cols) == 2) {
-    fig <- fig + ggplot2::facet_grid(reformulate(
+    fig <- fig + ggplot2::facet_grid(stats::reformulate(
       group_cols[1], group_cols[2]
     ))
   }

@@ -61,12 +61,12 @@ plot_hubverse_loc_quant_ts <- function(location,
   loc_table <- location_lookup(location, location_format)
   loc_data <- forecast_data |>
     dplyr::filter(
-      location == !!loc_table$location_code,
-      output_type == "quantile"
+      .data$location == !!loc_table$location_code,
+      .data$output_type == "quantile"
     ) |>
-    dplyr::rename("date" = "target_end_date")
+    dplyr::rename(date = "target_end_date")
   loc_obs <- observed_data |>
-    dplyr::filter(location == !!loc_table$location_code)
+    dplyr::filter(.data$location == !!loc_table$location_code)
 
 
   if (autotitle) {
@@ -240,9 +240,9 @@ plot_hubverse_file_quantiles <- function(forecast_file_path,
     col_types = hubverse_cols
   ) |>
     dplyr::filter(
-      output_type == "quantile",
+      .data$output_type == "quantile",
     ) |>
-    dplyr::mutate(output_type_id = as.numeric(output_type_id))
+    dplyr::mutate(output_type_id = as.numeric(.data$output_type_id))
 
   if (!is.null(observed_data_path)) {
     observed_cols <- readr::cols_only(
@@ -275,7 +275,7 @@ plot_hubverse_file_quantiles <- function(forecast_file_path,
 
   if (is.null(locations)) {
     locations <- forecast_data |>
-      dplyr::distinct(location) |>
+      dplyr::distinct(.data$location) |>
       dplyr::pull()
     loc_table <- location_lookup(locations, "hub")
   } else {

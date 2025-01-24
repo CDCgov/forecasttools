@@ -7,13 +7,13 @@
 #' a quantile timeseries for the
 #' given quantile values
 #'
-#' @param trajectories tidy data frame or tibble
+#' @param trajectories Tidy data frame or tibble
 #' of trajectories
-#' @param quantiles quantiles to output for each
+#' @param quantiles Quantiles to output for each
 #' timepoint (default the FluSight/COVIDHub 2024-25 quantiles:
 #' `c(0.01, 0.025, 1:19/20, 0.975, 0.99)`
-#' @param timepoint_cols name of the column(s) in`trajectories`
-#' that identifies unique timepoints. Default `timepoint`.
+#' @param timepoint_cols Name(s) of the column(s) in`trajectories`
+#' that identifies unique timepoints. Default `"timepoint"`.
 #' @param value_col name of the column in `trajectories`
 #' with the trajectory values (for which we wish to
 #' compute quantiles), e.g. `hosp`, `weekly_hosp`, `cases`,
@@ -45,21 +45,18 @@ trajectories_to_quantiles <- function(trajectories,
                                         "quantile_level",
                                       id_cols = NULL) {
   grouped_df <- trajectories |>
-    dplyr::rename(
-      value_col = {{ value_col }}
-    ) |>
+    dplyr::rename(value_col = !!value_col) |>
     dplyr::group_by(
-      dplyr::across(c(
-        {{ timepoint_cols }}, {{ id_cols }}
-      ))
+      dplyr::across(dplyr::all_of(c(timepoint_cols, id_cols)))
     )
 
   quant_df <- grouped_df |>
     dplyr::reframe(
-      {{ quantile_value_name }} := quantile(value_col,
+      !!quantile_value_name := stats::quantile(
+        .data$value_col,
         probs = !!quantiles
       ),
-      {{ quantile_level_name }} := !!quantiles
+      !!quantile_level_name := !!quantiles
     )
   return(quant_df)
 }

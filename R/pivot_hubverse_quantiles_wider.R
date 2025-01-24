@@ -51,7 +51,10 @@ pivot_hubverse_quantiles_wider <- function(hubverse_table,
     names(pivot_quantiles) <- paste("q", pivot_quantiles, sep = "")
   }
 
-  pivot_quant_map <- setNames(names(pivot_quantiles), pivot_quantiles)
+  ## create an inverse mapping for pivot_quantiles
+  pivot_quant_map <- purrr::set_names(
+    names(pivot_quantiles), pivot_quantiles
+  )
 
   dat <- dat |>
     dplyr::filter(.data$output_type_id %in% !!pivot_quantiles) |>

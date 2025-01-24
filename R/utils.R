@@ -37,7 +37,7 @@
 nullable_comparison <- function(a,
                                 comparison_operator,
                                 b) {
-  comparison_func <- getFunction(comparison_operator)
+  comparison_func <- methods::getFunction(comparison_operator)
   return(
     if (!is.null(b)) {
       comparison_func(a, b)
@@ -138,20 +138,7 @@ soql_nullable_select <- function(soql_list, columns) {
   )
 }
 
-
-#' Read from or write to tabular files, with
-#' file format inferred from the file extension.
-#'
-#' @param path_to_file Path to the file to read/write.
-#' @param ... Additional keyword arguments passed to the
-#' file reader/writer function, which will be one of
-#' [readr::read_csv()] / [readr::write_csv()],
-#' [readr::read_tsv()] / [readr::write_tsv()], and
-#' [arrow::read_parquet()] / [arrow::write_parquet()],
-#' depending on the `file_format`.
-#' @return The result of reading in the file, as a
-#' [`tibble`][tibble::tibble()].
-#' @export
+#' @rdname write_tabular_file
 read_tabular_file <- function(path_to_file,
                               ...) {
   file_format <- fs::path_ext(path_to_file)
@@ -173,14 +160,23 @@ read_tabular_file <- function(path_to_file,
   return(file_reader(path_to_file, ...))
 }
 
-#' @rdname read_tabular_file
+#' Read from or write to tabular files, with
+#' file format inferred from the file extension.
 #'
-#' @description Write a table to a tabular file, with
-#' format inferred from the file extension.
-#'
-#' @param table Table to save, passed to the writer function.
-#' @return Nothing, saving the table as a side
-#' effect.
+#' @param table Table to write (`write_tabular_file` only).
+#' @param path_to_file Path to the file to read/write.
+#' Must have extension `.tsv`, `.csv`, or `.parquet`
+#' (not case-sensitive).
+#' @param ... Additional keyword arguments passed to the
+#' file reader/writer function, which will be one of
+#' [readr::read_csv()] / [readr::write_csv()],
+#' [readr::read_tsv()] / [readr::write_tsv()], and
+#' [arrow::read_parquet()] / [arrow::write_parquet()],
+#' depending on the file format.
+#' @return For `read_tabular_file`, the result of
+#' reading in the file, as a
+#' [`tibble`][tibble::tibble()]. For `write_tabular_file`,
+#' nothing, saving the tabular to disk as a side effect.
 #' @export
 write_tabular_file <- function(table,
                                path_to_file,

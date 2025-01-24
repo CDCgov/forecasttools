@@ -41,6 +41,7 @@ Imports:
     hubData (>= 0.2.0),
     jsonlite,
     lubridate,
+    methods,
     purrr,
     readr,
     rlang,

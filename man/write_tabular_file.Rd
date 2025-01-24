@@ -11,25 +11,26 @@ read_tabular_file(path_to_file, ...)
 write_tabular_file(table, path_to_file, ...)
 }
 \arguments{
-\item{path_to_file}{Path to the file to read/write.}
+\item{path_to_file}{Path to the file to read/write.
+Must have extension \code{.tsv}, \code{.csv}, or \code{.parquet}
+(not case-sensitive).}
 
 \item{...}{Additional keyword arguments passed to the
 file reader/writer function, which will be one of
 \code{\link[readr:read_delim]{readr::read_csv()}} / \code{\link[readr:write_delim]{readr::write_csv()}},
 \code{\link[readr:read_delim]{readr::read_tsv()}} / \code{\link[readr:write_delim]{readr::write_tsv()}}, and
 \code{\link[arrow:read_parquet]{arrow::read_parquet()}} / \code{\link[arrow:write_parquet]{arrow::write_parquet()}},
-depending on the \code{file_format}.}
+depending on the file format.}
 
-\item{table}{Table to save, passed to the writer function.}
+\item{table}{Table to write (\code{write_tabular_file} only).}
 }
 \value{
-The result of reading in the file, as a
-\code{\link[tibble:tibble]{tibble}}.
-
-Nothing, saving the table as a side
-effect.
+For \code{read_tabular_file}, the result of
+reading in the file, as a
+\code{\link[tibble:tibble]{tibble}}. For \code{write_tabular_file},
+nothing, saving the tabular to disk as a side effect.
 }
 \description{
-Write a table to a tabular file, with
-format inferred from the file extension.
+Read from or write to tabular files, with
+file format inferred from the file extension.
 }

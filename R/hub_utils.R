@@ -55,7 +55,7 @@ update_hub <- function(hub_path) {
 gather_hub_quantile_forecasts <- function(hub_path) {
   hub_connection <- hubData::connect_hub(hub_path)
   forecasts <- hub_connection |>
-    dplyr::filter(output_type == "quantile") |>
+    dplyr::filter(.data$output_type == "quantile") |>
     hubData::collect_hub()
   return(forecasts)
 }

@@ -152,7 +152,7 @@ plot_pred_obs_by_forecast_date <- function(scorable_table,
   to_plot_forecast <- to_plot |>
     dplyr::select(-"quantile_level") |>
     tidyr::pivot_wider(
-      names_from = q_rank,
+      names_from = "q_rank",
       names_glue = "q_{q_rank}",
       values_from = "predicted"
     )
