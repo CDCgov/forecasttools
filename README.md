@@ -1,6 +1,8 @@
 # `forecasttools` R package
 
-This in-progress R package provides useful functions for short-term forecasting within CFA.
+[![codecov](https://codecov.io/gh/CDCgov/forecasttools/graph/badge.svg?token=2PT8QA8DM1)](https://codecov.io/gh/CDCgov/forecasttools)
+
+This in-progress R package provides functions for short-term forecasting within CFA.
 
 ## Installation
 
