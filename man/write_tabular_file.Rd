@@ -20,16 +20,15 @@ file reader/writer function, which will be one of
 \code{\link[arrow:read_parquet]{arrow::read_parquet()}} / \code{\link[arrow:write_parquet]{arrow::write_parquet()}},
 depending on the \code{file_format}.}
 
-\item{table}{Table to save, passed to the writer function.}
+\item{table}{Table to write (\code{write_tabular_file} only).}
 }
 \value{
-The result of reading in the file, as a
-\code{\link[tibble:tibble]{tibble}}.
-
-Nothing, saving the table as a side
-effect.
+For \code{read_tabular_file}, the result of
+reading in the file, as a
+\code{\link[tibble:tibble]{tibble}}. For \code{write_tabular_file},
+nothing, saving the tabular to disk as a side effect.
 }
 \description{
-Write a table to a tabular file, with
-format inferred from the file extension.
+Read from or write to tabular files, with
+file format inferred from the file extension.
 }
