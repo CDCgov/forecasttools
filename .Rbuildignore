@@ -19,3 +19,4 @@
 ^.lintr$
 ^.secrets.baseline$
 ^cran-comments\.md$
+^codecov\.yml$
