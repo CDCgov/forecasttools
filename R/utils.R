@@ -165,12 +165,14 @@ read_tabular_file <- function(path_to_file,
 #'
 #' @param table Table to write (`write_tabular_file` only).
 #' @param path_to_file Path to the file to read/write.
+#' Must have extension `.tsv`, `.csv`, or `.parquet`
+#' (not case-sensitive).
 #' @param ... Additional keyword arguments passed to the
 #' file reader/writer function, which will be one of
 #' [readr::read_csv()] / [readr::write_csv()],
 #' [readr::read_tsv()] / [readr::write_tsv()], and
 #' [arrow::read_parquet()] / [arrow::write_parquet()],
-#' depending on the `file_format`.
+#' depending on the file format.
 #' @return For `read_tabular_file`, the result of
 #' reading in the file, as a
 #' [`tibble`][tibble::tibble()]. For `write_tabular_file`,
