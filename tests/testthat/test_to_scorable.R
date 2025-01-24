@@ -45,7 +45,7 @@ testthat::test_that(paste0(
     horizon = c(0, 1, 2),
     location = c("loc1", "loc2"),
     output_type = "quantile",
-    output_type_id = c(0.01, 0.025, seq(0.05, 0.95, 0.05), 0.975, 0.99)
+    output_type_id = c(0.01, 0.025, 1:19 / 20, 0.975, 0.99)
   )
 
   observed <- create_observation_data(
@@ -75,7 +75,7 @@ testthat::test_that("score_hubverse handles missing location data", {
     horizon = c(0, 1),
     location = c("loc1", "loc2"),
     output_type = "quantile",
-    output_type_id = seq(0.05, 0.95, 0.05)
+    output_type_id = 1:19 / 20
   )
 
   observed <- create_observation_data(
