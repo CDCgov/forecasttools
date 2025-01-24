@@ -178,7 +178,7 @@ epiweekly_forecasts <- dat |>
 ### Compute the needed posterior quantiles
 Now we compute our forecast quantiles from our table of `epiweekly_forecasts`. Again, we could to this manually:
 ```{r}
-flusight_quantile_levels <- c(0.01, 0.025, seq(0.05, 0.95, 0.05), 0.975, 0.99)
+flusight_quantile_levels <- c(0.01, 0.025, 1:19 / 20, 0.975, 0.99)
 
 quant_summary <- epiweekly_forecasts |>
   dplyr::group_by(epiweek, epiyear, location) |>

@@ -8,7 +8,7 @@ timeseries or forecasts}
 \usage{
 trajectories_to_quantiles(
   trajectories,
-  quantiles = c(0.01, 0.025, seq(0.05, 0.95, 0.05), 0.975, 0.99),
+  quantiles = c(0.01, 0.025, 1:19/20, 0.975, 0.99),
   timepoint_cols = "timepoint",
   value_col = "value",
   quantile_value_name = "quantile_value",
@@ -22,7 +22,7 @@ of trajectories}
 
 \item{quantiles}{quantiles to output for each
 timepoint (default the FluSight/COVIDHub 2024-25 quantiles:
-\code{c(0.01, 0.025, seq(0.05, 0.95, 0.05), 0.975, 0.99)}}
+\code{c(0.01, 0.025, 1:19/20, 0.975, 0.99)}}
 
 \item{timepoint_cols}{name of the column(s) in\code{trajectories}
 that identifies unique timepoints. Default \code{timepoint}.}

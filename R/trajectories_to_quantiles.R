@@ -11,7 +11,7 @@
 #' of trajectories
 #' @param quantiles Quantiles to output for each
 #' timepoint (default the FluSight/COVIDHub 2024-25 quantiles:
-#' `c(0.01, 0.025, seq(0.05, 0.95, 0.05), 0.975, 0.99)`
+#' `c(0.01, 0.025, 1:19/20, 0.975, 0.99)`
 #' @param timepoint_cols Name(s) of the column(s) in`trajectories`
 #' that identifies unique timepoints. Default `"timepoint"`.
 #' @param value_col name of the column in `trajectories`
@@ -34,7 +34,7 @@
 trajectories_to_quantiles <- function(trajectories,
                                       quantiles = c(
                                         0.01, 0.025,
-                                        seq(0.05, 0.95, 0.05),
+                                        1:19 / 20,
                                         0.975, 0.99
                                       ),
                                       timepoint_cols = "timepoint",
