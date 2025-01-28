@@ -188,6 +188,8 @@ nhsn_soda_query <- function(api_endpoint,
       "jurisdiction", jurisdictions
     )
 
+  ## need to add order_by columns sequentially
+  ## to ensure the specified desc option is applied to each
   for (x in unique(order_by)) query <- soql::soql_order(query, x, desc = desc)
 
   ## do limit string formatting
