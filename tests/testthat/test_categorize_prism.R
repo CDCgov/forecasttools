@@ -1,3 +1,16 @@
+get_binnable_values <- function(set_of_cutpoints) {
+  return(c(
+    set_of_cutpoints[1] - 1.5,
+    mean(c(set_of_cutpoints[1], set_of_cutpoints[2])),
+    mean(c(set_of_cutpoints[2], set_of_cutpoints[3])),
+    mean(c(set_of_cutpoints[3], set_of_cutpoints[4])),
+    set_of_cutpoints[4] + 1.5
+  ))
+}
+
+default_labels <- c("Very Low", "Low", "Moderate", "High", "Very High")
+
+
 test_that(paste0(
   "get_prism_cutpoints() works identically ",
   "to a manual read from the table "
@@ -68,4 +81,59 @@ test_that(paste0(
     result <- get_prism_cutpoints(x$locations, x$diseases)
     expect_equal(result, x$expected)
   })
+})
+
+
+test_that(paste0(
+  "Categorization works as expected for all bins, ",
+  "all locations, and all diseases"
+), {
+  locations <- dimnames(forecasttools::prism_thresholds)$location
+  diseases <- dimnames(forecasttools::prism_thresholds)$disease
+
+  params <- tidyr::crossing(location = locations, disease = diseases)
+
+  categorize_and_compare <- function(location, disease) {
+    cutpoints <- get_prism_cutpoints(location, disease)
+    values <- get_binnable_values(cutpoints[[1]])
+    expected_categories <- categorize_vector(values,
+      break_sets = cutpoints,
+      label_sets = list(default_labels)
+    )
+
+    result <- categorize_prism(values, location, disease)
+    expect_equal(result, expected_categories)
+    expect_true(is.factor(result))
+    expect_true(is.ordered(result))
+  }
+
+  purrr::pmap(params, categorize_and_compare)
+})
+
+test_that("vectors can be categorized with custom bin names", {
+  locations <- dimnames(forecasttools::prism_thresholds)$location
+  diseases <- dimnames(forecasttools::prism_thresholds)$disease
+  custom_bin_names <- c("Bin1", "Bin2", "Bin3", "Bin4", "Bin5")
+
+  params <- tidyr::crossing(location = locations, disease = diseases)
+
+  categorize_with_custom_bins <- function(location, disease) {
+    cutpoints <- get_prism_cutpoints(location, disease)
+    values <- get_binnable_values(cutpoints[[1]])
+    expected_categories <- categorize_vector(values,
+      break_sets = cutpoints,
+      label_sets = list(custom_bin_names)
+    )
+
+    result <- categorize_prism(values,
+      location,
+      disease,
+      prism_bin_names = custom_bin_names
+    )
+    expect_equal(result, expected_categories)
+    expect_true(is.factor(result))
+    expect_true(is.ordered(result))
+  }
+
+  purrr::pmap(params, categorize_with_custom_bins)
 })
