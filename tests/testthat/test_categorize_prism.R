@@ -102,9 +102,8 @@ test_that(paste0(
     )
 
     result <- categorize_prism(values, location, disease)
+    checkmate::expect_factor(result, ordered = TRUE)
     expect_equal(result, expected_categories)
-    expect_true(is.factor(result))
-    expect_true(is.ordered(result))
   }
 
   purrr::pmap(params, categorize_and_compare)
@@ -130,9 +129,8 @@ test_that("vectors can be categorized with custom bin names", {
       disease,
       prism_bin_names = custom_bin_names
     )
+    checkmate::expect_factor(result, ordered = TRUE)
     expect_equal(result, expected_categories)
-    expect_true(is.factor(result))
-    expect_true(is.ordered(result))
   }
 
   purrr::pmap(params, categorize_with_custom_bins)
