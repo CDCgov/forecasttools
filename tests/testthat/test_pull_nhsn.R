@@ -10,7 +10,7 @@ with_mock_dir(mockdir, {
       api_key_id = NULL, api_key_secret = NULL,
       limit = 10,
       error_on_limit = FALSE
-    ))
+    ) |> suppressMessages())
   })
 
   test_that(paste0(
@@ -20,7 +20,7 @@ with_mock_dir(mockdir, {
     result <- pull_nhsn(
       start_date = start_date, end_date = end_date,
       jurisdictions = jurisdictions
-    )
+    ) |> suppressMessages()
 
     expect_true(all(result$weekendingdate >= as.Date(start_date)))
     expect_true(all(result$weekendingdate <= as.Date(end_date)))
@@ -34,7 +34,7 @@ with_mock_dir(mockdir, {
       columns = columns,
       limit = 10,
       error_on_limit = FALSE
-    )
+    ) |> suppressMessages()
 
     expected_columns <- c("jurisdiction", "weekendingdate", columns)
     checkmate::expect_names(
@@ -55,7 +55,7 @@ with_mock_dir(mockdir, {
       columns = columns,
       order_by = order_by,
       desc = FALSE
-    )
+    ) |> suppressMessages()
     result_desc <- pull_nhsn(
       start_date = start_date,
       end_date = end_date,
@@ -63,7 +63,7 @@ with_mock_dir(mockdir, {
       columns = columns,
       order_by = order_by,
       desc = TRUE
-    )
+    ) |> suppressMessages()
 
 
     expect_equal(
@@ -86,9 +86,13 @@ with_mock_dir(mockdir, {
 
   test_that("limit and error_on_limit work as expected", {
     limit <- 10
-    result <- pull_nhsn(limit = limit, error_on_limit = FALSE)
+    result <- pull_nhsn(limit = limit, error_on_limit = FALSE) |>
+      suppressMessages()
     expect_equal(nrow(result), limit)
 
-    expect_error(pull_nhsn(limit = limit, error_on_limit = TRUE))
+    expect_error(
+      pull_nhsn(limit = limit, error_on_limit = TRUE) |>
+        suppressMessages()
+    )
   })
 })
