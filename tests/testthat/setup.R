@@ -1,1 +1,1 @@
-library(httptest2)
+library(httptest)
