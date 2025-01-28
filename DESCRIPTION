@@ -62,8 +62,8 @@ Suggests:
     usethis,
     testthat (>= 3.0.0),
     rcmdcheck,
-    httptest,
-    withr
+    withr,
+    httptest2
 VignetteBuilder:
     knitr
 URL: https://cdcgov.github.io/forecasttools/, https://github.com/CDCgov/forecasttools/
