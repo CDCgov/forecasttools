@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-httptest::start_vignette("pull-nhsn")
+httptest2::start_vignette("pull-nhsn")
 ```
 
 In this vignette you will learn how use `forecasttools` to pull data from the [National Healthcare Safety Network (NHSN)](https://www.cdc.gov/nhsn/index.html) [Weekly Hospital Respiratory Data (HRD)](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/ua7e-t2fy/about_data) dataset. This dataset contains counts of epiweekly influenza and COVID-19 hospital admissions by U.S. state, among other quantities.
@@ -113,5 +113,5 @@ influenza_by_date
 ```
 
 ```{r, include=FALSE}
-httptest::end_vignette()
+httptest2::end_vignette()
 ```
