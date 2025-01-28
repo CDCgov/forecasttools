@@ -186,13 +186,11 @@ nhsn_soda_query <- function(api_endpoint,
     ) |>
     soql_nullable_is_in(
       "jurisdiction", jurisdictions
-    ) |>
-    soql::soql_order(
-      paste(unique(order_by),
-        collapse = ","
-      ),
-      desc = desc
     )
+
+  ## need to add order_by columns sequentially
+  ## to ensure the specified desc option is applied to each
+  for (x in unique(order_by)) query <- soql::soql_order(query, x, desc = desc)
 
   ## do limit string formatting
   ## manually since soql::soql_limit()

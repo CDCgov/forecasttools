@@ -18,12 +18,13 @@
 #' to use for all values, as a one-entry list containing a
 #' single character vector.
 #' @param include.lowest Passed to [base::cut()]. Default `TRUE`.
-#' @param order Passed to [base::cut()]. Default `TRUE`.
+#' @param order Should the output factors be ordered factors?
+#' Passed to [base::cut()]. Default `TRUE`.
 #' @param right Passed to [base::cut()]. Default `TRUE`.
 #' @param ... Additional keyword arguments passed to
 #' [base::cut()].
-#' @return A categorized vector, as vector of ordered
-#' factors.
+#' @return A categorized vector, as vector of
+#' factors (default ordered factors).
 #' @export
 categorize_vector <- function(values,
                               break_sets,

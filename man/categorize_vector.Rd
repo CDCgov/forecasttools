@@ -33,7 +33,8 @@ single character vector.}
 
 \item{include.lowest}{Passed to \code{\link[base:cut]{base::cut()}}. Default \code{TRUE}.}
 
-\item{order}{Passed to \code{\link[base:cut]{base::cut()}}. Default \code{TRUE}.}
+\item{order}{Should the output factors be ordered factors?
+Passed to \code{\link[base:cut]{base::cut()}}. Default \code{TRUE}.}
 
 \item{right}{Passed to \code{\link[base:cut]{base::cut()}}. Default \code{TRUE}.}
 
@@ -41,8 +42,8 @@ single character vector.}
 \code{\link[base:cut]{base::cut()}}.}
 }
 \value{
-A categorized vector, as vector of ordered
-factors.
+A categorized vector, as vector of
+factors (default ordered factors).
 }
 \description{
 Vectorized version of \code{\link[base:cut]{base::cut()}} that
