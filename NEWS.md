@@ -1,4 +1,4 @@
-# forecasttools (development version)
+# forecasttools 0.1.2
 
 # forecasttools 0.1.1
 
