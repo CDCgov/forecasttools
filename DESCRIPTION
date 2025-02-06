@@ -45,6 +45,7 @@ Imports:
     purrr,
     readr,
     rlang,
+    SBC (>= 0.3.0.9000),
     scales,
     scoringutils,
     soql,
@@ -71,6 +72,7 @@ Depends:
     R (>= 2.10)
 LazyData: true
 Remotes:
-    hubverse-org/hubData
+    hubverse-org/hubData,
+    hyunjimoon/SBC
 BugReports: https://github.com/CDCgov/forecasttools/issues
 Config/testthat/edition: 3
