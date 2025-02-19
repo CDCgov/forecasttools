@@ -1,4 +1,4 @@
-#' Catgeorize entries in a numeric vector according
+#' Categorize entries in a numeric vector according
 #' to a list of breakpoints and labels.
 #'
 #' Vectorized version of [base::cut()] that
