@@ -197,7 +197,7 @@ sample_aggregated_trajectories <- function(base_forecasts,
   return(sampled_forecasts)
 }
 
-#' Bottom up aggregration of base forecasts
+#' Bottom up aggregation of base forecasts
 #'
 #' @param base_forecasts The base forecasts tibble
 #' @param cp Base forecast rank sampling copula.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simple_bottom_up.R
 \name{bottom_up_aggregation}
 \alias{bottom_up_aggregation}
-\title{Bottom up aggregration of base forecasts}
+\title{Bottom up aggregation of base forecasts}
 \usage{
 bottom_up_aggregation(
   base_forecasts,
@@ -42,5 +42,5 @@ Default \code{"aggregate"}.}
 A tibble of 1,..., \code{ndraws} aggregated forecasts.
 }
 \description{
-Bottom up aggregration of base forecasts
+Bottom up aggregation of base forecasts
 }
