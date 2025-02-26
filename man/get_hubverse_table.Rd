@@ -15,6 +15,7 @@ get_hubverse_table(
   epiweek_col = "epiweek",
   epiyear_col = "epiyear",
   horizons = -1:3,
+  horizon_timescale = c("days", "weeks"),
   reference_dow = 7,
   week_start = 7,
   excluded_locations = c("60", "78")
@@ -52,6 +53,8 @@ Default \code{'epiyear'}.}
 \item{horizons}{Vector of forecast horizons to include,
 in weeks ahead of the \code{reference_date}.
 Default -1:3 (FluSight and Covidhub 2024/25 horizons).}
+
+\item{horizon_timescale}{Either "days" or "weeks"}
 
 \item{reference_dow}{Which day of the week should the reference_date
 be, as an integer? Default 7 (the last day of the week), which

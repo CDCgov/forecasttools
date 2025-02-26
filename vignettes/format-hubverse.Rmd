@@ -242,7 +242,8 @@ Now, we need to add the other required hubverse columns, select only the time ho
 flusight_table <- quant_summary |>
   get_hubverse_table(
     "2023-10-21",
-    "wk inc flu hosp"
+    "wk inc flu hosp",
+    horizon_timescale = "weeks"
   )
 
 flusight_table |> print(width = 100)

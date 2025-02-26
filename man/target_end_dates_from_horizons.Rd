@@ -6,7 +6,11 @@
 \code{target_end_date} values for the given reference
 date and set of horizons.}
 \usage{
-target_end_dates_from_horizons(reference_date, horizons = -1:3)
+target_end_dates_from_horizons(
+  reference_date,
+  horizons = -1:3,
+  horizon_timescale = c("days", "weeks")
+)
 }
 \arguments{
 \item{reference_date}{hub forecasting reference date}
@@ -14,6 +18,8 @@ target_end_dates_from_horizons(reference_date, horizons = -1:3)
 \item{horizons}{Vector of forecast horizons to include,
 in weeks ahead of the \code{reference_date}.
 Default -1:3 (FluSight and Covidhub 2024/25 horizons).}
+
+\item{horizon_timescale}{Either "days" or "weeks"}
 }
 \value{
 a \code{\link[tibble:tibble]{tibble}} with columns \code{reference_date},
