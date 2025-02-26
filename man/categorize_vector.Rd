@@ -2,7 +2,7 @@
 % Please edit documentation in R/categorize_vector.R
 \name{categorize_vector}
 \alias{categorize_vector}
-\title{Catgeorize entries in a numeric vector according
+\title{Categorize entries in a numeric vector according
 to a list of breakpoints and labels.}
 \usage{
 categorize_vector(
