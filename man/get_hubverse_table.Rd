@@ -12,8 +12,7 @@ get_hubverse_table(
   quantile_value_col = "quantile_value",
   quantile_level_col = "quantile_level",
   location_col = "location",
-  epiweek_col = "epiweek",
-  epiyear_col = "epiyear",
+  timepoint_cols = c("target_end_date", "epiweek", "epiyear"),
   horizons = -1:3,
   horizon_timescale = c("days", "weeks"),
   reference_dow = 7,
@@ -44,11 +43,8 @@ column name from \code{\link[=trajectories_to_quantiles]{trajectories_to_quantil
 \item{location_col}{name of the column containing the location
 value. Default \code{'location'}.}
 
-\item{epiweek_col}{name of the column containing the epiweek.
-Default \code{'epiweek'}.}
-
-\item{epiyear_col}{name of the column containing the epiyear.
-Default \code{'epiyear'}.}
+\item{timepoint_cols}{names of the columns indicating the target end date.
+Must be some subset of \code{c("target_end_date", "epiweek", "epiyear")}}
 
 \item{horizons}{Vector of forecast horizons to include,
 in weeks ahead of the \code{reference_date}.

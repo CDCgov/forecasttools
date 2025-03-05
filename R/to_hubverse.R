@@ -52,10 +52,8 @@ target_end_dates_from_horizons <- function(reference_date,
 #' column name from [trajectories_to_quantiles()]).
 #' @param location_col name of the column containing the location
 #' value. Default `'location'`.
-#' @param epiweek_col name of the column containing the epiweek.
-#' Default `'epiweek'`.
-#' @param epiyear_col name of the column containing the epiyear.
-#' Default `'epiyear'`.
+#' @param timepoint_cols names of the columns indicating the target end date.
+#' Must be some subset of `c("target_end_date", "epiweek", "epiyear")`
 #' @param horizons Vector of forecast horizons to include,
 #' in weeks ahead of the `reference_date`.
 #' Default -1:3 (FluSight and Covidhub 2024/25 horizons).
@@ -79,8 +77,10 @@ get_hubverse_table <- function(quantile_forecasts,
                                quantile_value_col = "quantile_value",
                                quantile_level_col = "quantile_level",
                                location_col = "location",
-                               epiweek_col = "epiweek",
-                               epiyear_col = "epiyear",
+                               timepoint_cols = c(
+                                 "target_end_date", "epiweek",
+                                 "epiyear"
+                               ),
                                horizons = -1:3,
                                horizon_timescale =
                                  c("days", "weeks"),
@@ -112,20 +112,20 @@ get_hubverse_table <- function(quantile_forecasts,
       target = !!target_name
     )
 
+  checkmate::assert_subset(timepoint_cols, colnames(targets))
+
   quants <- quantile_forecasts |>
     dplyr::select(
       value = {{ quantile_value_col }},
       location = {{ location_col }},
-      epiweek = {{ epiweek_col }},
-      epiyear = {{ epiyear_col }},
+      tidyselect::all_of(timepoint_cols),
       quantile_level = {{ quantile_level_col }}
     ) |>
     dplyr::filter(!(.data$location %in% !!excluded_locations))
 
   output_table <- dplyr::inner_join(targets,
     quants,
-    # NEED TO MODIFY THIS TO EXPECT DATE, NOT EPIWEEK AND EPIYEAR
-    by = c("epiweek", "epiyear")
+    by = timepoint_cols
   ) |>
     dplyr::mutate(
       output_type = "quantile",
@@ -137,6 +137,7 @@ get_hubverse_table <- function(quantile_forecasts,
       "reference_date",
       "target",
       "horizon",
+      "horizon_timescale",
       "target_end_date",
       "location",
       "output_type",

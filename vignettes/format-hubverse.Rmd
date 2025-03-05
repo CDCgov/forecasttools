@@ -243,7 +243,8 @@ flusight_table <- quant_summary |>
   get_hubverse_table(
     "2023-10-21",
     "wk inc flu hosp",
-    horizon_timescale = "weeks"
+    horizon_timescale = "weeks",
+    timepoint_cols = c("epiweek", "epiyear")
   )
 
 flusight_table |> print(width = 100)
