@@ -77,10 +77,7 @@ get_hubverse_table <- function(quantile_forecasts,
                                quantile_value_col = "quantile_value",
                                quantile_level_col = "quantile_level",
                                location_col = "location",
-                               timepoint_cols = c(
-                                 "target_end_date", "epiweek",
-                                 "epiyear"
-                               ),
+                               timepoint_cols = "target_end_date",
                                horizons = -1:3,
                                horizon_timescale =
                                  c("days", "weeks"),
