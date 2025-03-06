@@ -12,9 +12,9 @@ get_hubverse_table(
   quantile_value_col = "quantile_value",
   quantile_level_col = "quantile_level",
   location_col = "location",
-  epiweek_col = "epiweek",
-  epiyear_col = "epiyear",
+  timepoint_cols = "target_end_date",
   horizons = -1:3,
+  horizon_timescale = c("days", "weeks"),
   reference_dow = 7,
   week_start = 7,
   excluded_locations = c("60", "78")
@@ -43,15 +43,14 @@ column name from \code{\link[=trajectories_to_quantiles]{trajectories_to_quantil
 \item{location_col}{name of the column containing the location
 value. Default \code{'location'}.}
 
-\item{epiweek_col}{name of the column containing the epiweek.
-Default \code{'epiweek'}.}
-
-\item{epiyear_col}{name of the column containing the epiyear.
-Default \code{'epiyear'}.}
+\item{timepoint_cols}{names of the columns indicating the target end date.
+Must be some subset of \code{c("target_end_date", "epiweek", "epiyear")}}
 
 \item{horizons}{Vector of forecast horizons to include,
 in weeks ahead of the \code{reference_date}.
 Default -1:3 (FluSight and Covidhub 2024/25 horizons).}
+
+\item{horizon_timescale}{Either "days" or "weeks"}
 
 \item{reference_dow}{Which day of the week should the reference_date
 be, as an integer? Default 7 (the last day of the week), which

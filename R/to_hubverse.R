@@ -9,16 +9,27 @@
 #' @return a [`tibble`][tibble::tibble] with columns `reference_date`,
 #' `horizon`, `target_end_date`,
 #' `epiweek`, and `epiyear`.
+#' @param horizon_timescale Either "days" or "weeks"
 #' @export
 target_end_dates_from_horizons <- function(reference_date,
-                                           horizons = -1:3) {
+                                           horizons = -1:3,
+                                           horizon_timescale =
+                                             c("days", "weeks")) {
+  rlang::arg_match(horizon_timescale)
+
+  time_to_add <- switch(horizon_timescale,
+    days = lubridate::days(horizons),
+    weeks = lubridate::weeks(horizons)
+  )
+
   return(tibble::tibble(
     reference_date = reference_date,
     horizon = horizons,
-    target_end_date = lubridate::ymd(.data$reference_date) +
-      lubridate::weeks(horizons),
+    target_end_date = lubridate::as_date(.data$reference_date) +
+      time_to_add,
     epiweek = lubridate::epiweek((.data$target_end_date)),
-    epiyear = lubridate::epiyear((.data$target_end_date))
+    epiyear = lubridate::epiyear((.data$target_end_date)),
+    horizon_timescale = !!horizon_timescale
   ))
 }
 
@@ -41,13 +52,12 @@ target_end_dates_from_horizons <- function(reference_date,
 #' column name from [trajectories_to_quantiles()]).
 #' @param location_col name of the column containing the location
 #' value. Default `'location'`.
-#' @param epiweek_col name of the column containing the epiweek.
-#' Default `'epiweek'`.
-#' @param epiyear_col name of the column containing the epiyear.
-#' Default `'epiyear'`.
+#' @param timepoint_cols names of the columns indicating the target end date.
+#' Must be some subset of `c("target_end_date", "epiweek", "epiyear")`
 #' @param horizons Vector of forecast horizons to include,
 #' in weeks ahead of the `reference_date`.
 #' Default -1:3 (FluSight and Covidhub 2024/25 horizons).
+#' @param horizon_timescale Either "days" or "weeks"
 #' @param reference_dow Which day of the week should the reference_date
 #' be, as an integer? Default 7 (the last day of the week), which
 #' with the default value of `week_start` will be Saturday, i.e.
@@ -67,12 +77,15 @@ get_hubverse_table <- function(quantile_forecasts,
                                quantile_value_col = "quantile_value",
                                quantile_level_col = "quantile_level",
                                location_col = "location",
-                               epiweek_col = "epiweek",
-                               epiyear_col = "epiyear",
+                               timepoint_cols = "target_end_date",
                                horizons = -1:3,
+                               horizon_timescale =
+                                 c("days", "weeks"),
                                reference_dow = 7,
                                week_start = 7,
                                excluded_locations = c("60", "78")) {
+  rlang::arg_match(horizon_timescale)
+
   dow_supplied <- lubridate::wday(reference_date,
     week_start = week_start,
     label = FALSE
@@ -89,25 +102,34 @@ get_hubverse_table <- function(quantile_forecasts,
 
   targets <- target_end_dates_from_horizons(
     reference_date,
-    horizons = horizons
+    horizons = horizons,
+    horizon_timescale = horizon_timescale
   ) |>
     dplyr::mutate(
       target = !!target_name
     )
 
+  checkmate::assert_names(colnames(quantile_forecasts),
+    must.include = timepoint_cols
+  )
+
+  checkmate::assert_names(timepoint_cols,
+    subset.of = c("target_end_date", "epiweek", "epiyear")
+  )
+
+
   quants <- quantile_forecasts |>
     dplyr::select(
       value = {{ quantile_value_col }},
       location = {{ location_col }},
-      epiweek = {{ epiweek_col }},
-      epiyear = {{ epiyear_col }},
+      tidyselect::all_of(timepoint_cols),
       quantile_level = {{ quantile_level_col }}
     ) |>
     dplyr::filter(!(.data$location %in% !!excluded_locations))
 
   output_table <- dplyr::inner_join(targets,
     quants,
-    by = c("epiweek", "epiyear")
+    by = timepoint_cols
   ) |>
     dplyr::mutate(
       output_type = "quantile",
@@ -119,6 +141,7 @@ get_hubverse_table <- function(quantile_forecasts,
       "reference_date",
       "target",
       "horizon",
+      "horizon_timescale",
       "target_end_date",
       "location",
       "output_type",
