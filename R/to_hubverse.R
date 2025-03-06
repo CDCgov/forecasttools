@@ -109,19 +109,14 @@ get_hubverse_table <- function(quantile_forecasts,
       target = !!target_name
     )
 
-  if (!all(timepoint_cols %in% colnames(quantile_forecasts))) {
-    cli::cli_abort(message = paste0(
-      "timepoint_cols must be a column in `quantile_forecasts`."
-    ))
-  }
+  checkmate::assert_names(colnames(quantile_forecasts),
+    must.include = timepoint_cols
+  )
 
-  if (!all(timepoint_cols %in% c("target_end_date", "epiweek", "epiyear"))) {
-    cli::cli_abort(message = paste0(
-      "Expected `timepoint_cols` to be a subset of ",
-      "c('target_end_date', 'epiweek', 'epiyear'). ",
-      "Got {timepoint_cols}."
-    ))
-  }
+  checkmate::assert_names(timepoint_cols,
+    subset.of = c("target_end_date", "epiweek", "epiyear")
+  )
+
 
   quants <- quantile_forecasts |>
     dplyr::select(
