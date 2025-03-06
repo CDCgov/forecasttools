@@ -1,3 +1,6 @@
+# forecasttools 0.1.3
+* `target_end_dates_from_horizons()` and `get_hubverse_table()` now work with both daily and weekly horizons
+
 # forecasttools 0.1.2
 * Adds optional epidate annotation to `daily_to_epiweekly()`
 * Increases testing coverage
