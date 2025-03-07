@@ -85,3 +85,32 @@ test_that("get_hubverse_table handles improper timepoint_cols correctly", {
     timepoint_cols = "quantile_value"
   ))
 })
+
+
+reference_date <- lubridate::ymd("2025-01-01")
+n <- 5
+test_that("horizons_from_target_end_dates works correctly", {
+  expect_equal(
+    horizons_from_target_end_dates(
+      reference_date,
+      seq(reference_date, by = "days", length.out = n),
+      horizon_timescale = "days"
+    ),
+    0:(n - 1)
+  )
+  expect_equal(
+    horizons_from_target_end_dates(
+      reference_date,
+      seq(reference_date, by = "weeks", length.out = n),
+      horizon_timescale = "weeks"
+    ),
+    0:(n - 1)
+  )
+  expect_error(
+    horizons_from_target_end_dates(
+      reference_date,
+      seq(reference_date, by = "days", length.out = n),
+      horizon_timescale = "weeks"
+    )
+  )
+})
