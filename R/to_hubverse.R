@@ -33,6 +33,27 @@ target_end_dates_from_horizons <- function(reference_date,
   ))
 }
 
+
+#' Compute Horizon from Target End Dates
+#'
+#' @param reference_date hub forecasting reference date
+#' @param target_end_dates vector of target end dates
+#' @param horizon_timescale Either "days" or "weeks"
+#'
+#' @returns a vector of forecast horizons, in the specified timescale
+#' @export
+horizons_from_target_end_dates <- function(reference_date,
+                                           target_end_dates,
+                                           horizon_timescale =
+                                             c("days", "weeks")) {
+  rlang::arg_match(horizon_timescale)
+  horizons <- lubridate::time_length(target_end_dates - reference_date,
+    unit = horizon_timescale
+  )
+  checkmate::assert_integerish(horizons)
+  return(horizons)
+}
+
 #' Given a set of epiweekly quantile forecasts,
 #' format them for a hubverse submission
 #'
