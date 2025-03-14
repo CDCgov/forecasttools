@@ -19,5 +19,5 @@ the date of the first day of the epiweek (a Monday).
 }
 \examples{
 floor_mmwr_epiweek(as.Date("2025-03-13")) # rounded down to Sunday
-floor_mmwr_epiweek(as.Date("2025-03-08")) # this is already Sunday
+floor_mmwr_epiweek(as.Date("2025-03-09")) # this is already Sunday
 }

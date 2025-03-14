@@ -19,5 +19,5 @@ the date of the first day of the isoweek (a Monday).
 }
 \examples{
 floor_isoweek(as.Date("2025-03-13")) # rounded to Monday
-floor_isoweek(as.Date("2025-03-09")) # this is already Monday
+floor_isoweek(as.Date("2025-03-10")) # this is already Monday
 }

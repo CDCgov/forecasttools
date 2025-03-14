@@ -8,7 +8,7 @@
 #' [lubridate::date()].
 #' @examples
 #' floor_mmwr_epiweek(as.Date("2025-03-13")) # rounded down to Sunday
-#' floor_mmwr_epiweek(as.Date("2025-03-08")) # this is already Sunday
+#' floor_mmwr_epiweek(as.Date("2025-03-09")) # this is already Sunday
 #' @export
 floor_mmwr_epiweek <- function(date) {
   return(lubridate::floor_date(date,
@@ -28,7 +28,7 @@ floor_mmwr_epiweek <- function(date) {
 #' [lubridate::date()].
 #' @examples
 #' floor_isoweek(as.Date("2025-03-13")) # rounded to Monday
-#' floor_isoweek(as.Date("2025-03-09")) # this is already Monday
+#' floor_isoweek(as.Date("2025-03-10")) # this is already Monday
 #' @export
 floor_isoweek <- function(date) {
   return(lubridate::floor_date(date,
