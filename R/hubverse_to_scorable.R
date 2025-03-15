@@ -18,11 +18,14 @@
 #' location values in the `observed` table, as a string.
 #' Default `"location"`
 #' @param obs_date_column Name of the column containing
-#' date values in the `observed` table, as a string.
-#' Default `"date"`
+#' date values in the `observed` table, as a string. Will
+#' be joined to the `target_end_date` column in the hubverse
+#' table. Default `"date"`
 #' @param obs_value_name Name for the column of observed values
 #' in the resulting table (since `"value"` clashes with the forecast
 #' value column in a standard hubverse table. Default `"observed"`.
+#' @param id_cols Additional ID columns to join on, in addition to
+#' `obs_date_column`. Default `c("location", "target")`.
 #' @param join Which SQL-style `dplyr` [mutating join][dplyr::mutate-joins]
 #' function to use when joining the tables. Options are `"full"`
 #' (for [dplyr::full_join()]), `"left"` ([dplyr::left_join()]),
@@ -39,9 +42,9 @@
 hubverse_table_with_obs <- function(hubverse_forecast_table,
                                     observation_table,
                                     obs_value_column = "value",
-                                    obs_location_column = "location",
                                     obs_date_column = "date",
                                     obs_value_name = "observed",
+                                    id_cols = c("location", "target"),
                                     join = "full") {
   join_funcs <- list(
     "full" = dplyr::full_join,
@@ -49,12 +52,24 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
     "right" = dplyr::right_join,
     "inner" = dplyr::inner_join
   )
-
+  checkmate::assert_names(names(observation_table),
+    must.include = c(
+      id_cols,
+      obs_date_column,
+      obs_value_column
+    )
+  )
+  checkmate::assert_names(names(hubverse_forecast_table),
+    must.include = c(
+      id_cols,
+      "target_end_date"
+    )
+  )
   obs <- observation_table |>
     dplyr::select(
-      location = !!obs_location_column,
       target_end_date = !!obs_date_column,
-      !!obs_value_name := !!obs_value_column
+      !!obs_value_name := !!obs_value_column,
+      dplyr::all_of(id_cols)
     )
 
   checkmate::assert_names(join, subset.of = names(join_funcs))
@@ -66,7 +81,7 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
   return(join_func(
     hubverse_forecast_table,
     obs,
-    by = c("location", "target_end_date")
+    by = c(id_cols, "target_end_date")
   ))
 }
 
@@ -86,16 +101,18 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
 #' as produced by [get_hubverse_table()], with columns including
 #' `location`, `target_end_date`, `output_type`, `output_type_id`,
 #' and `value`.
-#' @param observation_table observations, as a [`tibble`][tibble::tibble()].
+#' @param observation_table observations, as a
+#' [`tibble`][tibble::tibble()].
 #' @param obs_value_column Name of the column containing
 #' observed values in the `observed` table, as a string.
 #' Default `"value"`
-#' @param obs_location_column Name of the column containing
-#' location values in the `observed` table, as a string.
-#' Default `"location"`
 #' @param obs_date_column Name of the column containing
 #' date values in the `observed` table, as a string.
-#' Default `"date"`
+#' Default `"date"`.
+#' @param id_cols Additional id columns for joining the
+#' `observation table` to the `hubverse_quantile_table`.
+#' Passed to [hubverse_table_with_obs()]. Default
+#' `c("location", "target")`.
 #' @param quantile_tol Round quantile level values to this many
 #' decimal places, to avoid problems with floating point number
 #' equality comparisons. Passed as the `digits` argument to
@@ -106,15 +123,15 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
 quantile_table_to_scorable <- function(hubverse_quantile_table,
                                        observation_table,
                                        obs_value_column = "value",
-                                       obs_location_column = "location",
                                        obs_date_column = "date",
+                                       id_cols = c("location", "target"),
                                        quantile_tol = 10) {
   scorable <- hubverse_quantile_table |>
     hubverse_table_with_obs(observation_table,
-      obs_value_column,
-      obs_location_column,
-      obs_date_column,
+      obs_value_column = obs_value_column,
+      obs_date_column = obs_date_column,
       obs_value_name = "observed",
+      id_cols = id_cols,
       join = "inner"
     ) |>
     dplyr::filter(.data$output_type == "quantile") |>
