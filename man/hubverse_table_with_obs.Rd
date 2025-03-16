@@ -48,10 +48,6 @@ In the join, the hubverse forecast table is the left table
 Default \code{"full"} (i.e. keep all forecasts and observations,
 even if some forecasts do not have a corresponding observation or
 some observations do not have a corresponding forecast).}
-
-\item{obs_location_column}{Name of the column containing
-location values in the \code{observed} table, as a string.
-Default \code{"location"}}
 }
 \value{
 A \code{\link[tibble:tibble]{tibble}} with the observed values

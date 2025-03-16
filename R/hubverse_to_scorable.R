@@ -14,9 +14,6 @@
 #' @param obs_value_column Name of the column containing
 #' observed values in the `observed` table, as a string.
 #' Default `"value"`
-#' @param obs_location_column Name of the column containing
-#' location values in the `observed` table, as a string.
-#' Default `"location"`
 #' @param obs_date_column Name of the column containing
 #' date values in the `observed` table, as a string. Will
 #' be joined to the `target_end_date` column in the hubverse
