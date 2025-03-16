@@ -78,6 +78,7 @@ forecast_and_target <- hub_to_scorable_quantiles(hub_path,
 
 `hub_to_scorable_quantiles()` outputs a `scoringutils` object, specifically the output of `scoringutils::as_forecast_quantile()`. Note that while `hubData::collect_hub()` identifies individual models with a `model_id` column, `hub_to_scorable_quantiles` renames this to the `scoringutils` standard `model` column.
 
+
 There were `r forecast_and_target$model |> unique() |> length()` different models that had been submitted to FluSight as of the [commit examined in this vignette](https://github.com/cdcepi/FluSight-forecast-hub/commit/6ae69198654)
 
 ```{r}
