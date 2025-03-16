@@ -8,9 +8,9 @@ hubverse_table_with_obs(
   hubverse_forecast_table,
   observation_table,
   obs_value_column = "value",
-  obs_location_column = "location",
   obs_date_column = "date",
   obs_value_name = "observed",
+  id_cols = c("location", "target"),
   join = "full"
 )
 }
@@ -26,17 +26,17 @@ and \code{location}.}
 observed values in the \code{observed} table, as a string.
 Default \code{"value"}}
 
-\item{obs_location_column}{Name of the column containing
-location values in the \code{observed} table, as a string.
-Default \code{"location"}}
-
 \item{obs_date_column}{Name of the column containing
-date values in the \code{observed} table, as a string.
-Default \code{"date"}}
+date values in the \code{observed} table, as a string. Will
+be joined to the \code{target_end_date} column in the hubverse
+table. Default \code{"date"}}
 
 \item{obs_value_name}{Name for the column of observed values
 in the resulting table (since \code{"value"} clashes with the forecast
 value column in a standard hubverse table. Default \code{"observed"}.}
+
+\item{id_cols}{Additional ID columns to join on, in addition to
+\code{obs_date_column}. Default \code{c("location", "target")}.}
 
 \item{join}{Which SQL-style \code{dplyr} \link[dplyr:mutate-joins]{mutating join}
 function to use when joining the tables. Options are \code{"full"}

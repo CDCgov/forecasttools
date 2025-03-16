@@ -30,7 +30,7 @@ In this vignette, we use `forecasttools` to capture the current state of the Flu
 
 ### Generating a table of forecasts against truth data.
 
-First, we create a table of forecast predictions formatted to work with `scoringutils` functions using `hub_to_scorable_quantiles()`. Generally, we expect users to use `hub_to_scorable_quantiles()` with a local path to the forecast repository which updates from GitHub by default. In this case, we download the hub first.
+First, we create a table of quantile forecasts formatted to work with `scoringutils` functions using `hub_to_scorable_quantiles()`. Generally, we expect users to use `hub_to_scorable_quantiles()` with a local path to the forecast repository which updates from GitHub by default. In this case, we download a copy of the Hub from GitHub.
 
 ```{r}
 hub_url <- "https://github.com/cdcepi/FluSight-forecast-hub"
@@ -53,14 +53,28 @@ gert::git_branch_create(
 )
 ```
 
+The FluSight hub currently has a single "target" for quantile forecasts: epiweekly incident Influenza hospital admissions. It provides a timeseries of that data in a file named [`target-data/target-hospital-admissions.csv'](https://github.com/cdcepi/FluSight-forecast-hub/blob/6ae6919865417a2557773faa5f7354a0329baa4c/target-data/target-hospital-admissions.csv).
+
+Unlike the schema for forecasts, the schema for target data is not yet standardized across Hubs. `hub_to_scorable_quantiles()` asks you to provide the relative path to the target data you want within the hub, as well as what ID columns (besides `target_end_date`) should be used to join it to forecasts:
+
 ```{r}
-forecast_and_target <- hub_to_scorable_quantiles(hub_path)
+target_data_path <- fs::path("target-data",
+  "target-hospital-admissions",
+  ext = "csv"
+)
+forecast_and_target <- hub_to_scorable_quantiles(hub_path,
+  target_data_rel_path =
+    target_data_path,
+  id_cols = "location"
+)
 ```
 
-There are `r forecast_and_target$model_id |> unique() |> length()` different models that have been submitted to FluSight.
+`hub_to_scorable_quantiles()` outputs a `scoringutils` object, specifically the output of `scoringutils::as_forecast_quantile()`. Note that while `hubData::collect_hub()` identifies individual models with a `model_id` column, `hub_to_scorable_quantiles` renames this to the `scoringutils` standard `model` column.
+
+There were `r forecast_and_target$model |> unique() |> length()` different models that had been submitted to FluSight as of the [copy examined in this vignette](https://github.com/cdcepi/FluSight-forecast-hub/commit/6ae69198654)
 
 ```{r}
-unique(forecast_and_target$model_id)
+unique(forecast_and_target$model)
 ```
 
 There are `r forecast_and_target$location |> unique() |> na.omit() |> length()` locations, either states or territories, for which there are available fforecasts. They are stored as two-digit codes, but can re-code them as the more familiar USPS-style two-letter abbreviations via `us_loc_code_to_abbr()`:
@@ -86,12 +100,12 @@ forecast_and_target |>
   filter(location == !!chosen_location) |>
   score() |>
   summarise_scores(
-    by = "model_id",
+    by = "model",
     relative_skill = TRUE,
     baseline = "FluSight-ensemble"
   ) |>
   summarise_scores(
-    by = "model_id",
+    by = "model",
     fun = signif,
     digits = 2
   ) |>

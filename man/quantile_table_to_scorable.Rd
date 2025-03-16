@@ -8,8 +8,8 @@ quantile_table_to_scorable(
   hubverse_quantile_table,
   observation_table,
   obs_value_column = "value",
-  obs_location_column = "location",
   obs_date_column = "date",
+  id_cols = c("location", "target"),
   quantile_tol = 10
 )
 }
@@ -20,19 +20,21 @@ as produced by \code{\link[=get_hubverse_table]{get_hubverse_table()}}, with col
 \code{location}, \code{target_end_date}, \code{output_type}, \code{output_type_id},
 and \code{value}.}
 
-\item{observation_table}{observations, as a \code{\link[tibble:tibble]{tibble}}.}
+\item{observation_table}{observations, as a
+\code{\link[tibble:tibble]{tibble}}.}
 
 \item{obs_value_column}{Name of the column containing
 observed values in the \code{observed} table, as a string.
 Default \code{"value"}}
 
-\item{obs_location_column}{Name of the column containing
-location values in the \code{observed} table, as a string.
-Default \code{"location"}}
-
 \item{obs_date_column}{Name of the column containing
 date values in the \code{observed} table, as a string.
-Default \code{"date"}}
+Default \code{"date"}.}
+
+\item{id_cols}{Additional id columns for joining the
+\verb{observation table} to the \code{hubverse_quantile_table}.
+Passed to \code{\link[=hubverse_table_with_obs]{hubverse_table_with_obs()}}. Default
+\code{c("location", "target")}.}
 
 \item{quantile_tol}{Round quantile level values to this many
 decimal places, to avoid problems with floating point number
