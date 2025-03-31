@@ -24,7 +24,7 @@ of trajectories}
 timepoint (default the FluSight/COVIDHub 2024-25 quantiles:
 \code{c(0.01, 0.025, 1:19/20, 0.975, 0.99)}}
 
-\item{timepoint_cols}{Name(s) of the column(s) in\code{trajectories}
+\item{timepoint_cols}{Name(s) of the column(s) in \code{trajectories}
 that identifies unique timepoints. Default \code{"timepoint"}.}
 
 \item{value_col}{name of the column in \code{trajectories}

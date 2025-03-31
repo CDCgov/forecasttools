@@ -12,7 +12,7 @@
 #' @param quantiles Quantiles to output for each
 #' timepoint (default the FluSight/COVIDHub 2024-25 quantiles:
 #' `c(0.01, 0.025, 1:19/20, 0.975, 0.99)`
-#' @param timepoint_cols Name(s) of the column(s) in`trajectories`
+#' @param timepoint_cols Name(s) of the column(s) in `trajectories`
 #' that identifies unique timepoints. Default `"timepoint"`.
 #' @param value_col name of the column in `trajectories`
 #' with the trajectory values (for which we wish to
