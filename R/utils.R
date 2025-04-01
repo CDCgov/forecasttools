@@ -149,7 +149,7 @@ soql_nullable_select <- function(soql_list, columns) {
 #' file reader/writer function, which will be one of
 #' [readr::read_csv()] / [readr::write_csv()],
 #' [readr::read_tsv()] / [readr::write_tsv()], and
-#' [arrow::read_parquet()] / [arrow::write_parquet()],
+#' [nanoparquet::read_parquet()] / [nanoparquet::write_parquet()],
 #' depending on the file format.
 #' @return For `read_tabular_file`, the result of
 #' reading in the file, as a
@@ -165,7 +165,7 @@ read_tabular_file <- function(path_to_file,
   file_readers <- c(
     "tsv" = readr::read_tsv,
     "csv" = readr::read_csv,
-    "parquet" = arrow::read_parquet
+    "parquet" = nanoparquet::read_parquet
   )
 
   checkmate::assert_names(file_format,
@@ -187,7 +187,7 @@ write_tabular_file <- function(table,
   file_writers <- c(
     "tsv" = readr::write_tsv,
     "csv" = readr::write_csv,
-    "parquet" = arrow::write_parquet
+    "parquet" = nanoparquet::write_parquet
   )
 
   checkmate::assert_names(file_format,
