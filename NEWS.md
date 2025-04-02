@@ -1,5 +1,5 @@
 # forecasttools 0.1.4
-* BREAKING CHANGE: Functions to prepare hubs for scoring (`hubverse_table_with_oobs()` and `quantile_table_to_scorable()`) now no longer assume that forecast tables contain a single target. This will break existing scoring workflows that use truth data without a target column. It can be addressed by setting the `id_cols` argument `hubverse_table_with_oobs()` or `quantile_table_to_scorable()` explicitly.
+* BREAKING CHANGE: Functions to prepare hubs for scoring (`hubverse_table_with_obs()` and `quantile_table_to_scorable()`) now no longer assume that forecast tables contain a single target. This will break existing scoring workflows that use truth data without a target column. It can be addressed by setting the `id_cols` argument `hubverse_table_with_obs()` or `quantile_table_to_scorable()` explicitly.
 * New function for calculating forecast horizons from target end dates: `horizons_from_target_end_dates()`
 * New epiweek rounding functions: `floor_mmwr_epiweek`, `ceiling_mmwr_epiweek()`, `floor_isoweek()`, and `ceiling_isoweek()`.
 * Smaller-than-memory `parquet` file I/O now handled via [`nanoparquet`](https://nanoparquet.r-lib.org/) (previously handled via [`arrow`](https://arrow.apache.org/docs/r/), reducing `forecasttools` package weight and installation time.
