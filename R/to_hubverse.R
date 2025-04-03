@@ -44,9 +44,7 @@ target_end_dates_from_horizons <- function(reference_date,
 #' @export
 horizons_from_target_end_dates <- function(reference_date,
                                            target_end_dates,
-                                           horizon_timescale =
-                                             c("days", "weeks")) {
-  rlang::arg_match(horizon_timescale)
+                                           horizon_timescale) {
   horizons <- lubridate::time_length(target_end_dates - reference_date,
     unit = horizon_timescale
   )
