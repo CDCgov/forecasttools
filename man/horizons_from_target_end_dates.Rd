@@ -7,7 +7,7 @@
 horizons_from_target_end_dates(
   reference_date,
   target_end_dates,
-  horizon_timescale = c("days", "weeks")
+  horizon_timescale
 )
 }
 \arguments{
