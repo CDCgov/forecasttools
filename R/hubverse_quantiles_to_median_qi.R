@@ -3,7 +3,7 @@
 #'
 #' These intervals are also called "equal-tailed intervals". A quantile
 #' interval can be computed whenver both the `x` quantile and the
-#' `1 - x` quantile are present (yielding an interval of width
+#' `1 - x` quantile are present, yielding an interval of width
 #' `abs(1 - 2 * x)`.
 #'
 #' Checks that all quantile_levels are between 0 and 1, inclusive.

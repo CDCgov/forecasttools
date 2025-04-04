@@ -26,7 +26,7 @@ intervals.
 \description{
 These intervals are also called "equal-tailed intervals". A quantile
 interval can be computed whenver both the \code{x} quantile and the
-\code{1 - x} quantile are present (yielding an interval of width
+\code{1 - x} quantile are present, yielding an interval of width
 \code{abs(1 - 2 * x)}.
 }
 \details{
