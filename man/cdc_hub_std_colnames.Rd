@@ -6,7 +6,8 @@
 \alias{covidhub_std_colnames}
 \alias{flusight_std_colnames}
 \title{Names of standard columns for the
-the CDC FluSight and COVID-19 Forecast Hubs}
+the CDC FluSight and COVID-19 Forecast Hubs, with
+convenient aliases.}
 \format{
 An object of class \code{character} of length 9.
 
@@ -23,10 +24,7 @@ flusight_std_colnames
 }
 \description{
 Names of standard columns for the
-the CDC FluSight and COVID-19 Forecast Hubs
-
-Alias for \link{cdc_hub_std_colnames}.
-
-Alias for \link{cdc_hub_std_colnames}.
+the CDC FluSight and COVID-19 Forecast Hubs, with
+convenient aliases.
 }
 \keyword{datasets}

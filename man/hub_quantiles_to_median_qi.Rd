@@ -55,10 +55,12 @@ than \code{output_type_id}, \code{output_type}, and \code{value} as grouping / i
 and returns them in the output table.
 }
 \examples{
-hub_quantiles_to_median_qi(hubExamples::forecast_outputs |>
-  dplyr::filter(.data$output_type == "quantile"),
+hub_quantiles_to_median_qi(
+  hubExamples::forecast_outputs |>
+    dplyr::filter(.data$output_type == "quantile"),
   .width = c(0.5, 0.8)
 )
+#
 hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
   .width = c(0.5),
   require_only_quantiles = FALSE

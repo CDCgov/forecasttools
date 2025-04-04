@@ -19,16 +19,15 @@ cdc_hub_additional_colnames <- c(
   purrr::set_names()
 
 #' Names of standard columns for the
-#' the CDC FluSight and COVID-19 Forecast Hubs
+#' the CDC FluSight and COVID-19 Forecast Hubs, with
+#' convenient aliases.
 #' @export
 cdc_hub_std_colnames <- c(hubverse_std_colnames, cdc_hub_additional_colnames)
 
-#' Alias for [cdc_hub_std_colnames].
 #' @rdname cdc_hub_std_colnames
 #' @export
 covidhub_std_colnames <- cdc_hub_std_colnames
 
-#' Alias for [cdc_hub_std_colnames].
 #' @rdname cdc_hub_std_colnames
 #' @export
 flusight_std_colnames <- cdc_hub_std_colnames
