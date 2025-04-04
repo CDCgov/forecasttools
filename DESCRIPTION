@@ -38,7 +38,6 @@ Imports:
     gridExtra,
     httr,
     hubData (>= 0.2.0),
-    hubExamples,
     hubUtils,
     jsonlite,
     lubridate,
@@ -56,6 +55,7 @@ Imports:
 Suggests:
     data.table,
     tidybayes,
+    hubExamples,
     knitr,
     kableExtra,
     rmarkdown,

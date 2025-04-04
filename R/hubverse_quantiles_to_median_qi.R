@@ -115,6 +115,10 @@ widths_to_qi_table <- function(widths,
 #' function will succeed if it can calculate all the requested
 #' interval `.width`s for all the groups present in the input and
 #' otherwise will error. Default `TRUE`.
+#' @param quantile_tol Round quantile level values to this many
+#' decimal places, to avoid problems with floating point number
+#' equality comparisons. Passed as the `digits` argument to
+#' [base::round()]. Default 10.
 #' @return A [`tibble`][tibble::tibble()] in the output format of
 #' [ggdist::median_qi()]
 #' added.

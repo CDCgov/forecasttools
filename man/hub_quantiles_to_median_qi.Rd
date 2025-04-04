@@ -37,6 +37,11 @@ any of the requested \code{.width}s for any group? If \code{TRUE}, the
 function will succeed if it can calculate all the requested
 interval \code{.width}s for all the groups present in the input and
 otherwise will error. Default \code{TRUE}.}
+
+\item{quantile_tol}{Round quantile level values to this many
+decimal places, to avoid problems with floating point number
+equality comparisons. Passed as the \code{digits} argument to
+\code{\link[base:Round]{base::round()}}. Default 10.}
 }
 \value{
 A \code{\link[tibble:tibble]{tibble}} in the output format of
