@@ -124,9 +124,15 @@ widths_to_qi_table <- function(widths,
 #' added.
 #'
 #' @examples
-#'
-#' hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
+#' hub_quantiles_to_median_qi(
+#'   hubExamples::forecast_outputs |>
+#'     dplyr::filter(.data$output_type == "quantile"),
 #'   .width = c(0.5, 0.8)
+#' )
+#' #
+#' hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
+#'   .width = c(0.5),
+#'   require_only_quantiles = FALSE
 #' )
 #'
 #' @export
@@ -179,7 +185,7 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
           "`require_all_medians` was set to `TRUE` but some ",
           "groups are missing medians: "
         ),
-        capture.output(print(missing))
+        utils::capture.output(print(missing))
       ))
     }
   }
@@ -242,7 +248,7 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
           "`require_all_widths` was set to `TRUE` but some ",
           "groups are missing required interval widths:"
         ),
-        capture.output(print(missing))
+        utils::capture.output(print(missing))
       ))
     }
   }
