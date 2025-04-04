@@ -8,8 +8,9 @@
 hub_quantiles_to_median_qi(
   hubverse_quantile_table,
   .width = 0.95,
-  require_only_quantiles = FALSE,
-  require_all_widths = FALSE,
+  require_only_quantiles = TRUE,
+  require_all_medians = TRUE,
+  require_all_widths = TRUE,
   quantile_tol = 10
 )
 }
@@ -22,14 +23,20 @@ in the output. Default \code{0.95}, to align with the default value in
 \code{\link[ggdist:point_interval]{ggdist::median_qi()}}.}
 
 \item{require_only_quantiles}{Boolean. Error if the table contains
-\code{output_type} values other than \code{"quantile"}? If \code{FALSE}, will
-silently filter the table to rows with \code{output_type == 'quantile'}.
-Default \code{FALSE}.}
+\code{output_type} values other than \code{"quantile"}? If \code{FALSE}, the function
+will silently filter the table to rows with \code{output_type == 'quantile'}.
+Default \code{TRUE}.}
 
-\item{require_all_widths}{Boolean. Error if the output is missing any
-rows for any of the requested \code{.width}s. If \code{TRUE}, the function will
-error if unless it can calculate all the requested intervals for all
-the groups present. Default \code{FALSE}.}
+\item{require_all_medians}{Boolean. Error if the output is missing
+any medians? If \code{TRUE}, the function will succeed if it can find a
+median (\code{0.5} quantile) value for all groups present in the input
+and otherwise will error. Default \code{TRUE}.}
+
+\item{require_all_widths}{Boolean. Error if the output is missing
+any of the requested \code{.width}s for any group? If \code{TRUE}, the
+function will succeed if it can calculate all the requested
+interval \code{.width}s for all the groups present in the input and
+otherwise will error. Default \code{TRUE}.}
 }
 \value{
 A \code{\link[tibble:tibble]{tibble}} in the output format of
