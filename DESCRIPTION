@@ -38,6 +38,7 @@ Imports:
     gridExtra,
     httr,
     hubData (>= 0.2.0),
+    hubExamples,
     hubUtils,
     jsonlite,
     lubridate,
@@ -72,6 +73,8 @@ Depends:
     R (>= 2.10)
 LazyData: true
 Remotes:
-    hubverse-org/hubData
+    hubverse-org/hubData,
+    hubverse-org/hubUtils,
+    hubverse-org/hubExamples
 BugReports: https://github.com/CDCgov/forecasttools/issues
 Config/testthat/edition: 3
