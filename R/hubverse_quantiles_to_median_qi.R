@@ -180,7 +180,7 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
     }
   }
 
-  with_lower <- qi_table |>
+  result <- qi_table |>
     dplyr::mutate(
       .lower_quantile = as.character(.data$.lower_quantile),
       .upper_quantile = as.character(.data$.upper_quantile),
@@ -194,9 +194,7 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
         .lower_quantile = "output_type_id"
       ),
       by = ".lower_quantile"
-    )
-
-  result <- with_lower |>
+    ) |>
     dplyr::inner_join(
       quant_tab |> dplyr::rename(
         .upper = "value",
@@ -204,7 +202,7 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
       ),
       by = c(".upper_quantile", id_cols)
     ) |>
-    dplyr::inner_join(
+    dplyr::left_join(
       quant_tab |> dplyr::rename(
         x = "value",
         .point_quantile = "output_type_id"
@@ -225,15 +223,15 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
       ".width"
     )
 
-
   if (require_all_widths) {
     id_groups_widths <- id_groups |>
       tidyr::crossing(.width = !!.width)
 
-    missing <- id_groups_widths |> dplyr::anti_join(
-      result,
-      by = c(".width", id_cols)
-    )
+    missing <- id_groups_widths |>
+      dplyr::anti_join(
+        result,
+        by = c(".width", id_cols)
+      )
     if (nrow(missing) > 0) {
       cli::cli_abort(c(
         paste0(

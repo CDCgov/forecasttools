@@ -76,59 +76,75 @@ test_that("widths_to_qi_table works as expected", {
 })
 
 
-withr::with_seed(5, {
-  test_table <- tibble::tibble(
-    output_type_id = rep(c(0.1, 0.2, 0.5, 0.8, 0.9), 3),
-    output_type = rep("quantile", 15),
-    value = runif(15),
-    group = rep(c("A", "B", "C"), each = 5)
-  )
-})
 
-
-# Define the test
 test_that(paste0(
   "hub_quantiles_to_median_qi throws errors ",
   "appropriately based on require_only_quantiles ",
-  "and require_all_widths"
+  "require_all_medians, and require_all_widths"
 ), {
-  expect_no_error(hub_quantiles_to_median_qi(
-    test_table,
-    NA,
-    require_only_quantiles = TRUE,
-    require_all_widths = FALSE
-  ))
+  test_table <- tibble::tibble(
+    output_type_id = rep(c(0.1, 0.2, 0.5, 0.8, 0.9), 3),
+    output_type = rep("quantile", 15),
+    value = 1:15,
+    group = rep(c("A", "B", "C"), each = 5)
+  )
 
-  with_other_output_type <- test_table %>%
+
+  ## test require_only_quantiles functionality
+  with_other_output_type <- test_table |>
     dplyr::mutate(output_type = ifelse(
-      group == "C",
+      .data$group == "C",
       "sample",
-      output_type
+      .data$output_type
     ))
+  expect_no_error(hub_quantiles_to_median_qi(
+    with_other_output_type,
+    .width = 0.6,
+    require_only_quantiles = FALSE
+  ))
   expect_error(
     hub_quantiles_to_median_qi(
-      with_other_output_type, NA,
-      require_only_quantiles = TRUE,
-      require_all_widths = FALSE
+      with_other_output_type,
+      .width = 0.6
     ),
     "quantile"
   )
 
+
+  ## test require_all_medians functionality
+  without_medians <- test_table |>
+    dplyr::filter(output_type_id != 0.5 | group == "C")
+
+  ## if require_all_medians is FALSE and medians
+  ## are missing, those values should be NA
+  ## and others should be the correct values
+  without_valid <- hub_quantiles_to_median_qi(
+    without_medians,
+    .width = 0.6,
+    require_all_medians = FALSE
+  )
+  expect_equal(without_valid$x, c(NA, NA, 13))
+
+  expect_error(
+    hub_quantiles_to_median_qi(
+      without_medians,
+      .width = 0.6
+    ),
+    "require_all_medians"
+  )
+
+  ## test require_all_widths functionality
   expect_no_error(hub_quantiles_to_median_qi(
-    with_other_output_type,
-    require_only_quantiles = FALSE,
-    require_all_widths = TRUE,
-    .width = c(0.8, 0.6)
+    test_table,
+    .width = c(0.8, 0.6),
+    require_all_widths = FALSE
   ))
 
   expect_error(
     hub_quantiles_to_median_qi(
-      with_other_output_type,
-      require_only_quantiles = FALSE,
-      require_all_widths = TRUE,
+      test_table,
       .width = c(0.5, 0.8, 0.2)
-    ) |>
-      suppressMessages(),
+    ),
     "require_all_widths"
   )
 })
