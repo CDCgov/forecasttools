@@ -1,9 +1,10 @@
 #' Get a table of quantile intervals ("qi") that can be computed
 #' from a given set of absolute quantile levels.
 #'
-#' These intervals are also called "equal-tailed intervals", and can
-#' be computed whenever both the `x` quantile and the `1 - x` are present.
-#' (yielding an interval of width `1 - (min(x, 1 - x) / 2)`.
+#' These intervals are also called "equal-tailed intervals". A quantile
+#' interval can be computed whenver both the `x` quantile and the
+#' `1 - x` quantile are present (yielding an interval of width
+#' `abs(1 - 2 * x)`.
 #'
 #' Checks that all quantile_levels are between 0 and 1, inclusive.
 #'
@@ -53,9 +54,9 @@ get_available_qi <- function(quantile_levels,
 #' Get a table of quantile intervals ("qi") corresponding to a
 #' vector of interval widths.
 #'
-#' These intervals are also called "equal-tailed intervals", and can
-#' be computed whenever both the `x` quantile and the `1 - x` are present.
-#' (yielding an interval of width `1 - (min(x, 1 - x) / 2)`.
+#' These intervals are also called "equal-tailed intervals". An interval
+#' of width `x` ranges from the `0.5 - x / 2` quantile to the
+#' `0.5 + x / 2` quantile.
 #'
 #' @param widths Vector of interval widths. All entries
 #' must be between 0 and 1, inclusive. Duplicate entries
@@ -94,8 +95,8 @@ widths_to_qi_table <- function(widths,
 #'
 #' Expects a hubverse-format quantile table (e.g. as created by
 #' [get_hubverse_table()]). Treats all columns in that table other
-#' than `output_type_id`, `output_type`, and `value` as grouping / id columns,
-#' and returns them in the output table.
+#' than `output_type_id`, `output_type`, and `value` as grouping / id
+#' columns, and returns them in the output table.
 #'
 #' @param hubverse_quantile_table Hubverse-format quantile table,
 #' as an object something coerceible to a [`tibble`][tibble::tibble()].

@@ -25,7 +25,7 @@ that give the bounds and the widths of the requested
 intervals.
 }
 \description{
-These intervals are also called "equal-tailed intervals", and can
-be computed whenever both the \code{x} quantile and the \code{1 - x} are present.
-(yielding an interval of width \code{1 - (min(x, 1 - x) / 2)}.
+These intervals are also called "equal-tailed intervals". An interval
+of width \code{x} ranges from the \code{0.5 - x / 2} quantile to the
+\code{0.5 + x / 2} quantile.
 }

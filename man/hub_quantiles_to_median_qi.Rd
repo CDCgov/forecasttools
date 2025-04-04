@@ -51,8 +51,8 @@ added.
 \description{
 Expects a hubverse-format quantile table (e.g. as created by
 \code{\link[=get_hubverse_table]{get_hubverse_table()}}). Treats all columns in that table other
-than \code{output_type_id}, \code{output_type}, and \code{value} as grouping / id columns,
-and returns them in the output table.
+than \code{output_type_id}, \code{output_type}, and \code{value} as grouping / id
+columns, and returns them in the output table.
 }
 \examples{
 hub_quantiles_to_median_qi(

@@ -24,9 +24,10 @@ that give the bounds and the widths of the available
 intervals.
 }
 \description{
-These intervals are also called "equal-tailed intervals", and can
-be computed whenever both the \code{x} quantile and the \code{1 - x} are present.
-(yielding an interval of width \code{1 - (min(x, 1 - x) / 2)}.
+These intervals are also called "equal-tailed intervals". A quantile
+interval can be computed whenver both the \code{x} quantile and the
+\code{1 - x} quantile are present (yielding an interval of width
+\code{abs(1 - 2 * x)}.
 }
 \details{
 Checks that all quantile_levels are between 0 and 1, inclusive.
