@@ -103,13 +103,18 @@ widths_to_qi_table <- function(widths,
 #' in the output. Default `0.95`, to align with the default value in
 #' [ggdist::median_qi()].
 #' @param require_only_quantiles Boolean. Error if the table contains
-#' `output_type` values other than `"quantile"`? If `FALSE`, will
-#' silently filter the table to rows with `output_type == 'quantile'`.
-#' Default `FALSE`.
-#' @param require_all_widths Boolean. Error if the output is missing any
-#' rows for any of the requested `.width`s. If `TRUE`, the function will
-#' error if unless it can calculate all the requested intervals for all
-#' the groups present. Default `FALSE`.
+#' `output_type` values other than `"quantile"`? If `FALSE`, the function
+#' will silently filter the table to rows with `output_type == 'quantile'`.
+#' Default `TRUE`.
+#' @param require_all_medians Boolean. Error if the output is missing
+#' any medians? If `TRUE`, the function will succeed if it can find a
+#' median (`0.5` quantile) value for all groups present in the input
+#' and otherwise will error. Default `TRUE`.
+#' @param require_all_widths Boolean. Error if the output is missing
+#' any of the requested `.width`s for any group? If `TRUE`, the
+#' function will succeed if it can calculate all the requested
+#' interval `.width`s for all the groups present in the input and
+#' otherwise will error. Default `TRUE`.
 #' @return A [`tibble`][tibble::tibble()] in the output format of
 #' [ggdist::median_qi()]
 #' added.
@@ -123,8 +128,9 @@ widths_to_qi_table <- function(widths,
 #' @export
 hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
                                        .width = 0.95,
-                                       require_only_quantiles = FALSE,
-                                       require_all_widths = FALSE,
+                                       require_only_quantiles = TRUE,
+                                       require_all_medians = TRUE,
+                                       require_all_widths = TRUE,
                                        quantile_tol = 10) {
   checkmate::assert_names(names(hubverse_quantile_table),
     must.include = purrr::discard(
@@ -143,8 +149,6 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
 
   qi_table <- widths_to_qi_table(.width, quantile_tol)
 
-
-
   quant_tab <- hubverse_quantile_table |>
     dplyr::select(-"output_type") |>
     dplyr::mutate(
@@ -153,8 +157,28 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
       ) |>
         as.character()
     )
+
   id_cols <- names(quant_tab) |>
     purrr::discard(~ . %in% c("value", "output_type_id"))
+  id_groups <- quant_tab |>
+    dplyr::distinct(dplyr::across(!!id_cols))
+
+  if (require_all_medians) {
+    missing <- id_groups |>
+      dplyr::mutate(output_type_id = "0.5") |>
+      dplyr::anti_join(quant_tab,
+        by = c("output_type_id", id_cols)
+      )
+    if (nrow(missing) > 0) {
+      cli::cli_abort(c(
+        paste0(
+          "`require_all_medians` was set to `TRUE` but some ",
+          "groups are missing medians: "
+        ),
+        capture.output(print(missing))
+      ))
+    }
+  }
 
   with_lower <- qi_table |>
     dplyr::mutate(
@@ -171,7 +195,6 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
       ),
       by = ".lower_quantile"
     )
-
 
   result <- with_lower |>
     dplyr::inner_join(
@@ -204,11 +227,10 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
 
 
   if (require_all_widths) {
-    id_groups <- quant_tab |>
-      dplyr::distinct(dplyr::across(!!id_cols)) |>
+    id_groups_widths <- id_groups |>
       tidyr::crossing(.width = !!.width)
 
-    missing <- id_groups |> dplyr::anti_join(
+    missing <- id_groups_widths |> dplyr::anti_join(
       result,
       by = c(".width", id_cols)
     )
