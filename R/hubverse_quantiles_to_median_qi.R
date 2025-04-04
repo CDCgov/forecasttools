@@ -42,10 +42,10 @@ get_available_qi <- function(quantile_levels,
     .lower_quantile = lowers[valid],
     .upper_quantile = uppers[valid]
   ) |>
-    dplyr::arrange(.data$.lower_quantile) |>
     dplyr::mutate(
       .width = .data$.upper_quantile - .data$.lower_quantile
-    )
+    ) |>
+    dplyr::arrange(.data$.width)
 
   return(result)
 }
@@ -83,7 +83,7 @@ widths_to_qi_table <- function(widths,
     .upper_quantile = 0.5 + widths / 2,
     .width = widths
   ) |>
-    dplyr::arrange(.data$.lower_quantile)
+    dplyr::arrange(.data$.width)
 
   return(qi_table)
 }
@@ -134,7 +134,7 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
   )
   if (require_only_quantiles) {
     checkmate::assert_names(hubverse_quantile_table$output_type,
-      identical.to = "quantile"
+      subset.of = "quantile"
     )
   } else {
     hubverse_quantile_table <- hubverse_quantile_table |>
@@ -196,7 +196,12 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
       ".width",
       ".point",
       ".interval"
+    ) |>
+    dplyr::arrange(
+      dplyr::across(!!id_cols),
+      ".width"
     )
+
 
   if (require_all_widths) {
     id_groups <- quant_tab |>
@@ -208,11 +213,12 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
       by = c(".width", id_cols)
     )
     if (nrow(missing) > 0) {
-      message("Missing groups:")
-      print(missing)
-      cli::cli_abort(message = c(
-        "Missing required interval widths ",
-        "for some groups"
+      cli::cli_abort(c(
+        paste0(
+          "`require_all_widths` was set to `TRUE` but some ",
+          "groups are missing required interval widths:"
+        ),
+        capture.output(print(missing))
       ))
     }
   }
