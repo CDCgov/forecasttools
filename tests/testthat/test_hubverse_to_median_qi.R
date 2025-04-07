@@ -1,4 +1,4 @@
-test_that("get_available_qi works as expected", {
+test_that("get_available_qi_widths works as expected", {
   expect_error(
     get_available_qi_widths(c(0.25, 0.5, 0.75, 1.01)),
     "<= 1"
