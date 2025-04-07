@@ -68,6 +68,7 @@ hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
 )
 
 hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
-  require_only_quantiles = FALSE
+  require_only_quantiles = FALSE,
+  require_all_widths = FALSE
 )
 }
