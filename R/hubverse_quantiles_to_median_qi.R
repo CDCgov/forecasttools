@@ -150,8 +150,8 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
     )
   )
   if (require_only_quantiles) {
-    checkmate::assert_names(hubverse_quantile_table$output_type,
-      subset.of = "quantile"
+    checkmate::assert_names(unique(hubverse_quantile_table$output_type),
+      identical.to = "quantile"
     )
   } else {
     hubverse_quantile_table <- hubverse_quantile_table |>
