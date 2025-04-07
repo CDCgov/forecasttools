@@ -7,7 +7,7 @@
 \usage{
 hub_quantiles_to_median_qi(
   hubverse_quantile_table,
-  .width = 0.95,
+  .width = NULL,
   require_only_quantiles = TRUE,
   require_all_medians = TRUE,
   require_all_widths = TRUE,
@@ -19,8 +19,9 @@ hub_quantiles_to_median_qi(
 as an object something coerceible to a \code{\link[tibble:tibble]{tibble}}.}
 
 \item{.width}{Vector of interval width(s) to for which to create rows
-in the output. Default \code{0.95}, to align with the default value in
-\code{\link[ggdist:point_interval]{ggdist::median_qi()}}.}
+in the output. If \code{NULL} (the default), use all and only the widths
+that can be computed from quantiles available in
+\code{hubverse_quantile_table}, as determined by \link{get_available_qi_widths}.}
 
 \item{require_only_quantiles}{Boolean. Error if the table contains
 \code{output_type} values other than \code{"quantile"}? If \code{FALSE}, the function
@@ -60,10 +61,13 @@ hub_quantiles_to_median_qi(
     dplyr::filter(.data$output_type == "quantile"),
   .width = c(0.5, 0.8)
 )
-#
+
 hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
   .width = c(0.5),
   require_only_quantiles = FALSE
 )
 
+hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
+  require_only_quantiles = FALSE
+)
 }

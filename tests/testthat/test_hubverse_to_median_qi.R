@@ -1,38 +1,26 @@
 test_that("get_available_qi works as expected", {
   expect_error(
-    get_available_qi(c(0.25, 0.5, 0.75, 1.01)),
+    get_available_qi_widths(c(0.25, 0.5, 0.75, 1.01)),
     "<= 1"
   )
   expect_error(
-    get_available_qi(c(0.25, 0.5, 0.75, -0.25)),
+    get_available_qi_widths(c(0.25, 0.5, 0.75, -0.25)),
     ">= 0"
   )
 
   expect_equal(
-    get_available_qi(c(0, 0.25, 0.3, 0.5, 0.75, 0.99)),
-    tibble::tibble(
-      .lower_quantile = 0.25,
-      .upper_quantile = 0.75,
-      .width = 0.5
-    )
+    get_available_qi_widths(c(0, 0.25, 0.3, 0.5, 0.75, 0.99)),
+    0.5
   )
 
   expect_equal(
-    get_available_qi(c(0.02, 0.1, 0.2, 0.5, 0.8, 0.9, 1)),
-    tibble::tibble(
-      .lower_quantile = c(0.2, 0.1),
-      .upper_quantile = c(0.8, 0.9),
-      .width = c(0.6, 0.8)
-    )
+    get_available_qi_widths(c(0.02, 0.1, 0.2, 0.5, 0.8, 0.9, 1)),
+    c(0.6, 0.8)
   )
   # works with out of order and duplicate levels
   expect_equal(
-    get_available_qi(c(1, 0.8, 0.8, 0.8, 0, 0.5, 0.2, 0.9, 0.1)),
-    tibble::tibble(
-      .lower_quantile = c(0.2, 0.1, 0),
-      .upper_quantile = c(0.8, 0.9, 1),
-      .width = c(0.6, 0.8, 1)
-    )
+    get_available_qi_widths(c(1, 0.8, 0.8, 0.8, 0, 0.5, 0.2, 0.9, 0.1)),
+    c(0.6, 0.8, 1)
   )
 })
 
@@ -171,10 +159,33 @@ test_that("hub_quantiles_to_median_qi output matches manual expected output", {
 
   result <- hub_quantiles_to_median_qi(
     input,
+    require_only_quantiles = TRUE,
+    require_all_widths = TRUE
+  )
+
+
+  result_explicit <- hub_quantiles_to_median_qi(
+    input,
     .width = c(0.5, 0.8),
     require_only_quantiles = TRUE,
     require_all_widths = TRUE
   )
 
+  result_filtered <- hub_quantiles_to_median_qi(
+    input,
+    .width = c(0.8),
+    require_only_quantiles = TRUE,
+    require_all_widths = TRUE
+  )
+
+
   expect_equal(result, expected_output)
+  expect_equal(result, result_explicit)
+  expect_equal(
+    result_filtered,
+    dplyr::filter(
+      expected_output,
+      .data$.width == 0.8
+    )
+  )
 })

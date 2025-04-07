@@ -1,4 +1,4 @@
-#' Get a table of quantile intervals ("qi") that can be computed
+#' Get a table of quantile interval widths that can be computed
 #' from a given set of absolute quantile levels.
 #'
 #' These intervals are also called "equal-tailed intervals". A quantile
@@ -14,18 +14,14 @@
 #' decimal places, to avoid problems with floating point number
 #' equality comparisons. Passed as the `digits` argument to
 #' [base::round()]. Default 10.
-#' @return A table of available intervals, as a
-#' [`tibble`][tibble::tibble()], with columns
-#' `.lower_quantile`, `.upper_quantile`, and `.width`,
-#' that give the bounds and the widths of the available
-#' intervals.
+#' @return A vector of widths that can be computed.
 #'
 #' @export
 #' @examples
 #' get_available_qi(c(0.25, 0.3, 0.5, 0.75, 0.99))
 #' get_available_qi(c(0.1, 0.2, 0.5, 0.8, 0.9))
-get_available_qi <- function(quantile_levels,
-                             quantile_tol = 10) {
+get_available_qi_widths <- function(quantile_levels,
+                                    quantile_tol = 10) {
   quantile_levels <- as.numeric(quantile_levels) |>
     round(digits = quantile_tol) |>
     unique()
@@ -39,16 +35,7 @@ get_available_qi <- function(quantile_levels,
 
   valid <- uppers %in% quantile_levels
 
-  result <- tibble::tibble(
-    .lower_quantile = lowers[valid],
-    .upper_quantile = uppers[valid]
-  ) |>
-    dplyr::mutate(
-      .width = .data$.upper_quantile - .data$.lower_quantile
-    ) |>
-    dplyr::arrange(.data$.width)
-
-  return(result)
+  return(sort(uppers[valid] - lowers[valid]))
 }
 
 #' Get a table of quantile intervals ("qi") corresponding to a
@@ -101,8 +88,9 @@ widths_to_qi_table <- function(widths,
 #' @param hubverse_quantile_table Hubverse-format quantile table,
 #' as an object something coerceible to a [`tibble`][tibble::tibble()].
 #' @param .width Vector of interval width(s) to for which to create rows
-#' in the output. Default `0.95`, to align with the default value in
-#' [ggdist::median_qi()].
+#' in the output. If `NULL` (the default), use all and only the widths
+#' that can be computed from quantiles available in
+#' `hubverse_quantile_table`, as determined by [get_available_qi_widths].
 #' @param require_only_quantiles Boolean. Error if the table contains
 #' `output_type` values other than `"quantile"`? If `FALSE`, the function
 #' will silently filter the table to rows with `output_type == 'quantile'`.
@@ -130,15 +118,19 @@ widths_to_qi_table <- function(widths,
 #'     dplyr::filter(.data$output_type == "quantile"),
 #'   .width = c(0.5, 0.8)
 #' )
-#' #
+#'
 #' hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
 #'   .width = c(0.5),
 #'   require_only_quantiles = FALSE
 #' )
 #'
+#' hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
+#'   require_only_quantiles = FALSE
+#' )
+
 #' @export
 hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
-                                       .width = 0.95,
+                                       .width = NULL,
                                        require_only_quantiles = TRUE,
                                        require_all_medians = TRUE,
                                        require_all_widths = TRUE,
@@ -158,8 +150,6 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
       dplyr::filter(.data$output_type == "quantile")
   }
 
-  qi_table <- widths_to_qi_table(.width, quantile_tol)
-
   quant_tab <- hubverse_quantile_table |>
     dplyr::select(-"output_type") |>
     dplyr::mutate(
@@ -173,6 +163,7 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
     purrr::discard(~ . %in% c("value", "output_type_id"))
   id_groups <- quant_tab |>
     dplyr::distinct(dplyr::across(!!id_cols))
+
 
   if (require_all_medians) {
     missing <- id_groups |>
@@ -190,6 +181,13 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
       ))
     }
   }
+
+  if (is.null(.width)) {
+    .width <- get_available_qi_widths(quant_tab$output_type_id)
+  }
+
+  qi_table <- widths_to_qi_table(.width, quantile_tol)
+
 
   result <- qi_table |>
     dplyr::mutate(
