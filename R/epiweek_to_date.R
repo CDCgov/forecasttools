@@ -6,34 +6,29 @@
 #' that can be passed to [lubridate::wday()]
 #' as the `week_start` argument.
 #'
-#' @param epiweek_standard One of `"USA"` (USA
-#' epiweek, starts on Sunday) and `"ISO"` (ISO
+#' @param epiweek_standard One of `"MMWR"` or `"USA"`
+#' (USA MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
 #' week, starts on Monday). Not case-sensitive.
 #' @return the start day of the week for the
-#' epiweek standard, as a three letter abbreviation
-#' (`'Sun'` or `'Mon'`) that can be passed to
+#' epiweek standard, as an integer that can be passed to
 #' [lubridate::wday()] as the `week_start`
 #' argument.
 #' export
 get_epiweek_start <- function(epiweek_standard) {
   standard <- stringr::str_to_lower(epiweek_standard)
-
-  epiweek_start <- dplyr::case_when(
-    standard == "usa" ~ "Sun",
-    standard == "iso" ~ "Mon",
-    TRUE ~ NA
+  epiweek_starts <- c(
+    "mmwr" = mmwr_epiweek_start,
+    "usa" = mmwr_epiweek_start,
+    "iso" = isoweek_start
   )
 
-  na_starts <- is.na(epiweek_start)
-  if (any(na_starts)) {
-    cli::cli_abort(paste0(
-      "Unknown epiweek standard(s) ",
-      "{epiweek_standard[na_starts]}. ",
-      "Expected `'USA'` or `'ISO'`"
-    ))
-  }
+  checkmate::assert_names(
+    epiweek_standard,
+    subset.of = names(epiweek_starts),
+    what = "Unique values of 'epiweek_standard'"
+  )
 
-  return(epiweek_start)
+  return(unname(epiweek_starts[epiweek_standard]))
 }
 
 #' Get the first date of an
@@ -96,7 +91,7 @@ epiyear_first_date <- function(epiyear,
 #' the epiweek. Two standard
 #' definitions of epidemiological
 #' weeks and years are supported:
-#' USA CDC / MMWR (`"USA"`, the default)
+#' USA CDC / MMWR (`"USA"` or `"MMWR"`, the default)
 #' and ISO (`"ISO"`).
 #'
 #' @param epiweek Epidemiological week,
@@ -112,10 +107,9 @@ epiyear_first_date <- function(epiyear,
 #'  week, starts on Monday). Passed to
 #' [epiyear_first_date()]. Not case-sensitive.
 #' Default `"USA"`
-#' @param validate Validate the answer by
-#' passing it back to [lubridate::epiweek()]
-#' and [lubridate::epiyear()]? Boolean,
-#' default `TRUE`.
+#' @param validate Validate the results by passing
+#' them back to the appropriate epiweek and epiyear
+#' functions? Boolean, default `TRUE`.
 #' @return The date, as a
 #' [`lubridate::date`][lubridate::date()] object
 #' @export
@@ -124,7 +118,8 @@ epiweek_to_date <- function(epiweek,
                             day_of_week = 1,
                             epiweek_standard = "USA",
                             validate = TRUE) {
-  candidates <- (epiyear_first_date(
+  epiweek_standard <- stringr::str_to_lower(epiweek_standard)
+  result <- (epiyear_first_date(
     epiyear,
     epiweek_standard = epiweek_standard
   ) +
@@ -133,42 +128,38 @@ epiweek_to_date <- function(epiweek,
   )
 
   if (validate) {
-    epiweek_start <- get_epiweek_start(epiweek_standard)
-
-    if (epiweek_start == "Sun") {
-      invalid <- (
-        lubridate::epiweek(candidates) != epiweek |
-          lubridate::epiyear(candidates) != epiyear
-      )
-    } else if (epiweek_start == "Mon") {
-      invalid <- (
-        lubridate::isoweek(candidates) != epiweek |
-          lubridate::isoyear(candidates) != epiyear
-      )
+    if (epiweek_standard == "usa" || epiweek_standard == "mmwr") {
+      week_fn <- lubridate::epiweek
+      year_fn <- lubridate::epiyear
+    } else if (epiweek_standard == "iso") {
+      week_fn <- lubridate::isoweek
+      year_fn <- lubridate::isoyear
     } else {
       cli::cli_abort(paste0(
-        "Could not validate results ",
+        "Could not validate results. ",
         "Got unknown epiweek standard ",
         "{epiweek_standard}"
       ))
     }
 
+    invalid <- week_fn(result) != epiweek | year_fn(result) != epiyear
+
     if (any(invalid)) {
-      failed <- candidates[invalid]
+      failed <- result[invalid]
       cli::cli_abort(paste0(
         "Calculated date(s) {failed} failed validation! ",
         "It does not return the user-requested values ",
         "for `epiweek` and `epiyear` when passed to ",
-        "`lubridate::epiweek()` and `lubridate::epiyear()`. ",
+        "{week_fn} and {year_fn}. ",
         "One reason this can occur is if the user specifies ",
         "an epiweek value greater than the number of epiweeks ",
         "in the specified epiyear. Note that not all epiyears ",
-        "contain the same number of epiweeks"
+        "contain the same number of epiweeks."
       ))
     }
   }
 
-  return(candidates)
+  return(result)
 }
 
 #' Annotate a dataframe with epiweek and epiyear
@@ -185,7 +176,7 @@ epiweek_to_date <- function(epiweek,
 #' for the epidate. 1-indexed. Passed to [epiweek_to_date()].
 #' Default 1 (start date of the epiweek).
 #' @param epiweek_standard Which epiweek standard to use. Passed
-#' to [epiweek_to_date()]. Default `"USA"`.
+#' to [epiweek_to_date()]. Default `"MMWR"`.
 #' @param validate Validate the result by
 #' passing it back to [lubridate::epiweek()]
 #' and [lubridate::epiyear()]? Boolean,
@@ -197,7 +188,7 @@ with_epidate <- function(df,
                          epiyear_col = "epiyear",
                          epidate_name = "epidate",
                          day_of_week = 1,
-                         epiweek_standard = "USA",
+                         epiweek_standard = "MMWR",
                          validate = TRUE) {
   return(df |> dplyr::mutate(!!epidate_name := epiweek_to_date(
     .data[[epiweek_col]],
