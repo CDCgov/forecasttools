@@ -35,7 +35,8 @@ target_end_dates_from_horizons <- function(reference_date,
 horizons_from_target_end_dates <- function(reference_date,
                                            target_end_dates,
                                            horizon_timescale) {
-  horizons <- lubridate::time_length(target_end_dates - reference_date,
+  horizons <- lubridate::time_length(
+    as.Date(target_end_dates) - as.Date(reference_date),
     unit = horizon_timescale
   )
   checkmate::assert_integerish(horizons)
