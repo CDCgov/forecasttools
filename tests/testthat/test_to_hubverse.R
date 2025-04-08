@@ -222,8 +222,8 @@ test_that("horizons_from_target_end_dates works correctly", {
     horizons_from_target_end_dates(
       reference_date = lubridate::ymd("2000-01-01"),
       target_end_dates = c(
-        lubridate::ymd("2000-01-01") + lubridate::ddays(1),
-        lubridate::ymd("2000-01-01") + lubridate::dweeks(1)
+        lubridate::ymd("2000-01-01") + lubridate::days(1),
+        lubridate::ymd("2000-01-01") + lubridate::weeks(1)
       ),
       horizon_timescale = c("days", "weeks")
     ),
