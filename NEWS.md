@@ -1,3 +1,8 @@
+# forecasttools 0.1.5
+* BREAKING CHANGE: `get_hubverse_table()` has been removed and replace by `get_hubverse_quantile_table()`, `get_flusight_hub_table()` and `get_covid_hub_table()`.
+* `horizons_from_target_end_dates` is now vectorized
+* New function: `hub_quantiles_to_median_qi()`
+
 # forecasttools 0.1.4
 * BREAKING CHANGE: Functions to prepare hubs for scoring (`hubverse_table_with_obs()` and `quantile_table_to_scorable()`) now no longer assume that forecast tables contain a single target. This will break existing scoring workflows that use truth data without a target column. It can be addressed by setting the `id_cols` argument `hubverse_table_with_obs()` or `quantile_table_to_scorable()` explicitly.
 * New function for calculating forecast horizons from target end dates: `horizons_from_target_end_dates()`
