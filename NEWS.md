@@ -1,5 +1,5 @@
 # forecasttools 0.1.5
-* BREAKING CHANGE: `get_hubverse_table()` has been removed and replace by `get_hubverse_quantile_table()`, `get_flusight_hub_table()` and `get_covid_hub_table()`.
+* BREAKING CHANGE: `get_hubverse_table()` has been removed and replaced by `get_hubverse_quantile_table()`, `get_flusight_hub_table()` and `get_covid_hub_table()`.
 * `horizons_from_target_end_dates` is now vectorized
 * New function: `hub_quantiles_to_median_qi()`
 
