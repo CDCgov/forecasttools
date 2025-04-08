@@ -61,7 +61,7 @@ Given a set of daily timeseries / time trajectories in
 tidy long-form format (i.e. with one row per day
 per trajectory, with one or more columns that uniquely
 identify individual trajectories (e.g. a \code{trajectory_id} column),
-aggregate it to the scale of epiweeks.
+aggregate it to the scale of USA MMWR epiweeks.
 }
 \details{
 This requires a column containing a set of timepoints

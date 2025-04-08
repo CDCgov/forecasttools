@@ -9,7 +9,7 @@ epiweek_to_date(
   epiweek,
   epiyear,
   day_of_week = 1,
-  epiweek_standard = "USA",
+  epiweek_standard = "MMWR",
   validate = TRUE
 )
 }
@@ -29,12 +29,11 @@ in the epiweek and 7 the last. Default \code{1}.}
 epiweek, starts on Sunday) and \code{"ISO"} (ISO
 week, starts on Monday). Passed to
 \code{\link[=epiyear_first_date]{epiyear_first_date()}}. Not case-sensitive.
-Default \code{"USA"}}
+Default \code{"MMWR"}}
 
-\item{validate}{Validate the answer by
-passing it back to \code{\link[lubridate:week]{lubridate::epiweek()}}
-and \code{\link[lubridate:year]{lubridate::epiyear()}}? Boolean,
-default \code{TRUE}.}
+\item{validate}{Validate the results by passing
+them back to the appropriate epiweek and epiyear
+functions? Boolean, default \code{TRUE}.}
 }
 \value{
 The date, as a
@@ -53,6 +52,6 @@ but can return any date in
 the epiweek. Two standard
 definitions of epidemiological
 weeks and years are supported:
-USA CDC / MMWR (\code{"USA"}, the default)
+USA CDC / MMWR (\code{"USA"} or \code{"MMWR"}, the default)
 and ISO (\code{"ISO"}).
 }

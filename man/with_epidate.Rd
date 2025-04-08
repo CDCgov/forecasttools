@@ -11,7 +11,7 @@ with_epidate(
   epiyear_col = "epiyear",
   epidate_name = "epidate",
   day_of_week = 1,
-  epiweek_standard = "USA",
+  epiweek_standard = "MMWR",
   validate = TRUE
 )
 }
@@ -31,8 +31,8 @@ associated "epidates". Default \code{"epidate"}.}
 for the epidate. 1-indexed. Passed to \code{\link[=epiweek_to_date]{epiweek_to_date()}}.
 Default 1 (start date of the epiweek).}
 
-\item{epiweek_standard}{Which epiweek standard to use. Passed
-to \code{\link[=epiweek_to_date]{epiweek_to_date()}}. Default \code{"USA"}.}
+\item{epiweek_standard}{Which epiweek standard to use.
+One of \code{"USA"} or \verb{"MMWR" (USA / MMWR epiweek, starts on Sunday) and }"ISO"\verb{(ISO  week, starts on Monday). Not case-sensitive. Default}"MMWR"`.}
 
 \item{validate}{Validate the result by
 passing it back to \code{\link[lubridate:week]{lubridate::epiweek()}}

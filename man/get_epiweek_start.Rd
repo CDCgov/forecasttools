@@ -7,17 +7,14 @@
 get_epiweek_start(epiweek_standard)
 }
 \arguments{
-\item{epiweek_standard}{One of \code{"USA"} (USA
-epiweek, starts on Sunday) and \code{"ISO"} (ISO
+\item{epiweek_standard}{One of \code{"MMWR"} or \code{"USA"}
+(USA / MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
 week, starts on Monday). Not case-sensitive.}
 }
 \value{
 the start day of the week for the
-epiweek standard, as a three letter abbreviation
-(\code{'Sun'} or \code{'Mon'}) that can be passed to
-\code{\link[lubridate:day]{lubridate::wday()}} as the \code{week_start}
-argument.
-export
+epiweek standard, as an integer that can be passed to
+\code{\link[lubridate:day]{lubridate::wday()}} as the \code{week_start} argument.
 }
 \description{
 Get the start day of an epiweek

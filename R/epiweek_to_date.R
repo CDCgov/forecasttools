@@ -1,3 +1,69 @@
+#' Get a date-to-epiweek function from an
+#' epiweek standard.
+#'
+#' Get the function that converts dates to epiweek numbers
+#' for a given epiweek standard.
+#'
+#' @param epiweek_standard One of `"MMWR"` or `"USA"`
+#' (USA MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
+#' week, starts on Monday). Not case-sensitive.
+#' Must be a single value.
+#' @return A function, either [lubridate::epiweek()] or
+#' [lubridate::isoweek()], depending on the value of
+#' `epiweek_standard`
+get_epiweek_fn <- function(epiweek_standard) {
+  epiweek_standard <- stringr::str_to_lower(epiweek_standard)
+  epiweek_fns <- c(
+    "mmwr" = lubridate::epiweek,
+    "usa" = lubridate::epiweek,
+    "iso" = lubridate::isoweek
+  )
+
+  checkmate::assert_scalar(
+    epiweek_standard
+  )
+  checkmate::assert_names(
+    epiweek_standard,
+    subset.of = names(epiweek_fns),
+  )
+
+  return(epiweek_fns[[epiweek_standard]])
+}
+
+#' Get a date-to-epiyear function from an epiweek
+#' standard.
+#'
+#' Get the function that converts dates to epiyear numbers
+#' for a given epiweek standard.
+#'
+#' @param epiweek_standard One of `"MMWR"` or `"USA"`
+#' (USA / MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
+#' week, starts on Monday). Not case-sensitive. Must be a
+#' single value.
+#' @return A function, either [lubridate::epiyear()] or
+#' [lubridate::isoyear()], depending on the value of
+#' `epiweek_standard`
+get_epiyear_fn <- function(epiweek_standard) {
+  epiweek_standard <- stringr::str_to_lower(epiweek_standard)
+  epiyear_fns <- c(
+    "mmwr" = lubridate::epiyear,
+    "usa" = lubridate::epiyear,
+    "iso" = lubridate::isoyear
+  )
+
+  checkmate::assert_scalar(
+    epiweek_standard
+  )
+
+  checkmate::assert_names(
+    epiweek_standard,
+    subset.of = names(epiyear_fns),
+  )
+
+  return(epiyear_fns[[epiweek_standard]])
+}
+
+
 #' Get the start day of an epiweek.
 #'
 #' Get the start day of an epiweek
@@ -7,15 +73,14 @@
 #' as the `week_start` argument.
 #'
 #' @param epiweek_standard One of `"MMWR"` or `"USA"`
-#' (USA MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
+#' (USA / MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
 #' week, starts on Monday). Not case-sensitive.
 #' @return the start day of the week for the
 #' epiweek standard, as an integer that can be passed to
-#' [lubridate::wday()] as the `week_start`
-#' argument.
-#' export
+#' [lubridate::wday()] as the `week_start` argument.
+#' @export
 get_epiweek_start <- function(epiweek_standard) {
-  standard <- stringr::str_to_lower(epiweek_standard)
+  epiweek_standard <- stringr::str_to_lower(epiweek_standard)
   epiweek_starts <- c(
     "mmwr" = mmwr_epiweek_start,
     "usa" = mmwr_epiweek_start,
@@ -29,6 +94,65 @@ get_epiweek_start <- function(epiweek_standard) {
   )
 
   return(unname(epiweek_starts[epiweek_standard]))
+}
+
+
+#' assert that a date corresponds to a given
+#' epidemiological week and year, according to the
+#' given epiweek standard.
+#'
+#' @param date Vector of dates to validate.
+#' @param expected_epiweek Vector of expected epiweek values.
+#' @param expected_epiyear Vector of expected epiyear values.
+#' @param epiweek_standard Epiweek standard to use.
+#' One of `"USA"` or `"MMWR"` (USA / MMWR
+#' epiweek, starts on Sunday) or `"ISO"` (ISO
+#'  week, starts on Monday). Not case-sensitive.
+#'
+#' @return Nothing on success, or raise an error if the assertion
+#' fails.
+#'
+#' @examples
+#' assert_date_in_epiweek("2025-01-02", 1, 2025, "USA")
+#' assert_date_in_epiweek(
+#'   c("2024-12-27", "2025-01-05"),
+#'   c(52, 1),
+#'   c(2024, 2025),
+#'   "ISO"
+#' )
+#'
+#' tryCatch(
+#'   assert_date_in_epiweek(
+#'     "2024-12-01", 52, 2024, "ISO"
+#'   ),
+#'   error = \(e) print(e)
+#' )
+#'
+#' @export
+assert_date_in_epiweek <- function(date,
+                                   expected_epiweek,
+                                   expected_epiyear,
+                                   epiweek_standard) {
+  week_fn <- get_epiweek_fn(epiweek_standard)
+  year_fn <- get_epiyear_fn(epiweek_standard)
+
+  invalid <- (
+    (week_fn(date) != expected_epiweek) |
+      (year_fn(date) != expected_epiyear)
+  )
+
+  if (any(invalid)) {
+    failed <- date[invalid]
+    cli::cli_abort(paste0(
+      "Date(s) '{failed}' failed epiweek validation! ",
+      "Did not obtain the user-requested values ",
+      "for `expected_epiweek` and `expected_epiyear` ",
+      "when passed to the epiweek and epiyear functions ",
+      "corresponding to epiweek standard '{epiweek_standard}'"
+    ))
+  }
+
+  invisible()
 }
 
 #' Get the first date of an
@@ -52,15 +176,15 @@ get_epiweek_start <- function(epiweek_standard) {
 #'
 #' @param epiyear The epidemiological
 #' year for which to get the first date.
-#' @param epiweek_standard One of `"USA"` (USA
-#' epiweek, starts on Sunday) and `"ISO"` (ISO
+#' @param epiweek_standard One of `"USA"` or `"MMWR"`
+#' (USA / MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
 #'  week, starts on Monday). Not case-sensitive.
-#' Default `"USA"`.
+#' Default `"MMWR"`.
 #' @return The first date of the epiyear,
 #' as a [`lubridate::date`][lubridate::date()] object
 #' @export
 epiyear_first_date <- function(epiyear,
-                               epiweek_standard = "USA") {
+                               epiweek_standard = "MMWR") {
   jan4 <- lubridate::make_date(
     epiyear,
     1,
@@ -106,7 +230,7 @@ epiyear_first_date <- function(epiyear,
 #' epiweek, starts on Sunday) and `"ISO"` (ISO
 #'  week, starts on Monday). Passed to
 #' [epiyear_first_date()]. Not case-sensitive.
-#' Default `"USA"`
+#' Default `"MMWR"`
 #' @param validate Validate the results by passing
 #' them back to the appropriate epiweek and epiyear
 #' functions? Boolean, default `TRUE`.
@@ -116,7 +240,7 @@ epiyear_first_date <- function(epiyear,
 epiweek_to_date <- function(epiweek,
                             epiyear,
                             day_of_week = 1,
-                            epiweek_standard = "USA",
+                            epiweek_standard = "MMWR",
                             validate = TRUE) {
   epiweek_standard <- stringr::str_to_lower(epiweek_standard)
   result <- (epiyear_first_date(
@@ -128,35 +252,10 @@ epiweek_to_date <- function(epiweek,
   )
 
   if (validate) {
-    if (epiweek_standard == "usa" || epiweek_standard == "mmwr") {
-      week_fn <- lubridate::epiweek
-      year_fn <- lubridate::epiyear
-    } else if (epiweek_standard == "iso") {
-      week_fn <- lubridate::isoweek
-      year_fn <- lubridate::isoyear
-    } else {
-      cli::cli_abort(paste0(
-        "Could not validate results. ",
-        "Got unknown epiweek standard ",
-        "{epiweek_standard}"
-      ))
-    }
-
-    invalid <- week_fn(result) != epiweek | year_fn(result) != epiyear
-
-    if (any(invalid)) {
-      failed <- result[invalid]
-      cli::cli_abort(paste0(
-        "Calculated date(s) {failed} failed validation! ",
-        "It does not return the user-requested values ",
-        "for `epiweek` and `epiyear` when passed to ",
-        "{week_fn} and {year_fn}. ",
-        "One reason this can occur is if the user specifies ",
-        "an epiweek value greater than the number of epiweeks ",
-        "in the specified epiyear. Note that not all epiyears ",
-        "contain the same number of epiweeks."
-      ))
-    }
+    assert_date_in_epiweek(
+      result, epiweek, epiyear,
+      epiweek_standard = epiweek_standard
+    )
   }
 
   return(result)
@@ -175,8 +274,10 @@ epiweek_to_date <- function(epiweek,
 #' @param day_of_week Which day of the epidemiological week to use
 #' for the epidate. 1-indexed. Passed to [epiweek_to_date()].
 #' Default 1 (start date of the epiweek).
-#' @param epiweek_standard Which epiweek standard to use. Passed
-#' to [epiweek_to_date()]. Default `"MMWR"`.
+#' @param epiweek_standard Which epiweek standard to use.
+#' One of `"USA"` or `"MMWR" (USA / MMWR epiweek, starts on Sunday)
+#' and `"ISO"` (ISO  week, starts on Monday). Not case-sensitive.
+#' Default `"MMWR"`.
 #' @param validate Validate the result by
 #' passing it back to [lubridate::epiweek()]
 #' and [lubridate::epiyear()]? Boolean,

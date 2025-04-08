@@ -4,7 +4,7 @@
 #' tidy long-form format (i.e. with one row per day
 #' per trajectory, with one or more columns that uniquely
 #' identify individual trajectories (e.g. a `trajectory_id` column),
-#' aggregate it to the scale of epiweeks.
+#' aggregate it to the scale of USA MMWR epiweeks.
 #'
 #' This requires a column containing a set of timepoints
 #' coercible to dates.
@@ -122,14 +122,14 @@ daily_to_epiweekly <- function(tidy_daily_trajectories,
   if (with_epiweek_start_date) {
     df <- df |> with_epidate(
       epidate_name = epiweek_start_date_name,
-      epiweek_standard = "USA"
+      epiweek_standard = "MMWR"
     )
   }
   if (with_epiweek_end_date) {
     df <- df |> with_epidate(
       epidate_name = epiweek_end_date_name,
       day_of_week = 7,
-      epiweek_standard = "USA"
+      epiweek_standard = "MMWR"
     )
   }
 

@@ -5,16 +5,16 @@
 \title{Get the first date of an
 epidemiological year ("epiyear")}
 \usage{
-epiyear_first_date(epiyear, epiweek_standard = "USA")
+epiyear_first_date(epiyear, epiweek_standard = "MMWR")
 }
 \arguments{
 \item{epiyear}{The epidemiological
 year for which to get the first date.}
 
-\item{epiweek_standard}{One of \code{"USA"} (USA
-epiweek, starts on Sunday) and \code{"ISO"} (ISO
+\item{epiweek_standard}{One of \code{"USA"} or \code{"MMWR"}
+(USA / MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
 week, starts on Monday). Not case-sensitive.
-Default \code{"USA"}.}
+Default \code{"MMWR"}.}
 }
 \value{
 The first date of the epiyear,
