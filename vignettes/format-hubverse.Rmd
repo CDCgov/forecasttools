@@ -236,15 +236,20 @@ quant_summary <- quant_summary |>
 quant_summary
 ```
 
-Now, we need to add the other required hubverse columns, select only the time horizons of interest, and so on. `forecasttools` provides a `get_hubverse_table()` function to do this for a given forecast `reference_date` and `target` name. Here, we'll use `2023-10-21` and `wk inc flu hosp`. `get_hubverse_table()` is configurable, but for convenience it is designed to accept `trajectories_to_quantiles()` output like our `quant_summary` tibble by default:
+Now, we need to add the other required hubverse columns, select only the time horizons of interest, and so on. `forecasttools` provides a `get_hubverse_quantile_table()` function to do this for a given forecast `reference_date` and `target` name. Here, we'll use `2023-10-21` and `wk inc flu hosp`. `get_hubverse_table()` is configurable, but for convenience it is designed to accept `trajectories_to_quantiles()` output like our `quant_summary` tibble by default:
 
 ```{r}
 flusight_table <- quant_summary |>
-  get_hubverse_table(
-    "2023-10-21",
-    "wk inc flu hosp",
+  mutate(target_end_date = epiweek_to_date(
+    epiweek = epiweek, epiyear = epiyear,
+    day_of_week = 7
+  )) |>
+  get_hubverse_quantile_table(
+    reference_date = "2023-10-21",
+    target_name = "wk inc flu hosp",
+    horizons = -1:3,
     horizon_timescale = "weeks",
-    timepoint_cols = c("epiweek", "epiyear")
+    timepoint_col = "target_end_date"
   )
 
 flusight_table |> print(width = 100)
