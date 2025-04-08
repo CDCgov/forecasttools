@@ -5,18 +5,22 @@ schema <- tidyr::crossing(
 )
 
 test_that(paste0(
-  "epiweek_to_date() function's internal ",
+  "epiweek_to_date() satisfies assert_date_in_epiweek() ",
   "validation passes for USA epiweeks for ",
   "every epiweek in 1:52 for every epiyear ",
   "in 1800:2200, for every day of the epiweek"
 ), {
   expect_no_warning(
-    epiweek_to_date(
+    assert_date_in_epiweek(
+      epiweek_to_date(
+        schema$epiweek,
+        schema$epiyear,
+        epiweek_standard = "USA",
+        day_of_week = schema$day_of_week
+      ),
       schema$epiweek,
       schema$epiyear,
-      epiweek_standard = "USA",
-      day_of_week = schema$day_of_week,
-      validate = TRUE
+      epiweek_standard = "MMWR"
     )
   )
 })
@@ -28,16 +32,58 @@ test_that(paste0(
   "in 1800:2200, for every day of the epiweek"
 ), {
   expect_no_warning(
-    epiweek_to_date(
+    assert_date_in_epiweek(
+      epiweek_to_date(
+        schema$epiweek,
+        schema$epiyear,
+        epiweek_standard = "ISO",
+        day_of_week = schema$day_of_week
+      ),
       schema$epiweek,
       schema$epiyear,
-      epiweek_standard = "ISO",
-      day_of_week = schema$day_of_week,
-      validate = TRUE
+      epiweek_standard = "iso"
     )
   )
 })
 
+test_that(paste0(
+  "epiyear_n_days and epiyear_n_days results correspond ",
+  "to manual expectation"
+), {
+  years <- 2020:2032
+  expected_weeks_mmwr <- c(
+    53, 52, 52, 52, 52, 53, 52,
+    52, 52, 52, 52, 53, 52
+  )
+  expected_weeks_iso <- c(
+    53, 52, 52, 52, 52, 52, 53, 52,
+    52, 52, 52, 52, 53
+  )
+  expect_equal(
+    epiyear_n_days(years),
+    7L * expected_weeks_mmwr
+  )
+  expect_equal(
+    epiyear_n_weeks(years),
+    expected_weeks_mmwr
+  )
+  expect_equal(
+    epiyear_n_weeks(years, epiweek_standard = "mMwR"),
+    expected_weeks_mmwr
+  )
+  expect_equal(
+    epiyear_n_weeks(years, epiweek_standard = "USa"),
+    expected_weeks_mmwr
+  )
+  expect_equal(
+    epiyear_n_weeks(years, epiweek_standard = "Iso"),
+    expected_weeks_iso
+  )
+  expect_equal(
+    epiyear_n_days(years, epiweek_standard = "isO"),
+    7L * expected_weeks_iso
+  )
+})
 
 test_that(paste0(
   "epiweek_to_date() function's internal ",
@@ -50,8 +96,7 @@ test_that(paste0(
     epiweek_to_date(
       53,
       2020,
-      epiweek_standard = "USA",
-      validate = TRUE
+      epiweek_standard = "USA"
     )
   )
 
@@ -60,8 +105,7 @@ test_that(paste0(
     epiweek_to_date(
       53,
       2021,
-      epiweek_standard = "USA",
-      validate = TRUE
+      epiweek_standard = "USA"
     )
   )
 
@@ -70,8 +114,7 @@ test_that(paste0(
     epiweek_to_date(
       53,
       c(2020, 2021),
-      epiweek_standard = "USA",
-      validate = TRUE
+      epiweek_standard = "USA"
     )
   )
 
@@ -81,8 +124,7 @@ test_that(paste0(
     epiweek_to_date(
       c(53, 52),
       c(2020, 2021),
-      epiweek_standard = "USA",
-      validate = TRUE
+      epiweek_standard = "USA"
     )
   )
 })
