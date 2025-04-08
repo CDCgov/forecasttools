@@ -239,15 +239,15 @@ get_flusight_hub_table <- function(quantile_forecasts,
 
 #' @rdname get_hubverse_quantile_table
 #' @export
-get_covid_19_hub_table <- function(quantile_forecasts,
-                                   reference_date,
-                                   target_name,
-                                   quantile_value_col =
-                                     "quantile_value",
-                                   quantile_level_col = "quantile_level",
-                                   location_col = "location",
-                                   timepoint_col = "target_end_date",
-                                   quantile_tol = 4) {
+get_covid_hub_table <- function(quantile_forecasts,
+                                reference_date,
+                                target_name,
+                                quantile_value_col =
+                                  "quantile_value",
+                                quantile_level_col = "quantile_level",
+                                location_col = "location",
+                                timepoint_col = "target_end_date",
+                                quantile_tol = 4) {
   get_epiweekly_hubverse_table(
     quantile_forecasts,
     reference_date,

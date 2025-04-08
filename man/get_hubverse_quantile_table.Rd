@@ -4,7 +4,7 @@
 \alias{get_hubverse_quantile_table}
 \alias{get_epiweekly_hubverse_table}
 \alias{get_flusight_hub_table}
-\alias{get_covid_19_hub_table}
+\alias{get_covid_hub_table}
 \title{Format quantile forecasts for a hubverse submission}
 \usage{
 get_hubverse_quantile_table(
@@ -49,7 +49,7 @@ get_flusight_hub_table(
   quantile_tol = 4
 )
 
-get_covid_19_hub_table(
+get_covid_hub_table(
   quantile_forecasts,
   reference_date,
   target_name,

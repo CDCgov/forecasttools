@@ -8,12 +8,19 @@ quantile_forecasts <- example_daily_forecast_flu |>
 
 test_that(
   paste0(
-    "get_hubverse_quantile_table errors if reference date ",
+    "get_epiweekly_hubverse_table errors if reference date ",
     "is the wrong day of the week"
   ),
   {
     expect_error(
       forecasttools::get_flusight_hub_table(
+        tibble::tibble(),
+        "2025-01-01"
+      ),
+      "4"
+    )
+    expect_error(
+      forecasttools::get_covid_hub_table(
         tibble::tibble(),
         "2025-01-01"
       ),
