@@ -17,7 +17,7 @@ hubverse_table_with_obs(
 \arguments{
 \item{hubverse_forecast_table}{Forecasts, as a hubverse-format
 \code{\link[tibble:tibble]{tibble}}, for instance as produced by
-\code{\link[=get_hubverse_table]{get_hubverse_table()}}, with columns including \code{target_end_date},
+\code{\link[=get_hubverse_quantile_table]{get_hubverse_quantile_table()}}, with columns including \code{target_end_date},
 and \code{location}.}
 
 \item{observation_table}{observations, as a \code{\link[tibble:tibble]{tibble}}.}
@@ -55,7 +55,7 @@ added.
 }
 \description{
 Expects forecast output in hubverse format (e.g. as created by
-\code{\link[=get_hubverse_table]{get_hubverse_table()}}) and an observed data table with location,
+\code{\link[=get_hubverse_quantile_table]{get_hubverse_quantile_table()}}) and an observed data table with location,
 date, and value columns. The names of these columns the observed
 data table can be configured; defaults are \code{"location"}, \code{"date"},
 and \code{"value"}, respectively (direct correspondence with

@@ -16,7 +16,7 @@ quantile_table_to_scorable(
 \arguments{
 \item{hubverse_quantile_table}{quantile forecasts,
 as a hubverse-format \code{\link[tibble:tibble]{tibble}}, e.g.
-as produced by \code{\link[=get_hubverse_table]{get_hubverse_table()}}, with columns including
+as produced by \code{\link[=get_hubverse_quantile_table]{get_hubverse_quantile_table()}}, with columns including
 \code{location}, \code{target_end_date}, \code{output_type}, \code{output_type_id},
 and \code{value}.}
 
@@ -47,7 +47,7 @@ as the output of \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as
 }
 \description{
 Expects quantile forecast output in hubverse format
-(e.g. as created by \code{\link[=get_hubverse_table]{get_hubverse_table()}})
+(e.g. as created by \code{\link[=get_hubverse_quantile_table]{get_hubverse_quantile_table()}})
 and an observed data table with location, date, and value columns.
 The column names in the observed data table can be configured;
 defaults are \code{"location"}, \code{"date"}, and

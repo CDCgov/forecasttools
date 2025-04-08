@@ -8,7 +8,7 @@ date and set of horizons.}
 \usage{
 target_end_dates_from_horizons(
   reference_date,
-  horizons = -1:3,
+  horizons,
   horizon_timescale = c("days", "weeks")
 )
 }
@@ -16,15 +16,12 @@ target_end_dates_from_horizons(
 \item{reference_date}{hub forecasting reference date}
 
 \item{horizons}{Vector of forecast horizons to include,
-in weeks ahead of the \code{reference_date}.
-Default -1:3 (FluSight and Covidhub 2024/25 horizons).}
+in weeks ahead of the \code{reference_date}.}
 
 \item{horizon_timescale}{Either "days" or "weeks"}
 }
 \value{
-a \code{\link[tibble:tibble]{tibble}} with columns \code{reference_date},
-\code{horizon}, \code{target_end_date},
-\code{epiweek}, and \code{epiyear}.
+a vector of target end dates
 }
 \description{
 Get a correctly-formatted set of hubverse
