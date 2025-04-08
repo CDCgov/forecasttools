@@ -81,7 +81,7 @@ widths_to_qi_table <- function(widths,
 #' `ggdist`-format table of quantiles.
 #'
 #' Expects a hubverse-format quantile table (e.g. as created by
-#' [get_hubverse_table()]). Treats all columns in that table other
+#' [get_hubverse_quantile_table()]). Treats all columns in that table other
 #' than `output_type_id`, `output_type`, and `value` as grouping / id
 #' columns, and returns them in the output table.
 #'

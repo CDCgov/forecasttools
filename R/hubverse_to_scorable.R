@@ -1,14 +1,14 @@
 #' Join hubverse forecasts to observed data
 #'
 #' Expects forecast output in hubverse format (e.g. as created by
-#' [get_hubverse_table()]) and an observed data table with location,
+#' [get_hubverse_quantile_table()]) and an observed data table with location,
 #' date, and value columns. The names of these columns the observed
 #' data table can be configured; defaults are `"location"`, `"date"`,
 #' and `"value"`, respectively (direct correspondence with
 #' standard Hub "target data" tables).
 #' @param hubverse_forecast_table Forecasts, as a hubverse-format
 #' [`tibble`][tibble::tibble()], for instance as produced by
-#' [get_hubverse_table()], with columns including `target_end_date`,
+#' [get_hubverse_quantile_table()], with columns including `target_end_date`,
 #' and `location`.
 #' @param observation_table observations, as a [`tibble`][tibble::tibble()].
 #' @param obs_value_column Name of the column containing
@@ -86,7 +86,7 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
 #' create a `scoringutils`-ready table.
 #'
 #' Expects quantile forecast output in hubverse format
-#' (e.g. as created by [get_hubverse_table()])
+#' (e.g. as created by [get_hubverse_quantile_table()])
 #' and an observed data table with location, date, and value columns.
 #' The column names in the observed data table can be configured;
 #' defaults are `"location"`, `"date"`, and
@@ -95,7 +95,7 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
 #'
 #' @param hubverse_quantile_table quantile forecasts,
 #' as a hubverse-format [`tibble`][tibble::tibble()], e.g.
-#' as produced by [get_hubverse_table()], with columns including
+#' as produced by [get_hubverse_quantile_table()], with columns including
 #' `location`, `target_end_date`, `output_type`, `output_type_id`,
 #' and `value`.
 #' @param observation_table observations, as a
