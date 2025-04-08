@@ -269,40 +269,31 @@ epiyear_n_weeks <- function(epiyear,
 
 
 
-#' Get a date from an epiweek
-#' and epiyear
+#' Get a date from an epiweek and epiyear
 #'
-#' Function to convert an
-#' epidemiological week and
-#' year ("epiweek" and "epiyear")
-#' pair to a date in a safe way.
+#' Function to convert an epidemiological week and year
+#' ("epiweek" and "epiyear") pair to a date in a safe way.
 #'
-#' By default returns the first
-#' date of the epiweek,
-#' but can return any date in
-#' the epiweek. Two standard
-#' definitions of epidemiological
-#' weeks and years are supported:
-#' USA CDC / MMWR (`"USA"` or `"MMWR"`, the default)
-#' and ISO (`"ISO"`).
+#' By default returns the first date of the epiweek, but can
+#' return any date in the epiweek. Two standard definitions
+#' of epidemiological weeks and years are supported: USA
+#' CDC / MMWR (`"USA"` or `"MMWR"`, the default) and ISO
+#' (`"ISO"`).
 #'
-#' @param epiweek Epidemiological week,
-#' as an integer (e.g. `46`). Must be between
-#' 1 and the number of weeks in `epiyear`,
-#' as determined by [epiyear_n_weeks()].
-#' @param epiyear Epidemiological year,
-#' as an integer. (e.g. `2022`).
-#' @param day_of_week day of the epiweek
-#' whose date should be returned, as a
-#' 1-indexed integer, so 1 is the first date
+#' @param epiweek Epidemiological week, as an integer
+#' (e.g. `46`). Must be between 1 and the number of
+#' weeks in `epiyear`, as determined by [epiyear_n_weeks()].
+#' @param epiyear Epidemiological year, as an integer
+#' (e.g. `2022`).
+#' @param day_of_week day of the epiweek whose date should
+#' be returned, as a 1-indexed integer. 1 is the first date
 #' in the epiweek and 7 the last. Default `1`.
-#' @param epiweek_standard One of `"USA"` (USA
-#' epiweek, starts on Sunday) and `"ISO"` (ISO
-#'  week, starts on Monday). Passed to
-#' [epiyear_first_date()]. Not case-sensitive.
+#' @param epiweek_standard One of `"USA"` (USA epiweek,
+#' starts on Sunday) and `"ISO"` (ISO  week, starts on Monday).
+#' Passed to [epiyear_first_date()]. Not case-sensitive.
 #' Default `"MMWR"`
-#' @return The date, as a
-#' [`lubridate::date`][lubridate::date()] object
+#' @return The date, as a [`lubridate::date`][lubridate::date()]
+#' object
 #' @export
 epiweek_to_date <- function(epiweek,
                             epiyear,
