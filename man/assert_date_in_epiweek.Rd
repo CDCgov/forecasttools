@@ -37,13 +37,17 @@ given epiweek standard.
 \examples{
 assert_date_in_epiweek("2025-01-02", 1, 2025, "USA")
 assert_date_in_epiweek(
-   c("2024-12-27", "2025-01-05"),
-   c(52, 1),
-   c(2024, 2025),
-   "ISO")
+  c("2024-12-27", "2025-01-05"),
+  c(52, 1),
+  c(2024, 2025),
+  "ISO"
+)
 
-tryCatch(assert_date_in_epiweek(
-   "2024-12-01", 52, 2024, "ISO"),
-   error = \(e) print(e))
+tryCatch(
+  assert_date_in_epiweek(
+    "2024-12-01", 52, 2024, "ISO"
+  ),
+  error = \(e) print(e)
+)
 
 }

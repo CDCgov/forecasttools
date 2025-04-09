@@ -21,9 +21,8 @@ The first date of the epiyear,
 as a \code{\link[lubridate:date]{lubridate::date}} object
 }
 \description{
-For the ISO, the epidemiological year
-('epiyear') YYYY begins on the Monday
-of the Monday to Sunday  week
+For the ISO, the epidemiological year ('epiyear') YYYY
+begins on the Monday of the Monday to Sunday week
 that includes January 4.
 }
 \details{

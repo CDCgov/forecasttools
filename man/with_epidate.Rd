@@ -11,8 +11,7 @@ with_epidate(
   epiyear_col = "epiyear",
   epidate_name = "epidate",
   day_of_week = 1,
-  epiweek_standard = "MMWR",
-  validate = TRUE
+  epiweek_standard = "MMWR"
 )
 }
 \arguments{
@@ -33,11 +32,6 @@ Default 1 (start date of the epiweek).}
 
 \item{epiweek_standard}{Which epiweek standard to use.
 One of \code{"USA"} or \verb{"MMWR" (USA / MMWR epiweek, starts on Sunday) and }"ISO"\verb{(ISO  week, starts on Monday). Not case-sensitive. Default}"MMWR"`.}
-
-\item{validate}{Validate the result by
-passing it back to \code{\link[lubridate:week]{lubridate::epiweek()}}
-and \code{\link[lubridate:year]{lubridate::epiyear()}}? Boolean,
-default \code{TRUE}. Passed to \code{\link[=epiweek_to_date]{epiweek_to_date()}}.}
 }
 \value{
 The data frame annotated with the epidate column.

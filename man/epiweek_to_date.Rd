@@ -2,56 +2,39 @@
 % Please edit documentation in R/epiweek_to_date.R
 \name{epiweek_to_date}
 \alias{epiweek_to_date}
-\title{Get a date from an epiweek
-and epiyear}
+\title{Get a date from an epiweek and epiyear}
 \usage{
-epiweek_to_date(
-  epiweek,
-  epiyear,
-  day_of_week = 1,
-  epiweek_standard = "MMWR",
-  validate = TRUE
-)
+epiweek_to_date(epiweek, epiyear, day_of_week = 1, epiweek_standard = "MMWR")
 }
 \arguments{
-\item{epiweek}{Epidemiological week,
-as an integer (e.g. \code{46})}
+\item{epiweek}{Epidemiological week, as an integer
+(e.g. \code{46}). Must be between 1 and the number of
+weeks in \code{epiyear}, as determined by \code{\link[=epiyear_n_weeks]{epiyear_n_weeks()}}.}
 
-\item{epiyear}{Epidemiological year,
-as an integer. (e.g. \code{2022}).}
+\item{epiyear}{Epidemiological year, as an integer
+(e.g. \code{2022}).}
 
-\item{day_of_week}{day of the epiweek
-whose date should be returned, as a
-1-indexed integer, so 1 is the first date
+\item{day_of_week}{day of the epiweek whose date should
+be returned, as a 1-indexed integer. 1 is the first date
 in the epiweek and 7 the last. Default \code{1}.}
 
-\item{epiweek_standard}{One of \code{"USA"} (USA
-epiweek, starts on Sunday) and \code{"ISO"} (ISO
-week, starts on Monday). Passed to
-\code{\link[=epiyear_first_date]{epiyear_first_date()}}. Not case-sensitive.
+\item{epiweek_standard}{One of \code{"USA"} (USA epiweek,
+starts on Sunday) and \code{"ISO"} (ISO  week, starts on Monday).
+Passed to \code{\link[=epiyear_first_date]{epiyear_first_date()}}. Not case-sensitive.
 Default \code{"MMWR"}}
-
-\item{validate}{Validate the results by passing
-them back to the appropriate epiweek and epiyear
-functions? Boolean, default \code{TRUE}.}
 }
 \value{
-The date, as a
-\code{\link[lubridate:date]{lubridate::date}} object
+The date, as a \code{\link[lubridate:date]{lubridate::date}}
+object
 }
 \description{
-Function to convert an
-epidemiological week and
-year ("epiweek" and "epiyear")
-pair to a date in a safe way.
+Function to convert an epidemiological week and year
+("epiweek" and "epiyear") pair to a date in a safe way.
 }
 \details{
-By default returns the first
-date of the epiweek,
-but can return any date in
-the epiweek. Two standard
-definitions of epidemiological
-weeks and years are supported:
-USA CDC / MMWR (\code{"USA"} or \code{"MMWR"}, the default)
-and ISO (\code{"ISO"}).
+By default returns the first date of the epiweek, but can
+return any date in the epiweek. Two standard definitions
+of epidemiological weeks and years are supported: USA
+CDC / MMWR (\code{"USA"} or \code{"MMWR"}, the default) and ISO
+(\code{"ISO"}).
 }
