@@ -233,7 +233,7 @@ epiyear_n_days <- function(epiyear,
     epiyear + 1L,
     epiweek_standard = epiweek_standard
   )
-  return(as.integer(next_year_start - this_year_start))
+  return(as.integer(next_year_start - this_year_start, units = "days"))
 }
 
 #' Get the number of epidemiological weeks in a given
