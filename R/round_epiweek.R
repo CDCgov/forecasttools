@@ -40,8 +40,8 @@ floor_isoweek <- function(date) {
 
 #' Get the final date in a US/MMWR epidemiological week
 #'
-#' Given any date from a US/MMWR epidemiological week ("epiweek") return
-#' the date of the final day of the epiweek (a Saturday).
+#' Given any date from a US/MMWR epidemiological week ("epiweek"),
+#' return the date of the final day of that epiweek (a Saturday).
 #'
 #' @param date A date.
 #' @return The date that ends the epidemiological week, as a
@@ -56,13 +56,23 @@ ceiling_mmwr_epiweek <- function(date) {
     week_start = mmwr_epiweek_end,
     change_on_boundary = FALSE
   ))
+  ## Note: the parameter name `week_start` is misleading
+  ## given how we are using the function here.
+  ## It may be helpful to think of it as the
+  ## "boundary day of the week".
+  ##
+  ## That is, ceiling_date() with `scale = "week"`,
+  ## `week_start = 6` (i.e. Saturday),
+  ## and `change_on_boundary = FALSE` means
+  ## "convert non-Saturday dates to the next Saturday,
+  ## leaving Saturday dates as they are".
 }
 
 
 #' Get the final date in an ISO week
 #'
 #' Given any date from an ISO week ("isoweek") return
-#' the date of the final day of the isoweek (a Sunday).
+#' the date of the final day of that isoweek (a Sunday).
 #'
 #' @param date A date.
 #' @return The date that ends the epidemiological week, as a
@@ -77,4 +87,14 @@ ceiling_isoweek <- function(date) {
     week_start = isoweek_end,
     change_on_boundary = FALSE
   ))
+  ## Note: the parameter name `week_start` is misleading
+  ## given how we are using the function here.
+  ## It may be helpful to think of it as the
+  ## "boundary day of the week".
+  ##
+  ## That is, ceiling_date() with `scale = "week"`,
+  ## `week_start = 7` (i.e. Sunday),
+  ## and `change_on_boundary = FALSE` means
+  ## "convert non-Sunday dates to the next Sunday,
+  ## leaving Sunday dates as they are".
 }

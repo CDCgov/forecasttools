@@ -15,7 +15,7 @@ The date that ends the epidemiological week, as a
 }
 \description{
 Given any date from an ISO week ("isoweek") return
-the date of the final day of the isoweek (a Sunday).
+the date of the final day of that isoweek (a Sunday).
 }
 \examples{
 ceiling_isoweek(as.Date("2025-03-13")) # rounded to Sunday

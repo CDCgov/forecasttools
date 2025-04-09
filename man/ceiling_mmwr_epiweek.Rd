@@ -14,8 +14,8 @@ The date that ends the epidemiological week, as a
 \code{\link[lubridate:date]{lubridate::date()}}.
 }
 \description{
-Given any date from a US/MMWR epidemiological week ("epiweek") return
-the date of the final day of the epiweek (a Saturday).
+Given any date from a US/MMWR epidemiological week ("epiweek"),
+return the date of the final day of that epiweek (a Saturday).
 }
 \examples{
 ceiling_mmwr_epiweek(as.Date("2025-03-13")) # rounded to Saturday
