@@ -3,7 +3,7 @@
 \docType{data}
 \name{isoweek_start}
 \alias{isoweek_start}
-\title{Integer start date of an ISO in ISO numbering.
+\title{Integer start date of an ISO week in ISO numbering.
 Value (1) corresponds to Monday.}
 \format{
 An object of class \code{integer} of length 1.
@@ -12,7 +12,7 @@ An object of class \code{integer} of length 1.
 isoweek_start
 }
 \description{
-Integer start date of an ISO in ISO numbering.
+Integer start date of an ISO week in ISO numbering.
 Value (1) corresponds to Monday.
 }
 \keyword{datasets}

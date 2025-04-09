@@ -13,7 +13,7 @@
 floor_mmwr_epiweek <- function(date) {
   return(lubridate::floor_date(date,
     "week",
-    week_start = 7
+    week_start = mmwr_epiweek_start
   ))
 }
 
@@ -33,7 +33,7 @@ floor_mmwr_epiweek <- function(date) {
 floor_isoweek <- function(date) {
   return(lubridate::floor_date(date,
     "week",
-    week_start = 1
+    week_start = isoweek_start
   ))
 }
 
@@ -53,7 +53,7 @@ floor_isoweek <- function(date) {
 ceiling_mmwr_epiweek <- function(date) {
   return(lubridate::ceiling_date(date,
     "week",
-    week_start = 6,
+    week_start = mmwr_epiweek_end,
     change_on_boundary = FALSE
   ))
 }
@@ -74,7 +74,7 @@ ceiling_mmwr_epiweek <- function(date) {
 ceiling_isoweek <- function(date) {
   return(lubridate::ceiling_date(date,
     "week",
-    week_start = 7,
+    week_start = isoweek_end,
     change_on_boundary = FALSE
   ))
 }
