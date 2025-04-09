@@ -179,8 +179,40 @@ test_that(paste0(
       53,
       2021,
       epiweek_standard = "USA"
-    )
+    ),
+    "epiweek 53 of epiyear 2021"
   )
+
+  # non-integer epiweeks are not valid
+  expect_error(
+    epiweek_to_date(
+      50.5,
+      2021,
+      epiweek_standard = "USA"
+    ),
+    "integer"
+  )
+
+  # non-integer epiyears are not valid
+  expect_error(
+    epiweek_to_date(
+      50,
+      2026.5,
+      epiweek_standard = "USA"
+    ),
+    "integer"
+  )
+
+  # epiweeks less than 1 are not valid
+  expect_error(
+    epiweek_to_date(
+      0,
+      2021,
+      epiweek_standard = "USA"
+    ),
+    ">= 1"
+  )
+
 
   ## a single failure should raise an error
   expect_error(
@@ -188,7 +220,8 @@ test_that(paste0(
       53,
       c(2020, 2021),
       epiweek_standard = "USA"
-    )
+    ),
+    "epiweek 53 of epiyear 2021"
   )
 
   ## but the validation should be vectorized

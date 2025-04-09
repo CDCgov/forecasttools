@@ -233,7 +233,9 @@ epiyear_n_days <- function(epiyear,
     epiyear + 1L,
     epiweek_standard = epiweek_standard
   )
-  return(as.integer(next_year_start - this_year_start, units = "days"))
+  return(as.integer(
+    as.numeric(next_year_start - this_year_start, units = "days")
+  ))
 }
 
 #' Get the number of epidemiological weeks in a given
@@ -309,27 +311,35 @@ epiweek_to_date <- function(epiweek,
   epiyear <- recycled_inputs[[2]]
   day_of_week <- recycled_inputs[[3]]
 
-  n_weeks <- epiyear_n_weeks(
-    epiyear,
-    epiweek_standard = epiweek_standard
+  checkmate::assert_integerish(
+    epiweek,
+    lower = 1,
+    upper = 53
   )
-
+  checkmate::assert_integerish(epiyear)
 
   checkmate::assert_integerish(day_of_week,
     lower = 1,
     upper = 7
   )
-  checkmate::assert_integerish(
-    epiweek[n_weeks > 52],
-    lower = 1,
-    upper = 53
+
+  n_weeks <- epiyear_n_weeks(
+    epiyear,
+    epiweek_standard = epiweek_standard
   )
-  checkmate::assert_integerish(
-    epiweek[n_weeks <= 52],
-    lower = 1,
-    upper = 52
-  )
-  checkmate::assert_integerish(epiyear)
+
+  wk_not_valid <- epiweek > n_weeks
+  if (any(wk_not_valid)) {
+    cli::cli_abort(
+      c(
+        "Some requested epiweeks are not valid: ",
+        glue::glue(
+          "epiweek {epiweek[wk_not_valid]} of ",
+          "epiyear {epiyear[wk_not_valid]}"
+        )
+      )
+    )
+  }
 
   result <- (epiyear_first_date(
     epiyear,
