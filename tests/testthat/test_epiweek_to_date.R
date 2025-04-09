@@ -1,50 +1,124 @@
-schema <- tidyr::crossing(
+some_epiweeks <- tidyr::crossing(
   epiweek = 1:52,
-  epiyear = 1800:2200,
+  epiyear = 1800:2200
+)
+
+ew_dow <- tidyr::crossing(
+  some_epiweeks,
   day_of_week = 1:7
 )
 
 test_that(paste0(
   "epiweek_to_date() satisfies assert_date_in_epiweek() ",
-  "validation passes for USA epiweeks for ",
-  "every epiweek in 1:52 for every epiyear ",
+  "every USA/MMWR epiweek in 1:52 for every epiyear ",
   "in 1800:2200, for every day of the epiweek"
 ), {
   expect_no_warning(
     assert_date_in_epiweek(
       epiweek_to_date(
-        schema$epiweek,
-        schema$epiyear,
+        ew_dow$epiweek,
+        ew_dow$epiyear,
         epiweek_standard = "USA",
-        day_of_week = schema$day_of_week
+        day_of_week = ew_dow$day_of_week
       ),
-      schema$epiweek,
-      schema$epiyear,
+      ew_dow$epiweek,
+      ew_dow$epiyear,
       epiweek_standard = "MMWR"
     )
   )
 })
 
 test_that(paste0(
-  "epiweek_to_date() function's internal ",
-  "validation passes for ISO (epi)weeks for ",
-  "every epiweek in 1:52 for every epiyear ",
+  "epiweek_to_date() satisfies assert_date_in_epiweek() ",
+  "every ISO epiweek in 1:52 for every epiyear ",
   "in 1800:2200, for every day of the epiweek"
 ), {
   expect_no_warning(
     assert_date_in_epiweek(
       epiweek_to_date(
-        schema$epiweek,
-        schema$epiyear,
+        ew_dow$epiweek,
+        ew_dow$epiyear,
         epiweek_standard = "ISO",
-        day_of_week = schema$day_of_week
+        day_of_week = ew_dow$day_of_week
       ),
-      schema$epiweek,
-      schema$epiyear,
+      ew_dow$epiweek,
+      ew_dow$epiyear,
       epiweek_standard = "iso"
     )
   )
 })
+
+test_that(paste0(
+  "epiweek_to_date() validates the `epiweek_standard`"
+), {
+  # must be a scalar
+  expect_error(
+    epiweek_to_date(
+      ew_dow$epiweek,
+      ew_dow$epiyear,
+      epiweek_standard = c("ISO", "ISO"),
+      day_of_week = ew_dow$day_of_week
+    ),
+    "Must have length 1."
+  )
+  ## must be a known standard
+  expect_error(
+    epiweek_to_date(
+      ew_dow$epiweek,
+      ew_dow$epiyear,
+      epiweek_standard = c("ISOA"),
+      day_of_week = ew_dow$day_of_week
+    ),
+    "must be a subset of"
+  )
+})
+
+
+test_that(paste0(
+  "epiweek_to_date() uses vector recycling but errors ",
+  "given incompatible shapes"
+), {
+  expect_no_warning(
+    epiweek_to_date(
+      1,
+      c(2020, 2027),
+      day_of_week = 1:2
+    )
+  )
+  expect_no_warning(
+    epiweek_to_date(
+      c(1, 5),
+      2025,
+      day_of_week = 1:2
+    )
+  )
+  expect_no_warning(
+    epiweek_to_date(
+      1,
+      2025,
+      day_of_week = c(1, 7)
+    )
+  )
+
+  expect_error(
+    epiweek_to_date(
+      1,
+      2025:2028,
+      day_of_week = c(1, 7)
+    ),
+    "Can't recycle"
+  )
+
+  expect_error(
+    epiweek_to_date(
+      rep(1, 5),
+      rep(2025, 5),
+      day_of_week = c(1, 7)
+    ),
+    "Can't recycle"
+  )
+})
+
 
 test_that(paste0(
   "epiyear_n_days and epiyear_n_days results correspond ",
@@ -86,10 +160,9 @@ test_that(paste0(
 })
 
 test_that(paste0(
-  "epiweek_to_date() function's internal ",
-  "validation fails if you try to get the ",
-  "start of an epiweek that doesn't exist ",
-  "but passes if you get a valid epiweek"
+  "epiweek_to_date() errors if you try to get ",
+  "a date from an epiweek that doesn't exist ",
+  "but not if you request a valid epiweek"
 ), {
   ## 2020 had an epiweek 53
   expect_no_error(
@@ -129,10 +202,6 @@ test_that(paste0(
   )
 })
 
-some_epiweeks <- tidyr::crossing(
-  epiweek = 1:52,
-  epiyear = 1800:2200
-)
 
 test_that(
   paste0(
