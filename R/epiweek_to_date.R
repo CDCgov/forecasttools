@@ -184,13 +184,13 @@ assert_date_in_epiweek <- function(date,
 #' @export
 epiyear_first_date <- function(epiyear,
                                epiweek_standard = "MMWR") {
+  epiweek_start <- get_epiweek_start(epiweek_standard)
+
   jan4 <- lubridate::make_date(
     epiyear,
     1,
     4
   )
-
-  epiweek_start <- get_epiweek_start(epiweek_standard)
 
   dow_jan4 <- lubridate::wday(jan4,
     week_start = epiweek_start
@@ -299,25 +299,37 @@ epiweek_to_date <- function(epiweek,
                             epiyear,
                             day_of_week = 1,
                             epiweek_standard = "MMWR") {
-  epiweek_standard <- stringr::str_to_lower(epiweek_standard)
+  checkmate::assert_scalar(epiweek_standard)
+  recycled_inputs <- vctrs::vec_recycle_common(
+    epiweek,
+    epiyear,
+    day_of_week
+  )
+  epiweek <- recycled_inputs[[1]]
+  epiyear <- recycled_inputs[[2]]
+  day_of_week <- recycled_inputs[[3]]
+
+  n_weeks <- epiyear_n_weeks(
+    epiyear,
+    epiweek_standard = epiweek_standard
+  )
+
 
   checkmate::assert_integerish(day_of_week,
     lower = 1,
     upper = 7
   )
-  n_weeks <- epiyear_n_weeks(epiyear,
-    epiweek_standard = epiweek_standard
+  checkmate::assert_integerish(
+    epiweek[n_weeks > 52],
+    lower = 1,
+    upper = 53
   )
-  purrr::map2(
-    epiweek,
-    n_weeks,
-    \(wk, n_wk) {
-      checkmate::assert_integerish(wk,
-        lower = 1,
-        upper = n_wk
-      )
-    }
+  checkmate::assert_integerish(
+    epiweek[n_weeks <= 52],
+    lower = 1,
+    upper = 52
   )
+  checkmate::assert_integerish(epiyear)
 
   result <- (epiyear_first_date(
     epiyear,
