@@ -31,19 +31,3 @@ covidhub_std_colnames <- cdc_hub_std_colnames
 #' @rdname cdc_hub_std_colnames
 #' @export
 flusight_std_colnames <- cdc_hub_std_colnames
-
-#' Integer start date of a USA MMWR epiweek in ISO numbering.
-#' Value (7) corresponds to Sunday.
-mmwr_epiweek_start <- 7L
-
-#' Integer end date of a USA MMWR epiweek in ISO numbering.
-#' Value (6) corresponds to Saturday.
-mmwr_epiweek_end <- 6L
-
-#' Integer start date of an ISO week in ISO numbering.
-#' Value (1) corresponds to Monday.
-isoweek_start <- 1L
-
-#' Integer end date of an ISO week in ISO numbering.
-#' Value (7) corresponds to Sunday.
-isoweek_end <- 7L
