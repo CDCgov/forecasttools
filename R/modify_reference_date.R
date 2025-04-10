@@ -10,8 +10,8 @@
 #' @param horizon_col The name of the horizon column. Default is "horizon".
 #' @param horizon_timescale_col The name of the horizon timescale column.
 #' Default is "horizon_timescale".
-#' @param horizon_timescale The timescale for the horizon. Either "days" or
-#' "weeks".
+#' @param horizon_timescale The timescale for the horizon. Must be a valid
+#' argument to [horizons_from_target_end_dates()].
 #'
 #' @returns A modified data frame with the reference date transformed and
 #' horizons recomputed
