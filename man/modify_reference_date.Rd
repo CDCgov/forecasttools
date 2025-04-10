@@ -39,5 +39,8 @@ A modified data frame with the reference date transformed and
 horizons recomputed
 }
 \description{
-Modify Reference Date
+\code{modify_reference_date} applies an arbitrary transformation to the
+reference_date of a hubverse table and recomputes the horizon, based on the
+new reference_date and existing target_end_date. A new unit for the horizon
+can also be specified.
 }

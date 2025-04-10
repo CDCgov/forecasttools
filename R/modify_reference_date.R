@@ -1,5 +1,10 @@
 #' Modify Reference Date
 #'
+#' `modify_reference_date` applies an arbitrary transformation to the
+#' reference_date of a hubverse table and recomputes the horizon, based on the
+#' new reference_date and existing target_end_date. A new unit for the horizon
+#' can also be specified.
+#'
 #' @param original_hub_tbl A data frame containing the hub table.
 #' @param horizon_timescale The timescale for the horizon. Must be a valid
 #' argument to [horizons_from_target_end_dates()].
