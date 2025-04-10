@@ -134,11 +134,11 @@ test_that(paste0(
     52, 52, 52, 52, 53
   )
   expect_equal(
-    epiyear_n_days(years),
+    epiyear_n_days(years, "mmwr"),
     7L * expected_weeks_mmwr
   )
   expect_equal(
-    epiyear_n_weeks(years),
+    epiyear_n_weeks(years, "usa"),
     expected_weeks_mmwr
   )
   expect_equal(

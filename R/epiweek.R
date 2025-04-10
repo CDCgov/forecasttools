@@ -58,6 +58,71 @@ epiweek_end <- function(epiweek_standard) {
 }
 
 
+#' Get a date-to-epiweek function from an
+#' epiweek standard.
+#'
+#' Get the function that converts dates to epiweek numbers
+#' for a given epiweek standard.
+#'
+#' @param epiweek_standard One of `"MMWR"` or `"USA"`
+#' (USA MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
+#' week, starts on Monday). Not case-sensitive.
+#' Must be a single value.
+#' @return A function, either [lubridate::epiweek()] or
+#' [lubridate::isoweek()], depending on the value of
+#' `epiweek_standard`
+epiweek_fn <- function(epiweek_standard) {
+  checkmate::assert_scalar(
+    epiweek_standard
+  )
+  epiweek_standard <- stringr::str_to_lower(epiweek_standard)
+  epiweek_fns <- c(
+    "mmwr" = lubridate::epiweek,
+    "usa" = lubridate::epiweek,
+    "iso" = lubridate::isoweek
+  )
+
+  checkmate::assert_names(
+    epiweek_standard,
+    subset.of = names(epiweek_fns),
+  )
+
+  return(epiweek_fns[[epiweek_standard]])
+}
+
+#' Get a date-to-epiyear function from an epiweek
+#' standard.
+#'
+#' Get the function that converts dates to epiyear numbers
+#' for a given epiweek standard.
+#'
+#' @param epiweek_standard One of `"MMWR"` or `"USA"`
+#' (USA / MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
+#' week, starts on Monday). Not case-sensitive. Must be a
+#' single value.
+#' @return A function, either [lubridate::epiyear()] or
+#' [lubridate::isoyear()], depending on the value of
+#' `epiweek_standard`
+epiyear_fn <- function(epiweek_standard) {
+  checkmate::assert_scalar(
+    epiweek_standard
+  )
+  epiweek_standard <- stringr::str_to_lower(epiweek_standard)
+  epiyear_fns <- c(
+    "mmwr" = lubridate::epiyear,
+    "usa" = lubridate::epiyear,
+    "iso" = lubridate::isoyear
+  )
+
+  checkmate::assert_names(
+    epiweek_standard,
+    subset.of = names(epiyear_fns),
+  )
+
+  return(epiyear_fns[[epiweek_standard]])
+}
+
+
 #' assert that a date corresponds to a given
 #' epidemiological week and year, according to the
 #' given epiweek standard.
@@ -65,10 +130,10 @@ epiweek_end <- function(epiweek_standard) {
 #' @param date Vector of dates to validate.
 #' @param expected_epiweek Vector of expected epiweek values.
 #' @param expected_epiyear Vector of expected epiyear values.
-#' @param epiweek_standard Epiweek standard to use.
-#' One of `"USA"` or `"MMWR"` (USA / MMWR
-#' epiweek, starts on Sunday) or `"ISO"` (ISO
-#'  week, starts on Monday). Not case-sensitive.
+#' @param epiweek_standard One of `"MMWR"` or `"USA"`
+#' (USA MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
+#' week, starts on Monday). Not case-sensitive.
+#' Must be a single value.
 #'
 #' @return Nothing on success, or raise an error if the assertion
 #' fails.
@@ -94,6 +159,8 @@ assert_date_in_epiweek <- function(date,
                                    expected_epiweek,
                                    expected_epiyear,
                                    epiweek_standard) {
+  checkmate::assert_scalar(epiweek_standard)
+
   week_fn <- epiweek_fn(epiweek_standard)
   year_fn <- epiyear_fn(epiweek_standard)
 
@@ -136,15 +203,25 @@ assert_date_in_epiweek <- function(date,
 #'
 #' @param epiyear The epidemiological
 #' year for which to get the first date.
-#' @param epiweek_standard One of `"USA"` or `"MMWR"`
-#' (USA / MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
-#'  week, starts on Monday). Not case-sensitive.
-#' Default `"MMWR"`.
+#' @param epiweek_standard One of `"MMWR"` or `"USA"`
+#' (USA MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
+#' week, starts on Monday). Not case-sensitive.
+#' Must be a single value.
 #' @return The first date of the epiyear,
 #' as a [`lubridate::date`][lubridate::date()] object
+#'
+#' @examples
+#'
+#' epiyear_first_date(2025, "MMWR")
+#'
+#' epiyear_first_date(2025, "usa")
+#'
+#' epiyear_first_date(2025, "ISO")
+#'
 #' @export
 epiyear_first_date <- function(epiyear,
-                               epiweek_standard = "MMWR") {
+                               epiweek_standard) {
+  checkmate::assert_scalar(epiweek_standard)
   jan4 <- lubridate::make_date(
     epiyear,
     1,
@@ -163,23 +240,26 @@ epiyear_first_date <- function(epiyear,
 #' in the [`epiweeks`](https://epiweeks.readthedocs.io/) Python package.
 #'
 #' @param epiyear Integer vector of epidemiological year values.
-#' @param epiweek_standard One of `"USA"` or `"MMWR"`
-#' (USA / MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
-#'  week, starts on Monday). Not case-sensitive.
-#' Default `"MMWR"`.
+#' @param epiweek_standard One of `"MMWR"` or `"USA"`
+#' (USA MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
+#' week, starts on Monday). Not case-sensitive.
+#' Must be a single value.
 #' @return Integer vector of the number(s) of days in the given
 #' epidemiological year(s).
 #'
 #' @examples
 #'
-#' epiyear_n_days(2023)
-#' epiyear_n_weeks(2025)
-#' epiyear_n_days(2026)
-#' epiyear_n_days(2026, epiweek_standard = "ISO")
+#' epiyear_n_days(2023, "MMWR")
+#'
+#' epiyear_n_days(2023, "USA")
+#'
+#' epiyear_n_days(2026, "MMWR")
+#'
+#' epiyear_n_days(2026, "ISO")
 #'
 #' @export
 epiyear_n_days <- function(epiyear,
-                           epiweek_standard = "MMWR") {
+                           epiweek_standard) {
   this_year_start <- epiyear_first_date(
     epiyear,
     epiweek_standard = epiweek_standard
@@ -202,22 +282,23 @@ epiyear_n_days <- function(epiyear,
 #' in the [`epiweeks`](https://epiweeks.readthedocs.io/) Python package.
 #'
 #' @param epiyear Integer vector of epidemiological year values.
-#' @param epiweek_standard One of `"USA"` or `"MMWR"`
-#' (USA / MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
-#'  week, starts on Monday). Not case-sensitive.
-#' Default `"MMWR"`.
+#' @param epiweek_standard One of `"MMWR"` or `"USA"`
+#' (USA MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
+#' week, starts on Monday). Not case-sensitive.
+#' Must be a single value.
 #' @return Integer vector of the number(s) of weeks in the given
 #' epidemiological year(s).
 #'
 #' @examples
 #'
-#' epiyear_n_weeks(2023)
-#' epiyear_n_weeks(2025)
-#' epiyear_n_weeks(2026)
-#' epiyear_n_weeks(2026, epiweek_standard = "ISO")
+#' epiyear_n_weeks(2023, "MMWR")
+#'
+#' epiyear_n_weeks(2023, "USA")
+#'
+#' epiyear_n_weeks(2023, "ISO")
 #' @export
 epiyear_n_weeks <- function(epiyear,
-                            epiweek_standard = "MMWR") {
+                            epiweek_standard) {
   return(epiyear_n_days(
     epiyear,
     epiweek_standard = epiweek_standard
