@@ -5,7 +5,7 @@
 #' according to different epiweek
 #' standards. Returns the day of the week index
 #' as an integer that can be passed to
-#' [`lubridate`]{lubridate} functions as a
+#' [lubridate::lubridate-package] functions as a
 #' day-of-the-week index (e.g. as the
 #' `week_start` argument to [lubridate::wday()]):
 #' 1 for Monday, 2 = Tuesday, ... 7 for Sunday.
