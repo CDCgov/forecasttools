@@ -32,7 +32,7 @@ modify_reference_date <- function(original_hub_tbl,
     )
   )
 
-  optional_cols_check <- checkmate::checkNames(colnames(original_hub_tbl),
+  optional_cols_check <- checkmate::check_names(colnames(original_hub_tbl),
     must.include = c(
       horizon_col,
       horizon_timescale_col
