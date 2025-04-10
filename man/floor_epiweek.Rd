@@ -26,7 +26,8 @@ ceiling_mmwr_epiweek(date)
 
 \item{epiweek_standard}{One of \code{"USA"} or \code{"MMWR"}
 (USA / MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
-week, starts on Monday). Not case-sensitive.}
+week, starts on Monday). Not case-sensitive. Must be a
+single value.}
 }
 \value{
 The date that starts or ends the epidemiological week, as a

@@ -18,10 +18,10 @@ weeks in \code{epiyear}, as determined by \code{\link[=epiyear_n_weeks]{epiyear_
 be returned, as a 1-indexed integer. 1 is the first date
 in the epiweek and 7 the last. Default \code{1}.}
 
-\item{epiweek_standard}{One of \code{"USA"} (USA epiweek,
-starts on Sunday) and \code{"ISO"} (ISO  week, starts on Monday).
-Passed to \code{\link[=epiyear_first_date]{epiyear_first_date()}}. Not case-sensitive.
-Default \code{"MMWR"}}
+\item{epiweek_standard}{One of \code{"MMWR"} or \code{"USA"}
+(USA MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
+week, starts on Monday). Not case-sensitive. Must be a single
+value. Default \code{"MMWR"}.}
 }
 \value{
 The date, as a \code{\link[lubridate:date]{lubridate::date}}
@@ -35,6 +35,14 @@ Function to convert an epidemiological week and year
 By default returns the first date of the epiweek, but can
 return any date in the epiweek. Two standard definitions
 of epidemiological weeks and years are supported: USA
-CDC / MMWR (\code{"USA"} or \code{"MMWR"}, the default) and ISO
-(\code{"ISO"}).
+CDC / MMWR  and ISO.
+}
+\examples{
+
+epiweek_to_date(2025, 5)
+
+epiweek_to_date(2025, 5, day_of_week = 7)
+
+epiweek_to_date(2025, 5, day_of_week = 7, epiweek_standard = "ISO")
+
 }
