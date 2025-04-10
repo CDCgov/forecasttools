@@ -5,10 +5,10 @@
 #' according to different epiweek
 #' standards. Returns the day of the week index
 #' as an integer that can be passed to
-#' [`lubridate`]{lubridate} functions as a
+#' {lubridate} functions as a
 #' day-of-the-week index (e.g. as the
 #' `week_start` argument to [lubridate::wday()]):
-#' 1 for Monday, 2 = Tuesday, ... 7 for Sunday.
+#' 1 for Monday, 2 for Tuesday, ... 7 for Sunday.
 #'
 #' @param epiweek_standard One of `"MMWR"` or `"USA"`
 #' (USA / MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
