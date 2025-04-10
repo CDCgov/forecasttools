@@ -2,7 +2,7 @@
 #'
 #' `modify_reference_date` applies an arbitrary transformation to the
 #' reference_date of a hubverse table and recomputes the horizon, based on the
-#' new reference_date and existing target_end_date. A new unit for the horizon
+#' new reference_date and existing `target_end_date`. A new unit for the horizon
 #' can also be specified.
 #'
 #' @param original_hub_tbl A data frame containing the hub table.
@@ -21,7 +21,22 @@
 #' @returns A modified data frame with the reference date transformed and
 #' horizons recomputed
 #' @export
-
+#' @examples
+#' example_daily_forecast_flu |>
+#'   trajectories_to_quantiles(
+#'     id_cols = "location",
+#'     timepoint_col = "date",
+#'     value_col = "hosp"
+#'   ) |>
+#'   dplyr::rename(target_end_date = date) |>
+#'   get_hubverse_quantile_table(
+#'     reference_date = as.Date("2023-10-20"),
+#'     horizon_timescale = "weeks",
+#'     target_name = "my_target",
+#'     timepoint_col = "target_end_date",
+#'     horizons = 1:4
+#'   ) |>
+#'   modify_reference_date(\(x) x - 1, horizon_timescale = "days")
 modify_reference_date <- function(original_hub_tbl,
                                   horizon_timescale,
                                   reference_date_transform = identity,
