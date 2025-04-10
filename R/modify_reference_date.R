@@ -1,6 +1,8 @@
 #' Modify Reference Date
 #'
 #' @param original_hub_tbl A data frame containing the hub table.
+#' @param horizon_timescale The timescale for the horizon. Must be a valid
+#' argument to [horizons_from_target_end_dates()].
 #' @param reference_date_transform A function to transform the reference date.
 #' Default is `identity`.
 #' @param reference_date_col The name of the reference date column. Default is
@@ -10,19 +12,18 @@
 #' @param horizon_col The name of the horizon column. Default is "horizon".
 #' @param horizon_timescale_col The name of the horizon timescale column.
 #' Default is "horizon_timescale".
-#' @param horizon_timescale The timescale for the horizon. Must be a valid
-#' argument to [horizons_from_target_end_dates()].
 #'
 #' @returns A modified data frame with the reference date transformed and
 #' horizons recomputed
 #' @export
+
 modify_reference_date <- function(original_hub_tbl,
+                                  horizon_timescale,
                                   reference_date_transform = identity,
                                   reference_date_col = "reference_date",
                                   target_end_date_col = "target_end_date",
                                   horizon_col = "horizon",
-                                  horizon_timescale_col = "horizon_timescale",
-                                  horizon_timescale) {
+                                  horizon_timescale_col = "horizon_timescale") {
   checkmate::assert_names(
     colnames(original_hub_tbl),
     must.include = c(

@@ -6,16 +6,19 @@
 \usage{
 modify_reference_date(
   original_hub_tbl,
+  horizon_timescale,
   reference_date_transform = identity,
   reference_date_col = "reference_date",
   target_end_date_col = "target_end_date",
   horizon_col = "horizon",
-  horizon_timescale_col = "horizon_timescale",
-  horizon_timescale
+  horizon_timescale_col = "horizon_timescale"
 )
 }
 \arguments{
 \item{original_hub_tbl}{A data frame containing the hub table.}
+
+\item{horizon_timescale}{The timescale for the horizon. Must be a valid
+argument to \code{\link[=horizons_from_target_end_dates]{horizons_from_target_end_dates()}}.}
 
 \item{reference_date_transform}{A function to transform the reference date.
 Default is \code{identity}.}
@@ -30,9 +33,6 @@ Default is \code{identity}.}
 
 \item{horizon_timescale_col}{The name of the horizon timescale column.
 Default is "horizon_timescale".}
-
-\item{horizon_timescale}{The timescale for the horizon. Must be a valid
-argument to \code{\link[=horizons_from_target_end_dates]{horizons_from_target_end_dates()}}.}
 }
 \value{
 A modified data frame with the reference date transformed and
