@@ -7,7 +7,8 @@
 #'
 #' @param original_hub_tbl A data frame containing the hub table.
 #' @param horizon_timescale The timescale for the horizon. Must be a valid
-#' argument to [horizons_from_target_end_dates()].
+#' argument to [horizons_from_target_end_dates()]. If `NULL`, the horizon from
+#' `horizon_timescale_col` is used.
 #' @param reference_date_transform A function to transform the reference date.
 #' Default is `identity`.
 #' @param reference_date_col The name of the reference date column. Default is
@@ -38,7 +39,7 @@
 #'   ) |>
 #'   modify_reference_date(\(x) x - 1, horizon_timescale = "days")
 modify_reference_date <- function(original_hub_tbl,
-                                  horizon_timescale,
+                                  horizon_timescale = NULL,
                                   reference_date_transform = identity,
                                   reference_date_col = "reference_date",
                                   target_end_date_col = "target_end_date",
@@ -58,6 +59,17 @@ modify_reference_date <- function(original_hub_tbl,
       horizon_timescale_col
     )
   )
+
+  if (is.null(horizon_timescale)) {
+    if (horizon_timescale_col %in% colnames(original_hub_tbl)) {
+      horizon_timescale <- original_hub_tbl[[horizon_timescale_col]]
+    } else {
+      rlang::abort(paste(
+        "horizon_timescale_col",
+        "must be provided if horizon_timescale is not specified."
+      ))
+    }
+  }
 
   if (!isTRUE(optional_cols_check)) {
     rlang::warn(paste(
