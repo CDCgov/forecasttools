@@ -68,4 +68,8 @@ test_that("modify_reference_date applies reference_date_transform correctly", {
     modified_tbl$reference_date,
     as.Date(original_hub_tbl_days$reference_date) + 1
   )
+  expect_equal(
+    modified_tbl$horizon,
+    as.Date(original_hub_tbl_days$horizon) - 1
+  )
 })
