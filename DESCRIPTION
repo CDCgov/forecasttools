@@ -51,7 +51,8 @@ Imports:
     soql,
     stringr,
     tibble,
-    tidyselect
+    tidyselect,
+    vctrs
 Suggests:
     data.table,
     tidybayes,
