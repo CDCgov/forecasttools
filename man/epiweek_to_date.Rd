@@ -39,10 +39,10 @@ CDC / MMWR  and ISO.
 }
 \examples{
 
-epiweek_to_date(2025, 5)
+epiweek_to_date(5, 2025)
 
-epiweek_to_date(2025, 5, day_of_week = 7)
+epiweek_to_date(5, 2025, day_of_week = 7)
 
-epiweek_to_date(2025, 5, day_of_week = 7, epiweek_standard = "ISO")
+epiweek_to_date(5, 2025, day_of_week = 7, epiweek_standard = "ISO")
 
 }
