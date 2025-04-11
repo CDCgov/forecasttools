@@ -1,3 +1,6 @@
+# forecasttools 0.1.6
+* New function: `modify_reference_date()`
+
 # forecasttools 0.1.5
 * BREAKING CHANGE: `get_hubverse_table()` has been removed and replaced by `get_hubverse_quantile_table()`, `get_flusight_hub_table()` and `get_covid_hub_table()`.
 * `horizons_from_target_end_dates` is now vectorized
