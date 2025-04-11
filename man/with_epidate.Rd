@@ -30,8 +30,10 @@ associated "epidates". Default \code{"epidate"}.}
 for the epidate. 1-indexed. Passed to \code{\link[=epiweek_to_date]{epiweek_to_date()}}.
 Default 1 (start date of the epiweek).}
 
-\item{epiweek_standard}{Which epiweek standard to use.
-One of \code{"USA"} or \verb{"MMWR" (USA / MMWR epiweek, starts on Sunday) and }"ISO"\verb{(ISO  week, starts on Monday). Not case-sensitive. Default}"MMWR"`.}
+\item{epiweek_standard}{One of \code{"MMWR"} or \code{"USA"}
+(USA MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
+week, starts on Monday). Not case-sensitive. Must be a single
+value. Default \code{"MMWR"}.}
 }
 \value{
 The data frame annotated with the epidate column.
@@ -39,4 +41,22 @@ The data frame annotated with the epidate column.
 \description{
 Annotate a dataframe with epiweek and epiyear
 columns with an epidate column.
+}
+\examples{
+
+tibble::tibble(epiweek = c(1, 2), epiyear = c(2024, 2025)) |>
+  with_epidate()
+
+tibble::tibble(epiweek = c(1, 2), epiyear = c(2024, 2025)) |>
+  with_epidate(day_of_week = 7, epidate_name = "week_ending_date")
+
+tibble::tibble(epiweek = c(1, 2), epiyear = c(2024, 2025)) |>
+  with_epidate(day_of_week = c(1, 7))
+
+tibble::tibble(epiweek = c(1, 2), epiyear = c(2024, 2025)) |>
+  with_epidate(epiweek_standard = "ISO")
+
+tibble::tibble(wk = c(1, 2), yr = c(2024, 2025)) |>
+  with_epidate(epiweek_col = "wk", epiyear_col = "yr")
+
 }

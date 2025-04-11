@@ -5,15 +5,15 @@
 \title{Get the number of epidemiological weeks in a given
 epidemiological year.}
 \usage{
-epiyear_n_weeks(epiyear, epiweek_standard = "MMWR")
+epiyear_n_weeks(epiyear, epiweek_standard)
 }
 \arguments{
 \item{epiyear}{Integer vector of epidemiological year values.}
 
-\item{epiweek_standard}{One of \code{"USA"} or \code{"MMWR"}
-(USA / MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
+\item{epiweek_standard}{One of \code{"MMWR"} or \code{"USA"}
+(USA MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
 week, starts on Monday). Not case-sensitive.
-Default \code{"MMWR"}.}
+Must be a single value.}
 }
 \value{
 Integer vector of the number(s) of weeks in the given
@@ -25,8 +25,9 @@ in the \href{https://epiweeks.readthedocs.io/}{\code{epiweeks}} Python package.
 }
 \examples{
 
-epiyear_n_weeks(2023)
-epiyear_n_weeks(2025)
-epiyear_n_weeks(2026)
-epiyear_n_weeks(2026, epiweek_standard = "ISO")
+epiyear_n_weeks(2023, "MMWR")
+
+epiyear_n_weeks(2023, "USA")
+
+epiyear_n_weeks(2023, "ISO")
 }

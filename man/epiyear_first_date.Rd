@@ -5,16 +5,16 @@
 \title{Get the first date of an
 epidemiological year ("epiyear")}
 \usage{
-epiyear_first_date(epiyear, epiweek_standard = "MMWR")
+epiyear_first_date(epiyear, epiweek_standard)
 }
 \arguments{
 \item{epiyear}{The epidemiological
 year for which to get the first date.}
 
-\item{epiweek_standard}{One of \code{"USA"} or \code{"MMWR"}
-(USA / MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
+\item{epiweek_standard}{One of \code{"MMWR"} or \code{"USA"}
+(USA MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
 week, starts on Monday). Not case-sensitive.
-Default \code{"MMWR"}.}
+Must be a single value.}
 }
 \value{
 The first date of the epiyear,
@@ -36,4 +36,13 @@ always starts on the first day of a seven day
 week (Monday for ISO, Sunday for US CDC/MMWR),
 and specifically on whichever first day of the
 week falls nearest to 1 January.
+}
+\examples{
+
+epiyear_first_date(2025, "MMWR")
+
+epiyear_first_date(2025, "usa")
+
+epiyear_first_date(2025, "ISO")
+
 }
