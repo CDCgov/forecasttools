@@ -1,3 +1,7 @@
+# forecasttools 0.1.6
+* New function: `modify_reference_date()`
+* BREAKING CHANGE: Various epiweek/epiyear functions no longer default to the `MMWR` epiweek standard and require the user to specify a standard explicitly. To restore previous behavior, set `epiweek_standard = "MMWR"` explicitly.
+
 # forecasttools 0.1.5
 * BREAKING CHANGE: `get_hubverse_table()` has been removed and replaced by `get_hubverse_quantile_table()`, `get_flusight_hub_table()` and `get_covid_hub_table()`.
 * `horizons_from_target_end_dates` is now vectorized
