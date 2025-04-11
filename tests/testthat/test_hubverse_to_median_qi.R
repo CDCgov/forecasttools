@@ -111,7 +111,7 @@ test_that(paste0(
     .width = 0.6,
     require_all_medians = FALSE
   )
-  expect_equal(without_valid$x, c(NA, NA, 13))
+  expect_equal(without_valid$value, c(NA, NA, 13))
 
   expect_error(
     hub_quantiles_to_median_qi(
@@ -149,7 +149,7 @@ test_that("hub_quantiles_to_median_qi output matches manual expected output", {
   expected_output <- tibble::tibble(
     id_col_one = rep(c("A", "B"), each = 2),
     id_col_two = "a string",
-    x = c(3, 3, 8, 8),
+    value = c(3, 3, 8, 8),
     .lower = c(2, 1, 7, 6),
     .upper = c(4, 5, 9, 10),
     .width = c(0.5, 0.8, 0.5, 0.8),
