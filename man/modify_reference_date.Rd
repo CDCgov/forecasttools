@@ -6,7 +6,7 @@
 \usage{
 modify_reference_date(
   original_hub_tbl,
-  horizon_timescale,
+  horizon_timescale = NULL,
   reference_date_transform = identity,
   reference_date_col = "reference_date",
   target_end_date_col = "target_end_date",
@@ -18,7 +18,8 @@ modify_reference_date(
 \item{original_hub_tbl}{A data frame containing the hub table.}
 
 \item{horizon_timescale}{The timescale for the horizon. Must be a valid
-argument to \code{\link[=horizons_from_target_end_dates]{horizons_from_target_end_dates()}}.}
+argument to \code{\link[=horizons_from_target_end_dates]{horizons_from_target_end_dates()}}. If \code{NULL}, the horizon from
+\code{horizon_timescale_col} is used.}
 
 \item{reference_date_transform}{A function to transform the reference date.
 Default is \code{identity}.}
@@ -46,11 +47,11 @@ can also be specified.
 }
 \examples{
 example_daily_forecast_flu |>
-trajectories_to_quantiles(
-  id_cols = "location",
-  timepoint_col = "date",
-  value_col = "hosp"
-) |>
+  trajectories_to_quantiles(
+    id_cols = "location",
+    timepoint_col = "date",
+    value_col = "hosp"
+  ) |>
   dplyr::rename(target_end_date = date) |>
   get_hubverse_quantile_table(
     reference_date = as.Date("2023-10-20"),
