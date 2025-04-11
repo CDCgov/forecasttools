@@ -8,7 +8,8 @@
 #' @param date A date.
 #' @param epiweek_standard One of `"USA"` or `"MMWR"`
 #' (USA / MMWR epiweek, starts on Sunday) and `"ISO"` (ISO
-#'  week, starts on Monday). Not case-sensitive.
+#'  week, starts on Monday). Not case-sensitive. Must be a
+#' single value.
 #' @return The date that starts or ends the epidemiological week, as a
 #' [lubridate::date()].
 #' @examples
@@ -26,6 +27,7 @@
 #'
 #' @export
 floor_epiweek <- function(date, epiweek_standard) {
+  checkmate::assert_scalar(epiweek_standard)
   return(lubridate::floor_date(date,
     "week",
     week_start = epiweek_start(epiweek_standard)
@@ -35,6 +37,7 @@ floor_epiweek <- function(date, epiweek_standard) {
 #' @rdname floor_epiweek
 #' @export
 ceiling_epiweek <- function(date, epiweek_standard) {
+  checkmate::assert_scalar(epiweek_standard)
   return(lubridate::ceiling_date(date,
     "week",
     week_start = epiweek_end(epiweek_standard),

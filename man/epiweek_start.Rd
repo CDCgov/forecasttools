@@ -25,10 +25,10 @@ epidemiological week ("epiweek")
 according to different epiweek
 standards. Returns the day of the week index
 as an integer that can be passed to
-\link[lubridate:lubridate-package]{lubridate::lubridate-package} functions as a
+\code{\link[lubridate:lubridate-package]{lubridate}} functions as a
 day-of-the-week index (e.g. as the
 \code{week_start} argument to \code{\link[lubridate:day]{lubridate::wday()}}):
-1 for Monday, 2 = Tuesday, ... 7 for Sunday.
+1 for Monday, 2 for Tuesday, ... 7 for Sunday.
 }
 \examples{
 epiweek_start("ISO")

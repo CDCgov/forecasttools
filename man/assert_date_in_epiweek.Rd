@@ -20,10 +20,10 @@ assert_date_in_epiweek(
 
 \item{expected_epiyear}{Vector of expected epiyear values.}
 
-\item{epiweek_standard}{Epiweek standard to use.
-One of \code{"USA"} or \code{"MMWR"} (USA / MMWR
-epiweek, starts on Sunday) or \code{"ISO"} (ISO
-week, starts on Monday). Not case-sensitive.}
+\item{epiweek_standard}{One of \code{"MMWR"} or \code{"USA"}
+(USA MMWR epiweek, starts on Sunday) and \code{"ISO"} (ISO
+week, starts on Monday). Not case-sensitive.
+Must be a single value.}
 }
 \value{
 Nothing on success, or raise an error if the assertion
