@@ -213,15 +213,12 @@ hub_quantiles_to_median_qi <- function(hubverse_quantile_table,
       by = c(".upper_quantile", id_cols)
     ) |>
     dplyr::left_join(
-      quant_tab |> dplyr::rename(
-        x = "value",
-        .point_quantile = "output_type_id"
-      ),
+      quant_tab |> dplyr::rename(.point_quantile = "output_type_id"),
       by = c(".point_quantile", id_cols)
     ) |>
     dplyr::select(
       tidyselect::all_of(id_cols),
-      "x",
+      "value",
       ".lower",
       ".upper",
       ".width",
