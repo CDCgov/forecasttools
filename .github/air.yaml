@@ -1,0 +1,18 @@
+name: Format R files with Air
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-r-formatting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: rstudio/shiny-workflows/format-r-code@v1
+      with:
+        check: true
