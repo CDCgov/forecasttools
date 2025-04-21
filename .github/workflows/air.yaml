@@ -1,23 +1,20 @@
-name: Autoformat R files with Air
+name: autofix.ci
 on:
   pull_request:
-permissions:
-  contents: write
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
   format-r:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
       with:
         ref: ${{ github.head_ref }}
-    - name: Configure git user
-      run: |
-        git config --global user.name "${{ github.actor }}"
-        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
     - uses: rstudio/shiny-workflows/format-r-code@v1
-    - name: Push changes
-      run: git push
+    - name: commit fixes, if any
+      uses: autofix-ci/action@551dded8c6cc8a1054039c8bc0b8b48c51dfc6ef
+# autofix.ci recommends pinning to a commit hash for security
