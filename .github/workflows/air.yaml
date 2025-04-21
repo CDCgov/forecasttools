@@ -16,6 +16,6 @@ jobs:
     - uses: actions/checkout@v4
     - name: Configure git user
       run: |
-        git config --global user.name "${{ github.actor }}
+        git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
     - uses: rstudio/shiny-workflows/format-r-code@v1
