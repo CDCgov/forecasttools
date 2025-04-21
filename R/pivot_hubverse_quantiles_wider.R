@@ -21,7 +21,7 @@
 pivot_hubverse_quantiles_wider <- function(
   hubverse_table,
   pivot_quantiles = c(
-        "point" = 0.5,
+    "point" = 0.5,
     "lower" = 0.025,
     "upper" = 0.975
   )
