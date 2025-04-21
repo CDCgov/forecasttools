@@ -1,18 +1,21 @@
-name: Format R files with Air
+name: Autoformat R files with Air
 on:
   pull_request:
   push:
     branches: [main]
-
+permissions:
+  contents: write
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  check-r-formatting:
+  format-r:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Configure 
+      run: |
+        git config --global user.name "${{ github.actor }}
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
     - uses: rstudio/shiny-workflows/format-r-code@v1
-      with:
-        check: true
