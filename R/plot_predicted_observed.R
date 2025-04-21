@@ -73,30 +73,29 @@
 #'     facet_columns = "" # facet only by forecast date
 #'   )
 #'
-plot_pred_obs_by_forecast_date <- function(scorable_table,
-                                           horizons = NULL,
-                                           prediction_interval_width = 0.95,
-                                           forecast_date_col =
-                                             "reference_date",
-                                           target_date_col =
-                                             "target_end_date",
-                                           predicted_col =
-                                             "predicted",
-                                           observed_col =
-                                             "observed",
-                                           quantile_level_col =
-                                             "quantile_level",
-                                           horizon_col = "horizon",
-                                           facet_columns = NULL,
-                                           x_label = "Date",
-                                           y_label = "Target",
-                                           y_transform = "log10",
-                                           quantile_tol = 10) {
+plot_pred_obs_by_forecast_date <- function(
+  scorable_table,
+  horizons = NULL,
+  prediction_interval_width = 0.95,
+  forecast_date_col = "reference_date",
+  target_date_col = "target_end_date",
+  predicted_col = "predicted",
+  observed_col = "observed",
+  quantile_level_col = "quantile_level",
+  horizon_col = "horizon",
+  facet_columns = NULL,
+  x_label = "Date",
+  y_label = "Target",
+  y_transform = "log10",
+  quantile_tol = 10
+) {
   ## ensure that forecast is a scoringutils-format
   ## quantile forecast
   scorable_table <- scorable_table |>
     dplyr::filter(nullable_comparison(
-      .data[[horizon_col]], "%in%", !!horizons
+      .data[[horizon_col]],
+      "%in%",
+      !!horizons
     )) |>
     scoringutils::as_forecast_quantile(
       predicted = predicted_col,
@@ -119,21 +118,18 @@ plot_pred_obs_by_forecast_date <- function(scorable_table,
   quantiles_to_plot <- c(lower_ci, 0.5, upper_ci) |>
     round(digits = quantile_tol)
 
-  checkmate::assert_subset(quantiles_to_plot,
+  checkmate::assert_subset(
+    quantiles_to_plot,
     scorable_table$quantile_level,
     .var.name = "Quantiles to plot"
   )
-
 
   facet_columns <- unique(c(forecast_date_col, facet_columns)) |>
     purrr::discard(~ .x == "")
 
   to_plot <- to_plot |>
     dplyr::mutate(
-      quantile_level =
-        round(.data$quantile_level,
-          digits = quantile_tol
-        )
+      quantile_level = round(.data$quantile_level, digits = quantile_tol)
     ) |>
     dplyr::filter(.data$quantile_level %in% !!quantiles_to_plot) |>
     dplyr::mutate(q_rank = dplyr::dense_rank(.data$quantile_level))

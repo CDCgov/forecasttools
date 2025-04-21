@@ -28,7 +28,8 @@
 #' @export
 floor_epiweek <- function(date, epiweek_standard) {
   checkmate::assert_scalar(epiweek_standard)
-  return(lubridate::floor_date(date,
+  return(lubridate::floor_date(
+    date,
     "week",
     week_start = epiweek_start(epiweek_standard)
   ))
@@ -38,7 +39,8 @@ floor_epiweek <- function(date, epiweek_standard) {
 #' @export
 ceiling_epiweek <- function(date, epiweek_standard) {
   checkmate::assert_scalar(epiweek_standard)
-  return(lubridate::ceiling_date(date,
+  return(lubridate::ceiling_date(
+    date,
     "week",
     week_start = epiweek_end(epiweek_standard),
     change_on_boundary = FALSE

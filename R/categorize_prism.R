@@ -20,14 +20,12 @@
 get_prism_cutpoints <- function(locations, diseases) {
   checkmate::assert_names(
     diseases,
-    subset.of =
-      dimnames(forecasttools::prism_thresholds)$disease,
+    subset.of = dimnames(forecasttools::prism_thresholds)$disease,
     what = "disease"
   )
   checkmate::assert_names(
     locations,
-    subset.of =
-      dimnames(forecasttools::prism_thresholds)$location,
+    subset.of = dimnames(forecasttools::prism_thresholds)$location,
     what = "location"
   )
 
@@ -35,7 +33,6 @@ get_prism_cutpoints <- function(locations, diseases) {
     forecasttools::prism_thresholds[x, y, ]
   }))
 }
-
 
 
 #' Categorize a vector of values into PRISM
@@ -57,16 +54,18 @@ get_prism_cutpoints <- function(locations, diseases) {
 #' @return A factor vector of category labels, equal in length
 #' to the input vector `values`.
 #' @export
-categorize_prism <- function(values,
-                             locations,
-                             diseases,
-                             prism_bin_names = c(
-                               "Very Low",
-                               "Low",
-                               "Moderate",
-                               "High",
-                               "Very High"
-                             )) {
+categorize_prism <- function(
+  values,
+  locations,
+  diseases,
+  prism_bin_names = c(
+    "Very Low",
+    "Low",
+    "Moderate",
+    "High",
+    "Very High"
+  )
+) {
   cutpoints <- get_prism_cutpoints(locations, diseases)
 
   return(categorize_vector(

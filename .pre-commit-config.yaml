@@ -13,10 +13,15 @@ repos:
     - id: trailing-whitespace
 #####
 # R
--   repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.4.3.9008
+-   repo: local
     hooks:
-      - id: style-files
+    -   id: air-format
+        name: Format with air
+        language: system
+        pass_filenames: false
+        entry: air format .
+-   repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.4.3.9009
+    hooks:
       - id: deps-in-desc
         args: [--allow_private_imports]
-      - id: lintr

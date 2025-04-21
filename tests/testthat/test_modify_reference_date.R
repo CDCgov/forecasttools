@@ -80,12 +80,15 @@ test_that("modify_reference_date handles mixed timescales correctly", {
     target_end_date = reference_date + lubridate::days(c(1, 7)),
     horizon_timescale = c("days", "weeks")
   ) |>
-    dplyr::mutate(horizon = horizons_from_target_end_dates(
-      horizon_timescale = horizon_timescale,
-      target_end_dates = target_end_date,
-      reference_date = reference_date
-    ))
-  result <- modify_reference_date(original_mixed_timescale_tbl,
+    dplyr::mutate(
+      horizon = horizons_from_target_end_dates(
+        horizon_timescale = horizon_timescale,
+        target_end_dates = target_end_date,
+        reference_date = reference_date
+      )
+    )
+  result <- modify_reference_date(
+    original_mixed_timescale_tbl,
     reference_date_transform = \(x) as.Date(x) - lubridate::days(7)
   )
   expect_equal(

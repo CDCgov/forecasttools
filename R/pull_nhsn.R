@@ -51,22 +51,23 @@
 #' @param ... other arguments passed to [nhsn_soda_query()]
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
-pull_nhsn <- function(api_endpoint =
-                        "https://data.cdc.gov/resource/mpgq-jmmr.json",
-                      api_key_id = Sys.getenv("NHSN_API_KEY_ID"),
-                      api_key_secret = Sys.getenv("NHSN_API_KEY_SECRET"),
-                      start_date = NULL,
-                      end_date = NULL,
-                      columns = NULL,
-                      jurisdictions = NULL,
-                      order_by = c(
-                        "jurisdiction",
-                        "weekendingdate"
-                      ),
-                      desc = FALSE,
-                      limit = 1e5,
-                      error_on_limit = TRUE,
-                      ...) {
+pull_nhsn <- function(
+  api_endpoint = "https://data.cdc.gov/resource/mpgq-jmmr.json",
+  api_key_id = Sys.getenv("NHSN_API_KEY_ID"),
+  api_key_secret = Sys.getenv("NHSN_API_KEY_SECRET"),
+  start_date = NULL,
+  end_date = NULL,
+  columns = NULL,
+  jurisdictions = NULL,
+  order_by = c(
+    "jurisdiction",
+    "weekendingdate"
+  ),
+  desc = FALSE,
+  limit = 1e5,
+  error_on_limit = TRUE,
+  ...
+) {
   query <- nhsn_soda_query(
     api_endpoint,
     start_date = start_date,
@@ -84,10 +85,8 @@ pull_nhsn <- function(api_endpoint =
   api_key_id <- if (is.null(api_key_id)) "" else api_key_id
   api_key_secret <- if (is.null(api_key_secret)) "" else api_key_secret
 
-  credentials <- (
-    api_key_id != "" &
-      api_key_secret != ""
-  )
+  credentials <- (api_key_id != "" &
+    api_key_secret != "")
 
   if (credentials) {
     response <- httr::GET(
@@ -157,18 +156,20 @@ pull_nhsn <- function(api_endpoint =
 #' @param ... additional arguments (ignored for now)
 #' @return the query as [soql::soql()] output
 #' @export
-nhsn_soda_query <- function(api_endpoint,
-                            start_date = NULL,
-                            end_date = NULL,
-                            columns = NULL,
-                            jurisdictions = NULL,
-                            limit = 1e5,
-                            order_by = c(
-                              "jurisdiction",
-                              "weekendingdate"
-                            ),
-                            desc = FALSE,
-                            ...) {
+nhsn_soda_query <- function(
+  api_endpoint,
+  start_date = NULL,
+  end_date = NULL,
+  columns = NULL,
+  jurisdictions = NULL,
+  limit = 1e5,
+  order_by = c(
+    "jurisdiction",
+    "weekendingdate"
+  ),
+  desc = FALSE,
+  ...
+) {
   cols <- if (!is.null(columns)) {
     c("jurisdiction", "weekendingdate", columns)
   } else {
@@ -179,13 +180,18 @@ nhsn_soda_query <- function(api_endpoint,
     soql::soql_add_endpoint(api_endpoint) |>
     soql_nullable_select(cols) |>
     soql_nullable_where(
-      "weekendingdate", ">=", start_date
+      "weekendingdate",
+      ">=",
+      start_date
     ) |>
     soql_nullable_where(
-      "weekendingdate", "<=", end_date
+      "weekendingdate",
+      "<=",
+      end_date
     ) |>
     soql_nullable_is_in(
-      "jurisdiction", jurisdictions
+      "jurisdiction",
+      jurisdictions
     )
 
   ## need to add order_by columns sequentially

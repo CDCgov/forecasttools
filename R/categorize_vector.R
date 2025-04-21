@@ -26,21 +26,19 @@
 #' @return A categorized vector, as vector of
 #' factors (default ordered factors).
 #' @export
-categorize_vector <- function(values,
-                              break_sets,
-                              label_sets,
-                              include.lowest = TRUE, # nolint
-                              order = TRUE,
-                              right = TRUE,
-                              ...) {
+categorize_vector <- function(
+  values,
+  break_sets,
+  label_sets,
+  include.lowest = TRUE, # nolint
+  order = TRUE,
+  right = TRUE,
+  ...
+) {
   n_vals <- length(values)
 
-  checkmate::assert_list(break_sets,
-    types = "numeric"
-  )
-  checkmate::assert_list(label_sets,
-    types = "character"
-  )
+  checkmate::assert_list(break_sets, types = "numeric")
+  checkmate::assert_list(label_sets, types = "character")
   checkmate::qassert(break_sets, c("l1", glue::glue("l{n_vals}")))
   checkmate::qassert(label_sets, c("l1", glue::glue("l{n_vals}")))
 

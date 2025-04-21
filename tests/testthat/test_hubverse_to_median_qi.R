@@ -64,78 +64,80 @@ test_that("widths_to_qi_table works as expected", {
 })
 
 
+test_that(
+  paste0(
+    "hub_quantiles_to_median_qi throws errors ",
+    "appropriately based on require_only_quantiles ",
+    "require_all_medians, and require_all_widths"
+  ),
+  {
+    test_table <- tibble::tibble(
+      output_type_id = rep(c(0.1, 0.2, 0.5, 0.8, 0.9), 3),
+      output_type = rep("quantile", 15),
+      value = 1:15,
+      group = rep(c("A", "B", "C"), each = 5)
+    )
 
-test_that(paste0(
-  "hub_quantiles_to_median_qi throws errors ",
-  "appropriately based on require_only_quantiles ",
-  "require_all_medians, and require_all_widths"
-), {
-  test_table <- tibble::tibble(
-    output_type_id = rep(c(0.1, 0.2, 0.5, 0.8, 0.9), 3),
-    output_type = rep("quantile", 15),
-    value = 1:15,
-    group = rep(c("A", "B", "C"), each = 5)
-  )
-
-
-  ## test require_only_quantiles functionality
-  with_other_output_type <- test_table |>
-    dplyr::mutate(output_type = ifelse(
-      .data$group == "C",
-      "sample",
-      .data$output_type
-    ))
-  expect_no_error(hub_quantiles_to_median_qi(
-    with_other_output_type,
-    .width = 0.6,
-    require_only_quantiles = FALSE
-  ))
-  expect_error(
-    hub_quantiles_to_median_qi(
+    ## test require_only_quantiles functionality
+    with_other_output_type <- test_table |>
+      dplyr::mutate(
+        output_type = ifelse(
+          .data$group == "C",
+          "sample",
+          .data$output_type
+        )
+      )
+    expect_no_error(hub_quantiles_to_median_qi(
       with_other_output_type,
-      .width = 0.6
-    ),
-    "quantile"
-  )
+      .width = 0.6,
+      require_only_quantiles = FALSE
+    ))
+    expect_error(
+      hub_quantiles_to_median_qi(
+        with_other_output_type,
+        .width = 0.6
+      ),
+      "quantile"
+    )
 
+    ## test require_all_medians functionality
+    without_medians <- test_table |>
+      dplyr::filter(output_type_id != 0.5 | group == "C")
 
-  ## test require_all_medians functionality
-  without_medians <- test_table |>
-    dplyr::filter(output_type_id != 0.5 | group == "C")
-
-  ## if require_all_medians is FALSE and medians
-  ## are missing, those values should be NA
-  ## and others should be the correct values
-  without_valid <- hub_quantiles_to_median_qi(
-    without_medians,
-    .width = 0.6,
-    require_all_medians = FALSE
-  )
-  expect_equal(without_valid$value, c(NA, NA, 13))
-
-  expect_error(
-    hub_quantiles_to_median_qi(
+    ## if require_all_medians is FALSE and medians
+    ## are missing, those values should be NA
+    ## and others should be the correct values
+    without_valid <- hub_quantiles_to_median_qi(
       without_medians,
-      .width = 0.6
-    ),
-    "require_all_medians"
-  )
+      .width = 0.6,
+      require_all_medians = FALSE
+    )
+    expect_equal(without_valid$value, c(NA, NA, 13))
 
-  ## test require_all_widths functionality
-  expect_no_error(hub_quantiles_to_median_qi(
-    test_table,
-    .width = c(0.8, 0.6),
-    require_all_widths = FALSE
-  ))
+    expect_error(
+      hub_quantiles_to_median_qi(
+        without_medians,
+        .width = 0.6
+      ),
+      "require_all_medians"
+    )
 
-  expect_error(
-    hub_quantiles_to_median_qi(
+    ## test require_all_widths functionality
+    expect_no_error(hub_quantiles_to_median_qi(
       test_table,
-      .width = c(0.5, 0.8, 0.2)
-    ),
-    "require_all_widths"
-  )
-})
+      .width = c(0.8, 0.6),
+      require_all_widths = FALSE
+    ))
+
+    expect_error(
+      hub_quantiles_to_median_qi(
+        test_table,
+        .width = c(0.5, 0.8, 0.2)
+      ),
+      "require_all_widths"
+    )
+  }
+)
 
 test_that("hub_quantiles_to_median_qi output matches manual expected output", {
   input <- tibble::tibble(
@@ -163,7 +165,6 @@ test_that("hub_quantiles_to_median_qi output matches manual expected output", {
     require_all_widths = TRUE
   )
 
-
   result_explicit <- hub_quantiles_to_median_qi(
     input,
     .width = c(0.5, 0.8),
@@ -177,7 +178,6 @@ test_that("hub_quantiles_to_median_qi output matches manual expected output", {
     require_only_quantiles = TRUE,
     require_all_widths = TRUE
   )
-
 
   expect_equal(result, expected_output)
   expect_equal(result, result_explicit)

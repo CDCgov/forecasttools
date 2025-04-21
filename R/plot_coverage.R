@@ -32,13 +32,15 @@
 #' [scales::label_percent()].
 #' @return A ggplot of the empirical coverage.
 #' @export
-plot_coverage_by_date <- function(scored,
-                                  coverage_level,
-                                  coverage_col = NULL,
-                                  date_col = "reference_date",
-                                  group_cols = c("target", "horizon"),
-                                  y_transform = "identity",
-                                  y_labels = scales::label_percent()) {
+plot_coverage_by_date <- function(
+  scored,
+  coverage_level,
+  coverage_col = NULL,
+  date_col = "reference_date",
+  group_cols = c("target", "horizon"),
+  y_transform = "identity",
+  y_labels = scales::label_percent()
+) {
   if (is.null(coverage_col)) {
     coverage_col <-
       glue::glue("interval_coverage_{coverage_level * 100}")
@@ -71,9 +73,11 @@ plot_coverage_by_date <- function(scored,
   if (length(group_cols) == 1 || length(group_cols > 2)) {
     fig <- fig + ggplot2::facet_wrap(group_cols)
   } else if (length(group_cols) == 2) {
-    fig <- fig + ggplot2::facet_grid(stats::reformulate(
-      group_cols[1], group_cols[2]
-    ))
+    fig <- fig +
+      ggplot2::facet_grid(stats::reformulate(
+        group_cols[1],
+        group_cols[2]
+      ))
   }
   return(fig)
 }

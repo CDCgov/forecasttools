@@ -20,30 +20,34 @@
 #' [ggplot2::geom_point()] Default `"darkblue"`.
 #' @return The plot, as a ggplot object.
 #' @export
-plot_quantile_timeseries <- function(data,
-                                     time_column,
-                                     value_column,
-                                     quantile_level_column,
-                                     linewidth = 2,
-                                     pointsize = 4,
-                                     pointcolor = "darkblue",
-                                     linecolor = "darkblue") {
-  return(ggplot2::ggplot(
-    mapping = ggplot2::aes(
-      x = .data[[time_column]],
-      y = .data[[value_column]],
-      group = .data[[quantile_level_column]],
-      alpha = 1 - abs(.data[[quantile_level_column]] - 0.5)
-    ),
-    data = data
-  ) +
-    ggplot2::geom_line(
-      linewidth = linewidth,
-      color = linecolor
+plot_quantile_timeseries <- function(
+  data,
+  time_column,
+  value_column,
+  quantile_level_column,
+  linewidth = 2,
+  pointsize = 4,
+  pointcolor = "darkblue",
+  linecolor = "darkblue"
+) {
+  return(
+    ggplot2::ggplot(
+      mapping = ggplot2::aes(
+        x = .data[[time_column]],
+        y = .data[[value_column]],
+        group = .data[[quantile_level_column]],
+        alpha = 1 - abs(.data[[quantile_level_column]] - 0.5)
+      ),
+      data = data
     ) +
-    ggplot2::geom_point(
-      size = pointsize,
-      color = pointcolor
-    ) +
-    ggplot2::scale_alpha_continuous(guide = NULL))
+      ggplot2::geom_line(
+        linewidth = linewidth,
+        color = linecolor
+      ) +
+      ggplot2::geom_point(
+        size = pointsize,
+        color = pointcolor
+      ) +
+      ggplot2::scale_alpha_continuous(guide = NULL)
+  )
 }

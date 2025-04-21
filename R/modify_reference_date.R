@@ -38,13 +38,15 @@
 #'     horizons = 1:4
 #'   ) |>
 #'   modify_reference_date(\(x) x - 1, horizon_timescale = "days")
-modify_reference_date <- function(original_hub_tbl,
-                                  horizon_timescale = NULL,
-                                  reference_date_transform = identity,
-                                  reference_date_col = "reference_date",
-                                  target_end_date_col = "target_end_date",
-                                  horizon_col = "horizon",
-                                  horizon_timescale_col = "horizon_timescale") {
+modify_reference_date <- function(
+  original_hub_tbl,
+  horizon_timescale = NULL,
+  reference_date_transform = identity,
+  reference_date_col = "reference_date",
+  target_end_date_col = "target_end_date",
+  horizon_col = "horizon",
+  horizon_timescale_col = "horizon_timescale"
+) {
   checkmate::assert_names(
     colnames(original_hub_tbl),
     must.include = c(
@@ -53,7 +55,8 @@ modify_reference_date <- function(original_hub_tbl,
     )
   )
 
-  optional_cols_check <- checkmate::check_names(colnames(original_hub_tbl),
+  optional_cols_check <- checkmate::check_names(
+    colnames(original_hub_tbl),
     must.include = c(
       horizon_col,
       horizon_timescale_col
@@ -81,13 +84,16 @@ modify_reference_date <- function(original_hub_tbl,
 
   original_hub_tbl |>
     dplyr::mutate(
-      !!reference_date_col :=
-        reference_date_transform(.data[[reference_date_col]])
+      !!reference_date_col := reference_date_transform(.data[[
+        reference_date_col
+      ]])
     ) |>
-    dplyr::mutate(!!horizon_col := horizons_from_target_end_dates(
-      reference_date = .data[[reference_date_col]],
-      target_end_dates = .data[[target_end_date_col]],
-      horizon_timescale = !!horizon_timescale
-    )) |>
+    dplyr::mutate(
+      !!horizon_col := horizons_from_target_end_dates(
+        reference_date = .data[[reference_date_col]],
+        target_end_dates = .data[[target_end_date_col]],
+        horizon_timescale = !!horizon_timescale
+      )
+    ) |>
     dplyr::mutate(!!horizon_timescale_col := !!horizon_timescale)
 }

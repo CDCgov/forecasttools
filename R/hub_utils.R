@@ -73,13 +73,14 @@ gather_hub_quantile_forecasts <- function(hub_path) {
 #' `NULL`.
 #' @return Table of location data.
 #' @export
-gather_hub_location_data <- function(hub_path,
-                                     location_file_rel_path =
-                                       fs::path(
-                                         "auxiliary-data",
-                                         "locations.csv"
-                                       ),
-                                     file_format = NULL) {
+gather_hub_location_data <- function(
+  hub_path,
+  location_file_rel_path = fs::path(
+    "auxiliary-data",
+    "locations.csv"
+  ),
+  file_format = NULL
+) {
   location_data_path <- fs::path(hub_path, location_file_rel_path)
   if (!fs::file_exists(location_data_path)) {
     cfl <- location_data_path
@@ -88,7 +89,8 @@ gather_hub_location_data <- function(hub_path,
     )
   }
 
-  location_data <- read_tabular_file(location_data_path,
+  location_data <- read_tabular_file(
+    location_data_path,
     file_format = file_format
   )
 
@@ -103,11 +105,13 @@ gather_hub_location_data <- function(hub_path,
 #' Defaults to the path in the FluSight Forecast Hub.
 #' @return Table of target data
 #' @export
-gather_hub_target_data <- function(hub_path,
-                                   target_data_rel_path = fs::path(
-                                     "target-data",
-                                     "target-hospital-admissions.csv"
-                                   )) {
+gather_hub_target_data <- function(
+  hub_path,
+  target_data_rel_path = fs::path(
+    "target-data",
+    "target-hospital-admissions.csv"
+  )
+) {
   target_data_path <- fs::path(hub_path, target_data_rel_path)
   if (!fs::file_exists(target_data_path)) {
     cfl <- target_data_path

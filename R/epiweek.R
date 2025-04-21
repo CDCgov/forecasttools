@@ -155,19 +155,19 @@ epiyear_fn <- function(epiweek_standard) {
 #' )
 #'
 #' @export
-assert_date_in_epiweek <- function(date,
-                                   expected_epiweek,
-                                   expected_epiyear,
-                                   epiweek_standard) {
+assert_date_in_epiweek <- function(
+  date,
+  expected_epiweek,
+  expected_epiyear,
+  epiweek_standard
+) {
   checkmate::assert_scalar(epiweek_standard)
 
   week_fn <- epiweek_fn(epiweek_standard)
   year_fn <- epiyear_fn(epiweek_standard)
 
-  invalid <- (
-    (week_fn(date) != expected_epiweek) |
-      (year_fn(date) != expected_epiyear)
-  )
+  invalid <- ((week_fn(date) != expected_epiweek) |
+    (year_fn(date) != expected_epiyear))
 
   if (any(invalid)) {
     failed <- date[invalid]
@@ -219,8 +219,7 @@ assert_date_in_epiweek <- function(date,
 #' epiyear_first_date(2025, "ISO")
 #'
 #' @export
-epiyear_first_date <- function(epiyear,
-                               epiweek_standard) {
+epiyear_first_date <- function(epiyear, epiweek_standard) {
   checkmate::assert_scalar(epiweek_standard)
   jan4 <- lubridate::make_date(
     epiyear,
@@ -258,8 +257,7 @@ epiyear_first_date <- function(epiyear,
 #' epiyear_n_days(2026, "ISO")
 #'
 #' @export
-epiyear_n_days <- function(epiyear,
-                           epiweek_standard) {
+epiyear_n_days <- function(epiyear, epiweek_standard) {
   this_year_start <- epiyear_first_date(
     epiyear,
     epiweek_standard = epiweek_standard
@@ -297,10 +295,12 @@ epiyear_n_days <- function(epiyear,
 #'
 #' epiyear_n_weeks(2023, "ISO")
 #' @export
-epiyear_n_weeks <- function(epiyear,
-                            epiweek_standard) {
-  return(epiyear_n_days(
-    epiyear,
-    epiweek_standard = epiweek_standard
-  ) %/% 7L)
+epiyear_n_weeks <- function(epiyear, epiweek_standard) {
+  return(
+    epiyear_n_days(
+      epiyear,
+      epiweek_standard = epiweek_standard
+    ) %/%
+      7L
+  )
 }
