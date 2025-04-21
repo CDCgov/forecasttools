@@ -21,3 +21,5 @@ jobs:
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
     - uses: rstudio/shiny-workflows/format-r-code@v1
+    - name: Push changes
+      run: git push
