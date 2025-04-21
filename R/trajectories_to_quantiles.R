@@ -31,19 +31,21 @@
 #' locations, such as different US States and Territories.
 #' If NULL, ignored. Default NULL.
 #' @export
-trajectories_to_quantiles <- function(trajectories,
-                                      quantiles = c(
-                                        0.01, 0.025,
-                                        1:19 / 20,
-                                        0.975, 0.99
-                                      ),
-                                      timepoint_cols = "timepoint",
-                                      value_col = "value",
-                                      quantile_value_name =
-                                        "quantile_value",
-                                      quantile_level_name =
-                                        "quantile_level",
-                                      id_cols = NULL) {
+trajectories_to_quantiles <- function(
+  trajectories,
+  quantiles = c(
+    0.01,
+    0.025,
+    1:19 / 20,
+    0.975,
+    0.99
+  ),
+  timepoint_cols = "timepoint",
+  value_col = "value",
+  quantile_value_name = "quantile_value",
+  quantile_level_name = "quantile_level",
+  id_cols = NULL
+) {
   grouped_df <- trajectories |>
     dplyr::rename(value_col = !!value_col) |>
     dplyr::group_by(

@@ -48,6 +48,4 @@ prism_thresholds <- thresholds_nested_list |>
 
 names(dimnames(prism_thresholds)) <- c("location", "disease", "breaks")
 
-usethis::use_data(prism_thresholds,
-  overwrite = TRUE
-)
+usethis::use_data(prism_thresholds, overwrite = TRUE)

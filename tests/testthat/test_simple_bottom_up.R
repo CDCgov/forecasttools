@@ -4,12 +4,32 @@ test_base_forecasts <- dplyr::tibble(
   date = c(rep("2023-03-01", 6), rep("2023-03-02", 6)),
   .draw = rep(c(1, 1, 2, 2, 1, 2), 2),
   hosps = c(
-    120, 80, 40, 120, 1, 3,
-    150, 110, 60, 170, 10, 30
+    120,
+    80,
+    40,
+    120,
+    1,
+    3,
+    150,
+    110,
+    60,
+    170,
+    10,
+    30
   ),
   rank_quantity = c(
-    12, 8, 4, 12, 0.1, 0.3,
-    15, 11, 6, 17, 1, 3
+    12,
+    8,
+    4,
+    12,
+    0.1,
+    0.3,
+    15,
+    11,
+    6,
+    17,
+    1,
+    3
   )
 )
 test_cp <- copula::normalCopula(0.5, dim = 3)
@@ -33,7 +53,8 @@ location_names <- c("A", "B", "C")
 colnames(test_u_mat) <- location_names
 
 test_that("`validate_base_forecasts` throws an error", {
-  expect_error(validate_base_forecasts(bad_test_base_forecasts,
+  expect_error(validate_base_forecasts(
+    bad_test_base_forecasts,
     test_cp,
     value_to_aggregate_col = "hosps",
     rank_quantity_col = "rank_quantity",
@@ -43,7 +64,8 @@ test_that("`validate_base_forecasts` throws an error", {
 })
 
 test_that("`count_trajectories` returns correct number of trajs", {
-  result <- count_trajectories(test_base_forecasts,
+  result <- count_trajectories(
+    test_base_forecasts,
     location_col = "location",
     date_col = "date"
   )
@@ -70,7 +92,8 @@ test_that("`copula2tbl` returns the expected output", {
 
 test_that("`rank_sampled_trajectories` returns correct rankings", {
   ranked_base_forecasts <-
-    rank_sampled_trajectories(test_base_forecasts,
+    rank_sampled_trajectories(
+      test_base_forecasts,
       location_col = "location",
       draw_col = ".draw",
       rank_quantity_col = "rank_quantity"
@@ -96,30 +119,31 @@ test_that("sample_aggregated_trajectories", {
     location_col
   )
   test_ranked_base_forecasts <-
-    rank_sampled_trajectories(test_base_forecasts,
+    rank_sampled_trajectories(
+      test_base_forecasts,
       location_col = "location",
       draw_col = ".draw",
       rank_quantity_col = "rank_quantity"
     )
-  test_num_samples <- count_trajectories(test_base_forecasts,
+  test_num_samples <- count_trajectories(
+    test_base_forecasts,
     location_col = "location",
     date_col = "date"
   )
 
-  result <- sample_aggregated_trajectories(test_base_forecasts,
+  result <- sample_aggregated_trajectories(
+    test_base_forecasts,
     test_sample,
     test_ranked_base_forecasts,
     test_num_samples,
     location_col = "location",
     draw_col = ".draw",
     date_col = "date",
-    value_to_aggregate_col =
-      "hosps"
+    value_to_aggregate_col = "hosps"
   )
 
   expected_output <- dplyr::tibble(
-    date =
-      c("2023-03-01", "2023-03-02"),
+    date = c("2023-03-01", "2023-03-02"),
     forecast = c(123, 200)
   )
 

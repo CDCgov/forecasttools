@@ -19,7 +19,4 @@ us_location_table <- dplyr::bind_rows(
   states
 )
 
-usethis::use_data(us_location_table,
-  overwrite = TRUE,
-  ascii = TRUE
-)
+usethis::use_data(us_location_table, overwrite = TRUE, ascii = TRUE)

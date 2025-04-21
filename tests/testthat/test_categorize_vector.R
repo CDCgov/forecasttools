@@ -10,7 +10,8 @@ withr::with_seed(5, {
     t()
   ## need lower and upper bound cutpoints in addition to one
   ## for each label
-  lab_no <- sample(1:(5 * n_to_categorize * n_categories),
+  lab_no <- sample(
+    1:(5 * n_to_categorize * n_categories),
     n_to_categorize * n_categories,
     replace = FALSE
   )
@@ -127,7 +128,8 @@ testthat::test_that(
         right = TRUE
       )
     }
-    result_vec_both <- categorize_vector(to_categorize,
+    result_vec_both <- categorize_vector(
+      to_categorize,
       purrr::array_branch(cutpoints, 1),
       purrr::array_branch(labs, 1),
       order = FALSE
@@ -162,10 +164,7 @@ testthat::test_that(
     result_vec_both <- categorize_vector(
       to_categorize,
       purrr::array_branch(cutpoints, 1),
-      replicate(n_to_categorize,
-        labs[1, ],
-        simplify = FALSE
-      )
+      replicate(n_to_categorize, labs[1, ], simplify = FALSE)
     )
 
     expect_equal(
@@ -174,9 +173,6 @@ testthat::test_that(
     )
   }
 )
-
-
-
 
 
 testthat::test_that(
@@ -207,7 +203,8 @@ testthat::test_that(
         right = TRUE
       )
     }
-    result_vec_labs <- categorize_vector(to_categorize,
+    result_vec_labs <- categorize_vector(
+      to_categorize,
       list(cutpoints[7, ]),
       purrr::array_branch(labs, 1),
       order = FALSE

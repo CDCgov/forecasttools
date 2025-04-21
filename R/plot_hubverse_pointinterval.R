@@ -25,13 +25,15 @@
 #' jurisdiction names). Default `"abbr"`.
 #' @return A ggplot2 plot of the forecasts as pointintervals
 #' @export
-plot_hubverse_pointintervals <- function(hubverse_table,
-                                         horizons = NULL,
-                                         point_estimate_quantile = 0.5,
-                                         lower_limit_quantile = 0.025,
-                                         upper_limit_quantile = 0.975,
-                                         location_input_format = "hub",
-                                         location_output_format = "abbr") {
+plot_hubverse_pointintervals <- function(
+  hubverse_table,
+  horizons = NULL,
+  point_estimate_quantile = 0.5,
+  lower_limit_quantile = 0.025,
+  upper_limit_quantile = 0.975,
+  location_input_format = "hub",
+  location_output_format = "abbr"
+) {
   if (is.null(horizons)) {
     horizons <- unique(hubverse_table$horizon)
   }
@@ -62,11 +64,13 @@ plot_hubverse_pointintervals <- function(hubverse_table,
     dplyr::pull("location")
 
   pivoted <- pivoted |>
-    dplyr::mutate(location = factor(
-      .data$location,
-      levels = !!loc_levels,
-      ordered = TRUE
-    ))
+    dplyr::mutate(
+      location = factor(
+        .data$location,
+        levels = !!loc_levels,
+        ordered = TRUE
+      )
+    )
 
   plot <- pivoted |>
     ggplot2::ggplot(ggplot2::aes_string(

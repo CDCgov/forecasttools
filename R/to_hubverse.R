@@ -8,13 +8,15 @@
 #' @return a vector of target end dates
 #' @param horizon_timescale Either "days" or "weeks"
 #' @export
-target_end_dates_from_horizons <- function(reference_date,
-                                           horizons,
-                                           horizon_timescale =
-                                             c("days", "weeks")) {
+target_end_dates_from_horizons <- function(
+  reference_date,
+  horizons,
+  horizon_timescale = c("days", "weeks")
+) {
   rlang::arg_match(horizon_timescale)
 
-  time_to_add <- switch(horizon_timescale,
+  time_to_add <- switch(
+    horizon_timescale,
     days = lubridate::days(horizons),
     weeks = lubridate::weeks(horizons)
   )
@@ -32,9 +34,11 @@ target_end_dates_from_horizons <- function(reference_date,
 #'
 #' @returns a vector of forecast horizons, in the specified timescale
 #' @export
-horizons_from_target_end_dates <- function(reference_date,
-                                           target_end_dates,
-                                           horizon_timescale) {
+horizons_from_target_end_dates <- function(
+  reference_date,
+  target_end_dates,
+  horizon_timescale
+) {
   horizons <- lubridate::time_length(
     as.Date(target_end_dates) - as.Date(reference_date),
     unit = horizon_timescale
@@ -72,42 +76,44 @@ horizons_from_target_end_dates <- function(reference_date,
 #' @return a properly formatted table, as a [`tibble`][tibble::tibble].
 #' @name get_hubverse_quantile_table
 #' @export
-get_hubverse_quantile_table <- function(quantile_forecasts,
-                                        reference_date,
-                                        target_name,
-                                        quantile_value_col = "quantile_value",
-                                        quantile_level_col = "quantile_level",
-                                        location_col = "location",
-                                        timepoint_col = "target_end_date",
-                                        target_end_dates = NULL,
-                                        horizons = NULL,
-                                        horizon_timescale =
-                                          c("days", "weeks"),
-                                        excluded_locations = NULL,
-                                        quantile_tol = 4) {
+get_hubverse_quantile_table <- function(
+  quantile_forecasts,
+  reference_date,
+  target_name,
+  quantile_value_col = "quantile_value",
+  quantile_level_col = "quantile_level",
+  location_col = "location",
+  timepoint_col = "target_end_date",
+  target_end_dates = NULL,
+  horizons = NULL,
+  horizon_timescale = c("days", "weeks"),
+  excluded_locations = NULL,
+  quantile_tol = 4
+) {
   rlang::arg_match(horizon_timescale)
 
-  checkmate::assert_names(colnames(quantile_forecasts),
+  checkmate::assert_names(
+    colnames(quantile_forecasts),
     must.include = timepoint_col
   )
 
   if (is.null(target_end_dates) && is.null(horizons)) {
     cli::cli_abort(
-      message =
-        "Either `target_end_dates` or `horizons` must be provided."
+      message = "Either `target_end_dates` or `horizons` must be provided."
     )
   } else if (!is.null(target_end_dates) && !is.null(horizons)) {
     cli::cli_abort(
-      message =
-        "Only one of `target_end_dates` or `horizons` can be provided."
+      message = "Only one of `target_end_dates` or `horizons` can be provided."
     )
   } else if (is.null(target_end_dates)) {
-    target_end_dates <- target_end_dates_from_horizons(reference_date,
+    target_end_dates <- target_end_dates_from_horizons(
+      reference_date,
       horizons = horizons,
       horizon_timescale = horizon_timescale
     )
   } else {
-    horizons <- horizons_from_target_end_dates(reference_date,
+    horizons <- horizons_from_target_end_dates(
+      reference_date,
       target_end_dates = target_end_dates,
       horizon_timescale = horizon_timescale
     )
@@ -134,9 +140,7 @@ get_hubverse_quantile_table <- function(quantile_forecasts,
     dplyr::filter(!(.data$location %in% !!excluded_locations)) |>
     dplyr::mutate(
       output_type = "quantile",
-      output_type_id = round(.data$quantile_level,
-        digits = quantile_tol
-      )
+      output_type_id = round(.data$quantile_level, digits = quantile_tol)
     ) |>
     dplyr::select(
       "reference_date",
@@ -169,34 +173,40 @@ get_hubverse_quantile_table <- function(quantile_forecasts,
 #' Monday, as an integer. See the [lubridate::wday()] documentation for details.
 #' @rdname get_hubverse_quantile_table
 #' @export
-get_epiweekly_hubverse_table <- function(quantile_forecasts,
-                                         reference_date,
-                                         target_name,
-                                         quantile_value_col = "quantile_value",
-                                         quantile_level_col = "quantile_level",
-                                         location_col = "location",
-                                         timepoint_col = "target_end_date",
-                                         target_end_dates = NULL,
-                                         horizons = NULL,
-                                         reference_dow = NULL,
-                                         week_start = NULL,
-                                         excluded_locations = NULL,
-                                         quantile_tol = 4) {
-  dow_supplied <- lubridate::wday(reference_date,
+get_epiweekly_hubverse_table <- function(
+  quantile_forecasts,
+  reference_date,
+  target_name,
+  quantile_value_col = "quantile_value",
+  quantile_level_col = "quantile_level",
+  location_col = "location",
+  timepoint_col = "target_end_date",
+  target_end_dates = NULL,
+  horizons = NULL,
+  reference_dow = NULL,
+  week_start = NULL,
+  excluded_locations = NULL,
+  quantile_tol = 4
+) {
+  dow_supplied <- lubridate::wday(
+    reference_date,
     week_start = week_start,
     label = FALSE
   )
   reference_dow_correct <- dow_supplied == reference_dow
   if (!reference_dow_correct) {
-    cli::cli_abort(message = paste0(
-      "Expected `reference_date` to be day number {reference_dow} ",
-      "of the week. Got {reference_date}, which is day number ",
-      "{dow_supplied} of the week, given the provided `week_start` ",
-      "value {week_start}."
-    ))
+    cli::cli_abort(
+      message = paste0(
+        "Expected `reference_date` to be day number {reference_dow} ",
+        "of the week. Got {reference_date}, which is day number ",
+        "{dow_supplied} of the week, given the provided `week_start` ",
+        "value {week_start}."
+      )
+    )
   }
 
-  get_hubverse_quantile_table(quantile_forecasts,
+  get_hubverse_quantile_table(
+    quantile_forecasts,
     reference_date,
     target_name,
     quantile_value_col,
@@ -213,15 +223,16 @@ get_epiweekly_hubverse_table <- function(quantile_forecasts,
 
 #' @rdname get_hubverse_quantile_table
 #' @export
-get_flusight_hub_table <- function(quantile_forecasts,
-                                   reference_date,
-                                   target_name,
-                                   quantile_value_col =
-                                     "quantile_value",
-                                   quantile_level_col = "quantile_level",
-                                   location_col = "location",
-                                   timepoint_col = "target_end_date",
-                                   quantile_tol = 4) {
+get_flusight_hub_table <- function(
+  quantile_forecasts,
+  reference_date,
+  target_name,
+  quantile_value_col = "quantile_value",
+  quantile_level_col = "quantile_level",
+  location_col = "location",
+  timepoint_col = "target_end_date",
+  quantile_tol = 4
+) {
   get_epiweekly_hubverse_table(
     quantile_forecasts,
     reference_date,
@@ -240,15 +251,16 @@ get_flusight_hub_table <- function(quantile_forecasts,
 
 #' @rdname get_hubverse_quantile_table
 #' @export
-get_covid_hub_table <- function(quantile_forecasts,
-                                reference_date,
-                                target_name,
-                                quantile_value_col =
-                                  "quantile_value",
-                                quantile_level_col = "quantile_level",
-                                location_col = "location",
-                                timepoint_col = "target_end_date",
-                                quantile_tol = 4) {
+get_covid_hub_table <- function(
+  quantile_forecasts,
+  reference_date,
+  target_name,
+  quantile_value_col = "quantile_value",
+  quantile_level_col = "quantile_level",
+  location_col = "location",
+  timepoint_col = "target_end_date",
+  quantile_tol = 4
+) {
   get_epiweekly_hubverse_table(
     quantile_forecasts,
     reference_date,

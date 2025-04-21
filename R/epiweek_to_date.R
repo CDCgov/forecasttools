@@ -36,10 +36,12 @@
 #' epiweek_to_date(5, 2025, day_of_week = 7, epiweek_standard = "ISO")
 #'
 #' @export
-epiweek_to_date <- function(epiweek,
-                            epiyear,
-                            day_of_week = 1,
-                            epiweek_standard = "MMWR") {
+epiweek_to_date <- function(
+  epiweek,
+  epiyear,
+  day_of_week = 1,
+  epiweek_standard = "MMWR"
+) {
   checkmate::assert_scalar(epiweek_standard)
   recycled_inputs <- vctrs::vec_recycle_common(
     epiweek,
@@ -57,10 +59,7 @@ epiweek_to_date <- function(epiweek,
   )
   checkmate::assert_integerish(epiyear)
 
-  checkmate::assert_integerish(day_of_week,
-    lower = 1,
-    upper = 7
-  )
+  checkmate::assert_integerish(day_of_week, lower = 1, upper = 7)
 
   n_weeks <- epiyear_n_weeks(
     epiyear,
@@ -85,8 +84,7 @@ epiweek_to_date <- function(epiweek,
     epiweek_standard = epiweek_standard
   ) +
     lubridate::weeks(as.integer(epiweek) - 1L) +
-    lubridate::days(as.integer(day_of_week) - 1L)
-  )
+    lubridate::days(as.integer(day_of_week) - 1L))
   return(result)
 }
 
@@ -133,16 +131,23 @@ epiweek_to_date <- function(epiweek,
 #'   with_epidate(epiweek_col = "wk", epiyear_col = "yr")
 #'
 #' @export
-with_epidate <- function(df,
-                         epiweek_col = "epiweek",
-                         epiyear_col = "epiyear",
-                         epidate_name = "epidate",
-                         day_of_week = 1,
-                         epiweek_standard = "MMWR") {
-  return(df |> dplyr::mutate(!!epidate_name := epiweek_to_date(
-    .data[[epiweek_col]],
-    .data[[epiyear_col]],
-    day_of_week = day_of_week,
-    epiweek_standard = epiweek_standard
-  )))
+with_epidate <- function(
+  df,
+  epiweek_col = "epiweek",
+  epiyear_col = "epiyear",
+  epidate_name = "epidate",
+  day_of_week = 1,
+  epiweek_standard = "MMWR"
+) {
+  return(
+    df |>
+      dplyr::mutate(
+        !!epidate_name := epiweek_to_date(
+          .data[[epiweek_col]],
+          .data[[epiyear_col]],
+          day_of_week = day_of_week,
+          epiweek_standard = epiweek_standard
+        )
+      )
+  )
 }

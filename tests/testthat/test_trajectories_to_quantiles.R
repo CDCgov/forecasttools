@@ -7,8 +7,11 @@ test_that("trajectories_to_quantiles works as expected with default args", {
     dplyr::filter(location == "NM")
 
   n_quants <- dplyr::n_distinct(c(
-    0.01, 0.025, seq(0.05, 0.95, 0.05),
-    0.975, 0.99
+    0.01,
+    0.025,
+    seq(0.05, 0.95, 0.05),
+    0.975,
+    0.99
   ))
   n_locs <- dplyr::n_distinct(dat$location)
   n_dates <- dplyr::n_distinct(dat$timepoint)

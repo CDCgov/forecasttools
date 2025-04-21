@@ -34,9 +34,7 @@
 #' )
 #'
 #' @export
-nullable_comparison <- function(a,
-                                comparison_operator,
-                                b) {
+nullable_comparison <- function(a, comparison_operator, b) {
   comparison_func <- methods::getFunction(comparison_operator)
   return(
     if (!is.null(b)) {
@@ -63,10 +61,12 @@ nullable_comparison <- function(a,
 #' @return A new [soql::soql()] object with the filter added, or
 #' simply the input object if `where_value` is `NULL`.
 #' @export
-soql_nullable_where <- function(soql_list,
-                                column,
-                                comparison_operator,
-                                where_value) {
+soql_nullable_where <- function(
+  soql_list,
+  column,
+  comparison_operator,
+  where_value
+) {
   return(
     if (!is.null(where_value)) {
       soql::soql_where(
@@ -128,9 +128,7 @@ soql_nullable_select <- function(soql_list, columns) {
     if (!is.null(columns)) {
       soql::soql_select(
         soql_list,
-        paste(unique(columns),
-          collapse = ","
-        )
+        paste(unique(columns), collapse = ",")
       )
     } else {
       soql_list
@@ -156,8 +154,7 @@ soql_nullable_select <- function(soql_list, columns) {
 #' [`tibble`][tibble::tibble()]. For `write_tabular_file`,
 #' nothing, saving the tabular to disk as a side effect.
 #' @export
-read_tabular_file <- function(path_to_file,
-                              ...) {
+read_tabular_file <- function(path_to_file, ...) {
   file_format <- fs::path_ext(path_to_file)
 
   file_format <- tolower(file_format)
@@ -168,9 +165,7 @@ read_tabular_file <- function(path_to_file,
     "parquet" = nanoparquet::read_parquet
   )
 
-  checkmate::assert_names(file_format,
-    subset.of = names(file_readers)
-  )
+  checkmate::assert_names(file_format, subset.of = names(file_readers))
 
   file_reader <- file_readers[[file_format]]
 
@@ -179,9 +174,7 @@ read_tabular_file <- function(path_to_file,
 
 #' @rdname read_tabular_file
 #' @export
-write_tabular_file <- function(table,
-                               path_to_file,
-                               ...) {
+write_tabular_file <- function(table, path_to_file, ...) {
   file_format <- fs::path_ext(path_to_file)
 
   file_writers <- c(
@@ -190,9 +183,7 @@ write_tabular_file <- function(table,
     "parquet" = nanoparquet::write_parquet
   )
 
-  checkmate::assert_names(file_format,
-    subset.of = names(file_writers)
-  )
+  checkmate::assert_names(file_format, subset.of = names(file_writers))
 
   file_writer <- file_writers[[file_format]]
 

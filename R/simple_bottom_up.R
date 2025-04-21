@@ -18,39 +18,53 @@
 #'
 #' @return Nothing.
 #' @export
-validate_base_forecasts <- function(base_forecasts,
-                                    cp,
-                                    draw_col = ".draw",
-                                    date_col = "date",
-                                    value_to_aggregate_col = "hosp",
-                                    rank_quantity_col = "hosp",
-                                    location_col = "location") {
+validate_base_forecasts <- function(
+  base_forecasts,
+  cp,
+  draw_col = ".draw",
+  date_col = "date",
+  value_to_aggregate_col = "hosp",
+  rank_quantity_col = "hosp",
+  location_col = "location"
+) {
   if (!tibble::is_tibble(base_forecasts)) {
     cli::cli_abort("Base forecasts are not in tibble format.")
   }
   if (!(draw_col %in% colnames(base_forecasts))) {
-    cli::cli_abort("The draw column {draw_col} does not exist
-                   for base forecasts.")
+    cli::cli_abort(
+      "The draw column {draw_col} does not exist
+                   for base forecasts."
+    )
   }
   if (!(date_col %in% colnames(base_forecasts))) {
-    cli::cli_abort("The date column {date_col} does not exist
-                   for base forecasts.")
+    cli::cli_abort(
+      "The date column {date_col} does not exist
+                   for base forecasts."
+    )
   }
   if (!(value_to_aggregate_col %in% colnames(base_forecasts))) {
-    cli::cli_abort("The aggregation column {value_to_aggregate_col}
-    does not exist for base forecasts.")
+    cli::cli_abort(
+      "The aggregation column {value_to_aggregate_col}
+    does not exist for base forecasts."
+    )
   }
   if (!(rank_quantity_col %in% colnames(base_forecasts))) {
-    cli::cli_abort("The ranking quantity column {rank_quantity_col}
-    does not exist for base forecasts.")
+    cli::cli_abort(
+      "The ranking quantity column {rank_quantity_col}
+    does not exist for base forecasts."
+    )
   }
   if (!(location_col %in% colnames(base_forecasts))) {
-    cli::cli_abort("The location column {location_col} does not exist for base
-                   forecasts.")
+    cli::cli_abort(
+      "The location column {location_col} does not exist for base
+                   forecasts."
+    )
   }
   if (cp@dimension != length(unique(base_forecasts[[location_col]]))) {
-    cli::cli_abort("The copula dimension and the number of base forecast
-                   locations don't match")
+    cli::cli_abort(
+      "The copula dimension and the number of base forecast
+                   locations don't match"
+    )
   }
   counted_samples <- count_trajectories(
     base_forecasts,
@@ -64,14 +78,18 @@ validate_base_forecasts <- function(base_forecasts,
     base_forecasts[[location_col]]
   )
   if (fc1) {
-    cli::cli_abort("The number of sampled trajectories per distinct values
+    cli::cli_abort(
+      "The number of sampled trajectories per distinct values
         in column {location_col} can't be counted. Possibly due to different
         numbers of samples per forecast per date across at least one
-        location.")
+        location."
+    )
   }
   if (fc2) {
-    cli::cli_abort("The distinct values in column {location_col} differ
-    between the base forecasts and the counted trajectories")
+    cli::cli_abort(
+      "The distinct values in column {location_col} differ
+    between the base forecasts and the counted trajectories"
+    )
   }
 }
 
@@ -90,9 +108,7 @@ validate_base_forecasts <- function(base_forecasts,
 #' @return A tibble with the number of samples per forecast, grouped
 #' by location.
 #' @export
-count_trajectories <- function(base_forecasts,
-                               location_col,
-                               date_col) {
+count_trajectories <- function(base_forecasts, location_col, date_col) {
   number_of_sampled_trajs <- base_forecasts |>
     dplyr::group_by(.data[[location_col]], .data[[date_col]]) |>
     dplyr::summarise(n_sample_trajs = dplyr::n()) |>
@@ -115,23 +131,24 @@ count_trajectories <- function(base_forecasts,
 #'
 #' @return A data frame with the ranked base forecasts.
 #' @export
-rank_sampled_trajectories <- function(base_forecasts,
-                                      location_col,
-                                      draw_col,
-                                      rank_quantity_col) {
+rank_sampled_trajectories <- function(
+  base_forecasts,
+  location_col,
+  draw_col,
+  rank_quantity_col
+) {
   ranked_base_forecasts <- base_forecasts |>
     dplyr::group_by(.data[[draw_col]], .data[[location_col]]) |>
     dplyr::summarise(mean_rank_quantity = mean(.data[[rank_quantity_col]])) |>
     dplyr::ungroup() |>
     dplyr::group_by(.data[[location_col]]) |>
-    dplyr::mutate(rank = rank(.data$mean_rank_quantity,
-      ties.method = "first"
-    )) |>
+    dplyr::mutate(
+      rank = rank(.data$mean_rank_quantity, ties.method = "first")
+    ) |>
     dplyr::arrange(.data[[location_col]], rank) |>
     dplyr::ungroup()
   return(ranked_base_forecasts)
 }
-
 
 
 #' Convert Copula Samples to a Tibble
@@ -145,10 +162,7 @@ rank_sampled_trajectories <- function(base_forecasts,
 #'
 #' @return A tibble containing the Copula samples and location names.
 #' @export
-copula2tbl <- function(i,
-                       u_mat,
-                       location_names,
-                       location_col) {
+copula2tbl <- function(i, u_mat, location_names, location_col) {
   samples <- dplyr::tibble(u = u_mat[i, location_names])
   samples[[location_col]] <- location_names
   return(samples)
@@ -174,14 +188,16 @@ copula2tbl <- function(i,
 #'
 #' @return A data frame containing the sampled forecasts
 #' @export
-sample_aggregated_trajectories <- function(base_forecasts,
-                                           samples,
-                                           ranked_base_forecasts,
-                                           number_of_sampled_trajs,
-                                           location_col,
-                                           draw_col,
-                                           date_col,
-                                           value_to_aggregate_col) {
+sample_aggregated_trajectories <- function(
+  base_forecasts,
+  samples,
+  ranked_base_forecasts,
+  number_of_sampled_trajs,
+  location_col,
+  draw_col,
+  date_col,
+  value_to_aggregate_col
+) {
   sampled_forecasts <- samples |>
     dplyr::left_join(number_of_sampled_trajs, by = location_col) |>
     dplyr::mutate(rank_draw = ceiling(.data$u * .data$n_sample_trajs)) |>
@@ -213,16 +229,19 @@ sample_aggregated_trajectories <- function(base_forecasts,
 #' Default `"aggregate"`.
 #' @return A tibble of 1,..., `ndraws` aggregated forecasts.
 #' @export
-bottom_up_aggregation <- function(base_forecasts,
-                                  cp,
-                                  ndraws,
-                                  draw_col = ".draw",
-                                  date_col = "date",
-                                  value_to_aggregate_col = "hosp",
-                                  rank_quantity_col = "hosp",
-                                  location_col = "location",
-                                  aggregated_location_name = "aggregate") {
-  validate_base_forecasts(base_forecasts,
+bottom_up_aggregation <- function(
+  base_forecasts,
+  cp,
+  ndraws,
+  draw_col = ".draw",
+  date_col = "date",
+  value_to_aggregate_col = "hosp",
+  rank_quantity_col = "hosp",
+  location_col = "location",
+  aggregated_location_name = "aggregate"
+) {
+  validate_base_forecasts(
+    base_forecasts,
     cp,
     draw_col = draw_col,
     date_col = date_col,

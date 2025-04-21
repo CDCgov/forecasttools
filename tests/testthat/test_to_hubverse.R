@@ -49,10 +49,14 @@ test_that(
 
 
 test_that(
-  "get_hubverse_quantile_table handles different horizon_timescales correctly",
+  paste0(
+    "get_hubverse_quantile_table handles different ",
+    "horizon_timescales correctly"
+  ),
   {
     expect_setequal(
-      object = get_hubverse_quantile_table(quantile_forecasts,
+      object = get_hubverse_quantile_table(
+        quantile_forecasts,
         reference_date = "2023-10-22",
         horizon_timescale = "days",
         target_name = "my_target",
@@ -61,17 +65,21 @@ test_that(
       ) |>
         dplyr::distinct(target_end_date) |>
         dplyr::pull(),
-      expected = seq.Date(as.Date("2023-10-21"), as.Date("2023-10-25"),
+      expected = seq.Date(
+        as.Date("2023-10-21"),
+        as.Date("2023-10-25"),
         by = "1 day"
       )
     )
     expect_setequal(
-      get_hubverse_quantile_table(quantile_forecasts,
+      get_hubverse_quantile_table(
+        quantile_forecasts,
         reference_date = "2023-10-22",
         horizon_timescale = "days",
         target_name = "my_target",
         timepoint_col = "target_end_date",
-        target_end_dates = seq.Date(as.Date("2023-10-21"),
+        target_end_dates = seq.Date(
+          as.Date("2023-10-21"),
           as.Date("2023-10-25"),
           by = "1 day"
         )
@@ -82,7 +90,8 @@ test_that(
     )
 
     expect_setequal(
-      object = get_hubverse_quantile_table(quantile_forecasts,
+      object = get_hubverse_quantile_table(
+        quantile_forecasts,
         reference_date = "2023-10-28",
         horizon_timescale = "weeks",
         target_name = "my_target",
@@ -91,19 +100,22 @@ test_that(
       ) |>
         dplyr::distinct(target_end_date) |>
         dplyr::pull(),
-      expected = seq.Date(as.Date("2023-10-21"),
+      expected = seq.Date(
+        as.Date("2023-10-21"),
         as.Date("2023-11-18"),
         by = "1 week"
       )
     )
 
     expect_setequal(
-      object = get_hubverse_quantile_table(quantile_forecasts,
+      object = get_hubverse_quantile_table(
+        quantile_forecasts,
         reference_date = "2023-10-28",
         horizon_timescale = "weeks",
         target_name = "my_target",
         timepoint_col = "target_end_date",
-        target_end_dates = seq.Date(as.Date("2023-10-21"),
+        target_end_dates = seq.Date(
+          as.Date("2023-10-21"),
           as.Date("2023-11-18"),
           by = "1 week"
         )
@@ -116,18 +128,21 @@ test_that(
 )
 
 test_that("get_hubverse_quantile_table errors with invalid inputs", {
-  expect_error(get_hubverse_quantile_table(quantile_forecasts,
+  expect_error(get_hubverse_quantile_table(
+    quantile_forecasts,
     reference_date = "2023-10-21",
     horizon_timescale = "seconds",
     target_name = "my_target",
     timepoint_col = "target_end_date"
   ))
-  expect_error(get_hubverse_quantile_table(quantile_forecasts,
+  expect_error(get_hubverse_quantile_table(
+    quantile_forecasts,
     reference_date = "2023-10-22",
     horizon_timescale = "days",
     target_name = "my_target",
     timepoint_col = "target_end_date",
-    target_end_dates = seq.Date(as.Date("2023-10-21"),
+    target_end_dates = seq.Date(
+      as.Date("2023-10-21"),
       as.Date("2023-10-25"),
       by = "1 day"
     ),
@@ -136,10 +151,14 @@ test_that("get_hubverse_quantile_table errors with invalid inputs", {
 })
 
 test_that(
-  "get_hubverse_quantile_table handles different horizon_timescales correctly",
+  paste0(
+    "get_hubverse_quantile_table handles ",
+    "different horizon_timescales correctly"
+  ),
   {
     expect_setequal(
-      get_hubverse_quantile_table(quantile_forecasts,
+      get_hubverse_quantile_table(
+        quantile_forecasts,
         reference_date = "2023-10-21",
         horizon_timescale = "days",
         target_name = "my_target",
@@ -151,7 +170,8 @@ test_that(
       as.Date(c("2023-10-21", "2023-10-22", "2023-10-23", "2023-10-24"))
     )
     expect_setequal(
-      get_hubverse_quantile_table(quantile_forecasts,
+      get_hubverse_quantile_table(
+        quantile_forecasts,
         reference_date = "2023-10-21",
         horizon_timescale = "weeks",
         target_name = "my_target",
@@ -162,7 +182,8 @@ test_that(
         dplyr::pull(),
       as.Date(c("2023-10-21", "2023-10-28", "2023-11-04", "2023-11-11"))
     )
-    expect_error(get_hubverse_quantile_table(quantile_forecasts,
+    expect_error(get_hubverse_quantile_table(
+      quantile_forecasts,
       reference_date = "2023-10-21",
       horizon_timescale = "seconds",
       target_name = "my_target",
@@ -172,17 +193,21 @@ test_that(
 )
 
 
-
 test_that(
-  "get_hubverse_quantile_table handles improper timepoint_col correctly",
+  paste0(
+    "get_hubverse_quantile_table handles improper ",
+    "timepoint_col correctly"
+  ),
   {
-    expect_error(get_hubverse_quantile_table(quantile_forecasts,
+    expect_error(get_hubverse_quantile_table(
+      quantile_forecasts,
       reference_date = "2023-10-21",
       horizon_timescale = "days",
       target_name = "my_target",
       timepoint_col = "blah"
     ))
-    expect_error(get_hubverse_quantile_table(quantile_forecasts,
+    expect_error(get_hubverse_quantile_table(
+      quantile_forecasts,
       reference_date = "2023-10-21",
       horizon_timescale = "days",
       target_name = "my_target",

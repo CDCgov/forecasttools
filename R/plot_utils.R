@@ -16,12 +16,14 @@
 #' [ggplot2::ggsave()]). Default `11`.
 #' @return Nothing, saving the plots as a side effect.
 #' @export
-plots_to_pdf <- function(list_of_plots,
-                         save_path,
-                         nrow = 1,
-                         ncol = 1,
-                         width = 8.5,
-                         height = 11) {
+plots_to_pdf <- function(
+  list_of_plots,
+  save_path,
+  nrow = 1,
+  ncol = 1,
+  width = 8.5,
+  height = 11
+) {
   save_ext <- fs::path_ext(save_path)
   if (!save_ext == "pdf") {
     cli::cli_abort(paste0(
@@ -32,10 +34,7 @@ plots_to_pdf <- function(list_of_plots,
   cli::cli_inform("Saving plots to {save_path}")
   ggplot2::ggsave(
     filename = save_path,
-    plot = gridExtra::marrangeGrob(list_of_plots,
-      nrow = nrow,
-      ncol = ncol
-    ),
+    plot = gridExtra::marrangeGrob(list_of_plots, nrow = nrow, ncol = ncol),
     width = width,
     height = height
   )

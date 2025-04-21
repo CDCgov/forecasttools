@@ -18,17 +18,21 @@
 #' So with the default `pivot_quantiles`, the output will have three
 #' value columns named `lower"`, `"point"`, and `"upper"`
 #' @export
-pivot_hubverse_quantiles_wider <- function(hubverse_table,
-                                           pivot_quantiles = c(
-                                             "point" = 0.5,
-                                             "lower" = 0.025,
-                                             "upper" = 0.975
-                                           )) {
+pivot_hubverse_quantiles_wider <- function(
+  hubverse_table,
+  pivot_quantiles = c(
+    "point" = 0.5,
+    "lower" = 0.025,
+    "upper" = 0.975
+  )
+) {
   if (!("quantile" %in% hubverse_table$output_type)) {
-    cli::cli_abort(message = paste0(
-      "Hubverse table must contain at least ",
-      "one quantile forecast."
-    ))
+    cli::cli_abort(
+      message = paste0(
+        "Hubverse table must contain at least ",
+        "one quantile forecast."
+      )
+    )
   }
 
   dat <- hubverse_table |>
@@ -39,12 +43,14 @@ pivot_hubverse_quantiles_wider <- function(hubverse_table,
 
   if (!all(pivot_quantiles_present)) {
     missing_pivot_quantiles <- pivot_quantiles[!pivot_quantiles_present]
-    cli::cli_abort(message = paste0(
-      "Hubverse table is missing one or more of ",
-      "the requested pivot quantiles for all forecasts. ",
-      "The following requested pivot quantiles ",
-      "could not be found: {missing_pivot_quantiles}."
-    ))
+    cli::cli_abort(
+      message = paste0(
+        "Hubverse table is missing one or more of ",
+        "the requested pivot quantiles for all forecasts. ",
+        "The following requested pivot quantiles ",
+        "could not be found: {missing_pivot_quantiles}."
+      )
+    )
   }
 
   if (is.null(names(pivot_quantiles))) {
@@ -53,7 +59,8 @@ pivot_hubverse_quantiles_wider <- function(hubverse_table,
 
   ## create an inverse mapping for pivot_quantiles
   pivot_quant_map <- purrr::set_names(
-    names(pivot_quantiles), pivot_quantiles
+    names(pivot_quantiles),
+    pivot_quantiles
   )
 
   dat <- dat |>

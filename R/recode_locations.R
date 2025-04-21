@@ -101,9 +101,11 @@ to_location_table_column <- function(location_format) {
 #' @return the corresponding rows of the [us_location_table]
 #' matching the location vector, with repeats possible.
 #' @export
-location_lookup <- function(location_vector,
-                            location_input_format,
-                            location_output_format = NULL) {
+location_lookup <- function(
+  location_vector,
+  location_input_format,
+  location_output_format = NULL
+) {
   ## coerce location vector to character
   ## (handles case of just states with no US,
   ## by FIPS, which R will default to treating
@@ -111,9 +113,7 @@ location_lookup <- function(location_vector,
   location_vector <- as.character(location_vector)
   join_key <- to_location_table_column(location_input_format)
   locs <- tibble::tibble({{ join_key }} := !!location_vector) |>
-    dplyr::inner_join(forecasttools::us_location_table,
-      by = join_key
-    )
+    dplyr::inner_join(forecasttools::us_location_table, by = join_key)
 
   if (is.null(location_output_format)) {
     result <- locs

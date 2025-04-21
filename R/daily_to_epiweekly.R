@@ -36,16 +36,18 @@
 #' If `FALSE`, allow partial weeks. Default `TRUE`.
 #' @return tibble of aggregated epiweekly trajectories.
 #' @export
-daily_to_epiweekly <- function(tidy_daily_trajectories,
-                               value_col = "value",
-                               date_col = "date",
-                               id_cols = ".draw",
-                               weekly_value_name = "weekly_value",
-                               with_epiweek_start_date = FALSE,
-                               with_epiweek_end_date = FALSE,
-                               epiweek_start_date_name = "epiweek_start_date",
-                               epiweek_end_date_name = "epiweek_end_date",
-                               strict = TRUE) {
+daily_to_epiweekly <- function(
+  tidy_daily_trajectories,
+  value_col = "value",
+  date_col = "date",
+  id_cols = ".draw",
+  weekly_value_name = "weekly_value",
+  with_epiweek_start_date = FALSE,
+  with_epiweek_end_date = FALSE,
+  epiweek_start_date_name = "epiweek_start_date",
+  epiweek_end_date_name = "epiweek_end_date",
+  strict = TRUE
+) {
   if (!(value_col %in% names(tidy_daily_trajectories))) {
     cli::cli_abort(
       c(
@@ -120,19 +122,20 @@ daily_to_epiweekly <- function(tidy_daily_trajectories,
     dplyr::ungroup()
 
   if (with_epiweek_start_date) {
-    df <- df |> with_epidate(
-      epidate_name = epiweek_start_date_name,
-      epiweek_standard = "MMWR"
-    )
+    df <- df |>
+      with_epidate(
+        epidate_name = epiweek_start_date_name,
+        epiweek_standard = "MMWR"
+      )
   }
   if (with_epiweek_end_date) {
-    df <- df |> with_epidate(
-      epidate_name = epiweek_end_date_name,
-      day_of_week = 7,
-      epiweek_standard = "MMWR"
-    )
+    df <- df |>
+      with_epidate(
+        epidate_name = epiweek_end_date_name,
+        day_of_week = 7,
+        epiweek_standard = "MMWR"
+      )
   }
-
 
   return(df)
 }

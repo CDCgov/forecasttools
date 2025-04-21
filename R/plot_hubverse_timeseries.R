@@ -45,19 +45,21 @@
 #' and reference date? Default `TRUE`.
 #' @return the plot as a ggplot object
 #' @export
-plot_hubverse_loc_quant_ts <- function(location,
-                                       forecast_data,
-                                       observed_data,
-                                       location_format = "abbr",
-                                       y_transform = "log10",
-                                       linewidth = 2,
-                                       pointsize = 4,
-                                       forecast_linecolor = "darkblue",
-                                       forecast_pointcolor = "darkblue",
-                                       obs_linecolor = "black",
-                                       obs_pointcolor = "black",
-                                       target_name = NULL,
-                                       autotitle = TRUE) {
+plot_hubverse_loc_quant_ts <- function(
+  location,
+  forecast_data,
+  observed_data,
+  location_format = "abbr",
+  y_transform = "log10",
+  linewidth = 2,
+  pointsize = 4,
+  forecast_linecolor = "darkblue",
+  forecast_pointcolor = "darkblue",
+  obs_linecolor = "black",
+  obs_pointcolor = "black",
+  target_name = NULL,
+  autotitle = TRUE
+) {
   loc_table <- location_lookup(location, location_format)
   loc_data <- forecast_data |>
     dplyr::filter(
@@ -67,7 +69,6 @@ plot_hubverse_loc_quant_ts <- function(location,
     dplyr::rename(date = "target_end_date")
   loc_obs <- observed_data |>
     dplyr::filter(.data$location == !!loc_table$location_code)
-
 
   if (autotitle) {
     loc_name <- loc_table$long_name[1]
@@ -124,7 +125,6 @@ plot_hubverse_loc_quant_ts <- function(location,
     ) +
     ggplot2::ggtitle(plot_title) +
     theme_forecasttools()
-
 
   return(plot)
 }
@@ -208,21 +208,23 @@ plot_hubverse_loc_quant_ts <- function(location,
 #' @return a list of ggplot objects of the plots created,
 #' one for each location
 #' @export
-plot_hubverse_file_quantiles <- function(forecast_file_path,
-                                         locations = NULL,
-                                         observed_data_path = NULL,
-                                         start_date = NULL,
-                                         end_date = NULL,
-                                         location_input_format = "abbr",
-                                         location_output_format = "abbr",
-                                         y_transform = "log10",
-                                         linewidth = 2,
-                                         pointsize = 4,
-                                         forecast_linecolor = "darkblue",
-                                         forecast_pointcolor = "darkblue",
-                                         obs_linecolor = "black",
-                                         obs_pointcolor = "black",
-                                         autotitle = TRUE) {
+plot_hubverse_file_quantiles <- function(
+  forecast_file_path,
+  locations = NULL,
+  observed_data_path = NULL,
+  start_date = NULL,
+  end_date = NULL,
+  location_input_format = "abbr",
+  location_output_format = "abbr",
+  y_transform = "log10",
+  linewidth = 2,
+  pointsize = 4,
+  forecast_linecolor = "darkblue",
+  forecast_pointcolor = "darkblue",
+  obs_linecolor = "black",
+  obs_pointcolor = "black",
+  autotitle = TRUE
+) {
   start_date <- if (!is.null(start_date)) as.Date(start_date) else NULL
   end_date <- if (!is.null(end_date)) as.Date(end_date) else NULL
   hubverse_cols <- readr::cols(
@@ -250,9 +252,7 @@ plot_hubverse_file_quantiles <- function(forecast_file_path,
       location = readr::col_character(),
       value = readr::col_double()
     )
-    obs_data <- readr::read_csv(observed_data_path,
-      col_types = observed_cols
-    )
+    obs_data <- readr::read_csv(observed_data_path, col_types = observed_cols)
   } else {
     obs_data <- tibble::tibble(
       date = as.Date(numeric(0)),

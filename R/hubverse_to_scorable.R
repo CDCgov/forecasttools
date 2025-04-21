@@ -36,27 +36,31 @@
 #' @return A [`tibble`][tibble::tibble()] with the observed values
 #' added.
 #' @export
-hubverse_table_with_obs <- function(hubverse_forecast_table,
-                                    observation_table,
-                                    obs_value_column = "value",
-                                    obs_date_column = "date",
-                                    obs_value_name = "observed",
-                                    id_cols = c("location", "target"),
-                                    join = "full") {
+hubverse_table_with_obs <- function(
+  hubverse_forecast_table,
+  observation_table,
+  obs_value_column = "value",
+  obs_date_column = "date",
+  obs_value_name = "observed",
+  id_cols = c("location", "target"),
+  join = "full"
+) {
   join_funcs <- list(
     "full" = dplyr::full_join,
     "left" = dplyr::left_join,
     "right" = dplyr::right_join,
     "inner" = dplyr::inner_join
   )
-  checkmate::assert_names(names(observation_table),
+  checkmate::assert_names(
+    names(observation_table),
     must.include = c(
       id_cols,
       obs_date_column,
       obs_value_column
     )
   )
-  checkmate::assert_names(names(hubverse_forecast_table),
+  checkmate::assert_names(
+    names(hubverse_forecast_table),
     must.include = c(
       id_cols,
       "target_end_date"
@@ -70,7 +74,8 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
     )
 
   checkmate::assert_names(join, subset.of = names(join_funcs))
-  checkmate::assert_names(obs_value_name,
+  checkmate::assert_names(
+    obs_value_name,
     disjunct.from = names(hubverse_forecast_table)
   )
   join_func <- join_funcs[[join]]
@@ -117,14 +122,17 @@ hubverse_table_with_obs <- function(hubverse_forecast_table,
 #' @return A [`data.table`][data.table::data.table()] for scoring,
 #' as the output of [scoringutils::as_forecast_quantile()].
 #' @export
-quantile_table_to_scorable <- function(hubverse_quantile_table,
-                                       observation_table,
-                                       obs_value_column = "value",
-                                       obs_date_column = "date",
-                                       id_cols = c("location", "target"),
-                                       quantile_tol = 10) {
+quantile_table_to_scorable <- function(
+  hubverse_quantile_table,
+  observation_table,
+  obs_value_column = "value",
+  obs_date_column = "date",
+  id_cols = c("location", "target"),
+  quantile_tol = 10
+) {
   scorable <- hubverse_quantile_table |>
-    hubverse_table_with_obs(observation_table,
+    hubverse_table_with_obs(
+      observation_table,
       obs_value_column = obs_value_column,
       obs_date_column = obs_date_column,
       obs_value_name = "observed",
@@ -165,18 +173,19 @@ quantile_table_to_scorable <- function(hubverse_quantile_table,
 #' [scoringutils::as_forecast_quantile()].
 #' @export
 hub_to_scorable_quantiles <-
-  function(hub_path,
-           target_data_rel_path = fs::path(
-             "target-data",
-             "target-hospital-admissions.csv"
-           ),
-           ...) {
+  function(
+    hub_path,
+    target_data_rel_path = fs::path(
+      "target-data",
+      "target-hospital-admissions.csv"
+    ),
+    ...
+  ) {
     quantile_forecasts <- gather_hub_quantile_forecasts(hub_path) |>
       dplyr::rename(model = "model_id")
     target_data <- gather_hub_target_data(
       hub_path,
-      target_data_rel_path =
-        target_data_rel_path
+      target_data_rel_path = target_data_rel_path
     )
     scorable <- quantile_table_to_scorable(
       quantile_forecasts,

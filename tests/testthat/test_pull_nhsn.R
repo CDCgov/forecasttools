@@ -6,26 +6,35 @@ mockdir <- "api_mocks"
 
 with_mock_dir(mockdir, {
   test_that("Warnings raised if API key/secret not provided", {
-    expect_warning(pull_nhsn(
-      api_key_id = NULL, api_key_secret = NULL,
-      limit = 10,
-      error_on_limit = FALSE
-    ) |> suppressMessages())
+    expect_warning(
+      pull_nhsn(
+        api_key_id = NULL,
+        api_key_secret = NULL,
+        limit = 10,
+        error_on_limit = FALSE
+      ) |>
+        suppressMessages()
+    )
   })
 
-  test_that(paste0(
-    "Filters by start_date, end_date, and ",
-    "jurisdiction work as expected"
-  ), {
-    result <- pull_nhsn(
-      start_date = start_date, end_date = end_date,
-      jurisdictions = jurisdictions
-    ) |> suppressMessages()
+  test_that(
+    paste0(
+      "Filters by start_date, end_date, and ",
+      "jurisdiction work as expected"
+    ),
+    {
+      result <- pull_nhsn(
+        start_date = start_date,
+        end_date = end_date,
+        jurisdictions = jurisdictions
+      ) |>
+        suppressMessages()
 
-    expect_true(all(result$weekendingdate >= as.Date(start_date)))
-    expect_true(all(result$weekendingdate <= as.Date(end_date)))
-    expect_setequal(result$jurisdiction, jurisdictions)
-  })
+      expect_true(all(result$weekendingdate >= as.Date(start_date)))
+      expect_true(all(result$weekendingdate <= as.Date(end_date)))
+      expect_setequal(result$jurisdiction, jurisdictions)
+    }
+  )
 
   test_that("Selection of columns works as expected", {
     columns <- c("numinptbeds", "totalconfc19newadmped")
@@ -34,7 +43,8 @@ with_mock_dir(mockdir, {
       columns = columns,
       limit = 10,
       error_on_limit = FALSE
-    ) |> suppressMessages()
+    ) |>
+      suppressMessages()
 
     expected_columns <- c("jurisdiction", "weekendingdate", columns)
     checkmate::expect_names(
@@ -55,7 +65,8 @@ with_mock_dir(mockdir, {
       columns = columns,
       order_by = order_by,
       desc = FALSE
-    ) |> suppressMessages()
+    ) |>
+      suppressMessages()
     result_desc <- pull_nhsn(
       start_date = start_date,
       end_date = end_date,
@@ -63,8 +74,8 @@ with_mock_dir(mockdir, {
       columns = columns,
       order_by = order_by,
       desc = TRUE
-    ) |> suppressMessages()
-
+    ) |>
+      suppressMessages()
 
     expect_equal(
       result_asc,
