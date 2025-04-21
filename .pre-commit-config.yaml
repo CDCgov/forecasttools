@@ -25,3 +25,4 @@ repos:
     hooks:
       - id: deps-in-desc
         args: [--allow_private_imports]
+      - id: lintr
