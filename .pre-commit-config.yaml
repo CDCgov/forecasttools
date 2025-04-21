@@ -1,3 +1,7 @@
+
+ci:
+    skip: [air-format]
+
 repos:
 #####
 # Basic file cleanliness
