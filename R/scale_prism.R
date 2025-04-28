@@ -21,7 +21,7 @@ prism_levels <- factor(
 
 #' Prism color scale
 #'
-#' @param ... Other arguments passed on to [discrete_scale()]
+#' @param ... Other arguments passed on to [ggplot2::discrete_scale()]
 #'
 #' @export
 #' @rdname scale_prism
