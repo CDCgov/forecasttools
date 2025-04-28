@@ -10,9 +10,13 @@ thresholds <- readr::read_tsv(
     ext = "tsv"
   ),
   show_col_types = FALSE
-)
+) |>
+  dplyr::mutate(dplyr::across(
+    dplyr::where(is.character),
+    stringr::str_to_lower
+  ))
 
-## Transform thresholds from percentage to proprotion
+## Transform thresholds from percentage to proportion
 prop_thresholds <- thresholds |>
   dplyr::transmute(
     disease,
@@ -39,7 +43,7 @@ thresholds_nested_list <- prop_thresholds |>
   tidyr::nest(breaks = dplyr::starts_with("prop_")) |>
   tidyr::nest(loc_breaks = c(location, breaks)) |>
   tibble::deframe() |>
-  purrr::map(deframe) # yields a nested list of tibbles
+  purrr::map(tibble::deframe) # yields a nested list of tibbles
 
 prism_thresholds <- thresholds_nested_list |>
   simplify2array() |> # yields a 2D array of length-1 tibbles
