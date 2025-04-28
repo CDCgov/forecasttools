@@ -148,3 +148,19 @@ test_that("vectors can be categorized with custom bin names", {
 
   purrr::pmap(params, categorize_with_custom_bins)
 })
+
+
+test_that("flexible capitalization of locations and diseases works", {
+  distinct_cuts <- tidyr::expand_grid(
+    location = c("CA", "ca", "Ca", "cA"),
+    disease = c(
+      "Influenza", "influenza", "INFLUENZA",
+      "iNFlUeNzA", "influEnza"
+    )
+  ) |>
+    dplyr::mutate(cuts = get_prism_cutpoints(location, disease)) |>
+    dplyr::pull(cuts) |>
+    dplyr::n_distinct()
+
+  expect_equal(distinct_cuts, 1)
+})
