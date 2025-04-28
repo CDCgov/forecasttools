@@ -13,7 +13,7 @@ scale_color_prism(...)
 scale_colour_prism(...)
 }
 \arguments{
-\item{...}{Other arguments passed on to \code{\link[=discrete_scale]{discrete_scale()}}}
+\item{...}{Other arguments passed on to \code{\link[ggplot2:discrete_scale]{ggplot2::discrete_scale()}}}
 }
 \description{
 Prism color scale

@@ -18,6 +18,8 @@
 #' get_prism_cutpoints(c("US", "WA"), c("ARI", "RSV"))
 #' @export
 get_prism_cutpoints <- function(locations, diseases) {
+  locations <- stringr::str_to_lower(locations)
+  diseases <- stringr::str_to_lower(diseases)
   checkmate::assert_names(
     diseases,
     subset.of = dimnames(forecasttools::prism_thresholds)$disease,
