@@ -25,12 +25,6 @@
 #' `c(compare, by)` is passed as the `by` argument to
 #' [scoringutils::summarise_scores()].
 #' Default `NULL`.
-#' @param relative_metric_prefix Prefix to use when naming the column
-#' with the relative value of `metric_to_compare` in the input table.
-#' The column will be named (in [glue::glue()] notation)
-#' `{relative_metric_prefix}{metric_to_compare}`. So if `metric = "wis"`
-#' and `relative_metric_prefix = "rel_"`, the output column containing
-#' relative WIS values will be named `rel_wis`. Default `"rel_"`.
 #' @param ... additional arguments passed to
 #' [scoringutils::summarise_scores()].
 #'
@@ -41,8 +35,7 @@
 #' quantile_summary <- scoringutils::example_quantile |>
 #'   scoringutils::score() |>
 #'   summarise_scores_with_baseline(
-#'   baseline = "EuroCOVIDhub-baseline",
-#'   relative_metric_prefix = "relative_")
+#'   baseline = "EuroCOVIDhub-baseline")
 #' )
 #' print(quantile_summary)
 #'
@@ -63,24 +56,19 @@ summarise_scores_with_baseline <- function(scores,
                                                  "brier_score"),
                                                names(scores)),
                                            by = NULL,
-                                           relative_metric_prefix =
-                                               "rel_",
                                            ...) {
-    rel_metric_colname <- glue::glue("{relative_metric_prefix}",
-                                     "{metric_to_compare}")
-    to_rename <- glue::glue("{metric_to_compare}",
-                            "_scaled_relative_skill")
-    relative_scores <- scores |>
-        scoringutils::get_pairwise_comparisons(
-            compare = compare,
-            baseline = baseline,
-            by = by,
-            metric = metric_to_compare
-        ) |>
+    relative_scores <- scoringutils::get_pairwise_comparisons(
+                                         scores = scores,
+                                         compare = compare,
+                                         baseline = baseline,
+                                         by = by,
+                                         metric = metric_to_compare
+                                     ) |>
         dplyr::filter(.data$compare_against == !!baseline) |>
         dplyr::select(
-          tidyselect::all_of(c(compare, by)),
-          !!rel_metric_colname := !!to_rename)
+                   tidyselect::all_of(c(compare, by)),
+                   "mean_scores_ratio",
+                   tidyselect::ends_with("scaled_relative_skill"))
 
   summarised <- scores |>
       scoringutils::summarise_scores(by = c(compare, by),
