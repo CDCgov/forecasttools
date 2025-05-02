@@ -96,3 +96,9 @@ test_that(
         "crps",
         "target_type")
     })
+
+
+test_that("z and s spellings exist and reference the same function", {
+    expect_identical(summarize_scores_with_baseline,
+                     summarise_scores_with_baseline)
+})
