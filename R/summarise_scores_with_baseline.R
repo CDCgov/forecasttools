@@ -47,34 +47,34 @@
 #' print(sample_summary)
 #'
 #' @export
-summarise_scores_with_baseline <- function(scores,
-                                           baseline,
-                                           compare = "model",
-                                           metric_to_compare = intersect(
-                                               c("wis",
-                                                 "crps",
-                                                 "brier_score"),
-                                               names(scores)),
-                                           by = NULL,
-                                           ...) {
-    relative_scores <- scoringutils::get_pairwise_comparisons(
-                                         scores = scores,
-                                         compare = compare,
-                                         baseline = baseline,
-                                         by = by,
-                                         metric = metric_to_compare
-                                     ) |>
-        dplyr::filter(.data$compare_against == !!baseline) |>
-        dplyr::select(
-                   tidyselect::all_of(c(compare, by)),
-                   "mean_scores_ratio",
-                   tidyselect::ends_with("scaled_relative_skill"))
+summarise_scores_with_baseline <- function(
+  scores,
+  baseline,
+  compare = "model",
+  metric_to_compare = intersect(
+    c("wis", "crps", "brier_score"),
+    names(scores)
+  ),
+  by = NULL,
+  ...
+) {
+  relative_scores <- scoringutils::get_pairwise_comparisons(
+    scores = scores,
+    compare = compare,
+    baseline = baseline,
+    by = by,
+    metric = metric_to_compare
+  ) |>
+    dplyr::filter(.data$compare_against == !!baseline) |>
+    dplyr::select(
+      tidyselect::all_of(c(compare, by)),
+      "mean_scores_ratio",
+      tidyselect::ends_with("scaled_relative_skill")
+    )
 
   summarised <- scores |>
-      scoringutils::summarise_scores(by = c(compare, by),
-                                     ...) |>
-      dplyr::inner_join(relative_scores,
-                        by = c(compare, by))
+    scoringutils::summarise_scores(by = c(compare, by), ...) |>
+    dplyr::inner_join(relative_scores, by = c(compare, by))
 
   return(summarised)
 }
