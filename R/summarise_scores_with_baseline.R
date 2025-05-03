@@ -58,18 +58,34 @@ summarise_scores_with_baseline <- function(
   by = NULL,
   ...
 ) {
+  # fork for 2-model comparisons
+  dual <- dplyr::n_distinct(scores[[compare]]) == 2
+  baseline_use <- if (dual) NULL else baseline
+  scaled_rel_skill_col <- glue::glue(
+    "{metric_to_compare}",
+    "_scaled_relative_skill"
+  )
   relative_scores <- scoringutils::get_pairwise_comparisons(
     scores = scores,
     compare = compare,
-    baseline = baseline,
+    baseline = baseline_use,
     by = by,
     metric = metric_to_compare
   ) |>
-    dplyr::filter(.data$compare_against == !!baseline) |>
+    dplyr::filter(.data$compare_against == !!baseline)
+
+  if (dual) {
+    # in 2 model comparisons, scaled rel skill is equivalent to
+    # mean_scores_ratio
+    relative_scores <- relative_scores |>
+      dplyr::mutate(!!scaled_rel_skill_col := .data$mean_scores_ratio)
+  }
+
+  relative_scores <- relative_scores |>
     dplyr::select(
       tidyselect::all_of(c(compare, by)),
       "mean_scores_ratio",
-      tidyselect::ends_with("scaled_relative_skill")
+      tidyselect::all_of(scaled_rel_skill_col)
     )
 
   summarised <- scores |>

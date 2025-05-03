@@ -96,6 +96,16 @@ test_that(
     )
     summary_test_case(
       scoringutils::example_sample_discrete |>
+        dplyr::filter(
+          .data$model %in% c("EuroCOVIDhub-baseline", "EuroCOVIDhub-ensemble")
+        ),
+      "EuroCOVIDhub-baseline",
+      "model",
+      "crps",
+      c("target_type", "location")
+    )
+    summary_test_case(
+      scoringutils::example_sample_discrete |>
         dplyr::rename(new_model_name = "model"),
       "EuroCOVIDhub-baseline",
       "new_model_name",
@@ -104,12 +114,25 @@ test_that(
     )
     expect_error(
       summary_test_case(
+        scoringutils::example_sample_discrete |>
+          dplyr::filter(.data$model == "EuroCOVIDhub-baseline"),
+        "EuroCOVIDhub-baseline",
+        "model",
+        "crps",
+        "target_type"
+      ),
+      "More than one non-baseline"
+    )
+
+    expect_error(
+      summary_test_case(
         scoringutils::example_sample_discrete,
         "EuroCOVIDhub-baseline",
         "new_model_name",
         "crps",
         "target_type"
-      )
+      ),
+      "not found in data"
     )
     summary_test_case(
       scoringutils::example_sample_discrete,
