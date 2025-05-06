@@ -21,8 +21,7 @@ test_that(
           baseline = baseline,
           compare = compare,
           metric_to_compare = metric_to_compare,
-          by = by,
-          relative_metric_prefix = relative_metric_prefix
+          by = by
         )
 
       auto_baseline <- dplyr::filter(auto, .data[[compare]] == !!baseline)
