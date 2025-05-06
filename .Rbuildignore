@@ -22,3 +22,6 @@
 ^codecov\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^air.toml$
+^smht.parquet$
+^smht_example.parquet
