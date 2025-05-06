@@ -67,7 +67,7 @@ quantile_summary <- scoringutils::example_quantile |>
   scoringutils::score() |>
   summarise_scores_with_baseline(
   baseline = "EuroCOVIDhub-baseline")
-)
+
 print(quantile_summary)
 
 sample_summary <- scoringutils::example_sample_discrete |>
