@@ -52,7 +52,7 @@
 #' Values of `disease` are `Influenza`, `COVID-19`,
 #' `RSV`, and `ARI` (acute respiratory infections).
 #'
-#' Values of `breaks` are `prop_lower_bound`,
+#' Values of `breaks` are `prop_very_low`,
 #' `prop_low`, `prop_moderate`, `prop_high`,
 #' `prop_very_high`, and `prop_upper_bound`.
 #'

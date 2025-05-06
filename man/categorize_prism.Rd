@@ -9,7 +9,7 @@ categorize_prism(
   values,
   locations,
   diseases,
-  prism_bin_names = c("Very Low", "Low", "Moderate", "High", "Very High")
+  prism_bin_names = default_prism_bin_names
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ in order from lowest to highest. Must be a vector of
 length 5. \code{list(prism_bin_names)} will be passed as the
 \code{label_sets} argument to \code{\link[=categorize_vector]{categorize_vector()}}.
 Defaults to the standard PRISM bin names in title case:
-\code{c("Very Low", "Low", "Moderate", "High", "Very High")}.}
+\code{default_prism_bin_names}.}
 }
 \value{
 A factor vector of category labels, equal in length

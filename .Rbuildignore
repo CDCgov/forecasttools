@@ -20,3 +20,8 @@
 ^.secrets.baseline$
 ^cran-comments\.md$
 ^codecov\.yml$
+^.*\.Rproj$
+^\.Rproj\.user$
+^air.toml$
+^smht.parquet$
+^smht_example.parquet

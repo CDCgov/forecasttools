@@ -1,3 +1,5 @@
+#' @export
+#' @rdname scale_prism
 prism_colors <- list(
   activity_levels = c(
     "Very Low" = "#D7F2ED",

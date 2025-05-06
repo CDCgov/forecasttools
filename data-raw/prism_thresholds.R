@@ -21,7 +21,7 @@ prop_thresholds <- thresholds |>
   dplyr::transmute(
     disease,
     location = state_abb,
-    prop_lower_bound = 0,
+    prop_very_low = 0,
     prop_low = perc_level_low / 100,
     prop_moderate = perc_level_moderate / 100,
     prop_high = perc_level_high / 100,

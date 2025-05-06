@@ -8,7 +8,7 @@ get_binnable_values <- function(set_of_cutpoints) {
   ))
 }
 
-default_labels <- c("Very Low", "Low", "Moderate", "High", "Very High")
+default_labels <- default_prism_bin_names
 
 
 test_that(
@@ -52,7 +52,7 @@ test_that(
         locations = c("US", "MA"),
         expected = list(
           c(
-            prop_lower_bound = 0,
+            prop_very_low = 0,
             prop_low = 0.00339654,
             prop_moderate = 0.019232328,
             prop_high = 0.035068116,
@@ -60,7 +60,7 @@ test_that(
             prop_upper_bound = 1
           ),
           c(
-            prop_lower_bound = 0,
+            prop_very_low = 0,
             prop_low = 0.002146614,
             prop_moderate = 0.020711687,
             prop_high = 0.03927676,
@@ -72,7 +72,7 @@ test_that(
           diseases = "RSV",
           locations = "UT",
           expected = list(c(
-            prop_lower_bound = 0,
+            prop_very_low = 0,
             prop_low = 0.0004531255,
             prop_moderate = 0.0088554939,
             prop_high = 0.0172578623,

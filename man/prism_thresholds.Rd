@@ -23,7 +23,7 @@ Dimensions, in order, are \code{location},
 Values of \code{disease} are \code{Influenza}, \code{COVID-19},
 \code{RSV}, and \code{ARI} (acute respiratory infections).
 
-Values of \code{breaks} are \code{prop_lower_bound},
+Values of \code{breaks} are \code{prop_very_low},
 \code{prop_low}, \code{prop_moderate}, \code{prop_high},
 \code{prop_very_high}, and \code{prop_upper_bound}.
 
