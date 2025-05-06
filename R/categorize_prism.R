@@ -52,7 +52,7 @@ get_prism_cutpoints <- function(locations, diseases) {
 #' length 5. `list(prism_bin_names)` will be passed as the
 #' `label_sets` argument to [categorize_vector()].
 #' Defaults to the standard PRISM bin names in title case:
-#' `c("Very Low", "Low", "Moderate", "High", "Very High")`.
+#' `default_prism_bin_names`.
 #' @return A factor vector of category labels, equal in length
 #' to the input vector `values`.
 #' @export
@@ -60,13 +60,7 @@ categorize_prism <- function(
   values,
   locations,
   diseases,
-  prism_bin_names = c(
-    "Very Low",
-    "Low",
-    "Moderate",
-    "High",
-    "Very High"
-  )
+  prism_bin_names = default_prism_bin_names
 ) {
   cutpoints <- get_prism_cutpoints(locations, diseases)
 

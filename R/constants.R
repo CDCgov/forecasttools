@@ -31,3 +31,6 @@ covidhub_std_colnames <- cdc_hub_std_colnames
 #' @rdname cdc_hub_std_colnames
 #' @export
 flusight_std_colnames <- cdc_hub_std_colnames
+
+#' @export
+default_prism_bin_names <- c("Very Low", "Low", "Moderate", "High", "Very High")
