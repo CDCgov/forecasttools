@@ -20,3 +20,5 @@
 ^.secrets.baseline$
 ^cran-comments\.md$
 ^codecov\.yml$
+^.*\.Rproj$
+^\.Rproj\.user$

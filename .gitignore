@@ -213,6 +213,8 @@ cython_debug/
 # R
 # https://github.com/github/gitignore/blob/main/R.gitignore
 
+*.Rproj
+
 # History files
 .Rhistory
 .Rapp.history
