@@ -12,7 +12,8 @@ prism_colors <- list(
   na_label = "Data Unavailable"
 )
 
-
+#' @export
+#' @rdname scale_prism
 prism_levels <- factor(
   c(names(prism_colors$activity_levels), NA),
   levels = c(names(prism_colors$activity_levels), NA),

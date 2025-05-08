@@ -3,15 +3,20 @@
 \docType{data}
 \name{prism_colors}
 \alias{prism_colors}
+\alias{prism_levels}
 \alias{scale_fill_prism}
 \alias{scale_color_prism}
 \alias{scale_colour_prism}
 \title{Prism color scale}
 \format{
 An object of class \code{list} of length 3.
+
+An object of class \code{ordered} (inherits from \code{factor}) of length 6.
 }
 \usage{
 prism_colors
+
+prism_levels
 
 scale_fill_prism(...)
 
