@@ -227,6 +227,7 @@ write_tabular_file <- function(table, path_to_file, ...) {
 #' @seealso [sym_limits_log()]
 #' @export
 sym_limits <- function(values, center = 0) {
+  checkmate::assert_numeric(values, min.len = 2)
   span <- max(abs(values - center))
   return(center + c(-span, span))
 }
