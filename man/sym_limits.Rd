@@ -61,7 +61,7 @@ plot_log <- ggplot(
     mapping = aes(x = x, y = y)) +
     geom_point() +
     geom_hline(yintercept = 2) +
-    scale_y_continuous(transform = "log10"),
+    scale_y_continuous(transform = "log10") +
     coord_cartesian(ylim = sym_limits(data_log$y, transform = "log10"))
 plot_log
 }
