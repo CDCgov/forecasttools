@@ -228,19 +228,21 @@ write_tabular_file <- function(table, path_to_file, ...) {
 #' plot <- ggplot(
 #'     data = data,
 #'     mapping = aes(x = x, y = y)) +
-#'     geom_point() +
-#'     geom_hline(yintercept = 2) +
-#'     coord_cartesian(ylim = sym_limits(data$y, center = 2))
+#'     geom_hline(yintercept = 2, size = 2, linetype = "dashed") +
+#'     geom_point(size = 4) +
+#'     coord_cartesian(ylim = sym_limits(data$y, center = 2)) +
+#'     theme_forecasttools()
 #' plot
 #'
 #' data_log <- tibble(x = 1:5, y = 10^rnorm(5))
 #' plot_log <- ggplot(
 #'     data = data_log,
 #'     mapping = aes(x = x, y = y)) +
-#'     geom_point() +
-#'     geom_hline(yintercept = 2) +
+#'     geom_hline(yintercept = 1, size = 2, linetype = "dashed") +
+#'     geom_point(size = 4) +
 #'     scale_y_continuous(transform = "log10") +
-#'     coord_cartesian(ylim = sym_limits(data_log$y, transform = "log10"))
+#'     coord_cartesian(ylim = sym_limits(data_log$y, transform = "log10")) +
+#'     theme_forecasttools()
 #' plot_log
 #' @export
 sym_limits <- function(values, transform = "identity", center = NULL) {
