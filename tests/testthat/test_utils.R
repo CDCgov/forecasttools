@@ -49,7 +49,7 @@ test_that(
   }
 )
 
-test_that("sym_limits and sym_limits_log have expected manual properties", {
+test_that("sym_limits has expected manual properties", {
   withr::with_seed(5, {
     rand_vals <- rnorm(100, sd = 100)
     center <- rnorm(1, sd = 100)
@@ -70,7 +70,11 @@ test_that("sym_limits and sym_limits_log have expected manual properties", {
   )
   expect_equal(mean(lims), center)
 
-  log_lims <- sym_limits_log(pos_rand_vals, center = pos_center)
+  log_lims <- sym_limits(
+    pos_rand_vals,
+    center = pos_center,
+    transform = "log10"
+  )
   checkmate::expect_numeric(
     log_lims,
     len = 2,
@@ -84,25 +88,34 @@ test_that("sym_limits and sym_limits_log have expected manual properties", {
   expect_equal(mean(log(log_lims)), log(pos_center))
 })
 
-test_that("sym_limits and sym_limits_log agree with manual expectation", {
-  expect_equal(sym_limits(c(-5, .52, 8)), c(-8, 8))
-  expect_equal(sym_limits(c(7), center = 2), c(-3, 7))
-  expect_equal(sym_limits(c(-5, .52, 8), center = 5), c(-5, 15))
-  expect_equal(sym_limits_log(c(100, 2, 0.00002)), c(0.00002, 1 / 0.00002))
+test_that("sym_limits agrees with manual expectation", {
+  expect_equal(sym_limits(c(-5, 0.52, 8)), c(-8, 8))
+  expect_equal(sym_limits(7, center = 2), c(-3, 7))
+  expect_equal(sym_limits(c(-5, 0.52, 8), center = 5), c(-5, 15))
   expect_equal(
-    sym_limits_log(c(100, 2, 0.00002), center = 2),
+    sym_limits(c(100, 2, 0.00002), center = 1, transform = "log"),
+    c(0.00002, 1 / 0.00002)
+  )
+  expect_equal(
+    sym_limits(c(100, 2, 0.00002), center = 2, transform = "log"),
     c(0.00002, 2 * 2 / 0.00002)
   )
-  expect_equal(sym_limits_log(c(1 / 5)), c(1 / 5, 5))
+  expect_equal(sym_limits(c(1 / 5), center = 1, transform = "log"), c(1 / 5, 5))
 
-  expect_equal(sym_limits_log(c(0, 2, 0.00002), center = 2), c(0, Inf))
-  expect_equal(sym_limits_log(c(0, 2, 0.00002)), c(0, Inf))
+  expect_equal(
+    sym_limits(c(0, 2, 0.00002), center = 2, transform = "log"),
+    c(0, Inf)
+  )
+  expect_equal(
+    sym_limits(c(0, 2, 0.00002), center = 1, transform = "log"),
+    c(0, Inf)
+  )
+
+  expect_equal(sym_limits(c(2, 9), center = 4, transform = "sqrt"), c(1, 9))
 })
 
 
 test_that("sym_limits functions argument checks work", {
   expect_error(sym_limits(c(1.3, "a")), "character")
   expect_error(sym_limits(c()), "NULL")
-  expect_error(sym_limits_log(c(1.5, "a")), "character")
-  expect_error(sym_limits_log(c(-5, .52, 8)), ">= 0")
 })

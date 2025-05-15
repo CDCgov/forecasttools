@@ -194,24 +194,26 @@ write_tabular_file <- function(table, path_to_file, ...) {
 #' that are symmetric about a central value
 #'
 #' This is useful for making the axis range of a
-#' plot symmetric about a key central value when
-#' the axis scale is linear.
+#' plot symmetric about a key central value.
 #'
-#' Given a center point `center` and a set of values
-#' `values`, returns `c(center - x, center + x)` where
-#' `x` is the entry of `values` that is farthest
-#' from `center` (i.e. `x <- max(abs(values - center))`).
+#' Given a center point `center` and a set of values `values`, returns
+#' `c(center - x, center + x)` where `x` is the entry of `values` that is
+#' farthest from `center` (i.e. `x <- max(abs(values - center))`) on the
+#' transformed scale.
 #'
 #' @param values Vector of values.
-#' @param center Center value for the span.
-#' Default 0.
+#' @param center Center value for the span. Default 0.
+#' @param transform Transformation to apply to the values. Passed to
+#' `scales::as.transform()`. Default `"identity"`.
 #' @return a length-two vector whose entries are
 #' symmetric about center and span the range of
 #' `values`.
 #' @examples
 #' sym_limits(c(-5.1, 2.2, 7.1))
 #'
-#' sym_limits(c(-10.2, 3.1, 5.5))
+#' sym_limits(values = c(0.4, 10), center = 1, transform = "log10")
+#'
+#' sym_limits(values = c(2, 9), center = 4, transform = "sqrt")
 #'
 #' library(ggplot2)
 #' library(tibble)
@@ -224,56 +226,13 @@ write_tabular_file <- function(table, path_to_file, ...) {
 #'     coord_cartesian(ylim = sym_limits(data$y, center = 2))
 #' plot
 #'
-#' @seealso [sym_limits_log()]
 #' @export
-sym_limits <- function(values, center = 0) {
+sym_limits <- function(values, center = 0, transform = "identity") {
   checkmate::assert_numeric(values, min.len = 1)
-  span <- max(abs(values - center))
-  return(center + c(-span, span))
-}
+  transform_fn <- scales::as.transform(transform)
+  transformed_values <- transform_fn$transform(values)
+  transformed_center <- transform_fn$transform(center)
+  span <- max(abs(transformed_values - transformed_center))
 
-#' Get limits spanning a set of values
-#' that are symmetric about a central value
-#' in logarthmic space
-#'
-#' This is useful for making the axis range of a
-#' plot symmetric about a key central value when
-#' the axis scale is logarithmic.
-#'
-#' Given a center point `center` and a set of values
-#' `values`, returns `c(x / center, x * center)` where
-#' `x` is the entry of `values` that is farthest
-#' from `center` in logarithmic space / has the most
-#' extreme ratio with center
-#' (i.e. `x <- max(c(values / center, center / values))`).
-#'
-#' @param values Vector of values.
-#' @param center Center value for the span.
-#' Default 1.
-#' @return a length-two vector whose entries
-#' are symmetric about `center` in logarithmic
-#' space and span the range of `values`.
-#'
-#' @examples
-#' sym_limits_log(c(1, 2.2, 5))
-#'
-#' sym_limits_log(c(3, 4, 5), center = 2)
-#'
-#' library(ggplot2)
-#' library(tibble)
-#' data <- tibble(x = 1:5, y = 10^rnorm(5))
-#' plot <- ggplot(
-#'     data = data,
-#'     mapping = aes(x = x, y = y)) +
-#'     geom_point() +
-#'     geom_hline(yintercept = 1) +
-#'     scale_y_continuous(transform = "log10") +
-#'     coord_cartesian(ylim = sym_limits_log(data$y))
-#' plot
-#'
-#' @seealso [sym_limits()]
-#' @export
-sym_limits_log <- function(values, center = 1) {
-  checkmate::assert_numeric(values, lower = 0)
-  return(exp(sym_limits(log(values), log(center))))
+  return(transform_fn$inverse(transformed_center + c(-span, span)))
 }
