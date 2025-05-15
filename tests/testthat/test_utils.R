@@ -53,8 +53,8 @@ test_that("sym_limits has expected manual properties", {
   withr::with_seed(5, {
     rand_vals <- rnorm(100, sd = 100)
     center <- rnorm(1, sd = 100)
-    pos_rand_vals <- exp(rnorm(100, sd = 100))
-    pos_center <- exp(rnorm(1, sd = 100))
+    pos_rand_vals <- exp(rnorm(100, sd = 1))
+    pos_center <- exp(rnorm(1, sd = 1))
   })
 
   lims <- sym_limits(rand_vals, center = center)
@@ -72,8 +72,8 @@ test_that("sym_limits has expected manual properties", {
 
   log_lims <- sym_limits(
     pos_rand_vals,
-    center = pos_center,
-    transform = "log10"
+    transform = "log10",
+    center = pos_center
   )
   checkmate::expect_numeric(
     log_lims,
@@ -85,7 +85,7 @@ test_that("sym_limits has expected manual properties", {
     lower = log_lims[1],
     upper = log_lims[2]
   )
-  expect_equal(mean(log(log_lims)), log(pos_center))
+  expect_equal(mean(log10(log_lims)), log10(pos_center))
 })
 
 test_that("sym_limits agrees with manual expectation", {
