@@ -249,9 +249,9 @@ sym_limits <- function(values, transform = "identity", center = NULL) {
   transformed_values <- transform_fn$transform(values)
 
   if (!is.null(center)) {
-      transformed_center <- transform_fn$transform(center)
+    transformed_center <- transform_fn$transform(center)
   } else {
-      transformed_center <- 0
+    transformed_center <- 0
   }
   span <- max(abs(transformed_values - transformed_center))
 
