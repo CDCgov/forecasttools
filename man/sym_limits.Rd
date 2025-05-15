@@ -5,13 +5,15 @@
 \title{Get limits spanning a set of values
 that are symmetric about a central value}
 \usage{
-sym_limits(values, center = 0)
+sym_limits(values, center = 0, transform = "identity")
 }
 \arguments{
 \item{values}{Vector of values.}
 
-\item{center}{Center value for the span.
-Default 0.}
+\item{center}{Center value for the span. Default 0.}
+
+\item{transform}{Transformation to apply to the values. Passed to
+\code{scales::as.transform()}. Default \code{"identity"}.}
 }
 \value{
 a length-two vector whose entries are
@@ -20,19 +22,20 @@ symmetric about center and span the range of
 }
 \description{
 This is useful for making the axis range of a
-plot symmetric about a key central value when
-the axis scale is linear.
+plot symmetric about a key central value.
 }
 \details{
-Given a center point \code{center} and a set of values
-\code{values}, returns \code{c(center - x, center + x)} where
-\code{x} is the entry of \code{values} that is farthest
-from \code{center} (i.e. \code{x <- max(abs(values - center))}).
+Given a center point \code{center} and a set of values \code{values}, returns
+\code{c(center - x, center + x)} where \code{x} is the entry of \code{values} that is
+farthest from \code{center} (i.e. \code{x <- max(abs(values - center))}) on the
+transformed scale.
 }
 \examples{
 sym_limits(c(-5.1, 2.2, 7.1))
 
-sym_limits(c(-10.2, 3.1, 5.5))
+sym_limits(values = c(0.4, 10), center = 1, transform = "log10")
+
+sym_limits(values = c(2, 9), center = 4, transform = "sqrt")
 
 library(ggplot2)
 library(tibble)
@@ -45,7 +48,4 @@ plot <- ggplot(
     coord_cartesian(ylim = sym_limits(data$y, center = 2))
 plot
 
-}
-\seealso{
-\code{\link[=sym_limits_log]{sym_limits_log()}}
 }
