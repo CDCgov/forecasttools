@@ -45,6 +45,7 @@ hubverse_table_with_obs <- function(
   id_cols = c("location", "target"),
   join = "full"
 ) {
+  # should accept value / obs based on schema
   join_funcs <- list(
     "full" = dplyr::full_join,
     "left" = dplyr::left_join,
