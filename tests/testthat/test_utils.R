@@ -93,21 +93,21 @@ test_that("sym_limits agrees with manual expectation", {
   expect_equal(sym_limits(7, center = 2), c(-3, 7))
   expect_equal(sym_limits(c(-5, 0.52, 8), center = 5), c(-5, 15))
   expect_equal(
-    sym_limits(c(100, 2, 0.00002), transform = "log", center = 1),
+    sym_limits(c(100, 2, 0.00002), transform = "log"),
     c(0.00002, 1 / 0.00002)
   )
   expect_equal(
     sym_limits(c(100, 2, 0.00002), transform = "log", center = 2),
     c(0.00002, 2 * 2 / 0.00002)
   )
-  expect_equal(sym_limits(c(1 / 5), transform = "log", center = 1), c(1 / 5, 5))
+  expect_equal(sym_limits(c(1 / 5), transform = "log"), c(1 / 5, 5))
 
   expect_equal(
     sym_limits(c(0, 2, 0.00002), transform = "log", center = 2),
     c(0, Inf)
   )
   expect_equal(
-    sym_limits(c(0, 2, 0.00002), transform = "log", center = 1),
+    sym_limits(c(0, 2, 0.00002), transform = "log"),
     c(0, Inf)
   )
 
