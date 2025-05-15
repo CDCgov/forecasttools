@@ -272,8 +272,7 @@ sym_limits <- function(values, center = 0) {
 #'
 #' @seealso [sym_limits()]
 #' @export
-sym_limits_log <- function(values,
-                           center = 1) {
-    checkmate::assert_numeric(values, lower = 0)
-    return(exp(sym_limits(log(values), log(center))))
+sym_limits_log <- function(values, center = 1) {
+  checkmate::assert_numeric(values, lower = 0)
+  return(exp(sym_limits(log(values), log(center))))
 }
