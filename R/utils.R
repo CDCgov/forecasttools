@@ -189,3 +189,71 @@ write_tabular_file <- function(table, path_to_file, ...) {
 
   file_writer(table, path_to_file, ...)
 }
+
+#' Get limits spanning a set of values
+#' that are symmetric about a central value
+#'
+#' This is useful for making the axis range of a
+#' plot symmetric about a key central value.
+#'
+#' Given a center point `center` and a set of values `values`, returns
+#' `c(center - x, center + x)` where `x` is the entry of `values` that is
+#' farthest from `center` (i.e. `x <- max(abs(values - center))`) on the
+#' transformed scale.
+#'
+#' If a custom `center` point is not specified, `sym_limits()`
+#' centers values around 0 on the transformed scale.
+#'
+#' @param values Vector of values.
+#' @param transform Transformation to apply to the values.
+#' Passed to [scales::as.transform()]. Default `"identity"`.
+#' @param center Custom center value for the span
+#' on the _untransformed_ scale. If not specified,
+#' the span will be centered at 0 on the _transformed_ scale.
+#' @return a length-two vector whose entries are
+#' symmetric about `center` on the transformed scale
+#' and span the range of `values`.
+#' @examples
+#' sym_limits(c(-5.1, 2.2, 7.1))
+#'
+#' # centered at 1, which corresponds to 0 on the
+#' # transformed scale
+#' sym_limits(values = c(0.4, 10), transform = "log10")
+#'
+#' sym_limits(values = c(2, 9), transform = "sqrt", center = 4)
+#'
+#' library(ggplot2)
+#' library(tibble)
+#' data <- tibble(x = 1:5, y = rnorm(5, mean = 2))
+#' plot <- ggplot(
+#'     data = data,
+#'     mapping = aes(x = x, y = y)) +
+#'     geom_point() +
+#'     geom_hline(yintercept = 2) +
+#'     coord_cartesian(ylim = sym_limits(data$y, center = 2))
+#' plot
+#'
+#' data_log <- tibble(x = 1:5, y = 10^rnorm(5))
+#' plot_log <- ggplot(
+#'     data = data_log,
+#'     mapping = aes(x = x, y = y)) +
+#'     geom_point() +
+#'     geom_hline(yintercept = 2) +
+#'     scale_y_continuous(transform = "log10") +
+#'     coord_cartesian(ylim = sym_limits(data_log$y, transform = "log10"))
+#' plot_log
+#' @export
+sym_limits <- function(values, transform = "identity", center = NULL) {
+  checkmate::assert_numeric(values, min.len = 1)
+  transform_fn <- scales::as.transform(transform)
+  transformed_values <- transform_fn$transform(values)
+
+  if (!is.null(center)) {
+    transformed_center <- transform_fn$transform(center)
+  } else {
+    transformed_center <- 0
+  }
+  span <- max(abs(transformed_values - transformed_center))
+
+  return(transform_fn$inverse(transformed_center + c(-span, span)))
+}
