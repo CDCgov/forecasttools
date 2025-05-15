@@ -5,20 +5,22 @@
 \title{Get limits spanning a set of values
 that are symmetric about a central value}
 \usage{
-sym_limits(values, center = 0, transform = "identity")
+sym_limits(values, transform = "identity", center = NULL)
 }
 \arguments{
 \item{values}{Vector of values.}
 
-\item{center}{Center value for the span. Default 0.}
+\item{transform}{Transformation to apply to the values.
+Passed to \code{\link[scales:new_transform]{scales::as.transform()}}. Default \code{"identity"}.}
 
-\item{transform}{Transformation to apply to the values. Passed to
-\code{scales::as.transform()}. Default \code{"identity"}.}
+\item{center}{Custom center value for the span
+on the \emph{untransformed} scale. If not specified,
+the span will be centered at 0 on the \emph{transformed} scale.}
 }
 \value{
 a length-two vector whose entries are
-symmetric about center and span the range of
-\code{values}.
+symmetric about \code{center} on the transformed scale
+and span the range of \code{values}.
 }
 \description{
 This is useful for making the axis range of a
@@ -29,13 +31,18 @@ Given a center point \code{center} and a set of values \code{values}, returns
 \code{c(center - x, center + x)} where \code{x} is the entry of \code{values} that is
 farthest from \code{center} (i.e. \code{x <- max(abs(values - center))}) on the
 transformed scale.
+
+If a custom \code{center} point is not specified, \code{sym_limits()}
+centers values around 0 on the transformed scale.
 }
 \examples{
 sym_limits(c(-5.1, 2.2, 7.1))
 
-sym_limits(values = c(0.4, 10), center = 1, transform = "log10")
+# centered at 1, which corresponds to 0 on the
+# transformed scale
+sym_limits(values = c(0.4, 10), transform = "log10")
 
-sym_limits(values = c(2, 9), center = 4, transform = "sqrt")
+sym_limits(values = c(2, 9), transform = "sqrt", center = 4)
 
 library(ggplot2)
 library(tibble)
@@ -48,4 +55,13 @@ plot <- ggplot(
     coord_cartesian(ylim = sym_limits(data$y, center = 2))
 plot
 
+data_log <- tibble(x = 1:5, y = 10^rnorm(5))
+plot_log <- ggplot(
+    data = data_log,
+    mapping = aes(x = x, y = y)) +
+    geom_point() +
+    geom_hline(yintercept = 2) +
+    scale_y_continuous(transform = "log10"),
+    coord_cartesian(ylim = sym_limits(data_log$y, transform = "log10"))
+plot_log
 }
