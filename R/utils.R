@@ -202,7 +202,7 @@ write_tabular_file <- function(table, path_to_file, ...) {
 #' transformed scale.
 #'
 #' @param values Vector of values.
-#' @param center Center value for the span. Default 0.
+#' @param center Center value for the span on the untransformed scale. Default 0.
 #' @param transform Transformation to apply to the values. Passed to
 #' `scales::as.transform()`. Default `"identity"`.
 #' @return a length-two vector whose entries are
