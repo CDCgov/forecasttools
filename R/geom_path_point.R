@@ -18,7 +18,7 @@ draw_key_path_point <- function(data, params, size) {
 #' Geometric object showing a path of connected points.
 #'
 #' @export
-  # nolint start
+# nolint start
 GeomPathPoint <- ggplot2::ggproto(
   # nolint end
   "GeomPathPoint",
@@ -63,7 +63,7 @@ GeomPathPoint <- ggplot2::ggproto(
       linemitre = linemitre,
       na.rm = na.rm,
       ...
-      )
+    )
     point <- ggplot2::GeomPoint$draw_panel(
       data,
       panel_params,
@@ -80,7 +80,7 @@ GeomPathPoint <- ggplot2::ggproto(
 #'
 #' @rdname GeomPathPoint
 #' @export
-  # nolint start
+# nolint start
 GeomLinePoint <- ggplot2::ggproto(
   # nolint end
   "GeomLinePoint",
