@@ -145,6 +145,7 @@ The difference is that that with the unified \code{geom_path_point()}
 and \code{geom_line_point()} geoms, paths/lines and points are
 plotted together, as a single \code{\link[ggplot2:layer_geoms]{layer}}.
 In the stacked approach, they are plotted as two separate layers.
+See Details for a discussion of why this can matter in practice.
 }
 \details{
 Plotting with a single layer is important when the user wants
@@ -155,25 +156,34 @@ With the standard \code{geom_line() + geom_point()} approach, all
 points (z-ordered by group) will be plotted on top of all lines
 (z-ordered by group), or the reverse if one does
 \code{geom_point() + geom_line()}. this can make the plot more difficult
-to read when points partially overlap. See the \link{Examples} section
-for a demonstration.
+to read when points partially overlap. See the Examples for a
+demonstration.
 }
 \examples{
 library(ggplot2)
 library(tibble)
 data <- tibble(x = rep(c(3,1,2), 2),
-               y = c(-0.5, 0, 0.5, 0.5, 0.05, -0.5),
+               y = c(-0.5, 0.5, 0, 0.5, 0, 0.02),
                z = c(rep("a", 3), rep("b", 3)))
+
+data <- tribble(
+   ~x,      ~y,   ~z,
+    1,       0,  "a",
+    2,       0,  "a",
+    3,    -0.5,  "a",
+    1,    0.01,  "b",
+    3,   -.520,  "b",
+    2,     0.02,  "b")
 
 # standard approach causes points to "interrupt"
 # lines when overplotted
 ggplot(data, aes(x = x, y = y, color = z)) +
-   geom_path(linewidth = 3) +
+   geom_path(linewidth = 2) +
    geom_point(size = 5)
 
 # using a single-layer approach fixes this
 ggplot(data, aes(x = x, y = y, color = z)) +
-   geom_path_point(linewidth = 3, size = 5)
+   geom_path_point(linewidth = 2, size = 5)
 
 # The same is true for `geom_line` and `geom_line_point`
 # multi-layer approach:

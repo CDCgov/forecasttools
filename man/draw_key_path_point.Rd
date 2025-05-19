@@ -6,6 +6,14 @@
 \usage{
 draw_key_path_point(data, params, size)
 }
+\arguments{
+\item{data}{A single row data frame containing the scaled aesthetics to
+display in this key}
+
+\item{params}{A list of additional parameters supplied to the geom.}
+
+\item{size}{Width and height of key in mm.}
+}
 \description{
 Legend key glyph for \link{GeomPathPoint} and subclasses of it.
 }

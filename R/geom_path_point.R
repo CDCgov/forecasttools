@@ -1,5 +1,5 @@
 #' Legend key glyph for [GeomPathPoint] and subclasses of it.
-#'
+#' @inheritParams ggplot2::draw_key
 #' @export
 draw_key_path_point <- function(data, params, size) {
   path_key <- ggplot2::draw_key_path(data, params, size)
@@ -14,10 +14,11 @@ draw_key_path_point <- function(data, params, size) {
   return(grob)
 }
 
+
 #' Geometric object showing a path of connected points.
 #'
 #' @export
-#'# nolint start
+  # nolint start
 GeomPathPoint <- ggplot2::ggproto(
   # nolint end
   "GeomPathPoint",
@@ -62,7 +63,7 @@ GeomPathPoint <- ggplot2::ggproto(
       linemitre = linemitre,
       na.rm = na.rm,
       ...
-    )
+      )
     point <- ggplot2::GeomPoint$draw_panel(
       data,
       panel_params,
@@ -77,8 +78,9 @@ GeomPathPoint <- ggplot2::ggproto(
 #' Geometric object showing a path of connected points sorted by
 #' orderded in the order of the x-axis variable.
 #'
+#' @rdname GeomPathPoint
 #' @export
-#'# nolint start
+  # nolint start
 GeomLinePoint <- ggplot2::ggproto(
   # nolint end
   "GeomLinePoint",
@@ -89,8 +91,9 @@ GeomLinePoint <- ggplot2::ggproto(
 )
 
 
-#' Plot a path of connected points
+#' @title Plot a path of connected points
 #'
+#' @description
 #' Adding `geom_path_point()` or `geom_line_point()` to a
 #' [`ggplot`][ggplot2::ggplot()] is similar to adding
 #' [`geom_path()`][ggplot2::geom_path()] followed by
@@ -101,7 +104,9 @@ GeomLinePoint <- ggplot2::ggproto(
 #' and `geom_line_point()` geoms, paths/lines and points are
 #' plotted together, as a single [`layer`][ggplot2::layer_geoms].
 #' In the stacked approach, they are plotted as two separate layers.
+#' See Details for a discussion of why this can matter in practice.
 #'
+#' @details
 #' Plotting with a single layer is important when the user wants
 #' points and lines to be stacked ("z-ordered") _together_ by
 #' [group][ggplot2::group], i.e. all points and lines representing
@@ -110,8 +115,8 @@ GeomLinePoint <- ggplot2::ggproto(
 #' points (z-ordered by group) will be plotted on top of all lines
 #' (z-ordered by group), or the reverse if one does
 #' `geom_point() + geom_line()`. this can make the plot more difficult
-#' to read when points partially overlap. See the [Examples] section
-#' for a demonstration.
+#' to read when points partially overlap. See the Examples for a
+#' demonstration.
 #'
 #' @inheritParams ggplot2::layer
 #' @inheritParams ggplot2::geom_point
@@ -121,18 +126,27 @@ GeomLinePoint <- ggplot2::ggproto(
 #' library(ggplot2)
 #' library(tibble)
 #' data <- tibble(x = rep(c(3,1,2), 2),
-#'                y = c(-0.5, 0, 0.5, 0.5, 0.05, -0.5),
+#'                y = c(-0.5, 0.5, 0, 0.5, 0, 0.02),
 #'                z = c(rep("a", 3), rep("b", 3)))
+#'
+#' data <- tribble(
+#'    ~x,      ~y,   ~z,
+#'     1,       0,  "a",
+#'     2,       0,  "a",
+#'     3,    -0.5,  "a",
+#'     1,    0.01,  "b",
+#'     3,   -.520,  "b",
+#'     2,     0.02,  "b")
 #'
 #' # standard approach causes points to "interrupt"
 #' # lines when overplotted
 #' ggplot(data, aes(x = x, y = y, color = z)) +
-#'    geom_path(linewidth = 3) +
+#'    geom_path(linewidth = 2) +
 #'    geom_point(size = 5)
 #'
 #' # using a single-layer approach fixes this
 #' ggplot(data, aes(x = x, y = y, color = z)) +
-#'    geom_path_point(linewidth = 3, size = 5)
+#'    geom_path_point(linewidth = 2, size = 5)
 #'
 #' # The same is true for `geom_line` and `geom_line_point`
 #' # multi-layer approach:
