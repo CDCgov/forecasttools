@@ -6,11 +6,11 @@
 #' or as a table coercible to a `scoringutils`-ready quantile
 #' forecast via [scoringutils::as_forecast_quantile()]. Must
 #' contain the median (0.5) quantile and the endpoint quantiles
-#' for the central prediction interval specified in
+#' for the equal-tailed prediction interval specified in
 #' `prediction_interval_width`.
 #' @param horizons Forecast horizons to plot. If `NULL`, plot all
 #' available horizons. Default `NULL`.
-#' @param prediction_interval_width Width of the (central) prediction
+#' @param prediction_interval_width Width of the equal-tailed prediction
 #' interval to plot around the median. Must correspond to quantiles
 #' available in `scorable_table`. Default `0.95` (plot the range from
 #' quantile `0.025` to quantile `0.975`).

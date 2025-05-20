@@ -73,7 +73,7 @@ widths_to_qi_table <- function(widths, quantile_tol = 10) {
 
 
 #' Convert a hubverse-format table of quantiles into a
-#' `ggdist`-format table of quantiles.
+#' `ggdist`-format table of quantile intervals.
 #'
 #' Expects a hubverse-format quantile table (e.g. as created by
 #' [get_hubverse_quantile_table()]). Treats all columns in that table other
@@ -85,7 +85,7 @@ widths_to_qi_table <- function(widths, quantile_tol = 10) {
 #' @param .width Vector of interval width(s) to for which to create rows
 #' in the output. If `NULL` (the default), use all and only the widths
 #' that can be computed from quantiles available in
-#' `hubverse_quantile_table`, as determined by [get_available_qi_widths].
+#' `hubverse_quantile_table`, as determined by [get_available_qi_widths()].
 #' @param require_only_quantiles Boolean. Error if the table contains
 #' `output_type` values other than `"quantile"`? If `FALSE`, the function
 #' will silently filter the table to rows with `output_type == 'quantile'`.
@@ -96,7 +96,7 @@ widths_to_qi_table <- function(widths, quantile_tol = 10) {
 #' and otherwise will error. Default `TRUE`.
 #' @param require_all_widths Boolean. Error if the output is missing
 #' any of the requested `.width`s for any group? If `TRUE`, the
-#' function will succeed if it can calculate all the requested
+#' function will succeed only if it can calculate all the requested
 #' interval `.width`s for all the groups present in the input and
 #' otherwise will error. Default `TRUE`.
 #' @param quantile_tol Round quantile level values to this many
@@ -105,7 +105,6 @@ widths_to_qi_table <- function(widths, quantile_tol = 10) {
 #' [base::round()]. Default 10.
 #' @return A [`tibble`][tibble::tibble()] in the output format of
 #' [ggdist::median_qi()]
-#' added.
 #'
 #' @examples
 #' hub_quantiles_to_median_qi(
