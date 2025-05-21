@@ -66,9 +66,68 @@ test_that("widths_to_qi_table works as expected", {
 
 test_that(
   paste0(
-    "hub_quantiles_to_median_qi throws errors ",
-    "appropriately based on require_only_quantiles ",
-    "require_all_medians, and require_all_widths"
+    "quantile_table_to_median_qi throws errors ",
+    "appropriately based on require_all_medians ",
+    "and require_all_widths"
+  ),
+  {
+    test_table <- tibble::tibble(
+      q_level = rep(c(0.1, 0.2, 0.5, 0.8, 0.9), 3),
+      q_value = 1:15,
+      group = rep(c("A", "B", "C"), each = 5)
+    )
+
+    ## test require_all_medians functionality
+    without_medians <- test_table |>
+      dplyr::filter(q_level != 0.5 | group == "C")
+
+    ## if require_all_medians is FALSE and medians
+    ## are missing, those values should be NA
+    ## and others should be the correct values
+    without_valid <- quantile_table_to_median_qi(
+      without_medians,
+      "q_value",
+      "q_level",
+      .width = 0.6,
+      require_all_medians = FALSE
+    )
+    expect_equal(without_valid$q_value, c(NA, NA, 13))
+
+    expect_error(
+      quantile_table_to_median_qi(
+        without_medians,
+        "q_value",
+        "q_level",
+        .width = 0.6
+      ),
+      "require_all_medians"
+    )
+
+    ## test require_all_widths functionality
+    expect_no_error(quantile_table_to_median_qi(
+      test_table,
+      "q_value",
+      "q_level",
+      .width = c(0.8, 0.6),
+      require_all_widths = FALSE
+    ))
+
+    expect_error(
+      quantile_table_to_median_qi(
+        test_table,
+        "q_value",
+        "q_level",
+        .width = c(0.5, 0.8, 0.2)
+      ),
+      "require_all_widths"
+    )
+  }
+)
+
+test_that(
+  paste0(
+    "hub_quantiles_to_median_qi throws error based ",
+    "on require_only_quantiles"
   ),
   {
     test_table <- tibble::tibble(
@@ -87,6 +146,7 @@ test_that(
           .data$output_type
         )
       )
+
     expect_no_error(hub_quantiles_to_median_qi(
       with_other_output_type,
       .width = 0.6,
@@ -98,43 +158,6 @@ test_that(
         .width = 0.6
       ),
       "quantile"
-    )
-
-    ## test require_all_medians functionality
-    without_medians <- test_table |>
-      dplyr::filter(output_type_id != 0.5 | group == "C")
-
-    ## if require_all_medians is FALSE and medians
-    ## are missing, those values should be NA
-    ## and others should be the correct values
-    without_valid <- hub_quantiles_to_median_qi(
-      without_medians,
-      .width = 0.6,
-      require_all_medians = FALSE
-    )
-    expect_equal(without_valid$value, c(NA, NA, 13))
-
-    expect_error(
-      hub_quantiles_to_median_qi(
-        without_medians,
-        .width = 0.6
-      ),
-      "require_all_medians"
-    )
-
-    ## test require_all_widths functionality
-    expect_no_error(hub_quantiles_to_median_qi(
-      test_table,
-      .width = c(0.8, 0.6),
-      require_all_widths = FALSE
-    ))
-
-    expect_error(
-      hub_quantiles_to_median_qi(
-        test_table,
-        .width = c(0.5, 0.8, 0.2)
-      ),
-      "require_all_widths"
     )
   }
 )

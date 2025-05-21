@@ -71,104 +71,104 @@ widths_to_qi_table <- function(widths, quantile_tol = 10) {
   return(qi_table)
 }
 
-
-#' Convert a hubverse-format table of quantiles into a
-#' `ggdist`-format table of quantiles.
+#' Convert a tidy table of quantiles into a
+#' `ggdist`-format table of quantile intervals.
 #'
-#' Expects a hubverse-format quantile table (e.g. as created by
-#' [get_hubverse_quantile_table()]). Treats all columns in that table other
-#' than `output_type_id`, `output_type`, and `value` as grouping / id
-#' columns, and returns them in the output table.
+#' Expects a tidy quantile table (e.g. a hubverse quantile table or the
+#' output of [scoringutils::as_forecast_quantile()].
+#' Treats any columns in that table other than those specifying the
+#' quantile level and the associated value as grouping variables,
+#' and returns them in the output table.
 #'
-#' @param hubverse_quantile_table Hubverse-format quantile table,
-#' as an object something coerceible to a [`tibble`][tibble::tibble()].
+#' @param quantile_table Tidy table of quantiles,
+#' as an object coerceible to a [`tibble`][tibble::tibble()]. Must
+#' have columns representing the quantile level and the associated
+#' value
+#' @param value_col Column in the table specifying values.
+#' @param quantile_level_col Column in the table specifying quantile
+#' levels
 #' @param .width Vector of interval width(s) to for which to create rows
 #' in the output. If `NULL` (the default), use all and only the widths
 #' that can be computed from quantiles available in
-#' `hubverse_quantile_table`, as determined by [get_available_qi_widths].
-#' @param require_only_quantiles Boolean. Error if the table contains
-#' `output_type` values other than `"quantile"`? If `FALSE`, the function
-#' will silently filter the table to rows with `output_type == 'quantile'`.
-#' Default `TRUE`.
+#' `quantile_table`, as determined by [get_available_qi_widths()].
 #' @param require_all_medians Boolean. Error if the output is missing
-#' any medians? If `TRUE`, the function will succeed if it can find a
+#' any medians? If `TRUE`, the function will succeed only if it can find a
 #' median (`0.5` quantile) value for all groups present in the input
 #' and otherwise will error. Default `TRUE`.
 #' @param require_all_widths Boolean. Error if the output is missing
 #' any of the requested `.width`s for any group? If `TRUE`, the
-#' function will succeed if it can calculate all the requested
+#' function will succeed only if it can calculate all the requested
 #' interval `.width`s for all the groups present in the input and
 #' otherwise will error. Default `TRUE`.
-#' @param quantile_tol Round quantile level values to this many
-#' decimal places, to avoid problems with floating point number
+#' @param quantile_tol Round values in the `quantile_level_col` to
+#' this many decimal places, to avoid problems with floating point number
 #' equality comparisons. Passed as the `digits` argument to
 #' [base::round()]. Default 10.
 #' @return A [`tibble`][tibble::tibble()] in the output format of
 #' [ggdist::median_qi()]
-#' added.
 #'
-#' @examples
-#' hub_quantiles_to_median_qi(
-#'   hubExamples::forecast_outputs |>
-#'     dplyr::filter(.data$output_type == "quantile"),
-#'   .width = c(0.5, 0.8)
-#' )
-#'
-#' hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
-#'   .width = c(0.5),
-#'   require_only_quantiles = FALSE
-#' )
-#'
-#' hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
-#'   require_only_quantiles = FALSE,
-#'   require_all_widths = FALSE
-#' )
-
+#' @seealso [hub_quantiles_to_median_qi()]
 #' @export
-hub_quantiles_to_median_qi <- function(
-  hubverse_quantile_table,
+quantile_table_to_median_qi <- function(
+  quantile_table,
+  value_col,
+  quantile_level_col,
   .width = NULL,
-  require_only_quantiles = TRUE,
   require_all_medians = TRUE,
   require_all_widths = TRUE,
   quantile_tol = 10
 ) {
-  checkmate::assert_names(
-    names(hubverse_quantile_table),
-    must.include = purrr::discard(
-      hubverse_std_colnames,
-      ~ . == "model_id"
-    )
-  )
-  if (require_only_quantiles) {
-    checkmate::assert_names(
-      unique(hubverse_quantile_table$output_type),
-      identical.to = "quantile"
-    )
-  } else {
-    hubverse_quantile_table <- hubverse_quantile_table |>
-      dplyr::filter(.data$output_type == "quantile")
+  checkmate::assert_string(value_col)
+  checkmate::assert_string(quantile_level_col)
+  if (value_col == quantile_level_col) {
+    cli::cli_abort(glue::glue(
+      "Value column and quantile level column ",
+      "must be distinct. Got '{value_col}' ",
+      "for both."
+    ))
   }
+  checkmate::assert_names(
+    names(quantile_table),
+    must.include = c(value_col, quantile_level_col)
+  )
 
-  quant_tab <- hubverse_quantile_table |>
-    dplyr::select(-"output_type") |>
+  quant_tab <- quantile_table |>
+    dplyr::rename(
+      q_lvl = !!quantile_level_col,
+      value = !!value_col
+    ) |>
     dplyr::mutate(
-      output_type_id = round(
-        as.numeric(.data$output_type_id),
+      q_lvl = round(
+        as.numeric(.data$q_lvl),
         digits = quantile_tol
       ) |>
         as.character()
     )
 
+  q_check <- checkmate::check_numeric(
+    as.numeric(quant_tab$q_lvl),
+    lower = 0,
+    upper = 1
+  )
+  if (!isTRUE(q_check)) {
+    cli::cli_abort(glue::glue(
+      "Specified quantile level column ",
+      "'{quantile_level_col}' does not ",
+      "contain a valid set of quantile ",
+      "levels.",
+      q_check
+    ))
+  }
+
   id_cols <- names(quant_tab) |>
-    purrr::discard(~ . %in% c("value", "output_type_id"))
+    purrr::discard(~ . %in% c("value", "q_lvl"))
   id_groups <- quant_tab |>
     dplyr::distinct(dplyr::across(!!id_cols))
 
   if (require_all_medians) {
     missing <- id_groups |>
-      dplyr::mutate(output_type_id = "0.5") |>
-      dplyr::anti_join(quant_tab, by = c("output_type_id", id_cols))
+      dplyr::mutate(q_lvl = "0.5") |>
+      dplyr::anti_join(quant_tab, by = c("q_lvl", id_cols))
     if (nrow(missing) > 0) {
       cli::cli_abort(c(
         paste0(
@@ -181,7 +181,7 @@ hub_quantiles_to_median_qi <- function(
   }
 
   if (is.null(.width)) {
-    .width <- get_available_qi_widths(quant_tab$output_type_id)
+    .width <- get_available_qi_widths(quant_tab$q_lvl)
   }
 
   qi_table <- widths_to_qi_table(.width, quantile_tol)
@@ -198,7 +198,7 @@ hub_quantiles_to_median_qi <- function(
       quant_tab |>
         dplyr::rename(
           .lower = "value",
-          .lower_quantile = "output_type_id"
+          .lower_quantile = "q_lvl"
         ),
       by = ".lower_quantile"
     ) |>
@@ -206,17 +206,17 @@ hub_quantiles_to_median_qi <- function(
       quant_tab |>
         dplyr::rename(
           .upper = "value",
-          .upper_quantile = "output_type_id"
+          .upper_quantile = "q_lvl"
         ),
       by = c(".upper_quantile", id_cols)
     ) |>
     dplyr::left_join(
-      quant_tab |> dplyr::rename(.point_quantile = "output_type_id"),
+      quant_tab |> dplyr::rename(.point_quantile = "q_lvl"),
       by = c(".point_quantile", id_cols)
     ) |>
     dplyr::select(
       tidyselect::all_of(id_cols),
-      "value",
+      !!value_col := "value",
       ".lower",
       ".upper",
       ".width",
@@ -247,6 +247,84 @@ hub_quantiles_to_median_qi <- function(
       ))
     }
   }
-
   return(result)
+}
+
+#' Convert a hubverse-format table of quantiles into a
+#' `ggdist`-format table of quantile intervals.
+#'
+#' Expects a hubverse-format quantile table (e.g. as created by
+#' [get_hubverse_quantile_table()]). Treats all columns in that table other
+#' than `output_type_id`, `output_type`, and `value` as grouping / id
+#' columns, and returns them in the output table.
+#'
+#' @param hubverse_quantile_table Hubverse-format quantile table,
+#' as an object something coerceible to a [`tibble`][tibble::tibble()].
+#' @param .width Vector of interval width(s) to for which to create rows
+#' in the output. If `NULL` (the default), use all and only the widths
+#' that can be computed from quantiles available in
+#' `hubverse_quantile_table`, as determined by [get_available_qi_widths()].
+#' @param require_only_quantiles Boolean. Error if the table contains
+#' `output_type` values other than `"quantile"`? If `FALSE`, the function
+#' will silently filter the table to rows with `output_type == 'quantile'`.
+#' Default `TRUE`.
+#' @inheritParams quantile_table_to_median_qi
+#' @return A [`tibble`][tibble::tibble()] in the output format of
+#' [ggdist::median_qi()].
+#'
+#' @examples
+#' hub_quantiles_to_median_qi(
+#'   hubExamples::forecast_outputs |>
+#'     dplyr::filter(.data$output_type == "quantile"),
+#'   .width = c(0.5, 0.8)
+#' )
+#'
+#' hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
+#'   .width = c(0.5),
+#'   require_only_quantiles = FALSE
+#' )
+#'
+#' hub_quantiles_to_median_qi(hubExamples::forecast_outputs,
+#'   require_only_quantiles = FALSE,
+#'   require_all_widths = FALSE
+#' )
+#'
+#' @export
+hub_quantiles_to_median_qi <- function(
+  hubverse_quantile_table,
+  .width = NULL,
+  require_only_quantiles = TRUE,
+  require_all_medians = TRUE,
+  require_all_widths = TRUE,
+  quantile_tol = 10
+) {
+  checkmate::assert_names(
+    names(hubverse_quantile_table),
+    must.include = purrr::discard(
+      hubverse_std_colnames,
+      ~ . == "model_id"
+    )
+  )
+  if (require_only_quantiles) {
+    checkmate::assert_names(
+      unique(hubverse_quantile_table$output_type),
+      identical.to = "quantile"
+    )
+  } else {
+    hubverse_quantile_table <- hubverse_quantile_table |>
+      dplyr::filter(.data$output_type == "quantile")
+  }
+
+  return(
+    hubverse_quantile_table |>
+      dplyr::select(-"output_type") |>
+      quantile_table_to_median_qi(
+        value_col = "value",
+        quantile_level_col = "output_type_id",
+        .width = .width,
+        require_all_medians = require_all_medians,
+        require_all_widths = require_all_widths,
+        quantile_tol = quantile_tol
+      )
+  )
 }
