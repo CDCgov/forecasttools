@@ -109,50 +109,61 @@ widths_to_qi_table <- function(widths, quantile_tol = 10) {
 #'
 #' @seealso [hub_quantiles_to_median_qi()]
 #' @export
-quantile_table_to_median_qi <- function(quantile_table,
-                                        value_col,
-                                        quantile_level_col,
-                                        .width = NULL,
-                                        require_all_medians = TRUE,
-                                        require_all_widths = TRUE,
-                                        quantile_tol = 10) {
-    checkmate::assert_string(value_col)
-    checkmate::assert_string(quantile_level_col)
-    if (value_col == quantile_level_col) {
-        cli::cli_abort(glue::glue("Value column and quantile level column ",
-                                  "must be distinct. Got '{value_col}' ",
-                                  "for both."))
-    }
-    checkmate::assert_names(names(quantile_table),
-                            must.include = c(value_col, quantile_level_col))
+quantile_table_to_median_qi <- function(
+  quantile_table,
+  value_col,
+  quantile_level_col,
+  .width = NULL,
+  require_all_medians = TRUE,
+  require_all_widths = TRUE,
+  quantile_tol = 10
+) {
+  checkmate::assert_string(value_col)
+  checkmate::assert_string(quantile_level_col)
+  if (value_col == quantile_level_col) {
+    cli::cli_abort(glue::glue(
+      "Value column and quantile level column ",
+      "must be distinct. Got '{value_col}' ",
+      "for both."
+    ))
+  }
+  checkmate::assert_names(
+    names(quantile_table),
+    must.include = c(value_col, quantile_level_col)
+  )
 
-    quant_tab <- quantile_table |>
-        dplyr::rename(
-                   q_lvl = !!quantile_level_col,
-                   value = !!value_col) |>
-        dplyr::mutate(
-                   q_lvl = round(
-                       as.numeric(.data$q_lvl),
-                       digits = quantile_tol
-                   ) |> as.character())
+  quant_tab <- quantile_table |>
+    dplyr::rename(
+      q_lvl = !!quantile_level_col,
+      value = !!value_col
+    ) |>
+    dplyr::mutate(
+      q_lvl = round(
+        as.numeric(.data$q_lvl),
+        digits = quantile_tol
+      ) |>
+        as.character()
+    )
 
-    q_check <- checkmate::check_numeric(
-                              as.numeric(quant_tab$q_lvl),
-                              lower = 0,
-                              upper = 1)
-    if (!isTRUE(q_check)) {
-        cli::cli_abort(glue::glue("Specified quantile level column ",
-                                  "'{quantile_level_col}' does not ",
-                                  "contain a valid set of quantile ",
-                                  "levels.",
-                                  q_check))
-    }
+  q_check <- checkmate::check_numeric(
+    as.numeric(quant_tab$q_lvl),
+    lower = 0,
+    upper = 1
+  )
+  if (!isTRUE(q_check)) {
+    cli::cli_abort(glue::glue(
+      "Specified quantile level column ",
+      "'{quantile_level_col}' does not ",
+      "contain a valid set of quantile ",
+      "levels.",
+      q_check
+    ))
+  }
 
-
-    id_cols <- names(quant_tab) |>
-        purrr::discard(~ . %in% c("value", "q_lvl"))
-    id_groups <- quant_tab |>
-        dplyr::distinct(dplyr::across(!!id_cols))
+  id_cols <- names(quant_tab) |>
+    purrr::discard(~ . %in% c("value", "q_lvl"))
+  id_groups <- quant_tab |>
+    dplyr::distinct(dplyr::across(!!id_cols))
 
   if (require_all_medians) {
     missing <- id_groups |>
@@ -236,7 +247,7 @@ quantile_table_to_median_qi <- function(quantile_table,
       ))
     }
   }
-    return(result)
+  return(result)
 }
 
 #' Convert a hubverse-format table of quantiles into a
@@ -304,12 +315,16 @@ hub_quantiles_to_median_qi <- function(
       dplyr::filter(.data$output_type == "quantile")
   }
 
-  return(hubverse_quantile_table |>
-         dplyr::select(-"output_type") |>
-         quantile_table_to_median_qi(value_col = "value",
-                                     quantile_level_col = "output_type_id",
-                                     .width = .width,
-                                     require_all_medians = require_all_medians,
-                                     require_all_widths = require_all_widths,
-                                     quantile_tol = quantile_tol))
+  return(
+    hubverse_quantile_table |>
+      dplyr::select(-"output_type") |>
+      quantile_table_to_median_qi(
+        value_col = "value",
+        quantile_level_col = "output_type_id",
+        .width = .width,
+        require_all_medians = require_all_medians,
+        require_all_widths = require_all_widths,
+        quantile_tol = quantile_tol
+      )
+  )
 }
