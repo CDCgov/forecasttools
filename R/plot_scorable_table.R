@@ -192,3 +192,226 @@ plot_pred_obs_by_forecast_date <- function(
 
   return(plot)
 }
+
+
+#' Plot median predictions and prediction
+#' intervals as pointintervals against observed data
+#'
+#' @param scorable_table quantile table with observations,
+#' as the output of [scoringutils::as_forecast_quantile()],
+#' or as a table coercible to a `scoringutils`-ready quantile
+#' forecast via [scoringutils::as_forecast_quantile()]. Must
+#' contain the median (0.5) quantile and the endpoint quantiles
+#' for the equal-tailed prediction interval specified in
+#' `prediction_interval_width`. Must contain a column specifying
+#' the forecast horizon. Plot will be faceted into rows and columns,
+#' with rows representing different horizons and columns representing
+#' all other forecast unit variables beside horizon and target date.
+#' @param interval_widths Width(s) of the equal-tailed prediction
+#' interval(s) to plot around the median. Must correspond to quantiles
+#' available in `scorable_table`. Default `c(0.5, 0.95`)`.
+#' @param target_date_col Name of the column in `scorable_table`
+#' giving the forecast target date for a given prediction.
+#' Default `"target_end_date"` (as in hubverse schema).
+#' @param predicted_col Name of the column in `scorable_table`
+#' giving the predicted values. Default `"predicted"` (as in
+#' the output of [scoringutils::as_forecast_quantile()]. Passed
+#' as the `predicted` argument to [scoringutils::as_forecast_quantile()].
+#' @param observed_col Name of the column in `scorable_table`
+#' giving the observed values. Default `"observed"` (as in
+#' the output of [scoringutils::as_forecast_quantile()]. Passed
+#' as the `observed` argument to [scoringutils::as_forecast_quantile()].
+#' @param quantile_level_col Name of the column in `scorable_table`
+#' giving the quantile level for a given row. Default `"quantile_level"`
+#' (as in the output of [scoringutils::as_forecast_quantile()].
+#' Passed as the `quantile_level` argument to
+#' [scoringutils::as_forecast_quantile()].
+#' @param horizon_col Name of the column in `scorable_table` containing
+#' the forecast horizon for a given row. Default `"horizon"` (as in
+#' hubverse schema).
+#' @param facet_columns Columns in `scorable_table` by which to
+#' facet the resulting plot. Will always facet by `forecast_date_col`.
+#' If `NULL`, facet by all the columns that make up the `scoringutils`
+#' "forecast unit", as determined by [scoringutils::get_forecast_unit()],
+#' except for `target_date_col` and `horizon`. This means that, by default,
+#' two distinct predictions for a given target date and horizon should
+#' not be visualized on the same facet. To facet _only_ by the forecast date
+#' column, pass that column name again, or pass `""`.
+#' @param x_label Label for the x axis in the plot. Default
+#' `"Date"`.
+#' @param y_label Label for the y axis in the plot. Default
+#' `"Target"`.
+#' @param y_transform Transformation for the y axis in the plot.
+#' Passed as the `transform` argument to [ggplot2::scale_y_continuous()]
+#' Default `"log10"`.
+#' @param quantile_tol Round quantile level values to this many
+#' decimal places, to avoid problems with floating point number
+#' equality comparisons. Affects both the target quantile level
+#' values determined from `prediction_interval_width` and the
+#' quantile level values in the `quantile_level_col` column of
+#' `scorable_table`. Passed as the `digits` argument to
+#' [base::round()]. Default 10.
+#' @param predicted_point_size Size for the points showing
+#' median predictions. Passed as the `point_size` argument to
+#' [ggdist::geom_pointinterval()]. Default `3`.
+#' @param predicted_point_shape Shape for the points showing
+#' median predictions. Passed as the `shape` argument to
+#' [ggdist::geom_pointinterval()]. Default `23` (filled diamonds).
+#' @param predicted_point_fill Fill color for the points showing
+#' median predictions. Passed as the `point_fill` argument to
+#' [ggdist::geom_pointinterval()]. Default `"lightblue"`.
+#' @param predicted_interval_color Color for the lines showing
+#' predictions intervals. Passed as the `interval_color` argument
+#' to [ggdist::geom_pointinterval()] Default `"darkblue"`.
+#' @param observed_point_size Size for the points showing observed
+#' values. Passed as the `size` argument to [geom_line_point()].
+#' Default `3`.
+#' @param observed_point_shape Shape for the points showing
+#' observed values. Passed as the `shape` argument to
+#' [geom_line_point()]. Default `21` (filled circles).
+#' @param observed_point_fill Fill color for the points showing
+#' observed values. Passed as the `fill` argument to
+#' [geom_line_point()]. Default `"darkred"`.
+#' @param observed_linetype Type of line to connect the timeseries
+#' of observed values. Passed as the `"linetype"` argument to
+#' [geom_line_point()]. Default `"solid"`.
+#' @param observed_linewidth Width for the line connecting the
+#' timeseries of observed values. Passed as the `"linewidth"`
+#' argument to [geom_line_point()]. Default `1`.
+#' @param observed_linecolor Color for the line connecting the
+#' timeseries of observed values. Passed as the `"color"`
+#' argument to [geom_line_point()]. Default `"black"`.
+#' @return The plot, as a [ggplot2::ggplot()] object.
+#' @export
+#'
+#' @examples
+#' scoringutils::example_quantile |>
+#'   dplyr::filter(
+#'     location == "IT",
+#'     target_type == "Cases",
+#'     model == "EuroCOVIDhub-ensemble"
+#'   ) |>
+#'   dplyr::select(-"forecast_date") |>
+#'   # otherwise will get single points per facet
+#'   # since forecast_date will be treated as a faceting
+#'   # variable independent of horizon
+#'   plot_pred_obs_by_pointervals()
+#'
+#' scoringutils::example_quantile |>
+#'   dplyr::filter(
+#'     location == "IT",
+#'     target_type == "Cases",
+#'     model %in% c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline")
+#'   ) |>
+#'   dplyr::select(-"forecast_date") |>
+#'   plot_pred_obs_by_pointervals()
+#'
+plot_pred_obs_pointintervals <- function(
+  scorable_table,
+  interval_widths = c(0.5, 0.95),
+  horizon_col = "horizon",
+  target_date_col = "target_end_date",
+  predicted_col = "predicted",
+  observed_col = "observed",
+  quantile_level_col = "quantile_level",
+  x_label = "Date",
+  y_label = "Target",
+  y_transform = "log10",
+  quantile_tol = 10,
+  predicted_point_size = 3,
+  predicted_point_shape = 23,
+  predicted_point_fill = "lightblue",
+  predicted_interval_color = "darkblue",
+  observed_point_size = 3,
+  observed_point_shape = 21,
+  observed_point_fill = "darkred",
+  observed_linetype = "solid",
+  observed_linewidth = 1,
+  observed_linecolor = "black"
+) {
+  checkmate::assert_names(
+    names(scorable_table),
+    must.include = c(
+      horizon_col,
+      target_date_col,
+      predicted_col,
+      observed_col,
+      quantile_level_col
+    )
+  )
+  ## ensure that forecast is a scoringutils-format
+  ## quantile forecast
+  scorable_table <- scorable_table |>
+    dplyr::rename(
+      target_end_date = !!target_date_col,
+      horizon = !!horizon_col
+    ) |>
+    scoringutils::as_forecast_quantile(
+      predicted = predicted_col,
+      observed = observed_col,
+      quantile_level = quantile_level_col
+    )
+
+  forecast_unit <- scoringutils::get_forecast_unit(scorable_table)
+  plot_group_cols <- purrr::discard(
+    forecast_unit,
+    ~ .x %in% c("target_end_date", "horizon")
+  )
+  ## no longer need scoringutils features, so coerce to
+  ## tibble to prevent warnings and add grouping variable
+  to_plot <- tibble::as_tibble(scorable_table) |>
+    dplyr::mutate(plot_group = interaction(dplyr::across(plot_group_cols))) |>
+    dplyr::filter(!is.na(plot_group))
+
+  print(to_plot)
+
+  qi <- quantile_table_to_median_qi(
+    dplyr::select(to_plot, -"observed"),
+    value_col = "predicted",
+    quantile_level_col = "quantile_level",
+    .width = interval_widths,
+    require_all_medians = FALSE,
+    require_all_widths = FALSE,
+    quantile_tol = quantile_tol
+  )
+  ## workaround for overplotting issue with `geom_pointinterval` when there
+  ## are infinite values, which can cause the mini-point to appear on top of
+  ## the full size point, instead of behind.
+
+  obs <- dplyr::select(
+    to_plot,
+    c("target_end_date", "observed", "plot_group", "horizon")
+  )
+
+  plot <- ggplot2::ggplot(
+    data = qi,
+    mapping = ggplot2::aes(x = .data$target_end_date, group = .data$plot_group)
+  ) +
+    ggdist::geom_pointinterval(
+      mapping = ggplot2::aes(
+        y = .data$predicted,
+        ymin = .data$.lower,
+        ymax = .data$.upper
+      ),
+      shape = predicted_point_shape,
+      point_size = predicted_point_size,
+      point_fill = predicted_point_fill,
+      interval_color = predicted_interval_color
+    ) +
+    forecasttools::geom_line_point(
+      data = obs,
+      mapping = ggplot2::aes(y = .data$observed),
+      shape = observed_point_shape,
+      linetype = observed_linetype,
+      linewidth = observed_linewidth,
+      size = observed_point_size,
+      fill = observed_point_fill,
+      color = observed_linecolor
+    ) +
+    ggplot2::labs(x = x_label, y = y_label) +
+    ggplot2::scale_y_continuous(transform = y_transform) +
+    ggplot2::facet_grid(.data$horizon ~ .data$plot_group) +
+    theme_forecasttools()
+
+  return(plot)
+}
