@@ -126,15 +126,6 @@ argument to \code{\link[=geom_line_point]{geom_line_point()}}. Default \code{1}.
 \item{observed_linecolor}{Color for the line connecting the
 timeseries of observed values. Passed as the \code{"color"}
 argument to \code{\link[=geom_line_point]{geom_line_point()}}. Default \code{"black"}.}
-
-\item{facet_columns}{Columns in \code{scorable_table} by which to
-facet the resulting plot. Will always facet by \code{forecast_date_col}.
-If \code{NULL}, facet by all the columns that make up the \code{scoringutils}
-"forecast unit", as determined by \code{\link[scoringutils:get_forecast_unit]{scoringutils::get_forecast_unit()}},
-except for \code{target_date_col} and \code{horizon}. This means that, by default,
-two distinct predictions for a given target date and horizon should
-not be visualized on the same facet. To facet \emph{only} by the forecast date
-column, pass that column name again, or pass \code{""}.}
 }
 \value{
 The plot, as a \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} object.

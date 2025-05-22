@@ -229,14 +229,6 @@ plot_pred_obs_by_forecast_date <- function(
 #' @param horizon_col Name of the column in `scorable_table` containing
 #' the forecast horizon for a given row. Default `"horizon"` (as in
 #' hubverse schema).
-#' @param facet_columns Columns in `scorable_table` by which to
-#' facet the resulting plot. Will always facet by `forecast_date_col`.
-#' If `NULL`, facet by all the columns that make up the `scoringutils`
-#' "forecast unit", as determined by [scoringutils::get_forecast_unit()],
-#' except for `target_date_col` and `horizon`. This means that, by default,
-#' two distinct predictions for a given target date and horizon should
-#' not be visualized on the same facet. To facet _only_ by the forecast date
-#' column, pass that column name again, or pass `""`.
 #' @param x_label Label for the x axis in the plot. Default
 #' `"Date"`.
 #' @param y_label Label for the y axis in the plot. Default
@@ -361,9 +353,7 @@ plot_pred_obs_pointintervals <- function(
   ## tibble to prevent warnings and add grouping variable
   to_plot <- tibble::as_tibble(scorable_table) |>
     dplyr::mutate(plot_group = interaction(dplyr::across(plot_group_cols))) |>
-    dplyr::filter(!is.na(plot_group))
-
-  print(to_plot)
+    dplyr::filter(!is.na(.data$plot_group))
 
   qi <- quantile_table_to_median_qi(
     dplyr::select(to_plot, -"observed"),
