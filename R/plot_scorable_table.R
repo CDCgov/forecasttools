@@ -213,6 +213,14 @@ plot_pred_obs_by_forecast_date <- function(
 #' @param target_date_col Name of the column in `scorable_table`
 #' giving the forecast target date for a given prediction.
 #' Default `"target_end_date"` (as in hubverse schema).
+#' @param horizon_col Name of the column in `scorable_table` containing
+#' the forecast horizon for a given row. Default `"horizon"` (as in
+#' hubverse schema).
+#' @param reference_date_col Name of the column in `scorable_table`
+#' containing the forecast "reference date": the target date corresponding
+#' to the 0 horizon. Silently dropped if present because it is
+#' redundant with `horizon_col`. Default `"reference_date"`
+#' (as in hubverse schema).
 #' @param predicted_col Name of the column in `scorable_table`
 #' giving the predicted values. Default `"predicted"` (as in
 #' the output of [scoringutils::as_forecast_quantile()]. Passed
@@ -226,9 +234,6 @@ plot_pred_obs_by_forecast_date <- function(
 #' (as in the output of [scoringutils::as_forecast_quantile()].
 #' Passed as the `quantile_level` argument to
 #' [scoringutils::as_forecast_quantile()].
-#' @param horizon_col Name of the column in `scorable_table` containing
-#' the forecast horizon for a given row. Default `"horizon"` (as in
-#' hubverse schema).
 #' @param x_label Label for the x axis in the plot. Default
 #' `"Date"`.
 #' @param y_label Label for the y axis in the plot. Default
@@ -283,10 +288,6 @@ plot_pred_obs_by_forecast_date <- function(
 #'     target_type == "Cases",
 #'     model == "EuroCOVIDhub-ensemble"
 #'   ) |>
-#'   dplyr::select(-"forecast_date") |>
-#'   # otherwise will get single points per facet
-#'   # since forecast_date will be treated as a faceting
-#'   # variable independent of horizon
 #'   plot_pred_obs_by_pointervals()
 #'
 #' scoringutils::example_quantile |>
@@ -295,14 +296,14 @@ plot_pred_obs_by_forecast_date <- function(
 #'     target_type == "Cases",
 #'     model %in% c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline")
 #'   ) |>
-#'   dplyr::select(-"forecast_date") |>
 #'   plot_pred_obs_by_pointervals()
 #'
 plot_pred_obs_pointintervals <- function(
   scorable_table,
   interval_widths = c(0.5, 0.95),
-  horizon_col = "horizon",
   target_date_col = "target_end_date",
+  horizon_col = "horizon",
+  reference_date_col = "reference_date",
   predicted_col = "predicted",
   observed_col = "observed",
   quantile_level_col = "quantile_level",
@@ -321,6 +322,14 @@ plot_pred_obs_pointintervals <- function(
   observed_linewidth = 1,
   observed_linecolor = "black"
 ) {
+  if (!horizon_col %in% names(scorable_table)) {
+    cli::cli_abort(paste0(
+      "Table must have a horizon column. ",
+      "You can compute one with ",
+      "{.fn horizons_from_target_end_dates()}"
+    ))
+  }
+
   checkmate::assert_names(
     names(scorable_table),
     must.include = c(
@@ -334,6 +343,7 @@ plot_pred_obs_pointintervals <- function(
   ## ensure that forecast is a scoringutils-format
   ## quantile forecast
   scorable_table <- scorable_table |>
+    dplyr::select(-tidyselect::any_of(reference_date_col)) |>
     dplyr::rename(
       target_end_date = !!target_date_col,
       horizon = !!horizon_col

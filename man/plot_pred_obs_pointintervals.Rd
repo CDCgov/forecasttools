@@ -8,8 +8,9 @@ intervals as pointintervals against observed data}
 plot_pred_obs_pointintervals(
   scorable_table,
   interval_widths = c(0.5, 0.95),
-  horizon_col = "horizon",
   target_date_col = "target_end_date",
+  horizon_col = "horizon",
+  reference_date_col = "reference_date",
   predicted_col = "predicted",
   observed_col = "observed",
   quantile_level_col = "quantile_level",
@@ -45,13 +46,19 @@ all other forecast unit variables beside horizon and target date.}
 interval(s) to plot around the median. Must correspond to quantiles
 available in \code{scorable_table}. Default \verb{c(0.5, 0.95})`.}
 
+\item{target_date_col}{Name of the column in \code{scorable_table}
+giving the forecast target date for a given prediction.
+Default \code{"target_end_date"} (as in hubverse schema).}
+
 \item{horizon_col}{Name of the column in \code{scorable_table} containing
 the forecast horizon for a given row. Default \code{"horizon"} (as in
 hubverse schema).}
 
-\item{target_date_col}{Name of the column in \code{scorable_table}
-giving the forecast target date for a given prediction.
-Default \code{"target_end_date"} (as in hubverse schema).}
+\item{reference_date_col}{Name of the column in \code{scorable_table}
+containing the forecast "reference date": the target date corresponding
+to the 0 horizon. Silently dropped if present because it is
+redundant with \code{horizon_col}. Default \code{"reference_date"}
+(as in hubverse schema).}
 
 \item{predicted_col}{Name of the column in \code{scorable_table}
 giving the predicted values. Default \code{"predicted"} (as in
@@ -141,10 +148,6 @@ scoringutils::example_quantile |>
     target_type == "Cases",
     model == "EuroCOVIDhub-ensemble"
   ) |>
-  dplyr::select(-"forecast_date") |>
-  # otherwise will get single points per facet
-  # since forecast_date will be treated as a faceting
-  # variable independent of horizon
   plot_pred_obs_by_pointervals()
 
 scoringutils::example_quantile |>
@@ -153,7 +156,6 @@ scoringutils::example_quantile |>
     target_type == "Cases",
     model \%in\% c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline")
   ) |>
-  dplyr::select(-"forecast_date") |>
   plot_pred_obs_by_pointervals()
 
 }
