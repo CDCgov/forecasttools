@@ -53,9 +53,12 @@ trajectories_to_quantiles <- function(
     )
 
   missing_groups <- grouped_df |>
-    summarize("any_missing" = any(is.na(.data$value_col)), .groups = "drop") |>
-    filter(.data$any_missing) |>
-    select(-"any_missing")
+    dplyr::summarize(
+      "any_missing" = any(is.na(.data$value_col)),
+      .groups = "drop"
+    ) |>
+    dplyr::filter(.data$any_missing) |>
+    dplyr::select(-"any_missing")
 
   quant_df <- grouped_df |>
     dplyr::anti_join(missing_groups, by = colnames(missing_groups)) |>
