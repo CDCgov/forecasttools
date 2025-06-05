@@ -148,7 +148,7 @@ scoringutils::example_quantile |>
     target_type == "Cases",
     model == "EuroCOVIDhub-ensemble"
   ) |>
-  plot_pred_obs_by_pointervals()
+  plot_pred_obs_pointintervals()
 
 scoringutils::example_quantile |>
   dplyr::filter(
@@ -156,6 +156,6 @@ scoringutils::example_quantile |>
     target_type == "Cases",
     model \%in\% c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline")
   ) |>
-  plot_pred_obs_by_pointervals()
+  plot_pred_obs_pointintervals()
 
 }
