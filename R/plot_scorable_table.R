@@ -362,7 +362,9 @@ plot_pred_obs_pointintervals <- function(
   ## no longer need scoringutils features, so coerce to
   ## tibble to prevent warnings and add grouping variable
   to_plot <- tibble::as_tibble(scorable_table) |>
-    dplyr::mutate(plot_group = interaction(dplyr::across(plot_group_cols))) |>
+    dplyr::mutate(
+      plot_group = interaction(dplyr::across(dplyr::all_of(plot_group_cols)))
+    ) |>
     dplyr::filter(!is.na(.data$plot_group))
 
   qi <- quantile_table_to_median_qi(
