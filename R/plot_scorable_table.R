@@ -288,7 +288,7 @@ plot_pred_obs_by_forecast_date <- function(
 #'     target_type == "Cases",
 #'     model == "EuroCOVIDhub-ensemble"
 #'   ) |>
-#'   plot_pred_obs_by_pointervals()
+#'   plot_pred_obs_pointintervals()
 #'
 #' scoringutils::example_quantile |>
 #'   dplyr::filter(
@@ -296,7 +296,7 @@ plot_pred_obs_by_forecast_date <- function(
 #'     target_type == "Cases",
 #'     model %in% c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline")
 #'   ) |>
-#'   plot_pred_obs_by_pointervals()
+#'   plot_pred_obs_pointintervals()
 #'
 plot_pred_obs_pointintervals <- function(
   scorable_table,
