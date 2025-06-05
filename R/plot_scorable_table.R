@@ -209,7 +209,7 @@ plot_pred_obs_by_forecast_date <- function(
 #' all other forecast unit variables beside horizon and target date.
 #' @param interval_widths Width(s) of the equal-tailed prediction
 #' interval(s) to plot around the median. Must correspond to quantiles
-#' available in `scorable_table`. Default `c(0.5, 0.95`)`.
+#' available in `scorable_table`. Default `c(0.5, 0.95)`.
 #' @param target_date_col Name of the column in `scorable_table`
 #' giving the forecast target date for a given prediction.
 #' Default `"target_end_date"` (as in hubverse schema).
@@ -227,11 +227,11 @@ plot_pred_obs_by_forecast_date <- function(
 #' as the `predicted` argument to [scoringutils::as_forecast_quantile()].
 #' @param observed_col Name of the column in `scorable_table`
 #' giving the observed values. Default `"observed"` (as in
-#' the output of [scoringutils::as_forecast_quantile()]. Passed
+#' the output of [scoringutils::as_forecast_quantile()]). Passed
 #' as the `observed` argument to [scoringutils::as_forecast_quantile()].
 #' @param quantile_level_col Name of the column in `scorable_table`
 #' giving the quantile level for a given row. Default `"quantile_level"`
-#' (as in the output of [scoringutils::as_forecast_quantile()].
+#' (as in the output of [scoringutils::as_forecast_quantile()]).
 #' Passed as the `quantile_level` argument to
 #' [scoringutils::as_forecast_quantile()].
 #' @param x_label Label for the x axis in the plot. Default
