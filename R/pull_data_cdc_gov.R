@@ -190,7 +190,7 @@ pull_nhsn <- function(
     dplyr::bind_rows() |>
     tibble::as_tibble()
 
-  if (error_on_limit && !nrow(df) < limit) {
+  if (error_on_limit && nrow(df) >= limit) {
     cli::cli_abort(glue::glue(
       "Query retrieved a number of ",
       "records equal to the query limit. ",
