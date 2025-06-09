@@ -1,4 +1,4 @@
-.data_cdc_gov_api_creation_url <- glue::glue(
+.data_cdc_gov_api_creation_url <- paste0(
   "https://data.cdc.gov/",
   "profile/edit/developer_settings"
 )
