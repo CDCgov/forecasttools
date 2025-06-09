@@ -1,3 +1,19 @@
+#' Construct a data.cdc.gov API endpoint from a dataset ID
+#'
+#' @param dataset_id Dataset ID, as a string.
+#' @return The full URL for the (JSON) Socrata Open Data API endpoint.
+#' @export
+#'
+#' @examples
+#'
+#' data_cdc_gov_endpoint(data_cdc_gov_ids$nhsn_hrd_prelim)
+#'
+#' data_cdc_gov_endpoint(data_cdc_gov_ids$nssp_prop_ed_visits)
+data_cdc_gov_endpoint <- function(dataset_id) {
+  return(glue::glue("https://data.cdc.gov/resource/{dataset_id}.json"))
+}
+
+
 #' Pull NHSN data from `data.cdc.gov`
 #'
 #' Pull relevant epidemiological
@@ -52,7 +68,7 @@
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
 pull_nhsn <- function(
-  api_endpoint = "https://data.cdc.gov/resource/mpgq-jmmr.json",
+  api_endpoint = data_cdc_gov_endpoint(data_cdc_gov_ids$nhsn_hrd_prelim),
   api_key_id = Sys.getenv("NHSN_API_KEY_ID"),
   api_key_secret = Sys.getenv("NHSN_API_KEY_SECRET"),
   start_date = NULL,

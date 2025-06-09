@@ -52,14 +52,14 @@ default_prism_bin_names <- c("Very Low", "Low", "Moderate", "High", "Very High")
 #' release. `nhsn_hrd_prelim` points the most recent preliminary (Wednesday)
 #' weekly release.
 #'
-#' `nssp_pct_ed_visits`: National Syndromic Surveillance
-#' Program (NSSP) data on percentage of ED visits due to COVID-19,
-#' Influenza, and RSV.
+#' `nssp_prop_ed_visits`: National Syndromic Surveillance
+#' Program (NSSP) data on proportion of incident emergency
+#' deparment (ED) visits due to COVID-19, Influenza, and RSV.
 #'
 #' @export
 data_cdc_gov_ids <- list(
   nhsn_hist_daily = "g62h-syeh",
   nhsn_hrd_prelim = "mpgq-jmmr",
   nhsn_hrd_final = "ua7e-t2fy",
-  nssp_pct_ed_visits = "rdmq-nq56"
+  nssp_prop_ed_visits = "rdmq-nq56"
 )

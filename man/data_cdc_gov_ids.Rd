@@ -25,8 +25,8 @@ timeseries for COVID-19, Influenza, and RSV.
 release. \code{nhsn_hrd_prelim} points the most recent preliminary (Wednesday)
 weekly release.
 
-\code{nssp_pct_ed_visits}: National Syndromic Surveillance
-Program (NSSP) data on percentage of ED visits due to COVID-19,
-Influenza, and RSV.
+\code{nssp_prop_ed_visits}: National Syndromic Surveillance
+Program (NSSP) data on proportion of incident emergency
+deparment (ED) visits due to COVID-19, Influenza, and RSV.
 }
 \keyword{datasets}
