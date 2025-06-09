@@ -247,7 +247,7 @@ plot_pred_obs_by_forecast_date <- function(
 #' values determined from `prediction_interval_width` and the
 #' quantile level values in the `quantile_level_col` column of
 #' `scorable_table`. Passed as the `digits` argument to
-#' [base::round()]. Default 10.
+#' [base::round()]. Default `10`.
 #' @param predicted_point_size Size for the points showing
 #' median predictions. Passed as the `point_size` argument to
 #' [ggdist::geom_pointinterval()]. Default `3`.
