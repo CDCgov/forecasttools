@@ -96,7 +96,15 @@ pull_nhsn <- function(
     ...
   )
 
-  socrata_url <- as.character(query)
+  soda_request <- query |>
+    as.character() |>
+    httr2::request() |>
+    httr2::req_user_agent(
+      paste0(
+        "forecasttools R package ",
+        "(https://cdcgov.github.io/forecasttools)"
+      )
+    )
 
   api_key_id <- if (is.null(api_key_id)) "" else api_key_id
   api_key_secret <- if (is.null(api_key_secret)) "" else api_key_secret
@@ -105,29 +113,25 @@ pull_nhsn <- function(
     api_key_secret != "")
 
   if (credentials) {
-    response <- httr::GET(
-      socrata_url,
-      httr::authenticate(api_key_id, api_key_secret)
+    soda_request <- httr2::req_auth_basic(
+      soda_request,
+      api_key_id,
+      api_key_secret
     )
   } else {
     cli::cli_warn(c(
-      "No API key ID and secret provided. ",
+      "No valid API key ID / secret pair provided. ",
       "This is considered impolite and ",
       "may result in your requests to the ",
       "server getting throttled. Create an ",
       "API key id/secret pair by visiting ",
-      "https://data.cdc.gov/profile/edit/developer_settings"
+      "https://data.cdc.gov/profile/edit/developer_settings."
     ))
-    response <- httr::GET(
-      socrata_url
-    )
   }
 
-  if (response$status != 200) {
-    cli::cli_abort("Bad response {response}")
-  }
-
-  df <- jsonlite::fromJSON(httr::content(response, "text")) |>
+  df <- httr2::req_perform(soda_request) |>
+    httr2::resp_body_json() |>
+    dplyr::bind_rows() |>
     tibble::as_tibble()
 
   if (error_on_limit && !dim(df)[1] < limit) {

@@ -36,7 +36,7 @@ Imports:
     ggplot2,
     glue,
     gridExtra,
-    httr,
+    httr2,
     hubData (>= 0.2.0),
     hubUtils,
     jsonlite,
