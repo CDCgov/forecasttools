@@ -1,3 +1,8 @@
+.data_cdc_gov_api_creation_url <- glue::glue(
+  "https://data.cdc.gov/",
+  "profile/edit/developer_settings"
+)
+
 #' Construct a data.cdc.gov API endpoint from a dataset ID
 #'
 #' @param dataset_id Dataset ID, as a string.
@@ -13,6 +18,74 @@ data_cdc_gov_endpoint <- function(dataset_id) {
   return(glue::glue("https://data.cdc.gov/resource/{dataset_id}.json"))
 }
 
+
+#' Warn the user that they are attempting an API request
+#' without credentials
+#'
+#' @param api_key_creation_url Optional URL to which to direct
+#' the user to create an API key ID / secret pair.
+#' @return Nothing, invisibly, warning the user as a side effect.
+#'
+#' @keywords internal
+.warn_no_api_creds <- function(api_key_creation_url = NULL) {
+  if (!is.null(api_key_creation_url)) {
+    create_creds_msg <- glue::glue(
+      "Create an ",
+      "API key id/secret pair by visiting ",
+      "{api_key_creation_url}."
+    )
+  } else {
+    create_creds_msg <- NULL
+  }
+  cli::cli_warn(glue::glue(
+    "No valid API key ID / secret pair provided. ",
+    "This is considered impolite and ",
+    "may result in your requests to the ",
+    "server getting throttled. ",
+    create_creds_msg
+  ))
+
+  invisible()
+}
+
+#' Default API requests for forecasttools via
+#' httr2
+#'
+#' @keywords internal
+.perform_request <- function(
+  request,
+  api_key_id,
+  api_key_secret,
+  api_key_creation_url = NULL
+) {
+  to_perform <-
+    httr2::request(request) |>
+    httr2::req_user_agent(
+      paste0(
+        "forecasttools R package ",
+        "(https://cdcgov.github.io/forecasttools)"
+      )
+    )
+
+  api_key_id <- if (is.null(api_key_id)) "" else api_key_id
+  api_key_secret <- if (is.null(api_key_secret)) "" else api_key_secret
+
+  credentials <- (api_key_id != "" &
+    api_key_secret != "")
+
+  if (credentials) {
+    to_perform <- httr2::req_auth_basic(
+      to_perform,
+      api_key_id,
+      api_key_secret
+    )
+  } else {
+    .warn_no_api_creds(api_key_creation_url)
+  }
+
+  response <- httr2::req_perform(to_perform)
+  return(response)
+}
 
 #' Pull NHSN data from `data.cdc.gov`
 #'
@@ -84,7 +157,7 @@ pull_nhsn <- function(
   error_on_limit = TRUE,
   ...
 ) {
-  query <- nhsn_soda_query(
+  df <- nhsn_soda_query(
     api_endpoint,
     start_date = start_date,
     end_date = end_date,
@@ -94,56 +167,28 @@ pull_nhsn <- function(
     desc = desc,
     limit = limit,
     ...
-  )
-
-  soda_request <- query |>
+  ) |>
     as.character() |>
-    httr2::request() |>
-    httr2::req_user_agent(
-      paste0(
-        "forecasttools R package ",
-        "(https://cdcgov.github.io/forecasttools)"
-      )
-    )
-
-  api_key_id <- if (is.null(api_key_id)) "" else api_key_id
-  api_key_secret <- if (is.null(api_key_secret)) "" else api_key_secret
-
-  credentials <- (api_key_id != "" &
-    api_key_secret != "")
-
-  if (credentials) {
-    soda_request <- httr2::req_auth_basic(
-      soda_request,
+    .perform_request(
       api_key_id,
-      api_key_secret
-    )
-  } else {
-    cli::cli_warn(c(
-      "No valid API key ID / secret pair provided. ",
-      "This is considered impolite and ",
-      "may result in your requests to the ",
-      "server getting throttled. Create an ",
-      "API key id/secret pair by visiting ",
-      "https://data.cdc.gov/profile/edit/developer_settings."
-    ))
-  }
-
-  df <- httr2::req_perform(soda_request) |>
+      api_key_secret,
+      api_key_creation_url = .data_cdc_gov_api_creation_url
+    ) |>
     httr2::resp_body_json() |>
     dplyr::bind_rows() |>
     tibble::as_tibble()
 
-  if (error_on_limit && !dim(df)[1] < limit) {
-    cli::cli_abort(c(
-      "Query retrieved a number of",
+  if (error_on_limit && !nrow(df) < limit) {
+    cli::cli_abort(glue::glue(
+      "Query retrieved a number of ",
       "records equal to the query limit. ",
-      "Some matching records may therefore",
+      "Some matching records may therefore ",
       "be excluded. Try a narrower query, a ",
       "higher limit, or, if this was intended, ",
-      "set `error_on_limit = FALSE`"
+      "set `error_on_limit = FALSE`."
     ))
   }
+
   return(df)
 }
 
