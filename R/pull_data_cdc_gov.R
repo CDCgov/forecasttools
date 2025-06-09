@@ -51,15 +51,25 @@ data_cdc_gov_endpoint <- function(dataset_id) {
 #' Default API requests for forecasttools via
 #' httr2
 #'
+#' @param url URL for the request to perform, passed
+#' as the url argument to [httr2::request()].
+#' @param api_key_id API key id to use when authenticating.
+#' If `NULL` or the empty string (`""`), treated as not provided.
+#' @param api_key_secret API key secret to use when authenticating.
+#' If `NULL` or the empty string (`""`), treated as not provided.
+#' @param api_key_creation_url The user will be warned if they fail
+#' to provide an `api_key_id` and `api_key_secret`. Provide this optional
+#' argument to direct the user to a website where they can create
+#' those credentials. See [.warn_no_api_creds()].
 #' @keywords internal
-.perform_request <- function(
-  request,
+.perform_api_request <- function(
+  url,
   api_key_id,
   api_key_secret,
   api_key_creation_url = NULL
 ) {
   to_perform <-
-    httr2::request(request) |>
+    httr2::request(url) |>
     httr2::req_user_agent(
       paste0(
         "forecasttools R package ",
@@ -169,7 +179,7 @@ pull_nhsn <- function(
     ...
   ) |>
     as.character() |>
-    .perform_request(
+    .perform_api_request(
       api_key_id,
       api_key_secret,
       api_key_creation_url = .data_cdc_gov_api_creation_url
