@@ -30,18 +30,20 @@ data_cdc_gov_endpoint <- function(dataset_id) {
 .warn_no_api_creds <- function(api_key_creation_url = NULL) {
   if (!is.null(api_key_creation_url)) {
     create_creds_msg <- glue::glue(
-      "Create an ",
-      "API key id/secret pair by visiting ",
+      " Create an ",
+      "API key ID / secret pair by visiting ",
       "{api_key_creation_url}."
     )
   } else {
     create_creds_msg <- NULL
   }
-  cli::cli_warn(glue::glue(
-    "No valid API key ID / secret pair provided. ",
-    "This is considered impolite and ",
-    "may result in your requests to the ",
-    "server getting throttled. ",
+  cli::cli_warn(c(
+    glue::glue(
+      "No valid API key ID / secret pair provided. ",
+      "This is considered impolite and ",
+      "may result in your requests to the ",
+      "server getting throttled."
+    ),
     create_creds_msg
   ))
 

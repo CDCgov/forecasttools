@@ -4,6 +4,17 @@ jurisdictions <- c("CA", "TX")
 
 mockdir <- "api_mocks"
 
+test_that(".warn_no_api_creds() works as expected", {
+  expect_warning(
+    .warn_no_api_creds(),
+    "No valid API key ID"
+  )
+  expect_warning(
+    .warn_no_api_creds("https://example.com"),
+    "by visiting https://example.com"
+  )
+})
+
 with_mock_dir(mockdir, {
   test_that("Warnings raised if API key/secret not provided", {
     expect_warning(
