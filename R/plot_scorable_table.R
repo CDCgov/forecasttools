@@ -414,7 +414,7 @@ plot_pred_obs_pointintervals <- function(
     ggplot2::scale_y_continuous(transform = y_transform) +
     ggplot2::facet_grid(
       .data$horizon ~ .data$plot_group,
-      labeller = ggplot2::labeller(.data$horizon = ggplot2::label_both)
+      labeller = ggplot2::labeller(horizon = ggplot2::label_both)
     ) +
     theme_forecasttools()
 

@@ -44,7 +44,7 @@ all other forecast unit variables beside horizon and target date.}
 
 \item{interval_widths}{Width(s) of the equal-tailed prediction
 interval(s) to plot around the median. Must correspond to quantiles
-available in \code{scorable_table}. Default \verb{c(0.5, 0.95})`.}
+available in \code{scorable_table}. Default \code{c(0.5, 0.95)}.}
 
 \item{target_date_col}{Name of the column in \code{scorable_table}
 giving the forecast target date for a given prediction.
@@ -67,12 +67,12 @@ as the \code{predicted} argument to \code{\link[scoringutils:as_forecast_quantil
 
 \item{observed_col}{Name of the column in \code{scorable_table}
 giving the observed values. Default \code{"observed"} (as in
-the output of \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}. Passed
+the output of \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}). Passed
 as the \code{observed} argument to \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}.}
 
 \item{quantile_level_col}{Name of the column in \code{scorable_table}
 giving the quantile level for a given row. Default \code{"quantile_level"}
-(as in the output of \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}.
+(as in the output of \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}).
 Passed as the \code{quantile_level} argument to
 \code{\link[scoringutils:as_forecast_quantile]{scoringutils::as_forecast_quantile()}}.}
 
