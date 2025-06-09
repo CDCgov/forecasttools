@@ -239,7 +239,7 @@ plot_pred_obs_by_forecast_date <- function(
 #' @param y_label Label for the y axis in the plot. Default
 #' `"Target"`.
 #' @param y_transform Transformation for the y axis in the plot.
-#' Passed as the `transform` argument to [ggplot2::scale_y_continuous()]
+#' Passed as the `transform` argument to [ggplot2::scale_y_continuous()].
 #' Default `"log10"`.
 #' @param quantile_tol Round quantile level values to this many
 #' decimal places, to avoid problems with floating point number
