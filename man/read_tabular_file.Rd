@@ -19,7 +19,7 @@ Must have extension \code{.tsv}, \code{.csv}, or \code{.parquet}
 file reader/writer function, which will be one of
 \code{\link[readr:read_delim]{readr::read_csv()}} / \code{\link[readr:write_delim]{readr::write_csv()}},
 \code{\link[readr:read_delim]{readr::read_tsv()}} / \code{\link[readr:write_delim]{readr::write_tsv()}}, and
-\code{\link[arrow:read_parquet]{arrow::read_parquet()}} / \code{\link[arrow:write_parquet]{arrow::write_parquet()}},
+\code{\link[nanoparquet:read_parquet]{nanoparquet::read_parquet()}} / \code{\link[nanoparquet:write_parquet]{nanoparquet::write_parquet()}},
 depending on the file format.}
 
 \item{table}{Table to write (\code{write_tabular_file} only).}
