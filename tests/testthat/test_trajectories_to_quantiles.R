@@ -59,3 +59,27 @@ test_that("trajectories_to_quantiles works as expected with custom args", {
     )
   )
 })
+
+test_that("trajectories_to_quantiles works with missing values", {
+  timepoint_to_na <- as.Date("2023-10-21")
+  draw_to_na <- 18
+  dat <- forecasttools::example_daily_forecast_flu |>
+    dplyr::rename(
+      value = "hosp",
+      timepoint = "date"
+    ) |>
+    dplyr::filter(location == "NM") |>
+    dplyr::mutate(
+      value = dplyr::if_else(
+        timepoint == timepoint_to_na & .draw == draw_to_na,
+        NaN,
+        value
+      )
+    )
+
+  quants <- trajectories_to_quantiles(dat)
+
+  present_timepoints <- unique(quants$timepoint)
+  expected_timepoints <- setdiff(unique(dat$timepoint), timepoint_to_na)
+  expect_true(setequal(present_timepoints, expected_timepoints))
+})
