@@ -7,12 +7,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-httptest::start_vignette("pull-nhsn")
+library(httptest2)
+start_vignette("pull-nhsn")
 ```
 
 
@@ -43,24 +44,12 @@ my_api_key_secret <- "<YOUR API KEY SECRET HERE>"
 ```
 
 ```{r, include = FALSE}
-# silently reconcile env var secrets and mock var secrets
+# silently use env var secrets to populate the id variables,
 # so that the vignette works as expected with both mock
 # and real requests provided that real requests are made with
 # real secrets (and mock requests do not require real secrets).
-env_id <- Sys.getenv("NHSN_API_KEY_ID")
-env_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
-
-if (env_id == "") {
-  Sys.setenv("NHSN_API_KEY_ID" = my_api_key_id)
-} else {
-  my_api_key_id <- env_id
-}
-
-if (env_secret == "") {
-  Sys.setenv("NHSN_API_KEY_SECRET" = my_api_key_secret)
-} else {
-  my_api_key_secret <- env_secret
-}
+my_api_key_id <- Sys.getenv("NHSN_API_KEY_ID")
+my_api_key_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
 ```
 
 ```{r}
@@ -114,5 +103,5 @@ influenza_by_date
 ```
 
 ```{r, include=FALSE}
-httptest::end_vignette()
+end_vignette()
 ```
