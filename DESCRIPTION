@@ -42,7 +42,7 @@ Imports:
     jsonlite,
     lubridate,
     methods,
-    arrow,
+    nanoparquet,
     purrr,
     readr,
     rlang,
