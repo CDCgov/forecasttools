@@ -63,12 +63,6 @@ all_data <- pull_nhsn(
 )
 
 all_data
-# silently use env var secrets to populate the id variables,
-# so that the vignette works as expected with both mock
-# and real requests provided that real requests are made with
-# real secrets (and mock requests do not require real secrets).
-my_api_key_id <- Sys.getenv("NHSN_API_KEY_ID")
-my_api_key_secret <- Sys.getenv("NHSN_API_KEY_SECRET")
 ```
 
 ## Getting only relevant rows and columns
