@@ -13,8 +13,8 @@ httr2}
 )
 }
 \arguments{
-\item{url}{URL for the request to perform, passed
-as the url argument to \code{\link[httr2:request]{httr2::request()}}.}
+\item{url}{URL for the request to perform, passed as the \code{url}
+argument to \code{\link[httr2:request]{httr2::request()}}.}
 
 \item{api_key_id}{API key id to use when authenticating.
 If \code{NULL} or the empty string (\code{""}), treated as not provided.}
@@ -23,9 +23,9 @@ If \code{NULL} or the empty string (\code{""}), treated as not provided.}
 If \code{NULL} or the empty string (\code{""}), treated as not provided.}
 
 \item{api_key_creation_url}{The user will be warned if they fail
-to provide an \code{api_key_id} and \code{api_key_secret}. Provide this optional
-argument to direct the user to a website where they can create
-those credentials. See \code{\link[=.warn_no_api_creds]{.warn_no_api_creds()}}.}
+to provide an \code{api_key_id} and \code{api_key_secret}. Provide this
+optional argument to direct the user to a website where they can
+create those credentials. See \code{\link[=.warn_no_api_creds]{.warn_no_api_creds()}}.}
 }
 \description{
 Default API requests for forecasttools via

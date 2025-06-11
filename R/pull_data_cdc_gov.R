@@ -1,3 +1,71 @@
+#' Dataset IDs and metadata for `data.cdc.gov` datasets of interest:
+#'
+#' `nhsn_hist_daily`: National Healthcare Safety Network
+#' (NHSN) daily-resolution incident hospital admissions timeseries,
+#' for COVID-19 and later Influenza, reported until 28 June 2024.
+#' Former target for the COVID-19 Forecast Hub.
+#'
+#' `nhsn_hrd_final`, `nhsn_hrd_prelim`: NHSN Hospital Respiratory Data
+#' (HRD).
+#' Epiweekly-resolution incident hospital admissions
+#' timeseries for COVID-19, Influenza, and RSV.
+#' `nhsn_hrd_final` points to the most recent final (Friday) weekly data
+#' release. `nhsn_hrd_prelim` points the most recent preliminary (Wednesday)
+#' weekly release.
+#'
+#' `nssp_prop_ed_visits`: National Syndromic Surveillance
+#' Program (NSSP) data on proportion of incident emergency
+#' deparment (ED) visits due to COVID-19, Influenza, and RSV.
+#'
+#' @seealso [data_cdc_gov_dataset_id()]
+#' @export
+data_cdc_gov_datasets <- list(
+  nhsn_hist_daily = list(
+    id = "g62h-syeh",
+    date_column = "date",
+    location_column = "state"
+  ),
+  nhsn_hrd_prelim = list(
+    id = "mpgq-jmmr",
+    date_column = "weekendingdate",
+    location_column = "jurisdiction"
+  ),
+  nhsn_hrd_final = list(
+    id = "ua7e-t2fy",
+    date_column = "weekendingdate",
+    location_column = "jurisdiction"
+  ),
+  nssp_prop_ed_visits = list(
+    id = "rdmq-nq56",
+    date_column = "week_end",
+    location_column = "county"
+  )
+)
+
+#' Retrieve the dataset ID for a supported `data.cdc.gov` dataset
+#'
+#' @param dataset_name Internal forecasttools name for the dataset.
+#' See [data_cdc_gov_datasets].
+#'
+#' @return The dataset id, as a string.
+#'
+#' @examples
+#' data_cdc_gov_dataset_id("nhsn_hrd_prelim")
+#'
+#' data_cdc_gov_dataset_id("nssp_prop_ed_visits")
+#'
+#' @export
+data_cdc_gov_dataset_id <- function(dataset_name) {
+  checkmate::assert_scalar(dataset_name)
+  checkmate::assert_names(
+    dataset_name,
+    subset.of = names(data_cdc_gov_datasets)
+  )
+
+  return(data_cdc_gov_datasets[[dataset_name]]$id)
+}
+
+
 .data_cdc_gov_api_creation_url <- paste0(
   "https://data.cdc.gov/",
   "profile/edit/developer_settings"
@@ -7,15 +75,37 @@
 #'
 #' @param dataset_id Dataset ID, as a string.
 #' @return The full URL for the (JSON) Socrata Open Data API endpoint.
-#' @export
 #'
 #' @examples
 #'
-#' data_cdc_gov_endpoint(data_cdc_gov_ids$nhsn_hrd_prelim)
+#' data_cdc_gov_endpoint(data_cdc_gov_dataset_id("nhsn_hrd_prelim"))
 #'
-#' data_cdc_gov_endpoint(data_cdc_gov_ids$nssp_prop_ed_visits)
+#' data_cdc_gov_dataset_id("nssp_prop_ed_visits") |>
+#'   data_cdc_gov_endpoint()
+#'
+#' @export
 data_cdc_gov_endpoint <- function(dataset_id) {
   return(glue::glue("https://data.cdc.gov/resource/{dataset_id}.json"))
+}
+
+
+#' Construct a base SOQL query pointing at at data.cdc.gov endpoint.
+#'
+#' @param dataset_id Dataset ID, as a string.
+#' @return A [soql:soql()] object pointing at the dataset's JSON
+#' API endpoint on `data.cdc.gov`.
+#' @examples
+#'
+#' data_cdc_gov_dataset_id("nssp_prop_ed_visits") |>
+#'   data_cdc_gov_endpoint() |>
+#'   data_cdc_gov_base_query()
+#'
+#' @export
+data_cdc_gov_base_query <- function(dataset_id) {
+  return(
+    soql::soql() |>
+      soql::soql_add_endpoint(data_cdc_gov_endpoint(dataset_id))
+  )
 }
 
 
@@ -53,16 +143,16 @@ data_cdc_gov_endpoint <- function(dataset_id) {
 #' Default API requests for forecasttools via
 #' httr2
 #'
-#' @param url URL for the request to perform, passed
-#' as the url argument to [httr2::request()].
+#' @param url URL for the request to perform, passed as the `url`
+#' argument to [httr2::request()].
 #' @param api_key_id API key id to use when authenticating.
 #' If `NULL` or the empty string (`""`), treated as not provided.
 #' @param api_key_secret API key secret to use when authenticating.
 #' If `NULL` or the empty string (`""`), treated as not provided.
 #' @param api_key_creation_url The user will be warned if they fail
-#' to provide an `api_key_id` and `api_key_secret`. Provide this optional
-#' argument to direct the user to a website where they can create
-#' those credentials. See [.warn_no_api_creds()].
+#' to provide an `api_key_id` and `api_key_secret`. Provide this
+#' optional argument to direct the user to a website where they can
+#' create those credentials. See [.warn_no_api_creds()].
 #' @keywords internal
 .perform_api_request <- function(
   url,
@@ -153,7 +243,9 @@ data_cdc_gov_endpoint <- function(dataset_id) {
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
 pull_nhsn <- function(
-  api_endpoint = data_cdc_gov_endpoint(data_cdc_gov_ids$nhsn_hrd_prelim),
+  api_endpoint = data_cdc_gov_endpoint(data_cdc_gov_dataset_id(
+    "nhsn_hrd_prelim"
+  )),
   api_key_id = Sys.getenv("NHSN_API_KEY_ID"),
   api_key_secret = Sys.getenv("NHSN_API_KEY_SECRET"),
   start_date = NULL,

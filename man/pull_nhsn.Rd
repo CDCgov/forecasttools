@@ -5,7 +5,7 @@
 \title{Pull NHSN data from \code{data.cdc.gov}}
 \usage{
 pull_nhsn(
-  api_endpoint = data_cdc_gov_endpoint(data_cdc_gov_ids$nhsn_hrd_prelim),
+  api_endpoint = data_cdc_gov_endpoint(data_cdc_gov_dataset_id("nhsn_hrd_prelim")),
   api_key_id = Sys.getenv("NHSN_API_KEY_ID"),
   api_key_secret = Sys.getenv("NHSN_API_KEY_SECRET"),
   start_date = NULL,
