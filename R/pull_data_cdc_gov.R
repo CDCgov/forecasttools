@@ -189,19 +189,140 @@ data_cdc_gov_base_query <- function(dataset_id) {
   return(response)
 }
 
-#' Pull NHSN data from `data.cdc.gov`
+#' Default processing for a SODA response from `data.cdc.gov`
 #'
-#' Pull relevant epidemiological
-#' data from NHSN, defaulting to the
-#' [`data.cdc.gov`](https://data.cdc.gov)
-#' public API endpoint.
+#' Returns a data frame and optionally errors if a query row
+#' limit was hit.
 #'
-#' @param api_endpoint API endpoint to
-#' use. Defaults to the `https:`/`.json` Socrata
-#' endpoint for NHSN COVID, Influenza, and RSV Wednesday release of
-#' data on [`data.cdc.gov`](https://data.cdc.gov), namely
-#' [`data.cdc.gov/resource/mpgq-jmmr.json`
-#' ](https://data.cdc.gov/resource/mpgq-jmmr.json)
+#' @param response Response to process, as the output of [httr::req_perform()].
+#' @param limit Limit number of rows for the SODA query.
+#' @param error_on_limit Raise an error if the number
+#' of rows returned is equal to the maximum? Default `TRUE`.
+#'
+#' @keywords internal
+.process_data_cdc_gov_response <- function(
+  response,
+  limit,
+  error_on_limit = TRUE
+) {
+  df <- httr2::resp_body_json(response) |>
+    dplyr::bind_rows() |>
+    tibble::as_tibble()
+
+  if (error_on_limit && nrow(df) >= limit) {
+    cli::cli_abort(glue::glue(
+      "Query retrieved a number of ",
+      "records equal to the query limit. ",
+      "Some matching records may therefore ",
+      "be excluded. Try a narrower query, a ",
+      "higher limit, or, if this was intended, ",
+      "set `error_on_limit = FALSE`."
+    ))
+  }
+
+  return(df)
+}
+
+#' Helper function for common Socrata open data
+#' API (SODA) queries targeted at `data.cdc.gov` datasets.
+#'
+#' @param dataset_name Name of the dataset to query.
+#' @param start_date Pull only rows with dates
+#' greater than or equal to this date. If `NULL`,
+#' no minimum date. Default `NULL`.
+#' @param end_date Pull only rows with dates
+#' less than or equal to this date. If `NULL`,
+#' no maximum date. Default `NULL`.
+#' @param columns Vector of columns to retrieve, in
+#' addition to the dataset's date and location columns, which
+#' are always retrieved. If `NULL`, retrieve all columns.
+#' Default `NULL`.
+#' @param locations Vector of locations to
+#' retrieve, in the format of the dataset's location
+#' column. If `NULL`, retrieve all. Default `NULL`.
+#' @param limit limit to the number of rows to retrieve.
+#' Default 1e5.
+#' @param order_by Vector of columns by which to order the
+#' results, if any. Default `NULL` (do not order the dataset.
+#' @param desc whether to order descending instead of
+#' ascending. Default `FALSE` (order ascending).
+#' @param ... additional arguments (ignored for now)
+#' @return the query as [soql::soql()] output
+#' @export
+data_cdc_gov_soda_query <- function(
+  dataset_name,
+  start_date = NULL,
+  end_date = NULL,
+  columns = NULL,
+  locations = NULL,
+  limit = 1e5,
+  order_by = NULL,
+  desc = FALSE,
+  ...
+) {
+  checkmate::assert_scalar(dataset_name)
+  checkmate::assert_names(
+    dataset_name,
+    subset.of = names(data_cdc_gov_datasets)
+  )
+
+  dataset_info <- data_cdc_gov_datasets[[dataset_name]]
+
+  date_col <- dataset_info$date_column
+  loc_col <- dataset_info$location_column
+
+  cols <- if (!is.null(columns)) {
+    c(loc_col, date_col, columns)
+  } else {
+    NULL
+  }
+
+  query <- data_cdc_gov_base_query(dataset_info$id) |>
+    soql_nullable_select(cols) |>
+    soql_nullable_where(
+      date_col,
+      ">=",
+      start_date
+    ) |>
+    soql_nullable_where(
+      date_col,
+      "<=",
+      end_date
+    ) |>
+    soql_nullable_is_in(
+      loc_col,
+      locations
+    )
+
+  ## need to add order_by columns sequentially
+  ## to ensure the specified desc option is applied to each
+  if (!is.null(order_by)) {
+    for (x in unique(order_by)) query <- soql::soql_order(query, x, desc = desc)
+  }
+
+  ## do limit string formatting
+  ## manually since soql::soql_limit()
+  ## coerces input to numeric and then
+  ## string formats with XeY notation
+  ## (e.g. 100000 as '1e5'), which endpoints
+  ## will fail to parse
+  query$clauses$limit <- sprintf("%d", as.numeric(limit))
+
+  return(query)
+}
+
+
+#' Pull NHSN Hospital Respiratory data from `data.cdc.gov`
+#'
+#' Defaults to the [`data.cdc.gov`](https://data.cdc.gov)
+#' public API endpoint for Wednesday preliminary
+#' releases.
+#'
+#' @param release HRD release to pull.
+#' One of `"prelim"` (preliminary weekly data release
+#' typically occurs on Wednesdays) or `"final"`
+#' final weekly data release, typically occurs on Fridays. Default
+#' `"prelim"`.
 #' @param api_key_id Key ID of an API key to use
 #' when querying the dataset. Not required,
 #' but polite and reduces throttling.
@@ -209,11 +330,11 @@ data_cdc_gov_base_query <- function(dataset_id) {
 #' [`data.cdc.gov/profile/edit/developer_settings`
 #' ](https://data.cdc.gov/profile/edit/developer_settings).
 #' Defaults to the value of the environment variable
-#' `NHSN_API_KEY_ID`, if any.
+#' `DATA_CDC_GOV_API_KEY_ID`, if any.
 #' @param api_key_secret Associated key secret
 #' for the API key given in `api_key_id`.
 #' Defaults to the value of the environment variable
-#' `NHSN_API_KEY_SECRET`, if any.
+#' `DATA_CDC_GOV_API_KEY_SECRET`, if any.
 #' @param start_date Pull only rows with dates
 #' greater than or equal to this date. If `NULL`,
 #' no minimum date. Default `NULL`.
@@ -242,16 +363,14 @@ data_cdc_gov_base_query <- function(dataset_id) {
 #' @param ... other arguments passed to [nhsn_soda_query()]
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
-pull_nhsn <- function(
-  api_endpoint = data_cdc_gov_endpoint(data_cdc_gov_dataset_id(
-    "nhsn_hrd_prelim"
-  )),
-  api_key_id = Sys.getenv("NHSN_API_KEY_ID"),
-  api_key_secret = Sys.getenv("NHSN_API_KEY_SECRET"),
+pull_nhsn_hrd <- function(
+  release = "prelim",
+  api_key_id = Sys.getenv("DATA_CDC_GOV_API_KEY_ID"),
+  api_key_secret = Sys.getenv("DATA_CDC_GOV_API_KEY_SECRET"),
   start_date = NULL,
   end_date = NULL,
   columns = NULL,
-  jurisdictions = NULL,
+  locations = NULL,
   order_by = c(
     "jurisdiction",
     "weekendingdate"
@@ -261,8 +380,13 @@ pull_nhsn <- function(
   error_on_limit = TRUE,
   ...
 ) {
-  df <- nhsn_soda_query(
-    api_endpoint,
+  checkmate::expect_scalar(release)
+  checkmate::expect_names(release, subset.of = c("prelim", "final"))
+
+  dataset_name <- glue::glue("nhsn_hrd_{release}")
+
+  df <- data_cdc_gov_soda_query(
+    dataset_name = dataset_name,
     start_date = start_date,
     end_date = end_date,
     columns = columns,
@@ -278,102 +402,10 @@ pull_nhsn <- function(
       api_key_secret,
       api_key_creation_url = .data_cdc_gov_api_creation_url
     ) |>
-    httr2::resp_body_json() |>
-    dplyr::bind_rows() |>
-    tibble::as_tibble()
-
-  if (error_on_limit && nrow(df) >= limit) {
-    cli::cli_abort(glue::glue(
-      "Query retrieved a number of ",
-      "records equal to the query limit. ",
-      "Some matching records may therefore ",
-      "be excluded. Try a narrower query, a ",
-      "higher limit, or, if this was intended, ",
-      "set `error_on_limit = FALSE`."
-    ))
-  }
-
-  return(df)
-}
-
-
-#' Construct a Socrata open data
-#' API (SODA) query for the NHSN Hospital Respiratory
-#' Data set.
-#'
-#' @param api_endpoint Base API endpoint URL to use
-#' when constructing the query.
-#' @param start_date Pull only rows with dates
-#' greater than or equal to this date. If `NULL`,
-#' no minimum date. Default `NULL`.
-#' @param end_date Pull only rows with dates
-#' less than or equal to this date. If `NULL`,
-#' no maximum date. Default `NULL`.
-#' @param columns Vector of columns to retrieve, in
-#' addition to `weekendingdate` and `jurisdiction`, which
-#' are always retrieved. If `NULL`, retrieve all columns.
-#' Default `NULL`.
-#' @param jurisdictions Vector of jurisdictions to
-#' retrieve, by two letter US postal service code.
-#' If `NULL`, retrieve all. Default `NULL`.
-#' @param limit limit to the number of rows to retrieve.
-#' Default 1e5.
-#' @param order_by Vector of columns by which to order the
-#' results. Default `c("jurisdiction", "weekendingdate")`
-#' @param desc whether to order descending instead of
-#' ascending. Default `FALSE` (order ascending).
-#' @param ... additional arguments (ignored for now)
-#' @return the query as [soql::soql()] output
-#' @export
-nhsn_soda_query <- function(
-  api_endpoint,
-  start_date = NULL,
-  end_date = NULL,
-  columns = NULL,
-  jurisdictions = NULL,
-  limit = 1e5,
-  order_by = c(
-    "jurisdiction",
-    "weekendingdate"
-  ),
-  desc = FALSE,
-  ...
-) {
-  cols <- if (!is.null(columns)) {
-    c("jurisdiction", "weekendingdate", columns)
-  } else {
-    NULL
-  }
-
-  query <- soql::soql() |>
-    soql::soql_add_endpoint(api_endpoint) |>
-    soql_nullable_select(cols) |>
-    soql_nullable_where(
-      "weekendingdate",
-      ">=",
-      start_date
-    ) |>
-    soql_nullable_where(
-      "weekendingdate",
-      "<=",
-      end_date
-    ) |>
-    soql_nullable_is_in(
-      "jurisdiction",
-      jurisdictions
+    .process_data_cdc_cov_response(
+      limit = limit,
+      error_on_limit = error_on_limit
     )
 
-  ## need to add order_by columns sequentially
-  ## to ensure the specified desc option is applied to each
-  for (x in unique(order_by)) query <- soql::soql_order(query, x, desc = desc)
-
-  ## do limit string formatting
-  ## manually since soql::soql_limit()
-  ## coerces input to numeric and then
-  ## string formats with XeY notation
-  ## (e.g. 100000 as '1e5'), which endpoints
-  ## will fail to parse
-  query$clauses$limit <- sprintf("%d", as.numeric(limit))
-
-  return(query)
+  return(df)
 }
