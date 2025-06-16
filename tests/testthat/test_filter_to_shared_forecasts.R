@@ -72,6 +72,34 @@ test_that("get_shared_forecasts accords with manual expectation", {
 })
 
 
+test_that("get_shared_forecasts defaults to all available comparators", {
+  result_default <- get_shared_forecasts(scoringutils::example_quantile)
+  result_manual <- get_shared_forecasts(
+    scoringutils::example_quantile,
+    comparator_values = unique(scoringutils::example_quantile$model)
+  )
+  expect_equal(result_default, result_manual)
+})
+
+
+test_that(
+  paste0(
+    "filter_to_shared_forecasts defaults to all ",
+    "available comparators"
+  ),
+  {
+    result_default <- filter_to_shared_forecasts(
+      scoringutils::example_sample_discrete
+    )
+    result_manual <- filter_to_shared_forecasts(
+      scoringutils::example_sample_discrete,
+      comparator_values = unique(scoringutils::example_quantile$model)
+    )
+    expect_equal(result_default, result_manual)
+  }
+)
+
+
 test_that("filter_to_shared_forecasts output has expected properties", {
   ## result number of rows should be divisible
   ## by number of comparator values if there is any
