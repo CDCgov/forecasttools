@@ -1,67 +1,93 @@
-#' Filter a set of forecasts or forecast scores to
-#' include only forecasts present for both halves
-#' of a pairwise comparison.
+#' Compute the set of forcasts shared across all
+#' unique values of a comparator column.
 #'
-#' Exposes the internal filtering logic of
-#' [scoringutils:::compare_forecasts()] to
-#' the user. Code adapted from that function, which is
-#' MIT licensed.
+#' Similar to the internal shared forecast computation logic of
+#' [scoringutils:::compare_forecasts()] but exposed to the user
+#' and for n-wise comparison rather than pairwise.
 #'
 #' @param forecasts Table of forecasts or scores to filter,
 #' as a valid input to [scoringutils::get_forecast_unit()].
-#' @param name_comparator1 Character, name of the first comparator.
-#' @param name_comparator2 Character, name of the comparator to compare
-#' against.
+#' @param comparator_values Character vector of comparator values
+#' for which to compute shared forecasts.
 #' @param compare Name of the column containing the comparator values.
 #' Default `"model"`.
-#' @return Table filtered to contain only forecasts from the two
-#' comparators that both share.
+#' @return Table of forecast unit values for all and only the shared
+#' forecasts, which can be joined to the original table for filtering
+#' purposes (see [filter_to_shared_forecasts()].
+#'
+#' @seealso [filter_to_shared_forecasts()]
+#'
 #' @examples
 #'
-#' filter_to_shared_forecasts(scoringutils::example_quantile,
-#'                            "EuroCOVIDhub-ensemble",
-#'                            "UMass-MechBayes")
+#' get_shared_forecasts(scoringutils::example_quantile,
+#'                            c("EuroCOVIDhub-ensemble", "UMass-MechBayes"))
 #'
-#' scoringutils::example_quantile |>
-#'     scoringutils::score() |>
-#'     filter_to_shared_forecasts("EuroCOVIDhub-ensemble",
-#'                                "UMass-MechBayes")
 #' @export
-filter_to_shared_forecasts <- function(
+get_shared_forecasts <- function(
   forecasts,
-  name_comparator1,
-  name_comparator2,
+  comparator_values,
   compare = "model"
 ) {
   forecasts <- data.table::as.data.table(forecasts)
   checkmate::assert_names(names(forecasts), must.include = compare)
   checkmate::assert_scalar(compare)
+  comparator_values <- unique(comparator_values)
   forecast_unit <- scoringutils::get_forecast_unit(forecasts)
 
-  if (name_comparator1 == name_comparator2) {
-    stop(glue::glue(
-      "Must provide two distinct comparator values ",
-      "for which to compute shared forecasts. Got ",
-      "'{name_comparator1}', '{name_comparator2}'."
-    ))
-  }
+  ## remove compare column from 'by' before grouping
+  join_by <- setdiff(forecast_unit, compare)
 
-  ## select only columns in c(by, var)
-  a <- forecasts[get(compare) == name_comparator1]
-  b <- forecasts[get(compare) == name_comparator2]
+  shared_forecasts <- forecasts |>
+    dplyr::filter(.data[[compare]] %in% !!comparator_values) |>
+    dplyr::distinct(dplyr::across(forecast_unit)) |>
+    dplyr::summarise(
+      models_present = list(.data$model),
+      .by = join_by,
+      .groups = "drop"
+    ) |>
+    dplyr::filter(purrr::map_lgl(
+      .data$models_present,
+      \(x) setequal(comparator_values, x)
+    )) |>
+    dplyr::select(tidyselect::all_of(join_by))
 
-  ## remove compare column from 'by' before merging
-  merge_by <- setdiff(forecast_unit, compare)
+  return(shared_forecasts)
+}
 
-  overlap <- dplyr::inner_join(
-    a[, ..merge_by],
-    b[, ..merge_by],
-    by = merge_by
-  ) |>
-    dplyr::distinct()
+#'
+#' @param forecasts Table of forecasts or scores to filter,
+#' as a valid input to [scoringutils::get_forecast_unit()].
+#' @param comparator_values Character vector of comparator values
+#' for which to compute shared forecasts.
+#' @param compare Name of the column containing the comparator values.
+#' Default `"model"`.
+#' @return Table filtered to contain only forecasts present for
+#' all unique values of `comparator_values`.
+#' @examples
+#'
+#' filter_to_shared_forecasts(scoringutils::example_quantile,
+#'                            c("EuroCOVIDhub-ensemble", "UMass-MechBayes"))
+#'
+#' scoringutils::example_quantile |>
+#'     scoringutils::score() |>
+#'     filter_to_shared_forecasts(c("EuroCOVIDhub-ensemble",
+#'                                  "epiforecasts-EpiNow2",
+#'                                  "UMass-MechBayes"))
+#' @export
+filter_to_shared_forecasts <- function(
+  forecasts,
+  comparator_values,
+  compare = "model"
+) {
+  shared_forecasts <- get_shared_forecasts(
+    forecasts,
+    comparator_values,
+    compare = compare
+  )
 
-  return(dplyr::bind_rows(
-    dplyr::inner_join(a, overlap, by = merge_by),
-    dplyr::inner_join(b, overlap, by = merge_by)
+  return(dplyr::inner_join(
+    forecasts,
+    shared_forecasts,
+    by = names(shared_forecasts)
   ))
 }
