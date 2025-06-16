@@ -29,27 +29,26 @@ get_shared_forecasts <- function(
   compare = "model"
 ) {
   forecasts <- data.table::as.data.table(forecasts)
+  forecast_unit <- scoringutils::get_forecast_unit(forecasts)
   checkmate::assert_names(names(forecasts), must.include = compare)
   checkmate::assert_scalar(compare)
-  comparator_values <- unique(comparator_values)
-  forecast_unit <- scoringutils::get_forecast_unit(forecasts)
 
   ## remove compare column from 'by' before grouping
   join_by <- setdiff(forecast_unit, compare)
 
   shared_forecasts <- forecasts |>
+    tibble::tibble() |>
     dplyr::filter(.data[[compare]] %in% !!comparator_values) |>
-    dplyr::distinct(dplyr::across(forecast_unit)) |>
+    dplyr::distinct(dplyr::across(dplyr::all_of(forecast_unit))) |>
     dplyr::summarise(
       models_present = list(.data$model),
-      .by = join_by,
-      .groups = "drop"
+      .by = dplyr::all_of(join_by)
     ) |>
     dplyr::filter(purrr::map_lgl(
       .data$models_present,
       \(x) setequal(comparator_values, x)
     )) |>
-    dplyr::select(tidyselect::all_of(join_by))
+    dplyr::select(dplyr::all_of(join_by))
 
   return(shared_forecasts)
 }
@@ -61,12 +60,14 @@ get_shared_forecasts <- function(
 #' for which to compute shared forecasts.
 #' @param compare Name of the column containing the comparator values.
 #' Default `"model"`.
-#' @return Table filtered to contain only forecasts present for
-#' all unique values of `comparator_values`.
+#' @return Table filtered to containing only forecasts corresponding to
+#' entries in `comparator_values` that are present for _all_ entries
+#' in `comparator_values`.
 #' @examples
 #'
-#' filter_to_shared_forecasts(scoringutils::example_quantile,
-#'                            c("EuroCOVIDhub-ensemble", "UMass-MechBayes"))
+#' filter_to_shared_forecasts(
+#'     scoringutils::example_quantile,
+#'     c("EuroCOVIDhub-ensemble", "UMass-MechBayes"))
 #'
 #' scoringutils::example_quantile |>
 #'     scoringutils::score() |>
@@ -79,6 +80,9 @@ filter_to_shared_forecasts <- function(
   comparator_values,
   compare = "model"
 ) {
+  checkmate::assert_names(names(forecasts), must.include = compare)
+  checkmate::assert_scalar(compare)
+
   shared_forecasts <- get_shared_forecasts(
     forecasts,
     comparator_values,
@@ -86,7 +90,7 @@ filter_to_shared_forecasts <- function(
   )
 
   return(dplyr::inner_join(
-    forecasts,
+    dplyr::filter(forecasts, .data[[compare]] %in% comparator_values),
     shared_forecasts,
     by = names(shared_forecasts)
   ))
