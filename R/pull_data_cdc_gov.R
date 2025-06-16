@@ -413,6 +413,13 @@ pull_nhsn_hrd <- function(
 
 #' Pull NHSN data from `data.cdc.gov`
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function has been replaced by [pull_nhsn_hrd()],
+#' which has a slightly different interface and better
+#' leverages general tooling for interacting with data.cdc.gov.
+#'
 #' Pull relevant epidemiological
 #' data from NHSN, defaulting to the
 #' [`data.cdc.gov`](https://data.cdc.gov)
@@ -481,6 +488,11 @@ pull_nhsn <- function(
   error_on_limit = TRUE,
   ...
 ) {
+  lifecycle::deprecate_warn(
+    "0.1.7",
+    "pull_nhsn()",
+    details = "Use pull_nhsn_hrd() instead."
+  )
   df <- nhsn_soda_query(
     api_endpoint,
     start_date = start_date,
@@ -520,6 +532,13 @@ pull_nhsn <- function(
 #' Construct a Socrata open data
 #' API (SODA) query for the NHSN Hospital Respiratory
 #' Data set.
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function has been replaced the more general
+#' [data_cdc_gov_soda_query()], which it now uses
+#' internally. Use that function instead.
 #'
 #' @param api_endpoint Base API endpoint URL to use
 #' when constructing the query.
