@@ -5,7 +5,7 @@
 #' [scoringutils:::compare_forecasts()] but exposed to the user
 #' and for n-wise comparison rather than pairwise.
 #'
-#' @param forecasts Table of forecasts or scores to filter,
+#' @param tbl Table of forecasts or scores to filter,
 #' as a valid input to [scoringutils::get_forecast_unit()].
 #' @param comparator_values Character vector of comparator values
 #' for which to compute shared forecasts.
@@ -24,19 +24,18 @@
 #'
 #' @export
 get_shared_forecasts <- function(
-  forecasts,
+  tbl,
   comparator_values,
   compare = "model"
 ) {
-  forecasts <- data.table::as.data.table(forecasts)
-  forecast_unit <- scoringutils::get_forecast_unit(forecasts)
-  checkmate::assert_names(names(forecasts), must.include = compare)
+  forecast_unit <- scoringutils::get_forecast_unit(tbl)
+  checkmate::assert_names(names(tbl), must.include = compare)
   checkmate::assert_scalar(compare)
 
   ## remove compare column from 'by' before grouping
   join_by <- setdiff(forecast_unit, compare)
 
-  shared_forecasts <- forecasts |>
+  shared_forecasts <- tbl |>
     tibble::tibble() |>
     dplyr::filter(.data[[compare]] %in% !!comparator_values) |>
     dplyr::distinct(dplyr::across(dplyr::all_of(forecast_unit))) |>
@@ -54,7 +53,7 @@ get_shared_forecasts <- function(
 }
 
 #'
-#' @param forecasts Table of forecasts or scores to filter,
+#' @param tbl Table of forecasts or scores to filter,
 #' as a valid input to [scoringutils::get_forecast_unit()].
 #' @param comparator_values Character vector of comparator values
 #' for which to compute shared forecasts.
@@ -76,21 +75,21 @@ get_shared_forecasts <- function(
 #'                                  "UMass-MechBayes"))
 #' @export
 filter_to_shared_forecasts <- function(
-  forecasts,
+  tbl,
   comparator_values,
   compare = "model"
 ) {
-  checkmate::assert_names(names(forecasts), must.include = compare)
+  checkmate::assert_names(names(tbl), must.include = compare)
   checkmate::assert_scalar(compare)
 
   shared_forecasts <- get_shared_forecasts(
-    forecasts,
+    tbl,
     comparator_values,
     compare = compare
   )
 
   return(dplyr::inner_join(
-    dplyr::filter(forecasts, .data[[compare]] %in% comparator_values),
+    dplyr::filter(tbl, .data[[compare]] %in% comparator_values),
     shared_forecasts,
     by = names(shared_forecasts)
   ))
