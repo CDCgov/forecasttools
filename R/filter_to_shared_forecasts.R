@@ -95,7 +95,7 @@ filter_to_shared_forecasts <- function(
 
   shared_forecasts <- get_shared_forecasts(
     tbl,
-    comparator_values,
+    comparator_values = comparator_values,
     compare = compare
   )
 
