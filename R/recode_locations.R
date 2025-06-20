@@ -75,6 +75,10 @@ location_lookup <- function(
 }
 
 
+#' @rdname location_lookup
+#' @export
+us_location_lookup <- location_lookup
+
 #' Convert a two-letter USA location abbreviation to a
 #' two-character USA location code
 #'
@@ -88,15 +92,9 @@ location_lookup <- function(
 #' @return vector of the same length recoded as hub-style
 #' location codes
 #' @export
-#' @seealso [us_loc_code_to_abbr()]
+#' @seealso [location_lookup()]
 us_loc_abbr_to_code <- function(abbrs) {
-  mask <- match(
-    x = abbrs,
-    table = forecasttools::us_location_table$short_name
-  )
-  return(
-    forecasttools::us_location_table$location_code[mask]
-  )
+  return(location_lookup(abbrs, "abbr", "hub"))
 }
 
 #' Convert a 2-character USA location code
@@ -112,13 +110,7 @@ us_loc_abbr_to_code <- function(abbrs) {
 #' @return vector of the same length recoded as USPS
 #' two letter abbreviations.
 #' @export
-#' @seealso [us_loc_abbr_to_code()]
+#' @seealso [location_lookup()]
 us_loc_code_to_abbr <- function(location_codes) {
-  mask <- match(
-    x = location_codes,
-    table = forecasttools::us_location_table$location_code
-  )
-  return(
-    forecasttools::us_location_table$short_name[mask]
-  )
+  return(location_lookup(location_codes, "hub", "abbr"))
 }
