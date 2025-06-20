@@ -1,3 +1,15 @@
+mock_scorable_table <- tibble::tibble(
+  model = "test_model",
+  target_end_date = as.Date("2023-01-01") + 0:1,
+  horizon = c(1, 2),
+  reference_date = as.Date("2022-12-31"),
+  predicted = c(10, 20),
+  observed = c(12, 18),
+  quantile_level = c(0.5, 0.5)
+) |>
+  scoringutils::as_forecast_quantile()
+
+
 silent_temp_save <- function(
   plot,
   save_filename = "test",
@@ -50,6 +62,62 @@ test_that(
         prediction_interval_width = 0.99999
       ),
       regexp = "Quantiles to plot"
+    )
+  }
+)
+
+
+test_that(
+  paste0(
+    "plot_pred_obs_pointintervals() drops ",
+    "reference_date_col if horizon_col present"
+  ),
+  {
+    # Create a minimal scorable_table with both 'horizon' and 'reference_date'
+    ## Should not error and should not have a `reference_date` column
+    ## in the ggplot data.
+    expect_no_message({
+      result <- plot_pred_obs_pointintervals(mock_scorable_table)
+    })
+    checkmate::expect_names(
+      names(result$data),
+      must.include = c(
+        "model",
+        "predicted",
+        "horizon",
+        "target_end_date",
+        ".lower",
+        ".upper"
+      ),
+      disjunct.from = "reference_date"
+    )
+
+    ## manually dropping reference_date should be equivalent
+    expect_no_message({
+      result_manual <- plot_pred_obs_pointintervals(
+        dplyr::select(mock_scorable_table, -"reference_date")
+      )
+    })
+
+    expect_equal(result, result_manual)
+  }
+)
+
+test_that(
+  paste0(
+    "plot_pred_obs_pointintervals() errors informatively ",
+    "if horizon_col is absent"
+  ),
+  {
+    df <- dplyr::select(mock_scorable_table, -"horizon")
+    checkmate::expect_names(names(df), disjunct.from = "horizon")
+
+    expect_error(
+      plot_pred_obs_pointintervals(df),
+      regexp = paste0(
+        "Table must have a horizon column.",
+        "*horizons_from_target_end_dates"
+      )
     )
   }
 )
