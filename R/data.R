@@ -58,7 +58,7 @@
 #'
 #' Values of `location` are US jurisdictions
 #' and the United States as a whole, using
-#' USPS two-letter codes (the values of `short_name`)
+#' USPS two-letter codes (the values of `abbr`)
 #' in [us_location_table].
 #'
 #' @source <data-raw/prism_thresholds.R>

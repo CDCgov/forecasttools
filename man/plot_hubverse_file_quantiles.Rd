@@ -54,16 +54,12 @@ obtained from \code{forecast_file_path}) and the observed
 data timeseries (obtained from \code{observed_data_path}, if
 provided). Default NULL.}
 
-\item{location_input_format}{format of the provided location
-vector. Permitted formats are \code{"abbr"} (state/territory
-or nation two letter USPS abbreviation), \code{"hub"} (
-legacy 2-digit FIPS code for states and territories, \code{US}
-for the USA as a whole), and \code{"long_name"} (full English
-jurisdiction names; not recommended). Default \code{"abbr"}.}
+\item{location_input_format}{Format of the provided location
+vector. See \code{\link[=to_location_table_column]{to_location_table_column()}} for valid formats.}
 
 \item{location_output_format}{Location format for naming the
-entries of the output list. Accepts the same string
-keys as \code{location_input_format}.}
+entries of the output list. See \code{\link[=to_location_table_column]{to_location_table_column()}}
+for valid formats.}
 
 \item{y_transform}{axis transform passed as the \code{transform}
 argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default \code{"log10"}.}

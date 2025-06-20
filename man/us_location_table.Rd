@@ -7,9 +7,9 @@
 \format{
 A tibble with 58 rows and 3 columns:
 \describe{
-\item{location_code}{2-character location code}
+\item{code}{2-character location code}
 \item{abbr}{2-character location abbreviation}
-\item{long_name}{Full name of the location}
+\item{name}{Full name of the location}
 }
 }
 \source{
