@@ -28,7 +28,7 @@ test_that(
     ]
     result <- us_loc_code_to_abbr(codes)
     expect_equal(length(result), length(codes))
-    expect_equal(expected_codes[3], as.character(NA))
+    expect_equal(expected_abbrs[3], as.character(NA))
     expect_equal(result, expected_abbrs)
   }
 )
