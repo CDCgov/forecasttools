@@ -55,10 +55,10 @@ data timeseries (obtained from \code{observed_data_path}, if
 provided). Default NULL.}
 
 \item{location_input_format}{Format of the provided location
-vector. See \code{\link[=to_location_table_column]{to_location_table_column()}} for valid formats.}
+vector. See \code{\link[=to_us_location_table_column]{to_us_location_table_column()}} for valid formats.}
 
 \item{location_output_format}{Location format for naming the
-entries of the output list. See \code{\link[=to_location_table_column]{to_location_table_column()}}
+entries of the output list. See \code{\link[=to_us_location_table_column]{to_us_location_table_column()}}
 for valid formats.}
 
 \item{y_transform}{axis transform passed as the \code{transform}

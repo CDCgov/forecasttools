@@ -31,11 +31,11 @@ the interval. Default \code{0.025}.}
 the interval. Default \code{0.975}.}
 
 \item{location_input_format}{Format of the hubverse table
-\code{location} column. See \code{\link[=to_location_table_column]{to_location_table_column()}}
+\code{location} column. See \code{\link[=to_us_location_table_column]{to_us_location_table_column()}}
 for valid formats.}
 
 \item{location_output_format}{How to code locations in the output plot.
-See \code{\link[=to_location_table_column]{to_location_table_column()}} for valid formats.}
+See \code{\link[=to_us_location_table_column]{to_us_location_table_column()}} for valid formats.}
 }
 \value{
 A ggplot2 plot of the forecasts as pointintervals

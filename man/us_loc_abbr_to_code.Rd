@@ -22,5 +22,5 @@ in forecast hubs (legacy FIPS code for states and territories,
 \code{US} for the US).
 }
 \seealso{
-\code{\link[=location_lookup]{location_lookup()}}
+\code{\link[=us_location_lookup]{us_location_lookup()}}
 }

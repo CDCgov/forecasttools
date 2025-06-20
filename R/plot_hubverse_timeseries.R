@@ -178,9 +178,9 @@ plot_hubverse_loc_quant_ts <- function(
 #' data timeseries (obtained from `observed_data_path`, if
 #' provided). Default NULL.
 #' @param location_input_format Format of the provided location
-#' vector. See [to_location_table_column()] for valid formats.
+#' vector. See [to_us_location_table_column()] for valid formats.
 #' @param location_output_format Location format for naming the
-#' entries of the output list. See [to_location_table_column()]
+#' entries of the output list. See [to_us_location_table_column()]
 #' for valid formats.
 #' @param y_transform axis transform passed as the `transform`
 #' argument to [ggplot2::scale_y_continuous()]. Default `"log10"`.
@@ -273,10 +273,14 @@ plot_hubverse_file_quantiles <- function(
     locations <- forecast_data |>
       dplyr::distinct(.data$location) |>
       dplyr::pull()
-    location_vector <- location_lookup(locations, "hub", location_output_format)
+    location_vector <- us_location_lookup(
+      locations,
+      "hub",
+      location_output_format
+    )
   } else {
     locations <- base::unique(locations)
-    location_vector <- location_lookup(
+    location_vector <- us_location_lookup(
       locations,
       location_input_format,
       location_output_format

@@ -11,10 +11,10 @@
 #' @param upper_limit_quantile Quantile to plot as the upper bound of
 #' the interval. Default `0.975`.
 #' @param location_input_format Format of the hubverse table
-#' `location` column. See [to_location_table_column()]
+#' `location` column. See [to_us_location_table_column()]
 #' for valid formats.
 #' @param location_output_format How to code locations in the output plot.
-#' See [to_location_table_column()] for valid formats.
+#' See [to_us_location_table_column()] for valid formats.
 #' @return A ggplot2 plot of the forecasts as pointintervals
 #' @export
 plot_hubverse_pointintervals <- function(
@@ -39,7 +39,7 @@ plot_hubverse_pointintervals <- function(
       )
     ) |>
     dplyr::mutate(
-      "location" = location_lookup(
+      "location" = us_location_lookup(
         .data$location,
         location_input_format,
         location_output_format

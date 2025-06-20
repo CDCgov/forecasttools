@@ -1,15 +1,22 @@
 #' Map location format strings to corresponding
-#' location lookup table column names.
+#' us location lookup table column names.
 #'
 #' Convert a location format string to the name of the
 #' corresponding column in [forecasttools::us_location_table],
 #' raising an error if an unknown format is provided.
 #'
 #' @param location_format the format string to convert.
+#' Valid values are:
+#' -`"abbr"` or `"short_name"`: USPS 2-letter abbreviation
+#' - `"code"` or `"hub"`: Legacy 2-digit FIPS code for states and territories,
+#' `US` for the US as a whole, the schema typically used in forecast
+#' hubs.
+#' - `"long_name"` or `"name"`: Full location name, as a string.
+#'
 #' @return the corresponding column name in
 #' [forecasttools::us_location_table].
 #' @export
-to_location_table_column <- function(location_format) {
+to_us_location_table_column <- function(location_format) {
   col_keys <- list(
     "abbr" = "abbr",
     "short_name" = "abbr",
@@ -28,6 +35,9 @@ to_location_table_column <- function(location_format) {
   }
   return(col_key)
 }
+
+#' @rdname to_us_location_table_column
+to_location_table_column <- to_us_location_table_column
 
 #' Look up rows of the USA location table
 #' corresponding to the entries of a given
@@ -58,12 +68,12 @@ to_location_table_column <- function(location_format) {
 #' values of those rows for a given column, as specified in
 #' `location_output_format`.
 #' @export
-location_lookup <- function(
+us_location_lookup <- function(
   location_vector,
   location_input_format,
   location_output_format = NULL
 ) {
-  tab_col <- to_location_table_column(location_input_format)
+  tab_col <- to_us_location_table_column(location_input_format)
   mask <- match(
     x = as.character(location_vector),
     table = forecasttools::us_location_table[[tab_col]]
@@ -71,16 +81,16 @@ location_lookup <- function(
 
   result <- forecasttools::us_location_table[mask, ]
   if (!is.null(location_output_format)) {
-    result <- result[[to_location_table_column(location_output_format)]]
+    result <- result[[to_us_location_table_column(location_output_format)]]
   }
 
   return(result)
 }
 
 
-#' @rdname location_lookup
+#' @rdname us_location_lookup
 #' @export
-us_location_lookup <- location_lookup
+location_lookup <- us_location_lookup
 
 #' Convert a two-letter USA location abbreviation to a
 #' two-character USA location code
@@ -95,9 +105,9 @@ us_location_lookup <- location_lookup
 #' @return vector of the same length recoded as hub-style
 #' location codes
 #' @export
-#' @seealso [location_lookup()]
+#' @seealso [us_location_lookup()]
 us_loc_abbr_to_code <- function(abbrs) {
-  return(location_lookup(abbrs, "abbr", "hub"))
+  return(us_location_lookup(abbrs, "abbr", "hub"))
 }
 
 #' Convert a 2-character USA location code
@@ -113,7 +123,7 @@ us_loc_abbr_to_code <- function(abbrs) {
 #' @return vector of the same length recoded as USPS
 #' two letter abbreviations.
 #' @export
-#' @seealso [location_lookup()]
+#' @seealso [us_location_lookup()]
 us_loc_code_to_abbr <- function(location_codes) {
-  return(location_lookup(location_codes, "hub", "abbr"))
+  return(us_location_lookup(location_codes, "hub", "abbr"))
 }
