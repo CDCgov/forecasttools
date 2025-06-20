@@ -29,7 +29,7 @@ Values of \code{breaks} are \code{prop_very_low},
 
 Values of \code{location} are US jurisdictions
 and the United States as a whole, using
-USPS two-letter codes (the values of \code{short_name})
+USPS two-letter codes (the values of \code{abbr})
 in \link{us_location_table}.
 }
 \keyword{datasets}

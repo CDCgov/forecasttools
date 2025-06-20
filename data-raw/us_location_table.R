@@ -1,7 +1,7 @@
 nation <- tibble::tibble(
-  location_code = "US",
-  short_name = "US",
-  long_name = "United States"
+  code = "US",
+  abbr = "US",
+  name = "United States"
 )
 
 states <- readr::read_delim(
@@ -9,9 +9,9 @@ states <- readr::read_delim(
   delim = "|"
 ) |>
   dplyr::select(
-    location_code = STATE,
-    short_name = STUSAB,
-    long_name = STATE_NAME
+    code = STATE,
+    abbr = STUSAB,
+    name = STATE_NAME
   )
 
 us_location_table <- dplyr::bind_rows(
