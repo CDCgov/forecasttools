@@ -60,18 +60,18 @@ plot_hubverse_loc_quant_ts <- function(
   target_name = NULL,
   autotitle = TRUE
 ) {
-  loc_table <- location_lookup(location, location_format)
+  loc <- location_lookup(location, location_format, "hub")
   loc_data <- forecast_data |>
     dplyr::filter(
-      .data$location == !!loc_table$location_code,
+      .data$location == !!loc,
       .data$output_type == "quantile"
     ) |>
     dplyr::rename(date = "target_end_date")
   loc_obs <- observed_data |>
-    dplyr::filter(.data$location == !!loc_table$location_code)
+    dplyr::filter(.data$location == !!loc)
 
   if (autotitle) {
-    loc_name <- loc_table$long_name[1]
+    loc_name <- location_lookup(location, location_format, "name")
     plot_date <- loc_data$reference_date[1]
     plot_title <- stringr::str_glue(
       "{loc_name} forecasts of {plot_date}"
@@ -277,18 +277,18 @@ plot_hubverse_file_quantiles <- function(
     locations <- forecast_data |>
       dplyr::distinct(.data$location) |>
       dplyr::pull()
-    loc_table <- location_lookup(locations, "hub")
+    location_vector <- location_lookup(locations, "hub", location_output_format)
   } else {
     locations <- base::unique(locations)
-    loc_table <- location_lookup(locations, location_input_format)
+    location_vector <- location_lookup(
+      locations,
+      location_input_format,
+      location_output_format
+    )
   }
 
-  location_vector <- loc_table |>
-    dplyr::pull(!!to_location_table_column(location_output_format)) |>
-    purrr::set_names()
-
   list_of_plots <- purrr::map(
-    location_vector,
+    location_vector |> purrr::set_names(),
     \(loc) {
       plot_hubverse_loc_quant_ts(
         loc,
