@@ -7,9 +7,9 @@
 #' @format
 #' A tibble with 58 rows and 3 columns:
 #' \describe{
-#'   \item{location_code}{2-character location code}
-#'   \item{short_name}{2-character location abbreviation}
-#'   \item{long_name}{Full name of the location}
+#'   \item{code}{2-character location code}
+#'   \item{abbr}{2-character location abbreviation}
+#'   \item{name}{Full name of the location}
 #' }
 #' @source <https://www2.census.gov/geo/docs/reference/state.txt>
 #' @source data-raw/us_location_table.R

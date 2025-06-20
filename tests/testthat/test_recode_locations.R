@@ -6,8 +6,8 @@ test_that(
   {
     # Example values, adjust as per your actual us_location_table
     abbrs <- c("MA", "TX", "PR", "ZZ") # "ZZ" is invalid
-    expected_codes <- forecasttools::us_location_table$location_code[
-      match(abbrs, forecasttools::us_location_table$short_name)
+    expected_codes <- forecasttools::us_location_table$code[
+      match(abbrs, forecasttools::us_location_table$abbr)
     ]
     result <- us_loc_abbr_to_code(abbrs)
     expect_equal(length(result), length(abbrs))
@@ -23,8 +23,8 @@ test_that(
   ),
   {
     codes <- c("25", "48", "XX", 72) # "XX" is invalid
-    expected_abbrs <- forecasttools::us_location_table$short_name[
-      match(codes, forecasttools::us_location_table$location_code)
+    expected_abbrs <- forecasttools::us_location_table$abbr[
+      match(codes, forecasttools::us_location_table$code)
     ]
     result <- us_loc_code_to_abbr(codes)
     expect_equal(length(result), length(codes))
@@ -39,9 +39,12 @@ test_that(
     "and errors on invalid input"
   ),
   {
-    expect_equal(to_location_table_column("abbr"), "short_name")
-    expect_equal(to_location_table_column("hub"), "location_code")
-    expect_equal(to_location_table_column("long_name"), "long_name")
+    expect_equal(to_location_table_column("abbr"), "abbr")
+    expect_equal(to_location_table_column("short_name"), "abbr")
+    expect_equal(to_location_table_column("code"), "code")
+    expect_equal(to_location_table_column("hub"), "code")
+    expect_equal(to_location_table_column("name"), "name")
+    expect_equal(to_location_table_column("long_name"), "name")
     expect_error(to_location_table_column("invalid_format"))
   }
 )
@@ -55,15 +58,15 @@ test_that(
     abbrs <- c("MA", "TX", "PR", "ZZ")
     # Get expected rows
     expected <- forecasttools::us_location_table[
-      match(abbrs, forecasttools::us_location_table$short_name),
+      match(abbrs, forecasttools::us_location_table$abbr),
     ]
 
     result <- location_lookup(abbrs, "abbr")
     expect_equal(result, expected)
 
     # Output column only
-    expected_codes <- forecasttools::us_location_table$location_code[
-      match(abbrs, forecasttools::us_location_table$short_name)
+    expected_codes <- forecasttools::us_location_table$code[
+      match(abbrs, forecasttools::us_location_table$abbr)
     ]
     codes_result <- location_lookup(abbrs, "abbr", "hub")
     expect_equal(codes_result, expected_codes)

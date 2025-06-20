@@ -11,16 +11,19 @@
 #' @export
 to_location_table_column <- function(location_format) {
   col_keys <- list(
-    "abbr" = "short_name",
-    "hub" = "location_code",
-    "long_name" = "long_name"
+    "abbr" = "abbr",
+    "short_name" = "abbr",
+    "code" = "code",
+    "hub" = "code",
+    "name" = "name",
+    "long_name" = "name"
   )
   col_key <- col_keys[[location_format]]
 
   if (is.null(col_key)) {
     cli::cli_abort(c(
       "Unknown location format {location_format}. ",
-      "Expected `'abbr'`, `'hub'`, or `'long_name'`"
+      "Expected one of {names(col_keys)}."
     ))
   }
   return(col_key)

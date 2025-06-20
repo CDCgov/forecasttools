@@ -22,5 +22,5 @@ hubs), return the corresponding state/territory
 two-letter USPS short names (e.g. MA, TX, PR).
 }
 \seealso{
-\code{\link[=us_loc_abbr_to_code]{us_loc_abbr_to_code()}}
+\code{\link[=location_lookup]{location_lookup()}}
 }

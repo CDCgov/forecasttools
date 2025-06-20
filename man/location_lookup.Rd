@@ -2,11 +2,18 @@
 % Please edit documentation in R/recode_locations.R
 \name{location_lookup}
 \alias{location_lookup}
+\alias{us_location_lookup}
 \title{Look up rows of the USA location table
 corresponding to the entries of a given
 vector.}
 \usage{
 location_lookup(
+  location_vector,
+  location_input_format,
+  location_output_format = NULL
+)
+
+us_location_lookup(
   location_vector,
   location_input_format,
   location_output_format = NULL
@@ -33,7 +40,9 @@ name for jurisdiction).}
 }
 \value{
 the corresponding rows of the \link{us_location_table}
-matching the location vector, with repeats possible.
+matching the location vector, with repeats possible, or the
+values of those rows for a given column, as specified in
+\code{location_output_format}.
 }
 \description{
 Get the rows of
