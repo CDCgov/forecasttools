@@ -101,28 +101,33 @@ test_that(
 
 
 test_that("filter_to_shared_forecasts output has expected properties", {
-  ## result number of rows should be divisible
-  ## by number of comparator values if there is any
-  ## overlap
-  result_a <- filter_to_shared_forecasts(
-    scoringutils::example_quantile,
-    c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline")
+  model_sets <- list(
+    c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline"),
+    c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline", "UMass-MechBayes")
   )
 
-  result_b <- filter_to_shared_forecasts(
+  purrr::walk(model_sets, \(model_set) {
+    result <- filter_to_shared_forecasts(
+      scoringutils::example_quantile,
+      model_set
+    ) |>
+      tibble::tibble() |>
+      dplyr::summarise(
+        count = dplyr::n(),
+        .by = "model"
+      )
+    expect_equal(dplyr::n_distinct(result$count), 1)
+    expect_equal(unique(model_set), unique(result$model))
+  })
+
+  ## filtering with a non-existant model should produce a
+  ## zero-length table
+  result_zero <- filter_to_shared_forecasts(
     scoringutils::example_quantile,
-    c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline", "UMass-MechBayes")
+    c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline", "FakeModel")
   )
-  expect_equal(nrow(result_a) %% 2, 0)
-  expect_setequal(
-    unique(result_a$model),
-    c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline")
-  )
-  expect_setequal(
-    unique(result_b$model),
-    c("EuroCOVIDhub-ensemble", "EuroCOVIDhub-baseline", "UMass-MechBayes")
-  )
-  expect_equal(nrow(result_b) %% 3, 0)
+
+  expect_equal(nrow(result_zero), 0)
 
   ## filtering to shared forecasts for a single model
   ## should be equivalent to just filtering to that model.
