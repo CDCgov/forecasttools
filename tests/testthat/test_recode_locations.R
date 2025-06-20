@@ -70,6 +70,12 @@ test_that(
     ]
     codes_result <- location_lookup(abbrs, "abbr", "hub")
     expect_equal(codes_result, expected_codes)
+
+    expected_names <- forecasttools::us_location_table$name[
+      match(abbrs, forecasttools::us_location_table$abbr)
+    ]
+    names_result <- location_lookup(abbrs, "abbr", "long_name")
+    expect_equal(names_result, expected_names)
   }
 )
 
@@ -78,4 +84,8 @@ test_that("location_lookup preserves output length with repeats", {
   abbrs <- c(rep("MA", 5), "CA", "MT", "MA")
   result <- location_lookup(abbrs, "abbr")
   expect_equal(nrow(result), 8)
+})
+
+test_that("us_location_lookup is an alias for location_lookup", {
+  expect_identical(us_location_lookup, location_lookup)
 })
