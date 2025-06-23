@@ -137,12 +137,12 @@ plot_pred_obs_by_forecast_date <- function(
   to_plot_obs <- to_plot |>
     dplyr::filter(.data$q_rank == 1) |>
     dplyr::select(
-      dplyr::all_of(c(
+      tidyselect::all_of(c(
         target_date_col,
         "observed",
         facet_columns
       )),
-      -dplyr::all_of(forecast_date_col)
+      -tidyselect::all_of(forecast_date_col)
     )
 
   to_plot_forecast <- to_plot |>
@@ -363,7 +363,9 @@ plot_pred_obs_pointintervals <- function(
   ## tibble to prevent warnings and add grouping variable
   to_plot <- tibble::as_tibble(scorable_table) |>
     dplyr::mutate(
-      plot_group = interaction(dplyr::across(dplyr::all_of(plot_group_cols)))
+      plot_group = interaction(dplyr::across(tidyselect::all_of(
+        plot_group_cols
+      )))
     ) |>
     dplyr::filter(!is.na(.data$plot_group))
 
