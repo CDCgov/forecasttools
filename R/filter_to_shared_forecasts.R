@@ -37,7 +37,7 @@ get_shared_forecasts <- function(
   join_by <- setdiff(forecast_unit, compare)
 
   shared_forecasts <- tbl |>
-    tibble::tibble() |>
+    tibble::as_tibble() |>
     dplyr::filter(.data[[compare]] %in% !!comparator_values) |>
     dplyr::distinct(dplyr::across(dplyr::all_of(forecast_unit))) |>
     dplyr::summarise(
