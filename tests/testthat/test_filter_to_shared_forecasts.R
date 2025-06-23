@@ -117,7 +117,7 @@ test_that("filter_to_shared_forecasts output has expected properties", {
         .by = "model"
       )
     expect_equal(dplyr::n_distinct(result$count), 1)
-    expect_equal(unique(model_set), unique(result$model))
+    expect_setequal(model_set, result$model)
   })
 
   ## filtering with a non-existant model should produce a
