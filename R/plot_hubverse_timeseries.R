@@ -61,7 +61,7 @@ plot_hubverse_loc_quant_ts <- function(
   autotitle = TRUE
 ) {
   checkmate::assert_scalar(location)
-  loc <- dplyr::pull(us_location_lookup(location, location_format, "hub"))
+  loc <- dplyr::pull(us_location_recode(location, location_format, "hub"))
   loc_data <- forecast_data |>
     dplyr::filter(
       .data$location == !!loc,
@@ -72,7 +72,7 @@ plot_hubverse_loc_quant_ts <- function(
     dplyr::filter(.data$location == !!loc)
 
   if (autotitle) {
-    loc_name <- location_lookup(location, location_format, "name")
+    loc_name <- us_location_recode(location, location_format, "name")
     plot_date <- loc_data$reference_date[1]
     plot_title <- stringr::str_glue(
       "{loc_name} forecasts of {plot_date}"
@@ -274,14 +274,14 @@ plot_hubverse_file_quantiles <- function(
     locations <- forecast_data |>
       dplyr::distinct(.data$location) |>
       dplyr::pull()
-    location_vector <- us_location_lookup(
+    location_vector <- us_location_recode(
       locations,
       "hub",
       location_output_format
     )
   } else {
     locations <- base::unique(locations)
-    location_vector <- us_location_lookup(
+    location_vector <- us_location_recode(
       locations,
       location_input_format,
       location_output_format
