@@ -47,7 +47,7 @@ to_location_table_column <- to_us_location_table_column
 #' [forecasttools::us_location_table]
 #' corresponding to a given location vector
 #' and format, with repeats possible
-#' @param location_vector vector of location values
+#' @param location vector of location values
 #' @param location_input_format format in which the location
 #' vector is coded.
 #' Permitted formats are `"abbr"` (state/territory
@@ -69,13 +69,13 @@ to_location_table_column <- to_us_location_table_column
 #' `location_output_format`.
 #' @export
 us_location_lookup <- function(
-  location_vector,
+  location,
   location_input_format,
   location_output_format = NULL
 ) {
   tab_col <- to_us_location_table_column(location_input_format)
   mask <- match(
-    x = as.character(location_vector),
+    x = as.character(location),
     table = forecasttools::us_location_table[[tab_col]]
   )
 
@@ -101,13 +101,13 @@ location_lookup <- us_location_lookup
 #' in forecast hubs (legacy FIPS code for states and territories,
 #' `US` for the US).
 #'
-#' @param abbrs vector of USPS two letter name abbreviations
+#' @param abbr vector of USPS two letter name abbreviations
 #' @return vector of the same length recoded as hub-style
 #' location codes
 #' @export
 #' @seealso [us_location_lookup()]
-us_loc_abbr_to_code <- function(abbrs) {
-  return(us_location_lookup(abbrs, "abbr", "hub"))
+us_loc_abbr_to_code <- function(abbr) {
+  return(us_location_lookup(abbr, "abbr", "hub"))
 }
 
 #' Convert a 2-character USA location code
@@ -119,11 +119,11 @@ us_loc_abbr_to_code <- function(abbrs) {
 #' hubs), return the corresponding state/territory
 #' two-letter USPS short names (e.g. MA, TX, PR).
 #'
-#' @param location_codes vector of location codes
+#' @param code vector of location codes
 #' @return vector of the same length recoded as USPS
 #' two letter abbreviations.
 #' @export
 #' @seealso [us_location_lookup()]
-us_loc_code_to_abbr <- function(location_codes) {
-  return(us_location_lookup(location_codes, "hub", "abbr"))
+us_loc_code_to_abbr <- function(code) {
+  return(us_location_lookup(code, "hub", "abbr"))
 }

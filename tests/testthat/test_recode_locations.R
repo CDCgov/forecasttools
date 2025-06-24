@@ -4,7 +4,6 @@ test_that(
     "and NAs and preserves length"
   ),
   {
-    # Example values, adjust as per your actual us_location_table
     abbrs <- c("MA", "TX", "PR", "ZZ") # "ZZ" is invalid
     expected_codes <- forecasttools::us_location_table$code[
       match(abbrs, forecasttools::us_location_table$abbr)
