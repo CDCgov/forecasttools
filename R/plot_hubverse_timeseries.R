@@ -60,7 +60,7 @@ plot_hubverse_loc_quant_ts <- function(
   target_name = NULL,
   autotitle = TRUE
 ) {
-  loc <- location_lookup(location, location_format, "hub")
+  loc <- us_location_lookup(location, location_format, "hub")
   loc_data <- forecast_data |>
     dplyr::filter(
       .data$location == !!loc,
