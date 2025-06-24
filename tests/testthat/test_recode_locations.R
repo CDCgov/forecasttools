@@ -35,7 +35,7 @@ test_that(
 test_that(
   paste0(
     "to_us_location_table_column returns correct column names ",
-    "and errors on invalid input"
+    "and errors on invalid input, both scalar and vectorized"
   ),
   {
     expect_equal(to_us_location_table_column("abbr"), "abbr")
@@ -44,7 +44,20 @@ test_that(
     expect_equal(to_us_location_table_column("hub"), "code")
     expect_equal(to_us_location_table_column("name"), "name")
     expect_equal(to_us_location_table_column("long_name"), "name")
-    expect_error(to_us_location_table_column("invalid_format"))
+    expect_equal(
+      to_us_location_table_column(
+        c("long_name", "name", "abbr")
+      ),
+      c("name", "name", "abbr")
+    )
+    expect_error(
+      to_us_location_table_column("invalid_name"),
+      "has additional elements"
+    )
+    expect_error(
+      to_us_location_table_column(c("name", "invalid_name")),
+      "has additional elements"
+    )
   }
 )
 
@@ -64,14 +77,16 @@ test_that(
     expect_equal(result, expected)
 
     # Output column only
-    expected_codes <- forecasttools::us_location_table$code[
-      match(abbrs, forecasttools::us_location_table$abbr)
+    expected_codes <- forecasttools::us_location_table[
+      match(abbrs, forecasttools::us_location_table$abbr),
+      "code"
     ]
     codes_result <- us_location_lookup(abbrs, "abbr", "hub")
     expect_equal(codes_result, expected_codes)
 
-    expected_names <- forecasttools::us_location_table$name[
-      match(abbrs, forecasttools::us_location_table$abbr)
+    expected_names <- forecasttools::us_location_table[
+      match(abbrs, forecasttools::us_location_table$abbr),
+      "name"
     ]
     names_result <- us_location_lookup(abbrs, "abbr", "long_name")
     expect_equal(names_result, expected_names)
