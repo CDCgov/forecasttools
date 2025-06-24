@@ -17,7 +17,7 @@
 #' [forecasttools::us_location_table].
 #' @export
 to_us_location_table_column <- function(location_format) {
-  col_keys <- list(
+  col_keys <- c(
     "abbr" = "abbr",
     "short_name" = "abbr",
     "code" = "code",
@@ -25,15 +25,9 @@ to_us_location_table_column <- function(location_format) {
     "name" = "name",
     "long_name" = "name"
   )
-  col_key <- col_keys[[location_format]]
-
-  if (is.null(col_key)) {
-    cli::cli_abort(c(
-      "Unknown location format {location_format}. ",
-      "Expected one of {names(col_keys)}."
-    ))
-  }
-  return(col_key)
+  checkmate::assert_names(location_format, subset.of = names(col_keys))
+  cols <- unname(col_keys[location_format])
+  return(cols)
 }
 
 #' @rdname to_us_location_table_column
@@ -49,30 +43,35 @@ to_location_table_column <- to_us_location_table_column
 #' and format, with repeats possible
 #' @param location vector of location values
 #' @param location_input_format format in which the location
-#' vector is coded.
-#' Permitted formats are `"abbr"` (state/territory
-#' or nation two letter USPS abbreviation), `"hub"`
-#' (legacy 2-digit FIPS code for states and territories, `US`
-#' for the USA as a whole), and `"long_name"` (full English
-#' name for jurisdiction).
-#' @param location_output_format Return only this column of the
-#' output table, if it is provided. Otherwise return the whole
-#' table. Default `NULL` (return all columns).
-#  Permitted formats are `"abbr"` (state/territory
-#' or nation two letter USPS abbreviation), `"hub"`
-#' (legacy 2-digit FIPS code for states and territories, `US`
-#' for the USA as a whole), and `"long_name"` (full English
-#' name for jurisdiction).
-#' @return the corresponding rows of the [us_location_table]
-#' matching the location vector, with repeats possible, or the
-#' values of those rows for a given column, as specified in
+#' vector is coded. See [to_us_location_table_column()]
+#' for permitted formats.
+#' @param location_output_format Vector specifying column(s) from
+#' the output table to return. If not provided (default),
+#' return all columns. See [to_us_location_table_column()]
+#' for permitted strings to specify columns.
+#' @return A [`tibble`][tibble::tibble()] with the
+#' corresponding rows of the [us_location_table]
+#' matching the location vector (with repeats possible) or the
+#' values of those rows for given column(s), as specified in
 #' `location_output_format`.
 #' @export
+#'
+#' @examples
+#'
+#' us_location_lookup(c("01", "05", "US", "05"), "code")
+#'
+#' us_location_lookup(c("01", "05", "US", "05"), "code", "name")
+#'
+#' us_location_lookup(c("01", "05", "US", "05"), "code", c("abbr", "name"))
+#'
+#' us_location_lookup(c("Alaska", "Hawaii"), "name", c("code", "abbr"))
+#'
 us_location_lookup <- function(
   location,
   location_input_format,
   location_output_format = NULL
 ) {
+  checkmate::assert_scalar(location_input_format)
   tab_col <- to_us_location_table_column(location_input_format)
   mask <- match(
     x = as.character(location),
@@ -81,7 +80,7 @@ us_location_lookup <- function(
 
   result <- forecasttools::us_location_table[mask, ]
   if (!is.null(location_output_format)) {
-    result <- result[[to_us_location_table_column(location_output_format)]]
+    result <- result[to_us_location_table_column(location_output_format)]
   }
 
   return(result)
@@ -107,7 +106,7 @@ location_lookup <- us_location_lookup
 #' @export
 #' @seealso [us_location_lookup()]
 us_loc_abbr_to_code <- function(abbr) {
-  return(us_location_lookup(abbr, "abbr", "hub"))
+  return(dplyr::pull(us_location_lookup(abbr, "abbr", "hub")))
 }
 
 #' Convert a 2-character USA location code
@@ -125,5 +124,5 @@ us_loc_abbr_to_code <- function(abbr) {
 #' @export
 #' @seealso [us_location_lookup()]
 us_loc_code_to_abbr <- function(code) {
-  return(us_location_lookup(code, "hub", "abbr"))
+  return(dplyr::pull(us_location_lookup(code, "hub", "abbr")))
 }
