@@ -37,18 +37,18 @@ get_shared_forecasts <- function(
   join_by <- setdiff(forecast_unit, compare)
 
   shared_forecasts <- tbl |>
-    tibble::tibble() |>
+    tibble::as_tibble() |>
     dplyr::filter(.data[[compare]] %in% !!comparator_values) |>
-    dplyr::distinct(dplyr::across(dplyr::all_of(forecast_unit))) |>
+    dplyr::distinct(dplyr::across(tidyselect::all_of(forecast_unit))) |>
     dplyr::summarise(
       models_present = list(.data$model),
-      .by = dplyr::all_of(join_by)
+      .by = tidyselect::all_of(join_by)
     ) |>
     dplyr::filter(purrr::map_lgl(
       .data$models_present,
       \(x) setequal(comparator_values, x)
     )) |>
-    dplyr::select(dplyr::all_of(join_by))
+    dplyr::select(tidyselect::all_of(join_by))
 
   return(shared_forecasts)
 }

@@ -49,7 +49,7 @@ trajectories_to_quantiles <- function(
   grouped_df <- trajectories |>
     dplyr::rename(value_col = !!value_col) |>
     dplyr::group_by(
-      dplyr::across(dplyr::all_of(c(timepoint_cols, id_cols)))
+      dplyr::across(tidyselect::all_of(c(timepoint_cols, id_cols)))
     )
 
   missing_groups <- grouped_df |>

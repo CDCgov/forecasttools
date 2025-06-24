@@ -201,7 +201,7 @@ sample_aggregated_trajectories <- function(
   sampled_forecasts <- samples |>
     dplyr::left_join(number_of_sampled_trajs, by = location_col) |>
     dplyr::mutate(rank_draw = ceiling(.data$u * .data$n_sample_trajs)) |>
-    dplyr::select("rank_draw", dplyr::all_of(location_col)) |>
+    dplyr::select("rank_draw", tidyselect::all_of(location_col)) |>
     dplyr::right_join(ranked_base_forecasts, by = location_col) |>
     dplyr::group_by(.data[[location_col]]) |>
     dplyr::slice(dplyr::first(.data$rank_draw)) |>

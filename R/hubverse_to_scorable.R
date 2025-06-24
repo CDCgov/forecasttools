@@ -70,7 +70,7 @@ hubverse_table_with_obs <- function(
     dplyr::select(
       target_end_date = !!obs_date_column,
       !!obs_value_name := !!obs_value_column,
-      dplyr::all_of(id_cols)
+      tidyselect::all_of(id_cols)
     )
 
   checkmate::assert_names(join, subset.of = names(join_funcs))
