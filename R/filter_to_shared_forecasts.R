@@ -46,7 +46,7 @@ get_shared_forecasts <- function(
     ) |>
     dplyr::filter(purrr::map_lgl(
       .data$models_present,
-      \(x) setequal(comparator_values, x)
+      \(x) setequal(!!comparator_values, x)
     )) |>
     dplyr::select(tidyselect::all_of(join_by))
 
@@ -100,7 +100,7 @@ filter_to_shared_forecasts <- function(
   )
 
   return(dplyr::inner_join(
-    dplyr::filter(tbl, .data[[compare]] %in% comparator_values),
+    dplyr::filter(tbl, .data[[compare]] %in% !!comparator_values),
     shared_forecasts,
     by = names(shared_forecasts)
   ))
