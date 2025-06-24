@@ -69,7 +69,7 @@ test_that("us_location_lookup preserves output length with repeats", {
 test_that(
   paste0(
     "location_lookup is an alias for us_location_lookup ",
-    "unless location_output_format is a scalar, in which case",
+    "unless location_output_format is a scalar, in which case ",
     "it is an alias for us_location_recode"
   ),
   {
