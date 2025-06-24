@@ -66,9 +66,39 @@ test_that("us_location_lookup preserves output length with repeats", {
   expect_equal(nrow(result), 8)
 })
 
-test_that("location_lookup is an alias for us_location_lookup", {
-  expect_identical(us_location_lookup, location_lookup)
-})
+test_that(
+  paste0(
+    "location_lookup is an alias for us_location_lookup ",
+    "unless location_output_format is a scalar, in which case",
+    "it is an alias for us_location_recode"
+  ),
+  {
+    abbrs <- c(rep("MA", 5), "CA", "MT", "MA")
+    result_vec <- location_lookup(abbrs, "abbr", "code")
+    expect_type(result_vec, "character")
+    expect_equal(
+      result_vec,
+      us_location_lookup(abbrs, "abbr", "code") |>
+        dplyr::pull()
+    )
+
+    result_tbl <- location_lookup(
+      abbrs,
+      "abbr",
+      c("code", "name", "long_name")
+    )
+    expect_s3_class(result_tbl, "tbl")
+
+    expect_equal(
+      result_tbl,
+      us_location_lookup(
+        abbrs,
+        "abbr",
+        c("code", "name", "long_name")
+      )
+    )
+  }
+)
 
 test_that(
   paste0(

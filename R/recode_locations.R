@@ -92,8 +92,26 @@ us_location_lookup <- function(
 
 #' @rdname us_location_lookup
 #' @export
-location_lookup <- us_location_lookup
+location_lookup <- function(
+  location,
+  location_input_format,
+  location_output_format = NULL
+) {
+  result <- us_location_lookup(
+    location,
+    location_input_format,
+    location_output_format = location_output_format
+  )
 
+  ## backward compatibility with old version that returned
+  ## vectors instead of single-column tibbles for
+  ## scalar `location_output_format`.
+  if (ncol(result) == 1) {
+    result <- dplyr::pull(result)
+  }
+
+  return(result)
+}
 #' Recode a vector of US locations
 #' from one format to another
 #'
