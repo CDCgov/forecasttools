@@ -39,7 +39,7 @@ plot_hubverse_pointintervals <- function(
       )
     ) |>
     dplyr::mutate(
-      "location" = us_location_lookup(
+      "location" = us_location_recode(
         .data$location,
         location_input_format,
         location_output_format

@@ -54,6 +54,9 @@ to_location_table_column <- to_us_location_table_column
 #' matching the location vector (with repeats possible) or the
 #' values of those rows for given column(s), as specified in
 #' `location_output_format`.
+#'
+#' @seealso [us_location_recode()]
+#'
 #' @export
 #'
 #' @examples
@@ -91,6 +94,43 @@ us_location_lookup <- function(
 #' @export
 location_lookup <- us_location_lookup
 
+#' Recode a vector of US locations
+#' from one format to another
+#'
+#' Uses [us_location_lookup()] to perform recoding.
+#'
+#' @param location vector of location values
+#' @param location_input_format format in which the location
+#' vector is coded. See [to_us_location_table_column()]
+#' for permitted formats. Must be a single value.
+#' @param location_output_format Code the output vector in this
+#' format. See [to_us_location_table_column()]
+#' for permitted formats. Must be a single value.
+#' @return The recoded vector.
+#'
+#' @examples
+#'
+#' us_location_recode(c("01", "05", "US", "05"), "code", "name")
+#'
+#' us_location_recode(c("AK", "US", "HI", "AK"), "abbr", "code")
+#'
+#' us_location_recode("AK", "abbr", "name")
+#'
+#' @export
+us_location_recode <- function(
+  location,
+  location_input_format,
+  location_output_format
+) {
+  checkmate::assert_scalar(location_input_format)
+  checkmate::assert_scalar(location_output_format)
+  return(dplyr::pull(us_location_lookup(
+    location,
+    location_input_format,
+    location_output_format = location_output_format
+  )))
+}
+
 #' Convert a two-letter USA location abbreviation to a
 #' two-character USA location code
 #'
@@ -106,7 +146,7 @@ location_lookup <- us_location_lookup
 #' @export
 #' @seealso [us_location_lookup()]
 us_loc_abbr_to_code <- function(abbr) {
-  return(dplyr::pull(us_location_lookup(abbr, "abbr", "hub")))
+  return(us_location_recode(abbr, "abbr", "hub"))
 }
 
 #' Convert a 2-character USA location code
@@ -122,7 +162,7 @@ us_loc_abbr_to_code <- function(abbr) {
 #' @return vector of the same length recoded as USPS
 #' two letter abbreviations.
 #' @export
-#' @seealso [us_location_lookup()]
+#' @seealso [us_location_recode()]
 us_loc_code_to_abbr <- function(code) {
-  return(dplyr::pull(us_location_lookup(code, "hub", "abbr")))
+  return(us_location_recode(code, "hub", "abbr"))
 }

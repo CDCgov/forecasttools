@@ -60,7 +60,8 @@ plot_hubverse_loc_quant_ts <- function(
   target_name = NULL,
   autotitle = TRUE
 ) {
-  loc <- us_location_lookup(location, location_format, "hub")
+  checkmate::assert_scalar(location)
+  loc <- dplyr::pull(us_location_lookup(location, location_format, "hub"))
   loc_data <- forecast_data |>
     dplyr::filter(
       .data$location == !!loc,
