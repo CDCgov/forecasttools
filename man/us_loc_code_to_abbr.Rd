@@ -5,10 +5,10 @@
 \title{Convert a 2-character USA location code
 to a 2-letter USA location abbreviation.}
 \usage{
-us_loc_code_to_abbr(location_codes)
+us_loc_code_to_abbr(code)
 }
 \arguments{
-\item{location_codes}{vector of location codes}
+\item{code}{vector of location codes}
 }
 \value{
 vector of the same length recoded as USPS

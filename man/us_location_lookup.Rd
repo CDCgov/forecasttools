@@ -8,19 +8,15 @@ corresponding to the entries of a given
 vector.}
 \usage{
 us_location_lookup(
-  location_vector,
+  location,
   location_input_format,
   location_output_format = NULL
 )
 
-location_lookup(
-  location_vector,
-  location_input_format,
-  location_output_format = NULL
-)
+location_lookup(location, location_input_format, location_output_format = NULL)
 }
 \arguments{
-\item{location_vector}{vector of location values}
+\item{location}{vector of location values}
 
 \item{location_input_format}{format in which the location
 vector is coded.
