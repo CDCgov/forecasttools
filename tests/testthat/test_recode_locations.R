@@ -1,39 +1,5 @@
 test_that(
   paste0(
-    "us_loc_abbr_to_code returns correct codes ",
-    "and NAs and preserves length"
-  ),
-  {
-    abbrs <- c("MA", "TX", "PR", "ZZ") # "ZZ" is invalid
-    expected_codes <- forecasttools::us_location_table$code[
-      match(abbrs, forecasttools::us_location_table$abbr)
-    ]
-    result <- us_loc_abbr_to_code(abbrs)
-    expect_equal(length(result), length(abbrs))
-    expect_equal(expected_codes[4], as.character(NA))
-    expect_equal(result, expected_codes)
-  }
-)
-
-test_that(
-  paste0(
-    "us_loc_code_to_abbr returns correct abbreviations",
-    "and NAs and preserves length"
-  ),
-  {
-    codes <- c("25", "48", "XX", 72) # "XX" is invalid
-    expected_abbrs <- forecasttools::us_location_table$abbr[
-      match(codes, forecasttools::us_location_table$code)
-    ]
-    result <- us_loc_code_to_abbr(codes)
-    expect_equal(length(result), length(codes))
-    expect_equal(expected_abbrs[3], as.character(NA))
-    expect_equal(result, expected_abbrs)
-  }
-)
-
-test_that(
-  paste0(
     "to_us_location_table_column returns correct column names ",
     "and errors on invalid input, both scalar and vectorized"
   ),
@@ -111,5 +77,58 @@ test_that(
   ),
   {
     expect_identical(to_us_location_table_column, to_location_table_column)
+  }
+)
+
+
+test_that(
+  paste0(
+    "us_location_recode returns correct codes ",
+    "and NAs and preserves lengths"
+  ),
+  {
+    input_vecs <- list(
+      abbr = c("MA", "TX", "PR", "ZZ"), # "ZZ" is invalid
+      code = c("25", "48", "XX", 72), # "XX" is invalid
+      name = c("United States", "AL", "Alabama", "Wyoming") # "AL" is invalid
+    )
+
+    io <- tidyr::crossing(
+      input = c("abbr", "code", "name"),
+      output = c("abbr", "code", "name")
+    )
+
+    purrr::pwalk(io, \(input, output) {
+      in_vec <- input_vecs[[input]]
+      lookup <- forecasttools::us_location_table[[input]]
+      expected <- forecasttools::us_location_table[
+        match(in_vec, lookup),
+      ][[output]]
+
+      result <- us_location_recode(in_vec, input, output)
+      expect_equal(length(result), length(in_vec))
+      expect_true(any(is.na(expected)))
+      expect_equal(result, expected)
+    })
+  }
+)
+
+test_that(
+  paste0(
+    "us_loc_abbr_to_code and us_loc_code_to_abbr ",
+    "are special cases of us_location_recode"
+  ),
+  {
+    abbrs <- c("MA", "TX", "PR", "ZZ") # "ZZ" is invalid
+    codes <- c("25", "48", "XX", 72) # "XX" is invalid
+
+    expect_equal(
+      us_location_recode(abbrs, "abbr", "code"),
+      us_loc_abbr_to_code(abbrs)
+    )
+    expect_equal(
+      us_location_recode(codes, "code", "abbr"),
+      us_loc_code_to_abbr(codes)
+    )
   }
 )
