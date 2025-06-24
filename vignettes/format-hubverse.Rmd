@@ -220,8 +220,8 @@ manual_rename <- quant_summary |>
   rename(state = location) |>
   inner_join(
     forecasttools::us_location_table |> select(
-      state = short_name,
-      location = location_code
+      state = abbr,
+      location = code
     ),
     by = "state"
   )

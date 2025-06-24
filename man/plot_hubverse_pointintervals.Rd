@@ -31,19 +31,11 @@ the interval. Default \code{0.025}.}
 the interval. Default \code{0.975}.}
 
 \item{location_input_format}{Format of the hubverse table
-\code{location} column.
-Permitted formats are \code{"abbr"} (state/territory
-or nation two letter USPS abbreviation), \code{"hub"} (
-legacy 2-digit FIPS code for states and territories, \code{US}
-for the USA as a whole), and \code{"long_name"} (full English
-jurisdiction names; not recommended). Default \code{"hub"}.}
+\code{location} column. See \code{\link[=to_us_location_table_column]{to_us_location_table_column()}}
+for valid formats.}
 
 \item{location_output_format}{How to code locations in the output plot.
-Permitted formats are \code{"abbr"} (state/territory
-or nation two letter USPS abbreviation), \code{"hub"} (
-legacy 2-digit FIPS code for states and territories, \code{US}
-#' for the USA as a whole), and \code{"long_name"} (full English
-jurisdiction names). Default \code{"abbr"}.}
+See \code{\link[=to_us_location_table_column]{to_us_location_table_column()}} for valid formats.}
 }
 \value{
 A ggplot2 plot of the forecasts as pointintervals
