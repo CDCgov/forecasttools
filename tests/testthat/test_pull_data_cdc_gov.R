@@ -15,6 +15,48 @@ test_that(".warn_no_api_creds() works as expected", {
   )
 })
 
+
+test_that("data_cdc_gov_dataset_id() works as expected", {
+  # compare to equivalent manual implementation
+  purrr::map(names(data_cdc_gov_datasets), \(x) {
+    expect_equal(
+      data_cdc_gov_dataset_id(x),
+      data_cdc_gov_datasets[[x]]$id
+    )
+  })
+
+  # should error with vector input
+  expect_error(
+    data_cdc_gov_dataset_id(c("nhsn_hist_daily", "nhsn_hrd_prelim")),
+    "length 1"
+  )
+
+  # should error with non-supported name
+  expect_error(data_cdc_gov_dataset_id("test_name"), "subset of")
+})
+
+
+test_that("data_cdc_gov_endpoint() works as expected", {
+  # compare to equivalent manual implementation
+  purrr::map(c("test-dataset-id1", "another-dataset-id3"), \(x) {
+    expect_equal(
+      data_cdc_gov_endpoint(x),
+      glue::glue("https://data.cdc.gov/resource/{x}.json")
+    )
+  })
+})
+
+test_that("data_cdc_gov_base_query() works as expected", {
+  # compare to equivalent manual implementation
+  purrr::map(c("mock-dataset-id1", "3-another-dataset-id"), \(x) {
+    expect_equal(
+      data_cdc_gov_base_query(x),
+      soql::soql(glue::glue("https://data.cdc.gov/resource/{x}.json"))
+    )
+  })
+})
+
+
 with_mock_dir(mockdir, {
   test_that("Warnings raised if API key/secret not provided", {
     expect_warning(
