@@ -3,12 +3,18 @@
 \name{read_tabular_file}
 \alias{read_tabular_file}
 \alias{write_tabular_file}
+\alias{write_tabular}
+\alias{read_tabular}
 \title{Read from or write to tabular files, with
 file format inferred from the file extension.}
 \usage{
 read_tabular_file(path_to_file, ...)
 
-write_tabular_file(table, path_to_file, ...)
+write_tabular_file(table, path_to_file, simplify_column_types = TRUE, ...)
+
+write_tabular(table, path_to_file, simplify_column_types = TRUE, ...)
+
+read_tabular(path_to_file, ...)
 }
 \arguments{
 \item{path_to_file}{Path to the file to read/write.
@@ -23,6 +29,9 @@ file reader/writer function, which will be one of
 depending on the file format.}
 
 \item{table}{Table to write (\code{write_tabular_file} only).}
+
+\item{simplify_column_types}{If \code{TRUE}, attempts to convert extension arrays
+(e.g. fs paths, glue strings) to plain base R vectors before writing.}
 }
 \value{
 For \code{read_tabular_file}, the result of
