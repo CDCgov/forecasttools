@@ -1,48 +1,51 @@
 temp_dir <- withr::local_tempdir()
 withr::with_seed(5, {
-  test_table <- tibble::tibble(
+  test_table_simple_types <- tibble::tibble(
     x = 1:5,
     y = LETTERS[x],
     z = runif(5)
   )
+  test_table <- test_table_simple_types |>
+    dplyr::mutate(y = fs::path(.data$y))
+})
+
+test_that("write_tabular simplfies column types correctly", {
+  purrr::map(
+    c("tsv", "csv", "parquet"),
+    \(ext) {
+      outpath <- fs::path(temp_dir, "test_table", ext = ext)
+      write_tabular(test_table, outpath, simplify_column_types = TRUE)
+      result <- read_tabular(outpath) |>
+        suppressMessages() |>
+        tibble::as_tibble()
+
+      expect_equal(result, test_table_simple_types)
+    }
+  )
+})
+
+test_that("write_tabular allows complex column types for parquet files", {
+  outpath <- fs::path(temp_dir, "test_table", ext = "parquet")
+  write_tabular(test_table, outpath, simplify_column_types = FALSE)
+  result <- read_tabular(outpath)
+
+  expect_equal(result, test_table)
 })
 
 test_that(
   paste0(
-    "write_tabular_file and read_tabular_file are inverses ",
-    "for all valid file extensions"
-  ),
-  {
-    purrr::map(
-      c("tsv", "csv", "parquet"),
-      \(ext) {
-        outpath <- fs::path(temp_dir, "test_table", ext = ext)
-        write_tabular_file(test_table, outpath)
-        result <- read_tabular_file(outpath) |>
-          suppressMessages() |>
-          tibble::as_tibble()
-
-        expect_equal(result, test_table)
-      }
-    )
-  }
-)
-
-
-test_that(
-  paste0(
-    "read_tabular_file and write_tabular_file error ",
+    "read_tabular and write_tabular error ",
     "when passed invalid extensions"
   ),
   {
     purrr::map(c("acsv", "tsv_", "parquetb"), \(ext) {
       outpath <- fs::path(temp_dir, "test_table", ext = ext)
       expect_error(
-        write_tabular_file(test_table, outpath),
+        write_tabular(test_table, outpath),
         "Names must be a subset of"
       )
       expect_error(
-        read_tabular_file(outpath),
+        read_tabular(outpath),
         "Names must be a subset of"
       )
     })

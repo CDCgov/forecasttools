@@ -172,9 +172,20 @@ read_tabular_file <- function(path_to_file, ...) {
   return(file_reader(path_to_file, ...))
 }
 
+is_extension_array <- function(x) {
+  "ExtensionArray" %in% class(arrow::as_arrow_array(x))
+}
+
+#' @param simplify_column_types If `TRUE`, attempts to convert extension arrays
+#' (e.g. fs paths, glue strings) to plain base R vectors before writing.
 #' @rdname read_tabular_file
 #' @export
-write_tabular_file <- function(table, path_to_file, ...) {
+write_tabular_file <- function(
+  table,
+  path_to_file,
+  simplify_column_types = TRUE,
+  ...
+) {
   file_format <- fs::path_ext(path_to_file)
 
   file_writers <- c(
@@ -187,8 +198,23 @@ write_tabular_file <- function(table, path_to_file, ...) {
 
   file_writer <- file_writers[[file_format]]
 
+  if (simplify_column_types) {
+    table <- dplyr::mutate(
+      table,
+      dplyr::across(tidyselect::where(is_extension_array), vctrs::vec_data)
+    )
+  }
+
   file_writer(table, path_to_file, ...)
 }
+
+#' @rdname read_tabular_file
+#' @export
+write_tabular <- write_tabular_file
+
+#' @rdname read_tabular_file
+#' @export
+read_tabular <- read_tabular_file
 
 #' Get limits spanning a set of values
 #' that are symmetric about a central value
