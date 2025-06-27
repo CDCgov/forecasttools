@@ -51,3 +51,6 @@ us_location_lookup(c("01", "05", "US", "05"), "code", c("abbr", "name"))
 us_location_lookup(c("Alaska", "Hawaii"), "name", c("code", "abbr"))
 
 }
+\seealso{
+\code{\link[=us_location_recode]{us_location_recode()}}
+}
