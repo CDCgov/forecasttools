@@ -19,25 +19,19 @@ location_lookup(location, location_input_format, location_output_format = NULL)
 \item{location}{vector of location values}
 
 \item{location_input_format}{format in which the location
-vector is coded.
-Permitted formats are \code{"abbr"} (state/territory
-or nation two letter USPS abbreviation), \code{"hub"}
-(legacy 2-digit FIPS code for states and territories, \code{US}
-for the USA as a whole), and \code{"long_name"} (full English
-name for jurisdiction).}
+vector is coded. See \code{\link[=to_us_location_table_column]{to_us_location_table_column()}}
+for permitted formats.}
 
-\item{location_output_format}{Return only this column of the
-output table, if it is provided. Otherwise return the whole
-table. Default \code{NULL} (return all columns).
-or nation two letter USPS abbreviation), \code{"hub"}
-(legacy 2-digit FIPS code for states and territories, \code{US}
-for the USA as a whole), and \code{"long_name"} (full English
-name for jurisdiction).}
+\item{location_output_format}{Vector specifying column(s) from
+the output table to return. If not provided (default),
+return all columns. See \code{\link[=to_us_location_table_column]{to_us_location_table_column()}}
+for permitted strings to specify columns.}
 }
 \value{
-the corresponding rows of the \link{us_location_table}
-matching the location vector, with repeats possible, or the
-values of those rows for a given column, as specified in
+A \code{\link[tibble:tibble]{tibble}} with the
+corresponding rows of the \link{us_location_table}
+matching the location vector (with repeats possible) or the
+values of those rows for given column(s), as specified in
 \code{location_output_format}.
 }
 \description{
@@ -45,4 +39,15 @@ Get the rows of
 \link{us_location_table}
 corresponding to a given location vector
 and format, with repeats possible
+}
+\examples{
+
+us_location_lookup(c("01", "05", "US", "05"), "code")
+
+us_location_lookup(c("01", "05", "US", "05"), "code", "name")
+
+us_location_lookup(c("01", "05", "US", "05"), "code", c("abbr", "name"))
+
+us_location_lookup(c("Alaska", "Hawaii"), "name", c("code", "abbr"))
+
 }
