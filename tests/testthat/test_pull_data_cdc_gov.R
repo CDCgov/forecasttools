@@ -108,7 +108,7 @@ with_mock_dir(mockdir, {
         end_date = end_date,
         jurisdictions = jurisdictions
       ) |>
-        suppressMessages()
+        expect_warning(regexp = NA) # fail if warning
 
       expect_true(all(result$weekendingdate >= as.Date(start_date)))
       expect_true(all(result$weekendingdate <= as.Date(end_date)))
@@ -126,7 +126,7 @@ with_mock_dir(mockdir, {
       limit = 10,
       error_on_limit = FALSE
     ) |>
-      suppressMessages()
+      expect_warning(regexp = NA) # fail if warning
 
     expected_columns <- c("jurisdiction", "weekendingdate", columns)
     checkmate::expect_names(
@@ -150,7 +150,7 @@ with_mock_dir(mockdir, {
       order_by = order_by,
       desc = FALSE
     ) |>
-      suppressMessages()
+      expect_warning(regexp = NA) # fail if warning
     result_desc <- pull_nhsn(
       start_date = start_date,
       end_date = end_date,
@@ -159,7 +159,7 @@ with_mock_dir(mockdir, {
       order_by = order_by,
       desc = TRUE
     ) |>
-      suppressMessages()
+      expect_warning(regexp = NA) # fail if warning
 
     expect_equal(
       result_asc,
@@ -183,13 +183,11 @@ with_mock_dir(mockdir, {
     rlang::local_options(lifecycle_verbosity = "quiet")
 
     limit <- 10
-    result <- pull_nhsn(limit = limit, error_on_limit = FALSE) |>
-      suppressMessages()
+    result <- pull_nhsn(limit = limit, error_on_limit = FALSE)
     expect_equal(nrow(result), limit)
 
     expect_error(
-      pull_nhsn(limit = limit, error_on_limit = TRUE) |>
-        suppressMessages()
+      pull_nhsn(limit = limit, error_on_limit = TRUE)
     )
   })
 })
