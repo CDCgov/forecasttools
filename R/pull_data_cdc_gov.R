@@ -194,7 +194,8 @@ data_cdc_gov_base_query <- function(dataset_id) {
 #' Returns a data frame and optionally errors if a query row
 #' limit was hit.
 #'
-#' @param response Response to process, as the output of [httr::req_perform()].
+#' @param response Response to process, as the output of
+#' [httr2::req_perform()].
 #' @param limit Limit number of rows for the SODA query.
 #' @param error_on_limit Raise an error if the number
 #' of rows returned is equal to the maximum? Default `TRUE`.
