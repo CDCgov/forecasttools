@@ -2,18 +2,7 @@ start_date <- "2023-01-01"
 end_date <- "2023-10-31"
 jurisdictions <- c("CA", "TX")
 
-mockdir <- "api_mocks"
-
-test_that(".warn_no_api_creds() works as expected", {
-  expect_warning(
-    .warn_no_api_creds(),
-    "No valid API key ID"
-  )
-  expect_warning(
-    .warn_no_api_creds("https://example.com"),
-    "by visiting https://example.com"
-  )
-})
+mockdir_tests <- fs::path(mockdir, "test_pull_data_cdc_gov")
 
 
 test_that("data_cdc_gov_dataset_id() works as expected", {
@@ -58,7 +47,7 @@ test_that("data_cdc_gov_base_query() works as expected", {
 
 ## replace env variables with fakes if and only if
 ## we are mocking api calls
-if (fs::dir_exists(mockdir)) {
+if (fs::dir_exists(mockdir_tests)) {
   withr::local_envvar(
     .new = c(
       "NHSN_API_KEY_ID" = "fake_key",
@@ -67,7 +56,7 @@ if (fs::dir_exists(mockdir)) {
   )
 }
 
-with_mock_dir(mockdir, {
+with_mock_dir(mockdir_tests, {
   test_that("pull_nhsn is deprecated", {
     rlang::local_options(lifecycle_verbosity = "error")
 
