@@ -297,7 +297,9 @@ data_cdc_gov_soda_query <- function(
   ## need to add order_by columns sequentially
   ## to ensure the specified desc option is applied to each
   if (!is.null(order_by)) {
-    for (x in unique(order_by)) query <- soql::soql_order(query, x, desc = desc)
+    for (x in unique(order_by)) {
+      query <- soql::soql_order(query, x, desc = desc)
+    }
   }
 
   ## do limit string formatting
@@ -604,7 +606,9 @@ nhsn_soda_query <- function(
 
   ## need to add order_by columns sequentially
   ## to ensure the specified desc option is applied to each
-  for (x in unique(order_by)) query <- soql::soql_order(query, x, desc = desc)
+  for (x in unique(order_by)) {
+    query <- soql::soql_order(query, x, desc = desc)
+  }
 
   ## do limit string formatting
   ## manually since soql::soql_limit()
