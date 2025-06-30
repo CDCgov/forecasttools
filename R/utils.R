@@ -172,6 +172,22 @@ read_tabular_file <- function(path_to_file, ...) {
   return(file_reader(path_to_file, ...))
 }
 
+#' Check if an object is converted to an Arrow ExtensionArray
+#'
+#' This function tests whether an object is converted to an Arrow ExtensionArray
+#' rather than a regular Arrow Array.
+#'
+#' @param x An R object to check
+#' @return A logical value: TRUE if the object can is converted to an Arrow
+#' ExtensionArray, FALSE otherwise.
+#' @noRd
+#' @examples
+#' # Arrow ExtensionArray
+#' is_extension_array(fs::path(letters))
+#'
+#' # Arrow Array
+#' # Regular R vector
+#' is_extension_array(1:10)
 is_extension_array <- function(x) {
   "ExtensionArray" %in% class(arrow::as_arrow_array(x))
 }
