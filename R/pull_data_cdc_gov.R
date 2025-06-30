@@ -405,7 +405,7 @@ pull_nhsn_hrd <- function(
       api_key_secret,
       api_key_creation_url = .data_cdc_gov_api_creation_url
     ) |>
-    .process_data_cdc_cov_response(
+    .process_data_cdc_gov_response(
       limit = limit,
       error_on_limit = error_on_limit
     )
