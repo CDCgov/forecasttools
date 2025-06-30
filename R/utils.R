@@ -139,7 +139,7 @@ soql_nullable_select <- function(soql_list, columns) {
 #' Read from or write to tabular files, with
 #' file format inferred from the file extension.
 #'
-#' @param table Table to write (`write_tabular_file` only).
+#' @param table Table to write (`write_tabular` only).
 #' @param path_to_file Path to the file to read/write.
 #' Must have extension `.tsv`, `.csv`, or `.parquet`
 #' (not case-sensitive).
@@ -149,12 +149,12 @@ soql_nullable_select <- function(soql_list, columns) {
 #' [readr::read_tsv()] / [readr::write_tsv()], and
 #' [arrow::read_parquet()] / [arrow::write_parquet()],
 #' depending on the file format.
-#' @return For `read_tabular_file`, the result of
+#' @return For `read_tabular`, the result of
 #' reading in the file, as a
-#' [`tibble`][tibble::tibble()]. For `write_tabular_file`,
+#' [`tibble`][tibble::tibble()]. For `write_tabular`,
 #' nothing, saving the tabular to disk as a side effect.
 #' @export
-read_tabular_file <- function(path_to_file, ...) {
+read_tabular <- function(path_to_file, ...) {
   file_format <- fs::path_ext(path_to_file)
 
   file_format <- tolower(file_format)
@@ -194,9 +194,9 @@ is_extension_array <- function(x) {
 
 #' @param simplify_column_types If `TRUE`, attempts to convert extension arrays
 #' (e.g. fs paths, glue strings) to plain base R vectors before writing.
-#' @rdname read_tabular_file
+#' @rdname read_tabular
 #' @export
-write_tabular_file <- function(
+write_tabular <- function(
   table,
   path_to_file,
   simplify_column_types = TRUE,
@@ -224,13 +224,13 @@ write_tabular_file <- function(
   file_writer(table, path_to_file, ...)
 }
 
-#' @rdname read_tabular_file
+#' @rdname read_tabular
 #' @export
-write_tabular <- write_tabular_file
+write_tabular_file <- write_tabular
 
-#' @rdname read_tabular_file
+#' @rdname read_tabular
 #' @export
-read_tabular <- read_tabular_file
+read_tabular_file <- read_tabular
 
 #' Get limits spanning a set of values
 #' that are symmetric about a central value
