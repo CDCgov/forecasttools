@@ -11,9 +11,17 @@ test_that(".warn_no_api_creds() works as expected", {
 
 mockdir_tests <- fs::path(mockdir, "test_api")
 
+if (fs::dir_exists(mockdir_tests)) {
+  api_key <- "fake_key"
+  api_secret <- "fake_secret"
+} else {
+  api_key <- Sys.getenv("DATA_CDC_GOV_API_KEY_ID")
+  api_secret <- Sys.getenv("DATA_CDC_GOV_API_KEY_SECRET")
+}
+
 with_mock_dir(mockdir_tests, {
-  test_that(".perform_api_request() works as expected", {
-    url <- "https://data.cdc.gov/resource/mpgq-jmmr.json?$limit=1"
+  url <- "https://data.cdc.gov/resource/mpgq-jmmr.json?$limit=1"
+  test_that(".perform_api_request() warns if API key missing", {
     purrr::map(c(NULL, ""), \(x) {
       expect_warning(
         .perform_api_request(
@@ -23,7 +31,7 @@ with_mock_dir(mockdir_tests, {
         ),
         "No valid API key ID"
       )
-      expect_warning(
+      result_warn <- expect_warning(
         .perform_api_request(
           url,
           api_key_id = "test",
@@ -32,5 +40,23 @@ with_mock_dir(mockdir_tests, {
         "No valid API key ID"
       )
     })
+  })
+
+  test_that(".perform_api_request() works as expected", {
+    result <- expect_warning(
+      .perform_api_request(
+        url,
+        api_key_id = api_key,
+        api_key_secret = api_secret
+      ),
+      regexp = NA
+    )
+
+    expect_s3_class(result, "httr2_response")
+    expect_equal(result$status_code, 200L)
+    expect_equal(result$method, "GET")
+    expect_s3_class(result, "httr2_response")
+    expect_equal(result$status_code, 200L)
+    expect_equal(result$method, "GET")
   })
 })
