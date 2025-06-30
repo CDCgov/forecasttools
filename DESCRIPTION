@@ -38,8 +38,6 @@ Imports:
     gridExtra,
     httr2,
     hubData (>= 0.2.0),
-    hubUtils,
-    jsonlite,
     lifecycle,
     lubridate,
     methods,

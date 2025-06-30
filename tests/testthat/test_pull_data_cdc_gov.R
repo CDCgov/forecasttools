@@ -2,7 +2,7 @@ start_date <- "2023-01-01"
 end_date <- "2023-03-03"
 jurisdictions <- c("CA", "TX")
 
-mockdir_tests <- fs::path(mockdir, "test_pull_data_cdc_gov")
+mockdir_tests <- fs::path(mockdir, "test_pull_dcg")
 
 
 test_that("data_cdc_gov_dataset_id() works as expected", {
