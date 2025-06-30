@@ -10,7 +10,7 @@ data_cdc_gov_base_query(dataset_id)
 \item{dataset_id}{Dataset ID, as a string.}
 }
 \value{
-A \code{\link[=soql:soql]{soql:soql()}} object pointing at the dataset's JSON
+A \code{\link[soql:soql]{soql::soql()}} object pointing at the dataset's JSON
 API endpoint on \code{data.cdc.gov}.
 }
 \description{
