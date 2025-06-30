@@ -139,7 +139,7 @@ soql_nullable_select <- function(soql_list, columns) {
 #' Read from or write to tabular files, with
 #' file format inferred from the file extension.
 #'
-#' @param table Table to write (`write_tabular_file` only).
+#' @param table Table to write (`write_tabular` only).
 #' @param path_to_file Path to the file to read/write.
 #' Must have extension `.tsv`, `.csv`, or `.parquet`
 #' (not case-sensitive).
@@ -147,14 +147,14 @@ soql_nullable_select <- function(soql_list, columns) {
 #' file reader/writer function, which will be one of
 #' [readr::read_csv()] / [readr::write_csv()],
 #' [readr::read_tsv()] / [readr::write_tsv()], and
-#' [nanoparquet::read_parquet()] / [nanoparquet::write_parquet()],
+#' [arrow::read_parquet()] / [arrow::write_parquet()],
 #' depending on the file format.
-#' @return For `read_tabular_file`, the result of
+#' @return For `read_tabular`, the result of
 #' reading in the file, as a
-#' [`tibble`][tibble::tibble()]. For `write_tabular_file`,
+#' [`tibble`][tibble::tibble()]. For `write_tabular`,
 #' nothing, saving the tabular to disk as a side effect.
 #' @export
-read_tabular_file <- function(path_to_file, ...) {
+read_tabular <- function(path_to_file, ...) {
   file_format <- fs::path_ext(path_to_file)
 
   file_format <- tolower(file_format)
@@ -162,7 +162,7 @@ read_tabular_file <- function(path_to_file, ...) {
   file_readers <- c(
     "tsv" = readr::read_tsv,
     "csv" = readr::read_csv,
-    "parquet" = nanoparquet::read_parquet
+    "parquet" = arrow::read_parquet
   )
 
   checkmate::assert_names(file_format, subset.of = names(file_readers))
@@ -172,23 +172,65 @@ read_tabular_file <- function(path_to_file, ...) {
   return(file_reader(path_to_file, ...))
 }
 
-#' @rdname read_tabular_file
+#' Check if an object is converted to an Arrow ExtensionArray
+#'
+#' This function tests whether an object is converted to an Arrow ExtensionArray
+#' rather than a regular Arrow Array.
+#'
+#' @param x An R object to check
+#' @return A logical value: TRUE if the object can is converted to an Arrow
+#' ExtensionArray, FALSE otherwise.
+#' @noRd
+#' @examples
+#' # Arrow ExtensionArray
+#' is_extension_array(fs::path(letters))
+#'
+#' # Arrow Array
+#' # Regular R vector
+#' is_extension_array(1:10)
+is_extension_array <- function(x) {
+  "ExtensionArray" %in% class(arrow::as_arrow_array(x))
+}
+
+#' @param simplify_column_types If `TRUE`, attempts to convert extension arrays
+#' (e.g. fs paths, glue strings) to plain base R vectors before writing.
+#' @rdname read_tabular
 #' @export
-write_tabular_file <- function(table, path_to_file, ...) {
+write_tabular <- function(
+  table,
+  path_to_file,
+  simplify_column_types = TRUE,
+  ...
+) {
   file_format <- fs::path_ext(path_to_file)
 
   file_writers <- c(
     "tsv" = readr::write_tsv,
     "csv" = readr::write_csv,
-    "parquet" = nanoparquet::write_parquet
+    "parquet" = arrow::write_parquet
   )
 
   checkmate::assert_names(file_format, subset.of = names(file_writers))
 
   file_writer <- file_writers[[file_format]]
 
+  if (simplify_column_types) {
+    table <- dplyr::mutate(
+      table,
+      dplyr::across(tidyselect::where(is_extension_array), vctrs::vec_data)
+    )
+  }
+
   file_writer(table, path_to_file, ...)
 }
+
+#' @rdname read_tabular
+#' @export
+write_tabular_file <- write_tabular
+
+#' @rdname read_tabular
+#' @export
+read_tabular_file <- read_tabular
 
 #' Get limits spanning a set of values
 #' that are symmetric about a central value

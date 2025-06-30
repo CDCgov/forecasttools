@@ -5,10 +5,10 @@
 \title{Convert a 2-character USA location code
 to a 2-letter USA location abbreviation.}
 \usage{
-us_loc_code_to_abbr(location_codes)
+us_loc_code_to_abbr(code)
 }
 \arguments{
-\item{location_codes}{vector of location codes}
+\item{code}{vector of location codes}
 }
 \value{
 vector of the same length recoded as USPS
@@ -22,5 +22,5 @@ hubs), return the corresponding state/territory
 two-letter USPS short names (e.g. MA, TX, PR).
 }
 \seealso{
-\code{\link[=us_loc_abbr_to_code]{us_loc_abbr_to_code()}}
+\code{\link[=us_location_recode]{us_location_recode()}}
 }

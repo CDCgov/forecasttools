@@ -43,7 +43,7 @@ Imports:
     lifecycle,
     lubridate,
     methods,
-    nanoparquet,
+    arrow,
     purrr,
     readr,
     rlang,
