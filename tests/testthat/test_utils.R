@@ -13,7 +13,7 @@ test_that("write_tabular simplfies column types correctly", {
   purrr::map(
     c("tsv", "csv", "parquet"),
     \(ext) {
-      outpath <- fs::path(temp_dir, "test_table", ext = ext)
+      outpath <- withr::local_tempfile(fileext = ".parquet")
       write_tabular(test_table, outpath, simplify_column_types = TRUE)
       result <- read_tabular(outpath) |>
         suppressMessages() |>
@@ -25,7 +25,7 @@ test_that("write_tabular simplfies column types correctly", {
 })
 
 test_that("write_tabular allows complex column types for parquet files", {
-  outpath <- fs::path(temp_dir, "test_table", ext = "parquet")
+  outpath <- withr::local_tempfile(fileext = ".parquet")
   write_tabular(test_table, outpath, simplify_column_types = FALSE)
   result <- read_tabular(outpath)
 
