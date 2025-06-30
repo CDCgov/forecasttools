@@ -109,121 +109,6 @@ data_cdc_gov_base_query <- function(dataset_id) {
 }
 
 
-#' Warn the user that they are attempting an API request
-#' without credentials
-#'
-#' @param api_key_creation_url Optional URL to which to direct
-#' the user to create an API key ID / secret pair.
-#' @return Nothing, invisibly, warning the user as a side effect.
-#'
-#' @keywords internal
-.warn_no_api_creds <- function(api_key_creation_url = NULL) {
-  if (!is.null(api_key_creation_url)) {
-    create_creds_msg <- glue::glue(
-      " Create an ",
-      "API key ID / secret pair by visiting ",
-      "{api_key_creation_url}."
-    )
-  } else {
-    create_creds_msg <- NULL
-  }
-  cli::cli_warn(c(
-    glue::glue(
-      "No valid API key ID / secret pair provided. ",
-      "This is considered impolite and ",
-      "may result in your requests to the ",
-      "server getting throttled."
-    ),
-    create_creds_msg
-  ))
-
-  invisible()
-}
-
-#' Default API requests for forecasttools via
-#' httr2
-#'
-#' @param url URL for the request to perform, passed as the `url`
-#' argument to [httr2::request()].
-#' @param api_key_id API key id to use when authenticating.
-#' If `NULL` or the empty string (`""`), treated as not provided.
-#' @param api_key_secret API key secret to use when authenticating.
-#' If `NULL` or the empty string (`""`), treated as not provided.
-#' @param api_key_creation_url The user will be warned if they fail
-#' to provide an `api_key_id` and `api_key_secret`. Provide this
-#' optional argument to direct the user to a website where they can
-#' create those credentials. See [.warn_no_api_creds()].
-#' @keywords internal
-.perform_api_request <- function(
-  url,
-  api_key_id,
-  api_key_secret,
-  api_key_creation_url = NULL
-) {
-  to_perform <-
-    httr2::request(url) |>
-    httr2::req_user_agent(
-      paste0(
-        "forecasttools R package ",
-        "(https://cdcgov.github.io/forecasttools)"
-      )
-    )
-
-  api_key_id <- if (is.null(api_key_id)) "" else api_key_id
-  api_key_secret <- if (is.null(api_key_secret)) "" else api_key_secret
-
-  credentials <- (api_key_id != "" &
-    api_key_secret != "")
-
-  if (credentials) {
-    to_perform <- httr2::req_auth_basic(
-      to_perform,
-      api_key_id,
-      api_key_secret
-    )
-  } else {
-    .warn_no_api_creds(api_key_creation_url)
-  }
-
-  response <- httr2::req_perform(to_perform)
-  return(response)
-}
-
-#' Default processing for a SODA response from `data.cdc.gov`
-#'
-#' Returns a data frame and optionally errors if a query row
-#' limit was hit.
-#'
-#' @param response Response to process, as the output of
-#' [httr2::req_perform()].
-#' @param limit Limit number of rows for the SODA query.
-#' @param error_on_limit Raise an error if the number
-#' of rows returned is equal to the maximum? Default `TRUE`.
-#'
-#' @keywords internal
-.process_data_cdc_gov_response <- function(
-  response,
-  limit,
-  error_on_limit = TRUE
-) {
-  df <- httr2::resp_body_json(response) |>
-    dplyr::bind_rows() |>
-    tibble::as_tibble()
-
-  if (error_on_limit && nrow(df) >= limit) {
-    cli::cli_abort(glue::glue(
-      "Query retrieved a number of ",
-      "records equal to the query limit. ",
-      "Some matching records may therefore ",
-      "be excluded. Try a narrower query, a ",
-      "higher limit, or, if this was intended, ",
-      "set `error_on_limit = FALSE`."
-    ))
-  }
-
-  return(df)
-}
-
 #' Helper function for common Socrata open data
 #' API (SODA) queries targeted at `data.cdc.gov` datasets.
 #'
@@ -315,17 +200,11 @@ data_cdc_gov_soda_query <- function(
 }
 
 
-#' Pull NHSN Hospital Respiratory data from `data.cdc.gov`
+#' Pull a dataset from `data.cdc.gov` with standard selection
+#' and filtering options.
 #'
-#' Defaults to the [`data.cdc.gov`](https://data.cdc.gov)
-#' public API endpoint for Wednesday preliminary
-#' releases.
-#'
-#' @param release HRD release to pull.
-#' One of `"prelim"` (preliminary weekly data release
-#' typically occurs on Wednesdays) or `"final"`
-#' final weekly data release, typically occurs on Fridays. Default
-#' `"prelim"`.
+#' @param dataset_name Name of the dataset. One of the keys
+#' of [data_cdc_gov_datasets].
 #' @param api_key_id Key ID of an API key to use
 #' when querying the dataset. Not required,
 #' but polite and reduces throttling.
@@ -345,14 +224,13 @@ data_cdc_gov_soda_query <- function(
 #' less than or equal to this date. If `NULL`,
 #' no maximum date. Default `NULL`.
 #' @param columns Vector of columns to retrieve, in
-#' addition to `weekendingdate` and `jurisdiction`, which are always
-#' retrieved. If `NULL`, retrieve all columns.
-#' Default `NULL`.
-#' @param jurisdictions value or values to filter on for the `jurisdiction`
-#' column of the NHSN dataset. If `NULL`, do not filter on that column.
+#' addition to the location and date columns for the dataset, which
+#' are always retrieved. Default `NULL`.
+#' @param locations value or values to filter on for the dataset's
+#' location column. If `NULL`, do not filter on that column.
 #' Default `NULL`.
 #' @param order_by column or columns to order (sort) by.
-#' Default `c("jurisdiction", "weekendingdate")`
+#' Default `NULL` (do not order).
 #' (sort first by jurisdiction, then by date).
 #' @param desc Boolean. Whether to order descending instead of
 #' ascending. Default `FALSE` (order ascending).
@@ -366,48 +244,43 @@ data_cdc_gov_soda_query <- function(
 #' @param ... other arguments passed to [nhsn_soda_query()]
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
-pull_nhsn_hrd <- function(
-  release = "prelim",
+pull_data_cdc_gov_dataset <- function(
+  dataset_name,
   api_key_id = Sys.getenv("DATA_CDC_GOV_API_KEY_ID"),
   api_key_secret = Sys.getenv("DATA_CDC_GOV_API_KEY_SECRET"),
   start_date = NULL,
   end_date = NULL,
   columns = NULL,
   locations = NULL,
-  order_by = c(
-    "jurisdiction",
-    "weekendingdate"
-  ),
+  order_by = NULL,
   desc = FALSE,
   limit = 1e5,
   error_on_limit = TRUE,
   ...
 ) {
-  checkmate::expect_scalar(release)
-  checkmate::expect_names(release, subset.of = c("prelim", "final"))
-
-  dataset_name <- glue::glue("nhsn_hrd_{release}")
+  checkmate::expect_scalar(dataset_name)
+  checkmate::expect_names(
+    dataset_name,
+    subset.of = names(data_cdc_gov_datasets)
+  )
 
   df <- data_cdc_gov_soda_query(
     dataset_name = dataset_name,
     start_date = start_date,
     end_date = end_date,
     columns = columns,
-    jurisdictions = jurisdictions,
+    locations = locations,
     order_by = order_by,
     desc = desc,
     limit = limit,
     ...
   ) |>
-    as.character() |>
-    .perform_api_request(
-      api_key_id,
-      api_key_secret,
-      api_key_creation_url = .data_cdc_gov_api_creation_url
-    ) |>
-    .process_data_cdc_gov_response(
+    perform_soda_query(
+      api_key_id = api_key_id,
+      api_key_secret = api_key_secret,
       limit = limit,
-      error_on_limit = error_on_limit
+      error_on_limit = error_on_limit,
+      api_key_creation_url = .data_cdc_gov_api_creation_url
     )
 
   return(df)
@@ -419,7 +292,7 @@ pull_nhsn_hrd <- function(
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' This function has been replaced by [pull_nhsn_hrd()],
+#' This function has been replaced by [pull_data_cdc_gov_dataset()],
 #' which has a slightly different interface and better
 #' leverages general tooling for interacting with data.cdc.gov.
 #'
@@ -455,7 +328,7 @@ pull_nhsn_hrd <- function(
 #' addition to `weekendingdate` and `jurisdiction`, which are always
 #' retrieved. If `NULL`, retrieve all columns.
 #' Default `NULL`.
-#' @param jurisdictions value or values to filter on for the `jurisdiction`
+#' @param location value or values to filter on for the `jurisdiction`
 #' column of the NHSN dataset. If `NULL`, do not filter on that column.
 #' Default `NULL`.
 #' @param order_by column or columns to order (sort) by.
@@ -508,26 +381,13 @@ pull_nhsn <- function(
     limit = limit,
     ...
   ) |>
-    as.character() |>
-    .perform_api_request(
-      api_key_id,
-      api_key_secret,
+    perform_soda_query(
+      api_key_id = api_key_id,
+      api_key_secret = api_key_secret,
+      limit = limit,
+      error_on_limit = error_on_limit,
       api_key_creation_url = .data_cdc_gov_api_creation_url
-    ) |>
-    httr2::resp_body_json() |>
-    dplyr::bind_rows() |>
-    tibble::as_tibble()
-
-  if (error_on_limit && nrow(df) >= limit) {
-    cli::cli_abort(glue::glue(
-      "Query retrieved a number of ",
-      "records equal to the query limit. ",
-      "Some matching records may therefore ",
-      "be excluded. Try a narrower query, a ",
-      "higher limit, or, if this was intended, ",
-      "set `error_on_limit = FALSE`."
-    ))
-  }
+    )
 
   return(df)
 }
@@ -565,7 +425,8 @@ pull_nhsn <- function(
 #' results. Default `c("jurisdiction", "weekendingdate")`
 #' @param desc whether to order descending instead of
 #' ascending. Default `FALSE` (order ascending).
-#' @param ... additional arguments (ignored for now)
+#' @param ... additional arguments passed to
+#' [data_cdc_gov_soda_query()].
 #' @return the query as [soql::soql()] output
 #' @export
 nhsn_soda_query <- function(
@@ -582,43 +443,18 @@ nhsn_soda_query <- function(
   desc = FALSE,
   ...
 ) {
-  cols <- if (!is.null(columns)) {
-    c("jurisdiction", "weekendingdate", columns)
-  } else {
-    NULL
-  }
-
-  query <- soql::soql() |>
-    soql::soql_add_endpoint(api_endpoint) |>
-    soql_nullable_select(cols) |>
-    soql_nullable_where(
-      "weekendingdate",
-      ">=",
-      start_date
+  return(
+    data_cdc_gov_soda_query(
+      dataset_name = "nhsn_hrd_prelim",
+      start_date = start_date,
+      end_date = end_date,
+      columns = columns,
+      locations = jurisdictions,
+      limit = limit,
+      order_by = order_by,
+      desc = desc,
+      ...
     ) |>
-    soql_nullable_where(
-      "weekendingdate",
-      "<=",
-      end_date
-    ) |>
-    soql_nullable_is_in(
-      "jurisdiction",
-      jurisdictions
-    )
-
-  ## need to add order_by columns sequentially
-  ## to ensure the specified desc option is applied to each
-  for (x in unique(order_by)) {
-    query <- soql::soql_order(query, x, desc = desc)
-  }
-
-  ## do limit string formatting
-  ## manually since soql::soql_limit()
-  ## coerces input to numeric and then
-  ## string formats with XeY notation
-  ## (e.g. 100000 as '1e5'), which endpoints
-  ## will fail to parse
-  query$clauses$limit <- sprintf("%d", as.numeric(limit))
-
-  return(query)
+      soql::soql_add_endpoint(api_endpoint)
+  )
 }

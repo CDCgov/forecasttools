@@ -52,10 +52,6 @@ addition to \code{weekendingdate} and \code{jurisdiction}, which are always
 retrieved. If \code{NULL}, retrieve all columns.
 Default \code{NULL}.}
 
-\item{jurisdictions}{value or values to filter on for the \code{jurisdiction}
-column of the NHSN dataset. If \code{NULL}, do not filter on that column.
-Default \code{NULL}.}
-
 \item{order_by}{column or columns to order (sort) by.
 Default \code{c("jurisdiction", "weekendingdate")}
 (sort first by jurisdiction, then by date).}
@@ -73,6 +69,10 @@ subset of the total set of rows matching the query. If a subset
 is desired, one can set \code{error_on_limit = FALSE}.}
 
 \item{...}{other arguments passed to \code{\link[=nhsn_soda_query]{nhsn_soda_query()}}}
+
+\item{location}{value or values to filter on for the \code{jurisdiction}
+column of the NHSN dataset. If \code{NULL}, do not filter on that column.
+Default \code{NULL}.}
 }
 \value{
 the pulled data, as a \code{\link[tibble:tibble]{tibble}}.
@@ -80,7 +80,7 @@ the pulled data, as a \code{\link[tibble:tibble]{tibble}}.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This function has been replaced by \code{\link[=pull_nhsn_hrd]{pull_nhsn_hrd()}},
+This function has been replaced by \code{\link[=pull_data_cdc_gov_dataset]{pull_data_cdc_gov_dataset()}},
 which has a slightly different interface and better
 leverages general tooling for interacting with data.cdc.gov.
 

@@ -48,7 +48,8 @@ results. Default \code{c("jurisdiction", "weekendingdate")}}
 \item{desc}{whether to order descending instead of
 ascending. Default \code{FALSE} (order ascending).}
 
-\item{...}{additional arguments (ignored for now)}
+\item{...}{additional arguments passed to
+\code{\link[=data_cdc_gov_soda_query]{data_cdc_gov_soda_query()}}.}
 }
 \value{
 the query as \code{\link[soql:soql]{soql::soql()}} output
