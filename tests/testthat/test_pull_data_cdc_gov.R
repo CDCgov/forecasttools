@@ -1,5 +1,5 @@
 start_date <- "2023-01-01"
-end_date <- "2023-10-31"
+end_date <- "2023-03-03"
 jurisdictions <- c("CA", "TX")
 
 mockdir_tests <- fs::path(mockdir, "test_pull_data_cdc_gov")
@@ -62,7 +62,7 @@ with_mock_dir(mockdir_tests, {
 
     expect_error(
       pull_nhsn(
-        limit = 10,
+        limit = 1,
         error_on_limit = FALSE
       ) |>
         suppressMessages(),

@@ -92,7 +92,7 @@ data_cdc_gov_endpoint <- function(dataset_id) {
 #' Construct a base SOQL query pointing at at data.cdc.gov endpoint.
 #'
 #' @param dataset_id Dataset ID, as a string.
-#' @return A [soql:soql()] object pointing at the dataset's JSON
+#' @return A [soql::soql()] object pointing at the dataset's JSON
 #' API endpoint on `data.cdc.gov`.
 #' @examples
 #'
@@ -328,7 +328,7 @@ pull_data_cdc_gov_dataset <- function(
 #' addition to `weekendingdate` and `jurisdiction`, which are always
 #' retrieved. If `NULL`, retrieve all columns.
 #' Default `NULL`.
-#' @param location value or values to filter on for the `jurisdiction`
+#' @param jurisdictions value or values to filter on for the `jurisdiction`
 #' column of the NHSN dataset. If `NULL`, do not filter on that column.
 #' Default `NULL`.
 #' @param order_by column or columns to order (sort) by.
