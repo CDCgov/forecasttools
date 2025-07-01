@@ -6,7 +6,8 @@
 and filtering options.}
 \usage{
 pull_data_cdc_gov_dataset(
-  dataset_name,
+  dataset,
+  dataset_lookup_format = "key",
   api_key_id = Sys.getenv("DATA_CDC_GOV_API_KEY_ID"),
   api_key_secret = Sys.getenv("DATA_CDC_GOV_API_KEY_SECRET"),
   start_date = NULL,
@@ -21,8 +22,13 @@ pull_data_cdc_gov_dataset(
 )
 }
 \arguments{
-\item{dataset_name}{Dataset name (as one of the keys
-of \link{data_cdc_gov_dataset_table}.}
+\item{dataset}{Dataset key or id (as one of the keys or ids
+in \link{data_cdc_gov_dataset_table}. Format determined by the
+value of \code{dataset_lookup_format}.}
+
+\item{dataset_lookup_format}{Format for the \code{dataset}
+string. One of \code{"key"} or \code{"id"}. Default \code{"key"}.
+See \code{\link[=data_cdc_gov_dataset_lookup]{data_cdc_gov_dataset_lookup()}}.}
 
 \item{api_key_id}{Key ID of an API key to use
 when querying the dataset. Not required,

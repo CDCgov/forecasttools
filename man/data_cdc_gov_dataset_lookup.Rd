@@ -6,13 +6,16 @@
 corresponding to the entries of a given
 vector.}
 \usage{
-data_cdc_gov_dataset_lookup(dataset, input_format)
+data_cdc_gov_dataset_lookup(dataset, format, strict = FALSE)
 }
 \arguments{
 \item{dataset}{vector of dataset keys or ids}
 
-\item{input_format}{format in which the input \code{dataset}
+\item{format}{format in which the input \code{dataset}
 vector is coded. One of \code{"key"} or \code{"id"}.}
+
+\item{strict}{Error if not all keys/ids can be matched?
+Default \code{FALSE}.}
 }
 \value{
 A \code{\link[tibble:tibble]{tibble}} with the

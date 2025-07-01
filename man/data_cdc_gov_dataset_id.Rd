@@ -11,7 +11,8 @@ data_cdc_gov_dataset_id(dataset_key)
 See \link{data_cdc_gov_dataset_table}.}
 }
 \value{
-The dataset ids, as a vector string.
+The dataset ids, as a vector string, with NA values for
+non-matches.
 }
 \description{
 Retrieve the dataset IDs for supported \code{data.cdc.gov} datasets
