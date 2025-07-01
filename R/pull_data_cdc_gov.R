@@ -80,6 +80,8 @@ data_cdc_gov_dataset_table <- dplyr::bind_rows(
 #' @param dataset vector of dataset keys or ids
 #' @param format format in which the input `dataset`
 #' vector is coded. One of `"key"` or `"id"`.
+#' @param strict Error if not all keys/ids can be matched?
+#' Default `FALSE`.
 #' @return A [`tibble`][tibble::tibble()] with the
 #' corresponding rows of the [data_cdc_gov_dataset_table]
 #' matching the location vector (with repeats possible).
@@ -102,7 +104,8 @@ data_cdc_gov_dataset_table <- dplyr::bind_rows(
 #' @export
 data_cdc_gov_dataset_lookup <- function(
   dataset,
-  format
+  format,
+  strict = FALSE
 ) {
   checkmate::assert_scalar(format)
   checkmate::assert_names(format, subset.of = c("key", "id"))
@@ -111,6 +114,17 @@ data_cdc_gov_dataset_lookup <- function(
     x = as.character(dataset),
     table = data_cdc_gov_dataset_table[[format]]
   )
+
+  not_found <- is.na(mask)
+  if (any(not_found) && strict) {
+    cli::cli_abort(paste0(
+      "Dataset(s) matching '{format}' = ",
+      "{glue::single_quote(dataset[not_found])} not found. Inspect ",
+      "{.obj forecasttools::data_cdc_gov_dataset_table} ",
+      "to view supported datasets, or set `strict = FALSE` to allow ",
+      "non-matches"
+    ))
+  }
 
   return(data_cdc_gov_dataset_table[mask, ])
 }
@@ -121,7 +135,8 @@ data_cdc_gov_dataset_lookup <- function(
 #' @param dataset_key Internal forecasttools name for the dataset.
 #' See [data_cdc_gov_dataset_table].
 #'
-#' @return The dataset ids, as a vector string.
+#' @return The dataset ids, as a vector string, with NA values for
+#' non-matches.
 #'
 #' @examples
 #' data_cdc_gov_dataset_id("nhsn_hrd_prelim")
@@ -336,7 +351,8 @@ pull_data_cdc_gov_dataset <- function(
 
   dataset_info <- data_cdc_gov_dataset_lookup(
     dataset,
-    dataset_lookup_format
+    dataset_lookup_format,
+    strict = TRUE
   )
 
   df <- data_cdc_gov_soda_query(
