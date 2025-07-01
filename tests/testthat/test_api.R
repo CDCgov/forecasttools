@@ -9,7 +9,7 @@ test_that(".warn_no_api_creds() works as expected", {
   )
 })
 
-mockdir_tests <- fs::path(mockdir, "test_api")
+mockdir_tests <- fs::path(mockdir, "api")
 
 if (fs::dir_exists(mockdir_tests)) {
   api_key <- "fake_key"
