@@ -4,6 +4,33 @@ jurisdictions <- c("CA", "TX")
 
 mockdir_tests <- fs::path(mockdir, "dcg")
 
+test_that("data_cdc_gov_endpoint() works as expected", {
+  result <- data_cdc_gov_endpoint("test-id")
+  expected <- "https://data.cdc.gov/resource/test-id.json"
+  expect_equal(result, expected)
+})
+
+test_that("data_cdc_gov_dataset_lookup() errors appropriately", {
+  test_vec_id <- c("ua7e-t2fy", "unavailable")
+  test_vec_key <- c("nhsn_hrd_prelim", "unavailable")
+
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, "id", strict = TRUE),
+    "matching 'id'"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_key, "key", strict = TRUE),
+    "matching 'key'"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, "id", strict = FALSE),
+    NA
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_key, "key", strict = FALSE),
+    NA
+  )
+})
 
 test_that("data_cdc_gov_dataset_id() works as expected", {
   manual <- function(x) {
