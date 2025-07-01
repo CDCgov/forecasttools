@@ -78,7 +78,7 @@ data_cdc_gov_dataset_table <- dplyr::bind_rows(
 #' vector.
 #'
 #' @param dataset vector of dataset keys or ids
-#' @param input_format format in which the input `dataset`
+#' @param format format in which the input `dataset`
 #' vector is coded. One of `"key"` or `"id"`.
 #' @return A [`tibble`][tibble::tibble()] with the
 #' corresponding rows of the [data_cdc_gov_dataset_table]
@@ -102,14 +102,14 @@ data_cdc_gov_dataset_table <- dplyr::bind_rows(
 #' @export
 data_cdc_gov_dataset_lookup <- function(
   dataset,
-  input_format
+  format
 ) {
-  checkmate::assert_scalar(input_format)
-  checkmate::assert_names(input_format, subset.of = c("key", "id"))
+  checkmate::assert_scalar(format)
+  checkmate::assert_names(format, subset.of = c("key", "id"))
 
   mask <- match(
     x = as.character(dataset),
-    table = data_cdc_gov_dataset_table[[input_format]]
+    table = data_cdc_gov_dataset_table[[format]]
   )
 
   return(data_cdc_gov_dataset_table[mask, ])
@@ -272,8 +272,12 @@ data_cdc_gov_soda_query <- function(
 #' Pull a dataset from `data.cdc.gov` with standard selection
 #' and filtering options.
 #'
-#' @param dataset_name Dataset name (as one of the keys
-#' of [data_cdc_gov_dataset_table].
+#' @param dataset Dataset key or id (as one of the keys or ids
+#' in [data_cdc_gov_dataset_table]. Format determined by the
+#' value of `dataset_lookup_format`.
+#' @param dataset_lookup_format Format for the `dataset`
+#' string. One of `"key"` or `"id"`. Default `"key"`.
+#' See [data_cdc_gov_dataset_lookup()].
 #' @param api_key_id Key ID of an API key to use
 #' when querying the dataset. Not required,
 #' but polite and reduces throttling.
@@ -314,7 +318,8 @@ data_cdc_gov_soda_query <- function(
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
 pull_data_cdc_gov_dataset <- function(
-  dataset_name,
+  dataset,
+  dataset_lookup_format = "key",
   api_key_id = Sys.getenv("DATA_CDC_GOV_API_KEY_ID"),
   api_key_secret = Sys.getenv("DATA_CDC_GOV_API_KEY_SECRET"),
   start_date = NULL,
@@ -327,11 +332,11 @@ pull_data_cdc_gov_dataset <- function(
   error_on_limit = TRUE,
   ...
 ) {
-  checkmate::assert_scalar(dataset_name)
+  checkmate::assert_scalar(dataset)
 
   dataset_info <- data_cdc_gov_dataset_lookup(
-    dataset_name,
-    "key"
+    dataset,
+    dataset_lookup_format
   )
 
   df <- data_cdc_gov_soda_query(
