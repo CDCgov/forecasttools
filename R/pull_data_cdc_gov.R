@@ -3,33 +3,8 @@
   "profile/edit/developer_settings"
 )
 
-#' Construct data.cdc.gov API endpoints from dataset IDs
-#'
-#' @param dataset_id One or more dataset IDs, as a vector of strings.
-#' @return The full URL(s) for the (JSON) Socrata Open Data API
-#' endpoint(s).
-#'
-#' @examples
-#'
-#' data_cdc_gov_endpoint(data_cdc_gov_dataset_id("nhsn_hrd_prelim"))
-#'
-#' data_cdc_gov_dataset_id("nssp_prop_ed_visits") |>
-#'   data_cdc_gov_endpoint()
-#'
-#' @export
-data_cdc_gov_endpoint <- function(dataset_id) {
-  return(as.character(glue::glue(
-    "https://data.cdc.gov/resource/{dataset_id}.json"
-  )))
-}
-
 
 #' Dataset IDs and metadata for `data.cdc.gov` datasets
-#'
-#' `nhsn_hist_daily`: National Healthcare Safety Network
-#' (NHSN) daily-resolution incident hospital admissions timeseries,
-#' for COVID-19 and later Influenza, reported until 28 June 2024.
-#' Former target for the COVID-19 Forecast Hub.
 #'
 #' `nhsn_hrd_final`, `nhsn_hrd_prelim`: NHSN Hospital Respiratory Data
 #' (HRD).
@@ -46,12 +21,6 @@ data_cdc_gov_endpoint <- function(dataset_id) {
 #' @seealso [data_cdc_gov_dataset_id()]
 #' @export
 data_cdc_gov_dataset_table <- dplyr::bind_rows(
-  list(
-    key = "nhsn_hist_daily",
-    id = "g62h-syeh",
-    date_column = "date",
-    location_column = "state"
-  ),
   list(
     key = "nhsn_hrd_prelim",
     id = "mpgq-jmmr",
@@ -71,6 +40,26 @@ data_cdc_gov_dataset_table <- dplyr::bind_rows(
     location_column = "county"
   )
 )
+
+#' Construct data.cdc.gov API endpoints from dataset IDs
+#'
+#' @param dataset_id One or more dataset IDs, as a vector of strings.
+#' @return The full URL(s) for the (JSON) Socrata Open Data API
+#' endpoint(s).
+#'
+#' @examples
+#'
+#' data_cdc_gov_endpoint(data_cdc_gov_dataset_id("nhsn_hrd_prelim"))
+#'
+#' data_cdc_gov_dataset_id("nssp_prop_ed_visits") |>
+#'   data_cdc_gov_endpoint()
+#'
+#' @export
+data_cdc_gov_endpoint <- function(dataset_id) {
+  return(as.character(glue::glue(
+    "https://data.cdc.gov/resource/{dataset_id}.json"
+  )))
+}
 
 
 #' Look up rows of the data.cdc.gov dataset table
@@ -322,13 +311,13 @@ data_cdc_gov_soda_query <- function(
 #' no maximum date. Default `NULL`.
 #' @param columns Vector of columns to retrieve, in
 #' addition to the location and date columns for the dataset, which
-#' are always retrieved. Default `NULL`.
+#' are always retrieved if they exist. Default `NULL`.
 #' @param locations value or values to filter on for the dataset's
 #' location column. If `NULL`, do not filter on that column.
 #' Default `NULL`.
 #' @param order_by column or columns to order (sort) by.
-#' Default `NULL` (do not order).
-#' (sort first by jurisdiction, then by date).
+#' If `NULL` (default), order first by location column,
+#' then by date column.
 #' @param desc Boolean. Whether to order descending instead of
 #' ascending. Default `FALSE` (order ascending).
 #' @param limit maximum number of rows to return. Default `1e5`
@@ -338,6 +327,9 @@ data_cdc_gov_soda_query <- function(
 #' This ensures that one does not silently end up with a
 #' subset of the total set of rows matching the query. If a subset
 #' is desired, one can set `error_on_limit = FALSE`.
+#' @param rename_columns Boolean. Rename the dataset-specific
+#' date and location columns to `date` and `location`, respectively?
+#' Default `FALSE`.
 #' @param ... other arguments passed to [nhsn_soda_query()]
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
@@ -354,15 +346,22 @@ pull_data_cdc_gov_dataset <- function(
   desc = FALSE,
   limit = 1e5,
   error_on_limit = TRUE,
+  rename_columns = FALSE,
   ...
 ) {
   checkmate::assert_scalar(dataset)
+  checkmate::assert_scalar(rename_columns)
+  checkmate::assert_logical(rename_columns)
 
   dataset_info <- data_cdc_gov_dataset_lookup(
     dataset,
     dataset_lookup_format,
     strict = TRUE
   )
+
+  if (is.null(order_by)) {
+    order_by <- c(dataset_info$location_column, dataset_info$date_column)
+  }
 
   df <- data_cdc_gov_soda_query(
     dataset_id = dataset_info$id,
@@ -384,6 +383,14 @@ pull_data_cdc_gov_dataset <- function(
       error_on_limit = error_on_limit,
       api_key_creation_url = .data_cdc_gov_api_creation_url
     )
+
+  if (rename_columns) {
+    df <- dplyr::rename(
+      df,
+      location = !!dataset_info$location_column,
+      date = !!dataset_info$date_column
+    )
+  }
 
   return(df)
 }
