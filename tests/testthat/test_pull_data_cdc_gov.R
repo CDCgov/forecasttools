@@ -1,27 +1,35 @@
-start_date <- "2023-01-01"
-end_date <- "2023-03-03"
+start_date <- "2024-01-01"
+end_date <- "2024-02-03"
 jurisdictions <- c("CA", "TX")
 
 mockdir_tests <- fs::path(mockdir, "test_pull_dcg")
 
 
 test_that("data_cdc_gov_dataset_id() works as expected", {
-  # compare to equivalent manual implementation
-  purrr::map(names(data_cdc_gov_datasets), \(x) {
+  manual <- function(x) {
+    mask <- match(x = as.character(x), table = data_cdc_gov_dataset_table$key)
+    return(data_cdc_gov_dataset_table[mask, ]$id)
+  }
+  ## compare to equivalent manual implementation for scalar
+  ## values
+
+  purrr::map(names(data_cdc_gov_dataset_table), \(x) {
     expect_equal(
       data_cdc_gov_dataset_id(x),
-      data_cdc_gov_datasets[[x]]$id
+      manual(x)
     )
   })
 
-  # should error with vector input
-  expect_error(
-    data_cdc_gov_dataset_id(c("nhsn_hist_daily", "nhsn_hrd_prelim")),
-    "length 1"
+  query_vector <- c(
+    "nhsn_hrd_prelim",
+    "nhsn_hrd_final",
+    "missing_dataset",
+    "nhsn_hrd_prelim"
   )
-
-  # should error with non-supported name
-  expect_error(data_cdc_gov_dataset_id("test_name"), "subset of")
+  expect_equal(
+    data_cdc_gov_dataset_id(query_vector),
+    manual(query_vector)
+  )
 })
 
 

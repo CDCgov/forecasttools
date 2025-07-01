@@ -6,7 +6,9 @@
 API (SODA) queries targeted at \code{data.cdc.gov} datasets.}
 \usage{
 data_cdc_gov_soda_query(
-  dataset_name,
+  dataset_id,
+  date_col = NULL,
+  location_col = NULL,
   start_date = NULL,
   end_date = NULL,
   columns = NULL,
@@ -18,7 +20,13 @@ data_cdc_gov_soda_query(
 )
 }
 \arguments{
-\item{dataset_name}{Name of the dataset to query.}
+\item{dataset_id}{Dataset ID for the dataset}
+
+\item{date_col}{Name of the date column for the dataset,
+if any. Default \code{NULL}.}
+
+\item{location_col}{Name of the location column for the dataset,
+if any. Default \code{NULL}.}
 
 \item{start_date}{Pull only rows with dates
 greater than or equal to this date. If \code{NULL},
@@ -54,4 +62,13 @@ the query as \code{\link[soql:soql]{soql::soql()}} output
 \description{
 Helper function for common Socrata open data
 API (SODA) queries targeted at \code{data.cdc.gov} datasets.
+}
+\examples{
+
+data_cdc_gov_query(
+  "nhsn_hrd_prelim",
+  "2025-05-01",
+  "2025-07-01",
+  "totalconfflunewadm")
+
 }

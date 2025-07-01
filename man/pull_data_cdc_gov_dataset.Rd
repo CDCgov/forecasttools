@@ -6,7 +6,7 @@
 and filtering options.}
 \usage{
 pull_data_cdc_gov_dataset(
-  dataset_name,
+  dataset,
   api_key_id = Sys.getenv("DATA_CDC_GOV_API_KEY_ID"),
   api_key_secret = Sys.getenv("DATA_CDC_GOV_API_KEY_SECRET"),
   start_date = NULL,
@@ -21,9 +21,6 @@ pull_data_cdc_gov_dataset(
 )
 }
 \arguments{
-\item{dataset_name}{Name of the dataset. One of the keys
-of \link{data_cdc_gov_datasets}.}
-
 \item{api_key_id}{Key ID of an API key to use
 when querying the dataset. Not required,
 but polite and reduces throttling.
@@ -70,6 +67,9 @@ subset of the total set of rows matching the query. If a subset
 is desired, one can set \code{error_on_limit = FALSE}.}
 
 \item{...}{other arguments passed to \code{\link[=nhsn_soda_query]{nhsn_soda_query()}}}
+
+\item{dataset_name}{Dataset name (as one of the keys
+of \link{data_cdc_gov_dataset_table}.}
 }
 \value{
 the pulled data, as a \code{\link[tibble:tibble]{tibble}}.

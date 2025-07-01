@@ -1,0 +1,62 @@
+[
+    {
+        "jurisdiction": "CA",
+        "weekendingdate": "2024-01-06T00:00:00.000",
+        "numinptbeds": "62024.14",
+        "totalconfc19newadmped": "133.0"
+    },
+    {
+        "jurisdiction": "TX",
+        "weekendingdate": "2024-01-06T00:00:00.000",
+        "numinptbeds": "54784.14",
+        "totalconfc19newadmped": "104.0"
+    },
+    {
+        "jurisdiction": "CA",
+        "weekendingdate": "2024-01-13T00:00:00.000",
+        "numinptbeds": "62705.29",
+        "totalconfc19newadmped": "93.0"
+    },
+    {
+        "jurisdiction": "TX",
+        "weekendingdate": "2024-01-13T00:00:00.000",
+        "numinptbeds": "54084.86",
+        "totalconfc19newadmped": "94.0"
+    },
+    {
+        "jurisdiction": "CA",
+        "weekendingdate": "2024-01-20T00:00:00.000",
+        "numinptbeds": "62933.0",
+        "totalconfc19newadmped": "89.0"
+    },
+    {
+        "jurisdiction": "TX",
+        "weekendingdate": "2024-01-20T00:00:00.000",
+        "numinptbeds": "53726.29",
+        "totalconfc19newadmped": "124.0"
+    },
+    {
+        "jurisdiction": "CA",
+        "weekendingdate": "2024-01-27T00:00:00.000",
+        "numinptbeds": "62533.81",
+        "totalconfc19newadmped": "114.0"
+    },
+    {
+        "jurisdiction": "TX",
+        "weekendingdate": "2024-01-27T00:00:00.000",
+        "numinptbeds": "53723.43",
+        "totalconfc19newadmped": "150.0"
+    },
+    {
+        "jurisdiction": "CA",
+        "weekendingdate": "2024-02-03T00:00:00.000",
+        "numinptbeds": "62575.57",
+        "totalconfc19newadmped": "93.0"
+    },
+    {
+        "jurisdiction": "TX",
+        "weekendingdate": "2024-02-03T00:00:00.000",
+        "numinptbeds": "53382.17",
+        "totalconfc19newadmped": "127.0"
+    }
+]

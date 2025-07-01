@@ -154,9 +154,12 @@ nhsn_soda_query <- function(
   desc = FALSE,
   ...
 ) {
+  dataset_info <- data_cdc_gov_dataset_lookup("nhsn_hrd_prelim", "key")
   return(
     data_cdc_gov_soda_query(
-      dataset_name = "nhsn_hrd_prelim",
+      dataset_id = dataset_info$id,
+      date_col = dataset_info$date_column,
+      location_col = dataset_info$location_column,
       start_date = start_date,
       end_date = end_date,
       columns = columns,

@@ -1,4 +1,30 @@
-#' Dataset IDs and metadata for `data.cdc.gov` datasets of interest:
+.data_cdc_gov_api_creation_url <- paste0(
+  "https://data.cdc.gov/",
+  "profile/edit/developer_settings"
+)
+
+#' Construct data.cdc.gov API endpoints from dataset IDs
+#'
+#' @param dataset_id One or more dataset IDs, as a vector of strings.
+#' @return The full URL(s) for the (JSON) Socrata Open Data API
+#' endpoint(s).
+#'
+#' @examples
+#'
+#' data_cdc_gov_endpoint(data_cdc_gov_dataset_id("nhsn_hrd_prelim"))
+#'
+#' data_cdc_gov_dataset_id("nssp_prop_ed_visits") |>
+#'   data_cdc_gov_endpoint()
+#'
+#' @export
+data_cdc_gov_endpoint <- function(dataset_id) {
+  return(as.character(glue::glue(
+    "https://data.cdc.gov/resource/{dataset_id}.json"
+  )))
+}
+
+
+#' Dataset IDs and metadata for `data.cdc.gov` datasets
 #'
 #' `nhsn_hist_daily`: National Healthcare Safety Network
 #' (NHSN) daily-resolution incident hospital admissions timeseries,
@@ -19,73 +45,85 @@
 #'
 #' @seealso [data_cdc_gov_dataset_id()]
 #' @export
-data_cdc_gov_datasets <- list(
-  nhsn_hist_daily = list(
+data_cdc_gov_dataset_table <- dplyr::bind_rows(
+  list(
+    key = "nhsn_hist_daily",
     id = "g62h-syeh",
     date_column = "date",
     location_column = "state"
   ),
-  nhsn_hrd_prelim = list(
+  list(
+    key = "nhsn_hrd_prelim",
     id = "mpgq-jmmr",
     date_column = "weekendingdate",
     location_column = "jurisdiction"
   ),
-  nhsn_hrd_final = list(
+  list(
+    key = "nhsn_hrd_final",
     id = "ua7e-t2fy",
     date_column = "weekendingdate",
     location_column = "jurisdiction"
   ),
-  nssp_prop_ed_visits = list(
+  list(
+    key = "nssp_prop_ed_visits",
     id = "rdmq-nq56",
     date_column = "week_end",
     location_column = "county"
   )
 )
 
-#' Retrieve the dataset ID for a supported `data.cdc.gov` dataset
+
+#' Look up rows of the data.cdc.gov dataset table
+#' corresponding to the entries of a given
+#' vector.
 #'
-#' @param dataset_name Internal forecasttools name for the dataset.
-#' See [data_cdc_gov_datasets].
-#'
-#' @return The dataset id, as a string.
+#' @param dataset vector of dataset keys or ids
+#' @param input_format format in which the input `dataset`
+#' vector is coded. One of `"key"` or `"id"`.
+#' @return A [`tibble`][tibble::tibble()] with the
+#' corresponding rows of the [data_cdc_gov_dataset_table]
+#' matching the location vector (with repeats possible).
+#' Returns `NA` rows where matches cannot be found.
 #'
 #' @examples
-#' data_cdc_gov_dataset_id("nhsn_hrd_prelim")
 #'
-#' data_cdc_gov_dataset_id("nssp_prop_ed_visits")
+#' data_cdc_gov_dataset_lookup(
+#'   c("nhsn_hrd_prelim", "nhsn_hrd_final"),
+#'   "key")
+#'
+#' data_cdc_gov_dataset_lookup(
+#'   c("rdmq-nq56", "ua7e-t2fy", "ua7e-t2fy"),
+#'   "id")
+#'
+#' data_cdc_gov_dataset_lookup(
+#'   c("rdmq-nq56", "unavailable", "ua7e-t2fy"),
+#'   "id",
+#'   strict = FALSE)
 #'
 #' @export
-data_cdc_gov_dataset_id <- function(dataset_name) {
-  checkmate::assert_scalar(dataset_name)
-  checkmate::assert_names(
-    dataset_name,
-    subset.of = names(data_cdc_gov_datasets)
+data_cdc_gov_dataset_lookup <- function(
+  dataset,
+  input_format
+) {
+  checkmate::assert_scalar(input_format)
+  checkmate::assert_names(input_format, subset.of = c("key", "id"))
+
+  mask <- match(
+    x = as.character(dataset),
+    table = data_cdc_gov_dataset_table[[input_format]]
   )
 
-  return(data_cdc_gov_datasets[[dataset_name]]$id)
+  return(data_cdc_gov_dataset_table[mask, ])
 }
 
 
-.data_cdc_gov_api_creation_url <- paste0(
-  "https://data.cdc.gov/",
-  "profile/edit/developer_settings"
-)
-
-#' Construct a data.cdc.gov API endpoint from a dataset ID
-#'
-#' @param dataset_id Dataset ID, as a string.
-#' @return The full URL for the (JSON) Socrata Open Data API endpoint.
-#'
-#' @examples
-#'
-#' data_cdc_gov_endpoint(data_cdc_gov_dataset_id("nhsn_hrd_prelim"))
-#'
-#' data_cdc_gov_dataset_id("nssp_prop_ed_visits") |>
-#'   data_cdc_gov_endpoint()
-#'
-#' @export
-data_cdc_gov_endpoint <- function(dataset_id) {
-  return(glue::glue("https://data.cdc.gov/resource/{dataset_id}.json"))
+data_cdc_gov_dataset_id <- function(dataset_key) {
+  return(
+    data_cdc_gov_dataset_lookup(
+      dataset_key,
+      "key"
+    )$id
+  )
 }
 
 
@@ -102,6 +140,7 @@ data_cdc_gov_endpoint <- function(dataset_id) {
 #'
 #' @export
 data_cdc_gov_base_query <- function(dataset_id) {
+  checkmate::assert_scalar(dataset_id)
   return(
     soql::soql() |>
       soql::soql_add_endpoint(data_cdc_gov_endpoint(dataset_id))
@@ -112,7 +151,11 @@ data_cdc_gov_base_query <- function(dataset_id) {
 #' Helper function for common Socrata open data
 #' API (SODA) queries targeted at `data.cdc.gov` datasets.
 #'
-#' @param dataset_name Name of the dataset to query.
+#' @param dataset_id Dataset ID for the dataset
+#' @param date_col Name of the date column for the dataset,
+#' if any. Default `NULL`.
+#' @param location_col Name of the location column for the dataset,
+#' if any. Default `NULL`.
 #' @param start_date Pull only rows with dates
 #' greater than or equal to this date. If `NULL`,
 #' no minimum date. Default `NULL`.
@@ -134,9 +177,20 @@ data_cdc_gov_base_query <- function(dataset_id) {
 #' ascending. Default `FALSE` (order ascending).
 #' @param ... additional arguments (ignored for now)
 #' @return the query as [soql::soql()] output
+#'
+#' @examples
+#'
+#' data_cdc_gov_query(
+#'   "nhsn_hrd_prelim",
+#'   "2025-05-01",
+#'   "2025-07-01",
+#'   "totalconfflunewadm")
+#'
 #' @export
 data_cdc_gov_soda_query <- function(
-  dataset_name,
+  dataset_id,
+  date_col = NULL,
+  location_col = NULL,
   start_date = NULL,
   end_date = NULL,
   columns = NULL,
@@ -146,39 +200,40 @@ data_cdc_gov_soda_query <- function(
   desc = FALSE,
   ...
 ) {
-  checkmate::assert_scalar(dataset_name)
-  checkmate::assert_names(
-    dataset_name,
-    subset.of = names(data_cdc_gov_datasets)
-  )
-
-  dataset_info <- data_cdc_gov_datasets[[dataset_name]]
-
-  date_col <- dataset_info$date_column
-  loc_col <- dataset_info$location_column
+  checkmate::assert_scalar(dataset_id)
 
   cols <- if (!is.null(columns)) {
-    c(loc_col, date_col, columns)
+    c(location_col, date_col, columns)
   } else {
     NULL
   }
 
-  query <- data_cdc_gov_base_query(dataset_info$id) |>
-    soql_nullable_select(cols) |>
-    soql_nullable_where(
-      date_col,
-      ">=",
-      start_date
-    ) |>
-    soql_nullable_where(
-      date_col,
-      "<=",
-      end_date
-    ) |>
-    soql_nullable_is_in(
-      loc_col,
+  query <- data_cdc_gov_base_query(dataset_id) |>
+    soql_nullable_select(cols)
+
+  if (!is.null(date_col)) {
+    checkmate::assert_scalar(date_col)
+    query <- query |>
+      soql_nullable_where(
+        date_col,
+        ">=",
+        start_date
+      ) |>
+      soql_nullable_where(
+        date_col,
+        "<=",
+        end_date
+      )
+  }
+
+  if (!is.null(location_col)) {
+    checkmate::assert_scalar(location_col)
+    query <- soql_nullable_is_in(
+      query,
+      location_col,
       locations
     )
+  }
 
   ## need to add order_by columns sequentially
   ## to ensure the specified desc option is applied to each
@@ -203,9 +258,8 @@ data_cdc_gov_soda_query <- function(
 #' Pull a dataset from `data.cdc.gov` with standard selection
 #' and filtering options.
 #'
-#' @param dataset Dataset name (as one of the keys
-#' of [data_cdc_gov_datasets] or id (as a raw `data.cdc.gov`
-#' dataset id).
+#' @param dataset_name Dataset name (as one of the keys
+#' of [data_cdc_gov_dataset_table].
 #' @param api_key_id Key ID of an API key to use
 #' when querying the dataset. Not required,
 #' but polite and reduces throttling.
@@ -259,8 +313,17 @@ pull_data_cdc_gov_dataset <- function(
   error_on_limit = TRUE,
   ...
 ) {
+  checkmate::assert_scalar(dataset)
+
+  dataset_info <- data_cdc_gov_dataset_lookup(
+    dataset_name,
+    "key"
+  )
+
   df <- data_cdc_gov_soda_query(
-    dataset_id = dataset_name,
+    dataset_id = dataset_info$id,
+    date_col = dataset_info$date_column,
+    location_col = dataset_info$location_column,
     start_date = start_date,
     end_date = end_date,
     columns = columns,
