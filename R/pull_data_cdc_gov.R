@@ -87,6 +87,8 @@ data_cdc_gov_dataset_table <- dplyr::bind_rows(
 #' matching the location vector (with repeats possible).
 #' Returns `NA` rows where matches cannot be found.
 #'
+#' @seealso [data_cdc_gov_dataset_id()]
+#'
 #' @examples
 #'
 #' data_cdc_gov_dataset_lookup(
@@ -109,6 +111,8 @@ data_cdc_gov_dataset_lookup <- function(
 ) {
   checkmate::assert_scalar(format)
   checkmate::assert_names(format, subset.of = c("key", "id"))
+  checkmate::assert_scalar(strict)
+  checkmate::assert_logical(strict)
 
   mask <- match(
     x = as.character(dataset),
@@ -134,9 +138,13 @@ data_cdc_gov_dataset_lookup <- function(
 #'
 #' @param dataset_key Internal forecasttools name for the dataset.
 #' See [data_cdc_gov_dataset_table].
+#' @param strict Error on nom-matches? Passed as the `strict`
+#' argument to [data_cdc_gov_dataset_lookup()]. Default `FALSE`.
 #'
 #' @return The dataset ids, as a vector string, with NA values for
-#' non-matches.
+#' non-matches if strict is `FALSE`.
+#'
+#' @seealso [data_cdc_gov_dataset_lookup()]
 #'
 #' @examples
 #' data_cdc_gov_dataset_id("nhsn_hrd_prelim")
@@ -146,11 +154,12 @@ data_cdc_gov_dataset_lookup <- function(
 #' data_cdc_gov_dataset_id(c("nssp_prop_ed_visits", "nhsn_hrd_final"))
 #'
 #' @export
-data_cdc_gov_dataset_id <- function(dataset_key) {
+data_cdc_gov_dataset_id <- function(dataset_key, strict = FALSE) {
   return(
     data_cdc_gov_dataset_lookup(
       dataset_key,
-      "key"
+      "key",
+      strict = strict
     )$id
   )
 }

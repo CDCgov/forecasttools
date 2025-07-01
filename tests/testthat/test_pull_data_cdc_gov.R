@@ -15,6 +15,26 @@ test_that("data_cdc_gov_dataset_lookup() errors appropriately", {
   test_vec_key <- c("nhsn_hrd_prelim", "unavailable")
 
   expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, "fake-column", strict = FALSE),
+    "id"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, c("id", "id"), strict = FALSE),
+    "length 1"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, "id", strict = "FALSE"),
+    "logical"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(
+      test_vec_id,
+      "id",
+      strict = c(FALSE, TRUE)
+    ),
+    "length 1"
+  )
+  expect_error(
     data_cdc_gov_dataset_lookup(test_vec_id, "id", strict = TRUE),
     "matching 'id'"
   )
@@ -32,32 +52,54 @@ test_that("data_cdc_gov_dataset_lookup() errors appropriately", {
   )
 })
 
-test_that("data_cdc_gov_dataset_id() works as expected", {
-  manual <- function(x) {
-    mask <- match(x = as.character(x), table = data_cdc_gov_dataset_table$key)
-    return(data_cdc_gov_dataset_table[mask, ]$id)
-  }
-  ## compare to equivalent manual implementation for scalar
-  ## values
-
-  purrr::map(names(data_cdc_gov_dataset_table), \(x) {
-    expect_equal(
-      data_cdc_gov_dataset_id(x),
-      manual(x)
-    )
-  })
-
-  query_vector <- c(
+test_that("data_cdc_gov_dataset_lookup() agrees with manual approach", {
+  query_vector_key <- c(
+    "nhsn_hrd_prelim",
+    "nhsn_hrd_final",
+    "missing_dataset",
+    "nhsn_hrd_prelim"
+  )
+  query_vector_id <- c(
     "nhsn_hrd_prelim",
     "nhsn_hrd_final",
     "missing_dataset",
     "nhsn_hrd_prelim"
   )
   expect_equal(
-    data_cdc_gov_dataset_id(query_vector),
-    manual(query_vector)
+    data_cdc_gov_dataset_lookup(query_vector_key, "key"),
+    data_cdc_gov_dataset_table[
+      match(x = query_vector_key, table = data_cdc_gov_dataset_table$key),
+    ]
+  )
+  expect_equal(
+    data_cdc_gov_dataset_lookup(query_vector_id, "id"),
+    data_cdc_gov_dataset_table[
+      match(x = query_vector_id, table = data_cdc_gov_dataset_table$id),
+    ]
   )
 })
+
+test_that(
+  paste0(
+    "data_cdc_gov_dataset_id() is a simple wrapper of ",
+    "data_cdc_gov_dataset_lookup()"
+  ),
+  {
+    purrr::map(
+      list(
+        "nhsn_hrd_prelim",
+        "unavailable",
+        c("nhsn_hrd_prelim", "unavailable")
+      ),
+      \(x) {
+        expect_equal(
+          data_cdc_gov_dataset_id(x),
+          data_cdc_gov_dataset_lookup(x, "key")$id
+        )
+      }
+    )
+  }
+)
 
 
 test_that("data_cdc_gov_endpoint() works as expected", {
