@@ -117,6 +117,21 @@ data_cdc_gov_dataset_lookup <- function(
 }
 
 
+#' Retrieve the dataset IDs for supported `data.cdc.gov` datasets
+#'
+#' @param dataset_name Internal forecasttools name for the dataset.
+#' See [data_cdc_gov_dataset_table].
+#'
+#' @return The dataset ids, as a vector string.
+#'
+#' @examples
+#' data_cdc_gov_dataset_id("nhsn_hrd_prelim")
+#'
+#' data_cdc_gov_dataset_id("nssp_prop_ed_visits")
+#'
+#' data_cdc_gov_dataset_id(c("nssp_prop_ed_visits", "nhsn_hrd_final"))
+#'
+#' @export
 data_cdc_gov_dataset_id <- function(dataset_key) {
   return(
     data_cdc_gov_dataset_lookup(
