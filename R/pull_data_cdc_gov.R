@@ -119,7 +119,7 @@ data_cdc_gov_dataset_lookup <- function(
 
 #' Retrieve the dataset IDs for supported `data.cdc.gov` datasets
 #'
-#' @param dataset_name Internal forecasttools name for the dataset.
+#' @param dataset_key Internal forecasttools name for the dataset.
 #' See [data_cdc_gov_dataset_table].
 #'
 #' @return The dataset ids, as a vector string.

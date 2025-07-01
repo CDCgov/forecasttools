@@ -7,7 +7,7 @@
 data_cdc_gov_dataset_id(dataset_key)
 }
 \arguments{
-\item{dataset_name}{Internal forecasttools name for the dataset.
+\item{dataset_key}{Internal forecasttools name for the dataset.
 See \link{data_cdc_gov_dataset_table}.}
 }
 \value{
