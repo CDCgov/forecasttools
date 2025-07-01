@@ -49,7 +49,10 @@ column. If \code{NULL}, retrieve all. Default \code{NULL}.}
 Default 1e5.}
 
 \item{order_by}{Vector of columns by which to order the
-results, if any. Default \code{NULL} (do not order the dataset.}
+results, if any. If \code{NULL} (default), order first by the
+date column, then by the location column.
+Having a default ordering makes queries more robust
+against unpredictable results.}
 
 \item{desc}{whether to order descending instead of
 ascending. Default \code{FALSE} (order ascending).}

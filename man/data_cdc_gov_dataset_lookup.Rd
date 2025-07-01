@@ -43,3 +43,6 @@ data_cdc_gov_dataset_lookup(
   "id")
 
 }
+\seealso{
+\code{\link[=data_cdc_gov_dataset_id]{data_cdc_gov_dataset_id()}}
+}

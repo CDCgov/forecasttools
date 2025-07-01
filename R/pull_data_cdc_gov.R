@@ -199,7 +199,10 @@ data_cdc_gov_base_query <- function(dataset_id) {
 #' @param limit limit to the number of rows to retrieve.
 #' Default 1e5.
 #' @param order_by Vector of columns by which to order the
-#' results, if any. Default `NULL` (do not order the dataset.
+#' results, if any. If `NULL` (default), order first by the
+#' date column, then by the location column.
+#' Having a default ordering makes queries more robust
+#' against unpredictable results.
 #' @param desc whether to order descending instead of
 #' ascending. Default `FALSE` (order ascending).
 #' @param ... additional arguments (ignored for now)
@@ -262,12 +265,13 @@ data_cdc_gov_soda_query <- function(
     )
   }
 
+  if (is.null(order_by)) {
+    order_by <- c(date_col, location_col)
+  }
   ## need to add order_by columns sequentially
   ## to ensure the specified desc option is applied to each
-  if (!is.null(order_by)) {
-    for (x in unique(order_by)) {
-      query <- soql::soql_order(query, x, desc = desc)
-    }
+  for (x in unique(order_by)) {
+    query <- soql::soql_order(query, x, desc = desc)
   }
 
   ## do limit string formatting
@@ -316,8 +320,8 @@ data_cdc_gov_soda_query <- function(
 #' location column. If `NULL`, do not filter on that column.
 #' Default `NULL`.
 #' @param order_by column or columns to order (sort) by.
-#' If `NULL` (default), order first by location column,
-#' then by date column.
+#' If `NULL` (default) will order first by the date column
+#' and then by the location column.
 #' @param desc Boolean. Whether to order descending instead of
 #' ascending. Default `FALSE` (order ascending).
 #' @param limit maximum number of rows to return. Default `1e5`
@@ -330,7 +334,7 @@ data_cdc_gov_soda_query <- function(
 #' @param rename_columns Boolean. Rename the dataset-specific
 #' date and location columns to `date` and `location`, respectively?
 #' Default `FALSE`.
-#' @param ... other arguments passed to [nhsn_soda_query()]
+#' @param ... other arguments passed to [data_cdc_gov_soda_query()]
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
 pull_data_cdc_gov_dataset <- function(
@@ -358,10 +362,6 @@ pull_data_cdc_gov_dataset <- function(
     dataset_lookup_format,
     strict = TRUE
   )
-
-  if (is.null(order_by)) {
-    order_by <- c(dataset_info$location_column, dataset_info$date_column)
-  }
 
   df <- data_cdc_gov_soda_query(
     dataset_id = dataset_info$id,

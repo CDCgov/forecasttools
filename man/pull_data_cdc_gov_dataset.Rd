@@ -18,6 +18,7 @@ pull_data_cdc_gov_dataset(
   desc = FALSE,
   limit = 1e+05,
   error_on_limit = TRUE,
+  rename_columns = FALSE,
   ...
 )
 }
@@ -53,15 +54,15 @@ no maximum date. Default \code{NULL}.}
 
 \item{columns}{Vector of columns to retrieve, in
 addition to the location and date columns for the dataset, which
-are always retrieved. Default \code{NULL}.}
+are always retrieved if they exist. Default \code{NULL}.}
 
 \item{locations}{value or values to filter on for the dataset's
 location column. If \code{NULL}, do not filter on that column.
 Default \code{NULL}.}
 
 \item{order_by}{column or columns to order (sort) by.
-Default \code{NULL} (do not order).
-(sort first by jurisdiction, then by date).}
+If \code{NULL} (default) will order first by the date column
+and then by the location column.}
 
 \item{desc}{Boolean. Whether to order descending instead of
 ascending. Default \code{FALSE} (order ascending).}
@@ -75,7 +76,11 @@ This ensures that one does not silently end up with a
 subset of the total set of rows matching the query. If a subset
 is desired, one can set \code{error_on_limit = FALSE}.}
 
-\item{...}{other arguments passed to \code{\link[=nhsn_soda_query]{nhsn_soda_query()}}}
+\item{rename_columns}{Boolean. Rename the dataset-specific
+date and location columns to \code{date} and \code{location}, respectively?
+Default \code{FALSE}.}
+
+\item{...}{other arguments passed to \code{\link[=data_cdc_gov_soda_query]{data_cdc_gov_soda_query()}}}
 }
 \value{
 the pulled data, as a \code{\link[tibble:tibble]{tibble}}.

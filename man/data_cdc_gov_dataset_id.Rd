@@ -4,15 +4,18 @@
 \alias{data_cdc_gov_dataset_id}
 \title{Retrieve the dataset IDs for supported \code{data.cdc.gov} datasets}
 \usage{
-data_cdc_gov_dataset_id(dataset_key)
+data_cdc_gov_dataset_id(dataset_key, strict = FALSE)
 }
 \arguments{
 \item{dataset_key}{Internal forecasttools name for the dataset.
 See \link{data_cdc_gov_dataset_table}.}
+
+\item{strict}{Error on nom-matches? Passed as the \code{strict}
+argument to \code{\link[=data_cdc_gov_dataset_lookup]{data_cdc_gov_dataset_lookup()}}. Default \code{FALSE}.}
 }
 \value{
 The dataset ids, as a vector string, with NA values for
-non-matches.
+non-matches if strict is \code{FALSE}.
 }
 \description{
 Retrieve the dataset IDs for supported \code{data.cdc.gov} datasets
@@ -24,4 +27,7 @@ data_cdc_gov_dataset_id("nssp_prop_ed_visits")
 
 data_cdc_gov_dataset_id(c("nssp_prop_ed_visits", "nhsn_hrd_final"))
 
+}
+\seealso{
+\code{\link[=data_cdc_gov_dataset_lookup]{data_cdc_gov_dataset_lookup()}}
 }

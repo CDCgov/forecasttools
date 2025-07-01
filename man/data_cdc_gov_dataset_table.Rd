@@ -5,18 +5,12 @@
 \alias{data_cdc_gov_dataset_table}
 \title{Dataset IDs and metadata for \code{data.cdc.gov} datasets}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 4 rows and 4 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 3 rows and 4 columns.
 }
 \usage{
 data_cdc_gov_dataset_table
 }
 \description{
-\code{nhsn_hist_daily}: National Healthcare Safety Network
-(NHSN) daily-resolution incident hospital admissions timeseries,
-for COVID-19 and later Influenza, reported until 28 June 2024.
-Former target for the COVID-19 Forecast Hub.
-}
-\details{
 \code{nhsn_hrd_final}, \code{nhsn_hrd_prelim}: NHSN Hospital Respiratory Data
 (HRD).
 Epiweekly-resolution incident hospital admissions
@@ -24,7 +18,8 @@ timeseries for COVID-19, Influenza, and RSV.
 \code{nhsn_hrd_final} points to the most recent final (Friday) weekly data
 release. \code{nhsn_hrd_prelim} points the most recent preliminary (Wednesday)
 weekly release.
-
+}
+\details{
 \code{nssp_prop_ed_visits}: National Syndromic Surveillance
 Program (NSSP) data on proportion of incident emergency
 deparment (ED) visits due to COVID-19, Influenza, and RSV.
