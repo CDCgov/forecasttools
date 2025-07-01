@@ -55,8 +55,5 @@ with_mock_dir(mockdir_tests, {
     expect_s3_class(result, "httr2_response")
     expect_equal(result$status_code, 200L)
     expect_equal(result$method, "GET")
-    expect_s3_class(result, "httr2_response")
-    expect_equal(result$status_code, 200L)
-    expect_equal(result$method, "GET")
   })
 })
