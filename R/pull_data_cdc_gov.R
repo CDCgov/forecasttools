@@ -97,8 +97,7 @@ data_cdc_gov_dataset_table <- dplyr::bind_rows(
 #'
 #' data_cdc_gov_dataset_lookup(
 #'   c("rdmq-nq56", "unavailable", "ua7e-t2fy"),
-#'   "id",
-#'   strict = FALSE)
+#'   "id")
 #'
 #' @export
 data_cdc_gov_dataset_lookup <- function(

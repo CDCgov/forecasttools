@@ -37,7 +37,6 @@ data_cdc_gov_dataset_lookup(
 
 data_cdc_gov_dataset_lookup(
   c("rdmq-nq56", "unavailable", "ua7e-t2fy"),
-  "id",
-  strict = FALSE)
+  "id")
 
 }
