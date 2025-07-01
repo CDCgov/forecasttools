@@ -300,7 +300,7 @@ data_cdc_gov_soda_query <- function(
 #' @return the pulled data, as a [`tibble`][tibble::tibble()].
 #' @export
 pull_data_cdc_gov_dataset <- function(
-  dataset,
+  dataset_name,
   api_key_id = Sys.getenv("DATA_CDC_GOV_API_KEY_ID"),
   api_key_secret = Sys.getenv("DATA_CDC_GOV_API_KEY_SECRET"),
   start_date = NULL,
@@ -313,7 +313,7 @@ pull_data_cdc_gov_dataset <- function(
   error_on_limit = TRUE,
   ...
 ) {
-  checkmate::assert_scalar(dataset)
+  checkmate::assert_scalar(dataset_name)
 
   dataset_info <- data_cdc_gov_dataset_lookup(
     dataset_name,
