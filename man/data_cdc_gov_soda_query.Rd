@@ -65,7 +65,7 @@ API (SODA) queries targeted at \code{data.cdc.gov} datasets.
 }
 \examples{
 
-data_cdc_gov_query(
+data_cdc_gov_soda_query(
   "nhsn_hrd_prelim",
   "2025-05-01",
   "2025-07-01",

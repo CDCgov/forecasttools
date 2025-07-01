@@ -194,7 +194,7 @@ data_cdc_gov_base_query <- function(dataset_id) {
 #'
 #' @examples
 #'
-#' data_cdc_gov_query(
+#' data_cdc_gov_soda_query(
 #'   "nhsn_hrd_prelim",
 #'   "2025-05-01",
 #'   "2025-07-01",
