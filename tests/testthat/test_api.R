@@ -32,7 +32,7 @@ with_mock_dir(mockdir_tests, {
         "No valid API key ID"
       )
       result_warn <- expect_warning(
-        .perform_api_request(
+        .do_api_request(
           url,
           api_key_id = "test",
           api_key_secret = x
@@ -44,7 +44,7 @@ with_mock_dir(mockdir_tests, {
 
   test_that(".do_api_request() works as expected", {
     result <- expect_warning(
-      .perform_api_request(
+      .do_api_request(
         url,
         api_key_id = api_key,
         api_key_secret = api_secret
