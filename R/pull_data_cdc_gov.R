@@ -376,7 +376,7 @@ pull_data_cdc_gov_dataset <- function(
     limit = limit,
     ...
   ) |>
-    perform_soda_query(
+    do_soda_query(
       api_key_id = api_key_id,
       api_key_secret = api_key_secret,
       limit = limit,

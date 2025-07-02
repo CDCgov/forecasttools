@@ -45,13 +45,13 @@
 #' optional argument to direct the user to a website where they can
 #' create those credentials. See [.warn_no_api_creds()].
 #' @keywords internal
-.perform_api_request <- function(
+.do_api_request <- function(
   url,
   api_key_id,
   api_key_secret,
   api_key_creation_url = NULL
 ) {
-  to_perform <-
+  to_do <-
     httr2::request(url) |>
     httr2::req_user_agent(
       paste0(
@@ -65,8 +65,8 @@
   has_credentials <- all(c(api_key_id, api_key_secret) != "")
 
   if (has_credentials) {
-    to_perform <- httr2::req_auth_basic(
-      to_perform,
+    to_do <- httr2::req_auth_basic(
+      to_do,
       api_key_id,
       api_key_secret
     )
@@ -74,6 +74,6 @@
     .warn_no_api_creds(api_key_creation_url)
   }
 
-  response <- httr2::req_perform(to_perform)
+  response <- httr2::req_perform(to_do)
   return(response)
 }

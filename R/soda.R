@@ -54,7 +54,7 @@
 #' optional argument to direct the user to a website where they can
 #' create those credentials. See [.warn_no_api_creds()].
 #' @export
-perform_soda_query <- function(
+do_soda_query <- function(
   query,
   api_key_id = NULL,
   api_key_secret = NULL,
@@ -62,7 +62,7 @@ perform_soda_query <- function(
   error_on_limit = TRUE,
   api_key_creation_url = NULL
 ) {
-  df <- .perform_api_request(
+  df <- .do_api_request(
     as.character(query),
     api_key_id,
     api_key_secret,
