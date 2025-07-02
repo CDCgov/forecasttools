@@ -60,13 +60,11 @@
       )
     )
 
-  api_key_id <- if (is.null(api_key_id)) "" else api_key_id
-  api_key_secret <- if (is.null(api_key_secret)) "" else api_key_secret
+  api_key_id <- api_key_id %||% ""
+  api_key_secret <- api_key_secret %||% ""
+  has_credentials <- all(c(api_key_id, api_key_secret) != "")
 
-  credentials <- (api_key_id != "" &
-    api_key_secret != "")
-
-  if (credentials) {
+  if (has_credentials) {
     to_perform <- httr2::req_auth_basic(
       to_perform,
       api_key_id,
