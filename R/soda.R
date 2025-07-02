@@ -42,9 +42,9 @@
 #' @param query Full URL representation of the query to perform,
 #' as a [soql::soql()] query object or a character string.
 #' @param api_key_id API key id to use when performing the query.
-#' Passed to [.perform_api_request()]. Default `NULL`.
+#' Passed to [.do_api_request()]. Default `NULL`.
 #' @param api_key_secret API key secret to use when performing the query.
-#' Passed to [.perform_api_request()]. Default `NULL`.
+#' Passed to [.do_api_request()]. Default `NULL`.
 #'#' @param limit Limit number of rows for the SODA query.
 #' @param limit Limit number of rows for the SODA query. Default `1e5`.
 #' @param error_on_limit Raise an error if the number

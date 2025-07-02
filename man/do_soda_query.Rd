@@ -19,10 +19,10 @@ do_soda_query(
 as a \code{\link[soql:soql]{soql::soql()}} query object or a character string.}
 
 \item{api_key_id}{API key id to use when performing the query.
-Passed to \code{\link[=.perform_api_request]{.perform_api_request()}}. Default \code{NULL}.}
+Passed to \code{\link[=.do_api_request]{.do_api_request()}}. Default \code{NULL}.}
 
 \item{api_key_secret}{API key secret to use when performing the query.
-Passed to \code{\link[=.perform_api_request]{.perform_api_request()}}. Default \code{NULL}.
+Passed to \code{\link[=.do_api_request]{.do_api_request()}}. Default \code{NULL}.
 #' @param limit Limit number of rows for the SODA query.}
 
 \item{limit}{Limit number of rows for the SODA query. Default \code{1e5}.}
