@@ -1,5 +1,5 @@
-start_date <- "2024-01-01"
-end_date <- "2024-02-03"
+start_date <- as.Date("2024-01-01")
+end_date <- as.Date("2024-02-03")
 jurisdictions <- c("CA", "TX")
 
 mockdir_tests <- fs::path(mockdir, "nhsn")
@@ -58,8 +58,8 @@ with_mock_dir(mockdir_tests, {
       ) |>
         expect_warning(regexp = NA) # fail if warning
 
-      expect_true(all(result$weekendingdate >= as.Date(start_date)))
-      expect_true(all(result$weekendingdate <= as.Date(end_date)))
+      expect_true(all(result$weekendingdate >= start_date))
+      expect_true(all(result$weekendingdate <= end_date))
       expect_setequal(result$jurisdiction, jurisdictions)
     }
   )

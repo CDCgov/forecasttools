@@ -1,5 +1,5 @@
-start_date <- "2024-01-01"
-end_date <- "2024-02-03"
+start_date <- as.Date("2024-01-01")
+end_date <- as.Date("2024-02-03")
 jurisdictions <- c("CA", "TX")
 
 mockdir_tests <- fs::path(mockdir, "dcg")
@@ -191,10 +191,10 @@ with_mock_dir(mockdir_tests, {
 
         if (nrow(result) > 0) {
           expect_true(all(
-            as.Date(result[[info$date_column]]) >= as.Date(start_date)
+            as.Date(result[[info$date_column]]) >= start_date
           ))
           expect_true(all(
-            as.Date(result[[info$date_column]]) <= as.Date(end_date)
+            as.Date(result[[info$date_column]]) <= end_date
           ))
           expect_setequal(result[[info$location_column]], jurisdictions)
         }
