@@ -21,10 +21,10 @@ if (fs::dir_exists(mockdir_tests)) {
 
 with_mock_dir(mockdir_tests, {
   url <- "https://data.cdc.gov/resource/mpgq-jmmr.json?$limit=1"
-  test_that(".perform_api_request() warns if API key missing", {
+  test_that(".do_api_request() warns if API key missing", {
     purrr::walk(c(NULL, ""), \(x) {
       expect_warning(
-        .perform_api_request(
+        .do_api_request(
           url,
           api_key_id = x,
           api_key_secret = "test"
@@ -42,7 +42,7 @@ with_mock_dir(mockdir_tests, {
     })
   })
 
-  test_that(".perform_api_request() works as expected", {
+  test_that(".do_api_request() works as expected", {
     result <- expect_warning(
       .perform_api_request(
         url,
