@@ -1,0 +1,60 @@
+[
+    {
+        "jurisdiction": "AK",
+        "weekendingdate": "2020-08-08T00:00:00.000",
+        "numinptbeds": "2387.0",
+        "totalconfc19newadmped": "0.0"
+    },
+    {
+        "jurisdiction": "AL",
+        "weekendingdate": "2020-08-08T00:00:00.000",
+        "numinptbeds": "22951.29",
+        "totalconfc19newadmped": "74.0"
+    },
+    {
+        "jurisdiction": "AR",
+        "weekendingdate": "2020-08-08T00:00:00.000",
+        "numinptbeds": "6981.44",
+        "totalconfc19newadmped": "0.0"
+    },
+    {
+        "jurisdiction": "AS",
+        "weekendingdate": "2020-08-08T00:00:00.000"
+    },
+    {
+        "jurisdiction": "AZ",
+        "weekendingdate": "2020-08-08T00:00:00.000",
+        "numinptbeds": "8085.81",
+        "totalconfc19newadmped": "13.0"
+    },
+    {
+        "jurisdiction": "CA",
+        "weekendingdate": "2020-08-08T00:00:00.000",
+        "numinptbeds": "59989.27",
+        "totalconfc19newadmped": "121.0"
+    },
+    {
+        "jurisdiction": "CO",
+        "weekendingdate": "2020-08-08T00:00:00.000",
+        "numinptbeds": "8067.88",
+        "totalconfc19newadmped": "4.0"
+    },
+    {
+        "jurisdiction": "CT",
+        "weekendingdate": "2020-08-08T00:00:00.000",
+        "numinptbeds": "8122.0",
+        "totalconfc19newadmped": "0.0"
+    },
+    {
+        "jurisdiction": "DC",
+        "weekendingdate": "2020-08-08T00:00:00.000",
+        "numinptbeds": "2398.71",
+        "totalconfc19newadmped": "8.0"
+    },
+    {
+        "jurisdiction": "DE",
+        "weekendingdate": "2020-08-08T00:00:00.000",
+        "numinptbeds": "2143.57",
+        "totalconfc19newadmped": "1.0"
+    }
+]

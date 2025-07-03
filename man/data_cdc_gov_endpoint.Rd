@@ -2,22 +2,25 @@
 % Please edit documentation in R/pull_data_cdc_gov.R
 \name{data_cdc_gov_endpoint}
 \alias{data_cdc_gov_endpoint}
-\title{Construct a data.cdc.gov API endpoint from a dataset ID}
+\title{Construct data.cdc.gov API endpoints from dataset IDs}
 \usage{
 data_cdc_gov_endpoint(dataset_id)
 }
 \arguments{
-\item{dataset_id}{Dataset ID, as a string.}
+\item{dataset_id}{One or more dataset IDs, as a vector of strings.}
 }
 \value{
-The full URL for the (JSON) Socrata Open Data API endpoint.
+The full URL(s) for the (JSON) Socrata Open Data API
+endpoint(s).
 }
 \description{
-Construct a data.cdc.gov API endpoint from a dataset ID
+Construct data.cdc.gov API endpoints from dataset IDs
 }
 \examples{
 
-data_cdc_gov_endpoint(data_cdc_gov_ids$nhsn_hrd_prelim)
+data_cdc_gov_endpoint(data_cdc_gov_dataset_id("nhsn_hrd_prelim"))
 
-data_cdc_gov_endpoint(data_cdc_gov_ids$nssp_prop_ed_visits)
+data_cdc_gov_dataset_id("nssp_prop_ed_visits") |>
+  data_cdc_gov_endpoint()
+
 }

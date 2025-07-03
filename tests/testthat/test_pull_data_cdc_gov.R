@@ -1,30 +1,175 @@
-start_date <- "2023-01-01"
-end_date <- "2023-10-31"
+start_date <- as.Date("2024-01-01")
+end_date <- as.Date("2024-02-03")
 jurisdictions <- c("CA", "TX")
 
-mockdir <- "api_mocks"
+mockdir_tests <- fs::path(mockdir, "dcg")
 
-test_that(".warn_no_api_creds() works as expected", {
-  expect_warning(
-    .warn_no_api_creds(),
-    "No valid API key ID"
+
+test_that("data_cdc_gov_endpoint() works as expected", {
+  # compare to equivalent manual implementation
+  purrr::walk(c("test-dataset-id1", "another-dataset-id3"), \(x) {
+    expect_equal(
+      data_cdc_gov_endpoint(x),
+      glue::glue("https://data.cdc.gov/resource/{x}.json")
+    )
+  })
+})
+
+test_that("data_cdc_gov_dataset_lookup() errors appropriately", {
+  test_vec_id <- c("ua7e-t2fy", "unavailable")
+  test_vec_key <- c("nhsn_hrd_prelim", "unavailable")
+
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, "fake-column", strict = FALSE),
+    "id"
   )
-  expect_warning(
-    .warn_no_api_creds("https://example.com"),
-    "by visiting https://example.com"
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, c("id", "id"), strict = FALSE),
+    "length 1"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, "id", strict = "FALSE"),
+    "logical"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(
+      test_vec_id,
+      "id",
+      strict = c(FALSE, TRUE)
+    ),
+    "length 1"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, "id", strict = TRUE),
+    "matching 'id'"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_key, "key", strict = TRUE),
+    "matching 'key'"
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_id, "id", strict = FALSE),
+    NA
+  )
+  expect_error(
+    data_cdc_gov_dataset_lookup(test_vec_key, "key", strict = FALSE),
+    NA
   )
 })
 
-with_mock_dir(mockdir, {
+test_that("data_cdc_gov_dataset_lookup() agrees with manual approach", {
+  query_vector_key <- c(
+    "nhsn_hrd_prelim",
+    "nhsn_hrd_final",
+    "missing_dataset",
+    "nhsn_hrd_prelim"
+  )
+  query_vector_id <- c(
+    "nhsn_hrd_prelim",
+    "nhsn_hrd_final",
+    "missing_dataset",
+    "nhsn_hrd_prelim"
+  )
+  expect_equal(
+    data_cdc_gov_dataset_lookup(query_vector_key, "key"),
+    data_cdc_gov_dataset_table[
+      match(x = query_vector_key, table = data_cdc_gov_dataset_table$key),
+    ]
+  )
+  expect_equal(
+    data_cdc_gov_dataset_lookup(query_vector_id, "id"),
+    data_cdc_gov_dataset_table[
+      match(x = query_vector_id, table = data_cdc_gov_dataset_table$id),
+    ]
+  )
+})
+
+test_that(
+  paste0(
+    "data_cdc_gov_dataset_id() is a simple wrapper of ",
+    "data_cdc_gov_dataset_lookup()"
+  ),
+  {
+    purrr::walk(
+      list(
+        "nhsn_hrd_prelim",
+        "unavailable",
+        c("nhsn_hrd_prelim", "unavailable")
+      ),
+      \(x) {
+        expect_equal(
+          data_cdc_gov_dataset_id(x),
+          data_cdc_gov_dataset_lookup(x, "key")$id
+        )
+      }
+    )
+  }
+)
+
+
+test_that("data_cdc_gov_base_query() works as expected", {
+  # compare to equivalent manual implementation
+  purrr::walk(c("mock-dataset-id1", "3-another-dataset-id"), \(x) {
+    expect_equal(
+      data_cdc_gov_base_query(x),
+      soql::soql(glue::glue("https://data.cdc.gov/resource/{x}.json"))
+    )
+  })
+})
+
+
+## replace env variables with fakes if and only if
+## we are mocking api calls
+if (fs::dir_exists(mockdir_tests)) {
+  withr::local_envvar(
+    .new = c(
+      "DATA_CDC_GOV_API_KEY_ID" = "fake_key",
+      "DATA_CDC_GOV_API_KEY_SECRET" = "fake_secret"
+    )
+  )
+}
+
+with_mock_dir(mockdir_tests, {
   test_that("Warnings raised if API key/secret not provided", {
     expect_warning(
-      pull_nhsn(
+      pull_data_cdc_gov_dataset(
+        "nhsn_hrd_prelim",
         api_key_id = NULL,
+        api_key_secret = "test",
+        limit = 10,
+        error_on_limit = FALSE
+      ),
+      "No valid API key"
+    )
+    expect_warning(
+      pull_data_cdc_gov_dataset(
+        "nhsn_hrd_prelim",
+        api_key_id = "test",
         api_key_secret = NULL,
         limit = 10,
         error_on_limit = FALSE
-      ) |>
-        suppressMessages()
+      ),
+      "No valid API key"
+    )
+    expect_warning(
+      pull_data_cdc_gov_dataset(
+        "nhsn_hrd_prelim",
+        api_key_id = "test",
+        api_key_secret = "",
+        limit = 10,
+        error_on_limit = FALSE
+      ),
+      "No valid API key"
+    )
+    expect_warning(
+      pull_data_cdc_gov_dataset(
+        "nhsn_hrd_prelim",
+        api_key_id = "",
+        api_key_secret = "test",
+        limit = 10,
+        error_on_limit = FALSE
+      ),
+      "No valid API key"
     )
   })
 
@@ -34,28 +179,39 @@ with_mock_dir(mockdir, {
       "jurisdiction work as expected"
     ),
     {
-      result <- pull_nhsn(
-        start_date = start_date,
-        end_date = end_date,
-        jurisdictions = jurisdictions
-      ) |>
-        suppressMessages()
+      purrr::walk(forecasttools::data_cdc_gov_dataset_table$key, \(key) {
+        info <- data_cdc_gov_dataset_lookup(key, "key", strict = TRUE)
+        result <- pull_data_cdc_gov_dataset(
+          key,
+          start_date = start_date,
+          end_date = end_date,
+          locations = jurisdictions
+        ) |>
+          expect_warning(regexp = NA) # fail if warning
 
-      expect_true(all(result$weekendingdate >= as.Date(start_date)))
-      expect_true(all(result$weekendingdate <= as.Date(end_date)))
-      expect_setequal(result$jurisdiction, jurisdictions)
+        if (nrow(result) > 0) {
+          expect_true(all(
+            as.Date(result[[info$date_column]]) >= start_date
+          ))
+          expect_true(all(
+            as.Date(result[[info$date_column]]) <= end_date
+          ))
+          expect_setequal(result[[info$location_column]], jurisdictions)
+        }
+      })
     }
   )
 
   test_that("Selection of columns works as expected", {
     columns <- c("numinptbeds", "totalconfc19newadmped")
 
-    result <- pull_nhsn(
+    result <- pull_data_cdc_gov_dataset(
+      "nhsn_hrd_prelim",
       columns = columns,
       limit = 10,
       error_on_limit = FALSE
     ) |>
-      suppressMessages()
+      expect_warning(regexp = NA) # fail if warning
 
     expected_columns <- c("jurisdiction", "weekendingdate", columns)
     checkmate::expect_names(
@@ -69,7 +225,8 @@ with_mock_dir(mockdir, {
 
     order_by <- c("weekendingdate", "jurisdiction")
 
-    result_asc <- pull_nhsn(
+    result_asc <- pull_data_cdc_gov_dataset(
+      "nhsn_hrd_prelim",
       start_date = start_date,
       end_date = end_date,
       jurisdictions = jurisdictions,
@@ -77,8 +234,9 @@ with_mock_dir(mockdir, {
       order_by = order_by,
       desc = FALSE
     ) |>
-      suppressMessages()
-    result_desc <- pull_nhsn(
+      expect_warning(regexp = NA) # fail if warning
+    result_desc <- pull_data_cdc_gov_dataset(
+      "nhsn_hrd_prelim",
       start_date = start_date,
       end_date = end_date,
       jurisdictions = jurisdictions,
@@ -86,7 +244,7 @@ with_mock_dir(mockdir, {
       order_by = order_by,
       desc = TRUE
     ) |>
-      suppressMessages()
+      expect_warning(regexp = NA) # fail if warning
 
     expect_equal(
       result_asc,
@@ -106,15 +264,46 @@ with_mock_dir(mockdir, {
     )
   })
 
+  test_that("rename_columns works as expected", {
+    limit <- 10
+    info <- data_cdc_gov_dataset_lookup("nssp_prop_ed_visits", "key")
+
+    result_no_rename <- pull_data_cdc_gov_dataset(
+      info$key,
+      limit = limit,
+      error_on_limit = FALSE
+    )
+    result_rename <- pull_data_cdc_gov_dataset(
+      info$key,
+      limit = limit,
+      error_on_limit = FALSE,
+      rename_columns = TRUE
+    )
+    expect_equal(
+      result_rename,
+      result_no_rename |>
+        dplyr::rename(
+          location = !!info$location_column,
+          date = !!info$date_column
+        )
+    )
+  })
+
   test_that("limit and error_on_limit work as expected", {
     limit <- 10
-    result <- pull_nhsn(limit = limit, error_on_limit = FALSE) |>
-      suppressMessages()
+    result <- pull_data_cdc_gov_dataset(
+      "nssp_prop_ed_visits",
+      limit = limit,
+      error_on_limit = FALSE
+    )
     expect_equal(nrow(result), limit)
 
     expect_error(
-      pull_nhsn(limit = limit, error_on_limit = TRUE) |>
-        suppressMessages()
+      pull_data_cdc_gov_dataset(
+        "nssp_prop_ed_visits",
+        limit = limit,
+        error_on_limit = TRUE
+      )
     )
   })
 })

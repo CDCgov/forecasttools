@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @importFrom rlang .data :=
+#' @importFrom lifecycle deprecated
+#' @importFrom rlang .data := %||%
 ## usethis namespace: end
 NULL
