@@ -146,7 +146,7 @@ with_hubverse_oracle_output <- function(hubverse_table, oracle_output_table) {
   return(dplyr::bind_rows(needs_id_partition, no_needs_id_partition))
 }
 
-#' create a `scoringutils`-ready table.
+#' Create a `scoringutils`-ready quantile table from a hubverse table
 #'
 #' Expects quantile forecast output in hubverse format
 #' (e.g. as created by [get_hubverse_quantile_table()])
@@ -159,7 +159,6 @@ with_hubverse_oracle_output <- function(hubverse_table, oracle_output_table) {
 #' @param hubverse_quantile_table quantile forecasts,
 #' as a hubverse-format [`tibble`][tibble::tibble()], e.g.
 #' as produced by [get_hubverse_quantile_table()].
-#'
 #' @param quantile_tol Round quantile level values to this many
 #' decimal places, to avoid problems with floating point number
 #' equality comparisons. Passed as the `digits` argument to
@@ -170,15 +169,21 @@ with_hubverse_oracle_output <- function(hubverse_table, oracle_output_table) {
 quantile_table_to_scorable <- function(
   hubverse_quantile_table,
   hubverse_oracle_output_table,
-  id_cols = c("location", "target"),
   quantile_tol = 10
 ) {
-  scorable <-
-    dplyr::filter(.data$output_type == "quantile") |>
-    dplyr::mutate(
-      output_type_id = as.numeric(.data$output_type_id) |>
-        round(digits = !!quantile_tol)
-    ) |>
+  prep_table <- function(tbl) {
+    return(
+      dplyr::filter(tbl, .data$output_type == "quantile") |>
+        dplyr::mutate(
+          output_type_id = as.numeric(.data$output_type_id) |>
+            round(digits = !!quantile_tol)
+        )
+    )
+  }
+
+  scorable <- hubverse_quantile_table |>
+    prep_table() |>
+    with_hubverse_oracle_output(prep_table(hubverse_oracle_output_table)) |>
     scoringutils::as_forecast_quantile(
       predicted = "value",
       observed = "observed",
@@ -196,28 +201,27 @@ quantile_table_to_scorable <- function(
 #' Requires a local version of the
 #' forecast hub at `hub_path`.
 #'
-#' @param hub_path Local path to hubverse-style
+#' @param hub_path Local path to a hubverse-style
 #' forecast hub.
 #' @param ... keyword arguments passed to
 #' [quantile_table_to_scorable()].
 #' @return Scorable table, as the output of
 #' [scoringutils::as_forecast_quantile()].
 #' @export
-hub_to_scorable_quantiles <-
-  function(
-    hub_path,
+hub_to_scorable_quantiles <- function(
+  hub_path,
+  ...
+) {
+  quantile_forecasts <- gather_hub_quantile_forecasts(hub_path) |>
+    dplyr::rename(model = "model_id")
+  oracle_output <- hubData::connect_oracle_output(hub_path) |>
+    dplyr::filter(output_type == "quantile") |>
+    dplyr::collect()
+  scorable <- quantile_table_to_scorable(
+    quantile_forecasts,
+    target_data,
     ...
-  ) {
-    quantile_forecasts <- gather_hub_quantile_forecasts(hub_path) |>
-      dplyr::rename(model = "model_id")
-    oracle_output <- gather_hub_oracle_output(hub_path) |>
-      dplyr::filter(output_type == "quantile") |>
-      dplyr::collect()
-    scorable <- quantile_table_to_scorable(
-      quantile_forecasts,
-      target_data,
-      ...
-    )
+  )
 
-    return(scorable)
-  }
+  return(scorable)
+}
