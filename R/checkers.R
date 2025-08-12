@@ -23,7 +23,7 @@ assert_hubverse_output_types <- function(x) {
   return(
     checkmate::assert_names(
       x,
-      subset.of = hubverse_valid_output_types,
+      subset.of = hubverse_output_types,
       .var.name = checkmate::vname(x),
       what = "Hubverse 'output_type' values"
     )

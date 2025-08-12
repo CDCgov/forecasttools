@@ -3,7 +3,7 @@
 #' Names of the valid output_type values for hubverse tables.
 #'
 #' @export
-hubverse_valid_output_types <- c(
+hubverse_output_types <- c(
   "mean",
   "median",
   "quantile",
