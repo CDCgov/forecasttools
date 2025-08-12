@@ -6,9 +6,7 @@
 \usage{
 quantile_table_to_scorable(
   hubverse_quantile_table,
-  observation_table,
-  obs_value_column = "value",
-  obs_date_column = "date",
+  hubverse_oracle_output_table,
   id_cols = c("location", "target"),
   quantile_tol = 10
 )
@@ -16,25 +14,7 @@ quantile_table_to_scorable(
 \arguments{
 \item{hubverse_quantile_table}{quantile forecasts,
 as a hubverse-format \code{\link[tibble:tibble]{tibble}}, e.g.
-as produced by \code{\link[=get_hubverse_quantile_table]{get_hubverse_quantile_table()}}, with columns including
-\code{location}, \code{target_end_date}, \code{output_type}, \code{output_type_id},
-and \code{value}.}
-
-\item{observation_table}{observations, as a
-\code{\link[tibble:tibble]{tibble}}.}
-
-\item{obs_value_column}{Name of the column containing
-observed values in the \code{observed} table, as a string.
-Default \code{"value"}}
-
-\item{obs_date_column}{Name of the column containing
-date values in the \code{observed} table, as a string.
-Default \code{"date"}.}
-
-\item{id_cols}{Additional id columns for joining the
-\verb{observation table} to the \code{hubverse_quantile_table}.
-Passed to \code{\link[=hubverse_table_with_obs]{hubverse_table_with_obs()}}. Default
-\code{c("location", "target")}.}
+as produced by \code{\link[=get_hubverse_quantile_table]{get_hubverse_quantile_table()}}.}
 
 \item{quantile_tol}{Round quantile level values to this many
 decimal places, to avoid problems with floating point number

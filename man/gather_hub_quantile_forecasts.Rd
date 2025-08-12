@@ -2,7 +2,7 @@
 % Please edit documentation in R/hub_utils.R
 \name{gather_hub_quantile_forecasts}
 \alias{gather_hub_quantile_forecasts}
-\title{Collect and reformat hub forecasts for scoring.}
+\title{Collect and reformat hub quantile forecasts for scoring.}
 \usage{
 gather_hub_quantile_forecasts(hub_path)
 }
@@ -13,5 +13,5 @@ gather_hub_quantile_forecasts(hub_path)
 Forecast data as a table.
 }
 \description{
-Gather hub quantile forecasts.
+Collect and reformat hub quantile forecasts for scoring.
 }

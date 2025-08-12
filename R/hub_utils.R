@@ -44,9 +44,7 @@ update_hub <- function(hub_path) {
   }
 }
 
-#' Collect and reformat hub forecasts for scoring.
-#'
-#' Gather hub quantile forecasts.
+#' Collect and reformat hub quantile forecasts for scoring.
 #'
 #' @param hub_path Local path to hub
 #'
@@ -59,6 +57,7 @@ gather_hub_quantile_forecasts <- function(hub_path) {
     hubData::collect_hub()
   return(forecasts)
 }
+
 
 #' Gather location data from a forecast hub.
 #'
@@ -97,29 +96,24 @@ gather_hub_location_data <- function(
   return(location_data)
 }
 
-#' Gather target truth data from a forecast hub.
-#'
-#' @param hub_path Local path to hub.
-#' @param target_data_rel_path The path to the target
-#' data file relative to forecast hub root directory.
-#' Defaults to the path in the FluSight Forecast Hub.
-#' @return Table of target data
-#' @export
-gather_hub_target_data <- function(
-  hub_path,
-  target_data_rel_path = fs::path(
-    "target-data",
-    "target-hospital-admissions.csv"
-  )
-) {
-  target_data_path <- fs::path(hub_path, target_data_rel_path)
-  if (!fs::file_exists(target_data_path)) {
-    cfl <- target_data_path
-    cli::cli_abort(
-      "Cannot find target data file at {.path {target_data_path}}."
-    )
-  }
 
-  target_data <- read_tabular_file(target_data_path)
-  return(target_data)
+filter_hub_timeseries_as_of <- function(timeseries, as_of = "latest") {
+  checkmate::assert_scalar(as_of)
+  vintaged <- "as_of" %in% colnames(timeseries)
+  if (vintaged) {
+    if (as_of == "latest") {
+      as_of <- max(as.Date(timeseries$as_of))
+    }
+    checkmate::assert_date(as_of)
+    return(timeseries |> dplyr::filter(.data$as_of == !!as_of))
+  } else {
+    if (as_of != "latest") {
+      cli::cli_abort(
+        "Requested an 'as_of' date other than the default 'latest', ",
+        "but the provided hubverse timeseries data table does not appear",
+        "to be vintaged. It has no 'as_of' column."
+      )
+    }
+    return(timeseries)
+  }
 }
