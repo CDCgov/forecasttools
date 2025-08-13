@@ -96,24 +96,51 @@ gather_hub_location_data <- function(
   return(location_data)
 }
 
-
-filter_hub_timeseries_as_of <- function(timeseries, as_of = "latest") {
+#' Filter to a given vintage of hub target data and drop the `as_of`
+#' column.
+#'
+#' This function succeeds silently on unvintaged target data tables
+#' provided the user requests the latest available data. Otherwise,
+#' it raises an error when the data set is not vintaged.
+#'
+#' @param hub_target_data Table of hub target data to filter
+#' @param as_of As of date to filter to. If `"latest"` (default)
+#' use the latest available vintage.
+#' @param .drop Drop the `as_of` column once the dataset
+#' has been filtered to a specific vintage? Default `TRUE`.
+#' @return The specific requested vintage of target data,
+#' potentially with the `as_of` column removed.
+#' @export
+hub_target_data_as_of <- function(
+  hub_target_data,
+  as_of = "latest",
+  .drop = TRUE
+) {
   checkmate::assert_scalar(as_of)
-  vintaged <- "as_of" %in% colnames(timeseries)
+  vintaged <- "as_of" %in% colnames(hub_target_data)
   if (vintaged) {
     if (as_of == "latest") {
-      as_of <- max(as.Date(timeseries$as_of))
+      as_of <- max(as.Date(hub_target_data$as_of))
     }
     checkmate::assert_date(as_of)
-    return(timeseries |> dplyr::filter(.data$as_of == !!as_of))
-  } else {
-    if (as_of != "latest") {
-      cli::cli_abort(
-        "Requested an 'as_of' date other than the default 'latest', ",
-        "but the provided hubverse timeseries data table does not appear",
-        "to be vintaged. It has no 'as_of' column."
-      )
-    }
-    return(timeseries)
+    hub_target_data <- dplyr::filter(
+      hub_target_data,
+      as.Date(.data$as_of) == !!as_of
+    )
+  } else if (as_of != "latest") {
+    cli::cli_abort(
+      "Requested an 'as_of' date other than the default 'latest', ",
+      "but the provided hubverse target data table does not appear",
+      "to be vintaged. It has no 'as_of' column."
+    )
   }
+
+  if (.drop) {
+    hub_target_data <- dplyr::select(
+      hub_target_data,
+      -tidyselect::any_of("as_of")
+    )
+  }
+
+  return(hub_target_data)
 }

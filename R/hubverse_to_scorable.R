@@ -186,7 +186,7 @@ quantile_table_to_scorable <- function(
     with_hubverse_oracle_output(prep_table(hubverse_oracle_output_table)) |>
     scoringutils::as_forecast_quantile(
       predicted = "value",
-      observed = "observed",
+      observed = "oracle_value",
       quantile_level = "output_type_id"
     )
 
@@ -210,16 +210,20 @@ quantile_table_to_scorable <- function(
 #' @export
 hub_to_scorable_quantiles <- function(
   hub_path,
+  as_of = "latest",
   ...
 ) {
   quantile_forecasts <- gather_hub_quantile_forecasts(hub_path) |>
     dplyr::rename(model = "model_id")
-  oracle_output <- hubData::connect_oracle_output(hub_path) |>
+  oracle_output <- hubData::connect_target_oracle_output(hub_path) |>
     dplyr::filter(output_type == "quantile") |>
-    dplyr::collect()
+    dplyr::collect() |>
+    hub_target_data_as_of("latest")
+  ## any other behavior for evaluation data is rare enough that
+  ## we prefer manual creation of scorable tables to potential user error
   scorable <- quantile_table_to_scorable(
     quantile_forecasts,
-    target_data,
+    oracle_output,
     ...
   )
 
