@@ -161,7 +161,6 @@ test_that("hub_target_data_as_of respects .drop argument for as_of column", {
 })
 
 test_that("hub_target_data_as_of works with single row vintage data", {
-  # Test edge case with single vintage
   test_data <- data.frame(
     location = "US",
     value = 100,
@@ -177,3 +176,124 @@ test_that("hub_target_data_as_of works with single row vintage data", {
 
   expect_equal(result, expected_data)
 })
+
+
+test_that(
+  paste0(
+    "hub_target_data_as_of works with arrow ",
+    "datasets using the lazy API"
+  ),
+  {
+    test_data <- data.frame(
+      location = c("01", "02", "01", "02"),
+      target_end_date = as.Date(c(
+        "2023-01-01",
+        "2023-01-01",
+        "2023-01-08",
+        "2023-01-08"
+      )),
+      observation = c(100, 200, 150, 250),
+      as_of = as.Date(c("2023-01-07", "2023-01-07", "2023-01-14", "2023-01-14"))
+    )
+
+    parquet_path_vintaged <- withr::local_tempfile(fileext = ".parquet")
+    arrow::write_parquet(test_data, parquet_path_vintaged)
+
+    # Open as arrow dataset
+    arrow_dataset_vintaged <- arrow::open_dataset(parquet_path_vintaged)
+
+    test_cases <- list(
+      list(
+        as_of = "latest",
+        .drop = TRUE,
+        expected_date = as.Date("2023-01-08"),
+        has_as_of_col = FALSE
+      ),
+      list(
+        as_of = "latest",
+        .drop = FALSE,
+        expected_date = as.Date("2023-01-08"),
+        has_as_of_col = TRUE
+      ),
+      list(
+        as_of = as.Date("2023-01-07"),
+        .drop = TRUE,
+        expected_date = as.Date("2023-01-01"),
+        has_as_of_col = FALSE
+      ),
+      list(
+        as_of = as.Date("2023-01-07"),
+        .drop = FALSE,
+        expected_date = as.Date("2023-01-01"),
+        has_as_of_col = TRUE
+      )
+    )
+
+    purrr::walk(test_cases, function(case) {
+      result <- hub_target_data_as_of(
+        arrow_dataset_vintaged,
+        as_of = case$as_of,
+        .drop = case$.drop
+      )
+
+      # Verify query non-execution
+      expect_s3_class(result, "arrow_dplyr_query")
+      expect_false(inherits(result, "data.frame"))
+
+      collected <- dplyr::collect(result)
+      expect_s3_class(collected, "data.frame")
+      expect_equal(collected$target_end_date, rep(case$expected_date, 2))
+      expect_equal("as_of" %in% colnames(collected), case$has_as_of_col)
+    })
+  }
+)
+
+test_that(
+  paste0(
+    "hub_target_data_as_of works lazily with ",
+    "arrow datasets on unvintaged data"
+  ),
+  {
+    test_data <- data.frame(
+      location = c("01", "02", "03", "04"),
+      target_end_date = as.Date(c(
+        "2023-01-01",
+        "2023-01-01",
+        "2023-01-08",
+        "2023-01-08"
+      )),
+      observation = c(100, 200, 150, 250)
+    )
+
+    parquet_path_unvintaged <- withr::local_tempfile(fileext = ".parquet")
+    arrow::write_parquet(test_data, parquet_path_unvintaged)
+    arrow_dataset_unvintaged <- arrow::open_dataset(parquet_path_unvintaged)
+
+    purrr::walk(c(TRUE, FALSE), function(x) {
+      result <- hub_target_data_as_of(
+        arrow_dataset_unvintaged,
+        as_of = "latest",
+        .drop = x
+      )
+      ## this is the only case in which drop = FALSE makes the return
+      ## an object rather than a query
+      expected_class <- if (x) "arrow_dplyr_query" else "ArrowObject"
+      expect_s3_class(result, expected_class)
+      expect_false(inherits(result, "data.frame"))
+
+      collected <- dplyr::collect(result)
+      expect_s3_class(collected, "data.frame")
+
+      expect_equal(as.data.frame(collected), test_data)
+
+      expect_error(
+        hub_target_data_as_of(
+          arrow_dataset_unvintaged,
+          as_of = as.Date("2023-01-07"),
+          .drop = x
+        ),
+        "Requested an 'as_of' date other than the default 'latest'"
+      )
+    })
+  }
+)
