@@ -11,13 +11,20 @@ test_that(
       date = as.Date(c("2023-01-01", "2023-01-02", "2023-01-03"))
     )
 
-    # Should error when requesting specific date on unvintaged data
+    ## Should error when requesting specific date on unvintaged data,
+    ## regardless of whether date is passed directly as a date or as
+    ## something coercible to a date
     expect_error(
       hub_target_data_as_of(test_data, as_of = as.Date("2023-01-01")),
       "Requested an 'as_of' date other than the default 'latest'"
     )
+    expect_error(
+      hub_target_data_as_of(test_data, as_of = "2023-01-01"),
+      "Requested an 'as_of' date other than the default 'latest'"
+    )
   }
 )
+
 
 test_that(
   paste0(
@@ -80,7 +87,8 @@ test_that(
 test_that(
   paste0(
     "hub_target_data_as_of filters to a ",
-    "specific as_of date when provided"
+    "specific as_of date when provided, and errors if ",
+    "the as_of argument cannot be coerced to a date"
   ),
   {
     # Create vintaged test data
@@ -93,9 +101,15 @@ test_that(
       )
     )
 
-    # Filter to middle date
-    target_date <- as.Date("2023-01-02")
+    ## Filter to middle date, passing a string representation
+    target_date <- "2023-01-02"
     result <- hub_target_data_as_of(test_data, as_of = target_date)
+
+    ## Filter to middle date, passing a date directly
+    result_date <- hub_target_data_as_of(
+      test_data,
+      as_of = as.Date(target_date)
+    )
 
     ## Should contain only data from 2023-01-02
     ## and no as_of column.
@@ -105,6 +119,12 @@ test_that(
     )
 
     expect_equal(result, expected_data)
+    expect_equal(result_date, expected_data)
+
+    expect_error(
+      hub_target_data_as_of(test_data, as_of = "latesta"),
+      "character string is not in a standard unambiguous format"
+    )
   }
 )
 
