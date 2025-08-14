@@ -180,7 +180,10 @@ with_hubverse_oracle_output <- function(hubverse_table, oracle_output_table) {
 #' @export
 quantile_table_to_scorable <- function(
   hubverse_quantile_table,
-  hubverse_oracle_output_table,
+  observation_table,
+  obs_value_column = "value",
+  obs_date_column = "date",
+  id_cols = c("location", "target"),
   quantile_tol = 10
 ) {
   scorable <- hubverse_quantile_table |>
