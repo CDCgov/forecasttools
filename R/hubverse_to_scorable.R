@@ -153,12 +153,24 @@ with_hubverse_oracle_output <- function(hubverse_table, oracle_output_table) {
 #' and an observed data table with location, date, and value columns.
 #' The column names in the observed data table can be configured;
 #' defaults are `"location"`, `"date"`, and
-#' `"value"`, respectively (i.e. direct correspondence with
-#' standard hub target data tables).
-#'
+#' `"value"`, respectively.
 #' @param hubverse_quantile_table quantile forecasts,
 #' as a hubverse-format [`tibble`][tibble::tibble()], e.g.
-#' as produced by [get_hubverse_quantile_table()].
+#' as produced by [get_hubverse_quantile_table()], with columns including
+#' `location`, `target_end_date`, `output_type`, `output_type_id`,
+#' and `value`.
+#' @param observation_table observations, as a
+#' [`tibble`][tibble::tibble()].
+#' @param obs_value_column Name of the column containing
+#' observed values in the `observed` table, as a string.
+#' Default `"value"`
+#' @param obs_date_column Name of the column containing
+#' date values in the `observed` table, as a string.
+#' Default `"date"`.
+#' @param id_cols Additional id columns for joining the
+#' `observation table` to the `hubverse_quantile_table`.
+#' Passed to [hubverse_table_with_obs()]. Default
+#' `c("location", "target")`.
 #' @param quantile_tol Round quantile level values to this many
 #' decimal places, to avoid problems with floating point number
 #' equality comparisons. Passed as the `digits` argument to
@@ -171,22 +183,23 @@ quantile_table_to_scorable <- function(
   hubverse_oracle_output_table,
   quantile_tol = 10
 ) {
-  prep_table <- function(tbl) {
-    return(
-      dplyr::filter(tbl, .data$output_type == "quantile") |>
-        dplyr::mutate(
-          output_type_id = as.numeric(.data$output_type_id) |>
-            round(digits = !!quantile_tol)
-        )
-    )
-  }
-
   scorable <- hubverse_quantile_table |>
-    prep_table() |>
-    with_hubverse_oracle_output(prep_table(hubverse_oracle_output_table)) |>
+    hubverse_table_with_obs(
+      observation_table,
+      obs_value_column = obs_value_column,
+      obs_date_column = obs_date_column,
+      obs_value_name = "observed",
+      id_cols = id_cols,
+      join = "inner"
+    ) |>
+    dplyr::filter(.data$output_type == "quantile") |>
+    dplyr::mutate(
+      output_type_id = as.numeric(.data$output_type_id) |>
+        round(digits = !!quantile_tol)
+    ) |>
     scoringutils::as_forecast_quantile(
       predicted = "value",
-      observed = "oracle_value",
+      observed = "observed",
       quantile_level = "output_type_id"
     )
 
