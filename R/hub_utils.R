@@ -104,8 +104,9 @@ gather_hub_location_data <- function(
 #' it raises an error when the data set is not vintaged.
 #'
 #' @param hub_target_data Table of hub target data to filter
-#' @param as_of As of date to filter to. If `"latest"` (default)
-#' use the latest available vintage.
+#' @param as_of As of date to filter to, as an object coercible by
+#' [as.Date()], or "latest" to filter to the most recent available
+#' vintage. Default `"latest"`.
 #' @param .drop Drop the `as_of` column once the dataset
 #' has been filtered to a specific vintage? Default `TRUE`.
 #' @return The specific requested vintage of target data,
@@ -119,23 +120,23 @@ hub_target_data_as_of <- function(
   checkmate::assert_scalar(as_of)
   vintaged <- "as_of" %in% colnames(hub_target_data)
   if (vintaged) {
-    if (as_of == "latest") {
+    if (as.character(as_of) == "latest") {
       as_of <- hub_target_data |>
         dplyr::summarise(max_date = max(.data$as_of)) |>
         dplyr::collect() |>
-        dplyr::pull() |>
-        as.Date()
+        dplyr::pull()
     }
-    checkmate::assert_date(as_of)
     hub_target_data <- dplyr::filter(
       hub_target_data,
-      as.Date(.data$as_of) == !!as_of
+      as.Date(.data$as_of) == as.Date(!!as_of)
     )
-  } else if (as_of != "latest") {
+  } else if (as.character(as_of) != "latest") {
     cli::cli_abort(
-      "Requested an 'as_of' date other than the default 'latest', ",
-      "but the provided hubverse target data table does not appear ",
-      "to be vintaged. It has no 'as_of' column."
+      paste0(
+        "Requested an 'as_of' date other than the default 'latest', ",
+        "but the provided hubverse target data table does not appear ",
+        "to be vintaged. It has no 'as_of' column."
+      )
     )
   }
 
