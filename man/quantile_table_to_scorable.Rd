@@ -6,7 +6,10 @@
 \usage{
 quantile_table_to_scorable(
   hubverse_quantile_table,
-  hubverse_oracle_output_table,
+  observation_table,
+  obs_value_column = "value",
+  obs_date_column = "date",
+  id_cols = c("location", "target"),
   quantile_tol = 10
 )
 }
@@ -16,11 +19,6 @@ as a hubverse-format \code{\link[tibble:tibble]{tibble}}, e.g.
 as produced by \code{\link[=get_hubverse_quantile_table]{get_hubverse_quantile_table()}}, with columns including
 \code{location}, \code{target_end_date}, \code{output_type}, \code{output_type_id},
 and \code{value}.}
-
-\item{quantile_tol}{Round quantile level values to this many
-decimal places, to avoid problems with floating point number
-equality comparisons. Passed as the \code{digits} argument to
-\code{\link[base:Round]{base::round()}}. Default 10.}
 
 \item{observation_table}{observations, as a
 \code{\link[tibble:tibble]{tibble}}.}
@@ -37,6 +35,11 @@ Default \code{"date"}.}
 \verb{observation table} to the \code{hubverse_quantile_table}.
 Passed to \code{\link[=hubverse_table_with_obs]{hubverse_table_with_obs()}}. Default
 \code{c("location", "target")}.}
+
+\item{quantile_tol}{Round quantile level values to this many
+decimal places, to avoid problems with floating point number
+equality comparisons. Passed as the \code{digits} argument to
+\code{\link[base:Round]{base::round()}}. Default 10.}
 }
 \value{
 A \code{\link[data.table:data.table]{data.table}} for scoring,
