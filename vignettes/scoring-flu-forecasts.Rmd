@@ -63,10 +63,12 @@ As of [`b311e92`](https://github.com/cdcepi/FluSight-forecast-hub/commit/b311e92
 ```{r}
 forecast_and_target <- hub_to_scorable_quantiles(hub_path)
 
-head(forecast_and_target)
+tail(forecast_and_target)
 ```
+`hub_to_scorable_quantiles()` performs a [left join](https://dplyr.tidyverse.org/reference/mutate-joins.html) of the forecast data to the target data, so the table includes forcasts for which there is no available evaluation data, with the `observed` column set to `NA`. `scoringutils` handles this.
 
 Note that while the `hubData` package identifies individual models with a `model_id` column, `hub_to_scorable_quantiles()` renames this to the `scoringutils` standard column name for models: `model`.
+
 
 There were `r forecast_and_target$model |> unique() |> length()` different models that had submitted quantile forecasts to FluSight as of [`b311e92`](https://github.com/cdcepi/FluSight-forecast-hub/commit/b311e92).
 
