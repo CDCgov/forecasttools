@@ -206,6 +206,7 @@ quantile_table_to_scorable <- function(
   return(scorable)
 }
 
+#'
 
 #' Create a table for scoring hub model
 #' quantile forecasts from a local copy of
@@ -216,15 +217,16 @@ quantile_table_to_scorable <- function(
 #'
 #' @param hub_path Local path to a hubverse-style
 #' forecast hub.
-#' @param ... keyword arguments passed to
-#' [quantile_table_to_scorable()].
+#' @param quantile_tol Round quantile level values to this many
+#' decimal places, to avoid problems with floating point number
+#' equality comparisons. Passed as the `digits` argument to
+#' [base::round()]. Default 10.
 #' @return Scorable table, as the output of
 #' [scoringutils::as_forecast_quantile()].
 #' @export
 hub_to_scorable_quantiles <- function(
   hub_path,
-  as_of = "latest",
-  ...
+  quantile_tol = 10
 ) {
   quantile_forecasts <- gather_hub_quantile_forecasts(hub_path) |>
     dplyr::rename(model = "model_id")
@@ -237,11 +239,17 @@ hub_to_scorable_quantiles <- function(
   ## speaking the schema permits).
   ## any other behavior for evaluation data is rare enough that
   ## we prefer manual creation of scorable tables to potential user error
-  scorable <- quantile_table_to_scorable(
-    quantile_forecasts,
-    oracle_output,
-    ...
-  )
+  scorable <- quantile_forecasts |>
+    with_hubverse_oracle_output(oracle_output) |>
+    dplyr::mutate(
+      output_type_id = as.numeric(.data$output_type_id) |>
+        round(digits = !!quantile_tol)
+    ) |>
+    scoringutils::as_forecast_quantile(
+      predicted = "value",
+      observed = "oracle_value",
+      quantile_level = "output_type_id"
+    )
 
   return(scorable)
 }
