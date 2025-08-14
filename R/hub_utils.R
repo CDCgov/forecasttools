@@ -134,7 +134,7 @@ hub_target_data_as_of <- function(
   } else if (as_of != "latest") {
     cli::cli_abort(
       "Requested an 'as_of' date other than the default 'latest', ",
-      "but the provided hubverse target data table does not appear",
+      "but the provided hubverse target data table does not appear ",
       "to be vintaged. It has no 'as_of' column."
     )
   }
