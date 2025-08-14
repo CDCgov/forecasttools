@@ -258,10 +258,3 @@ hub_to_scorable_quantiles <- function(
 
   return(scorable)
 }
-
-
-hub_to_scorable_tables <- function(hub_path) {
-  hub_connection <- hubData::connect_hub(hub_path)
-  forecasts <- hub_connection |>
-    hubData::collect_hub()
-}
