@@ -234,11 +234,13 @@ hub_to_scorable_quantiles <- function(
     dplyr::filter(.data$output_type == "quantile") |>
     hub_target_data_as_of("latest") |>
     dplyr::collect()
-  ## we force-filter to the latest oracle output data, if the oracle
-  ## data is versioned (which it typically will not be, but which strictly
-  ## speaking the schema permits).
-  ## any other behavior for evaluation data is rare enough that
-  ## we prefer manual creation of scorable tables to potential user error
+  ## We force-filter the oracle output to the latest vintage whenever
+  ## data are versioned (often oracle output data will not be,
+  ## but the hubverse schema currently permits it).
+  ##
+  ## Since scoring against a vintage of evaluation data other than the
+  ## latest available is rarely desirable, we force the user to do so
+  ## manually.
   scorable <- quantile_forecasts |>
     with_hubverse_oracle_output(oracle_output) |>
     dplyr::mutate(
@@ -252,4 +254,11 @@ hub_to_scorable_quantiles <- function(
     )
 
   return(scorable)
+}
+
+
+hub_to_scorable_tables <- function(hub_path) {
+  hub_connection <- hubData::connect_hub(hub_path)
+  forecasts <- hub_connection |>
+    hubData::collect_hub()
 }

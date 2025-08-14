@@ -13,12 +13,30 @@ quantile_table_to_scorable(
 \arguments{
 \item{hubverse_quantile_table}{quantile forecasts,
 as a hubverse-format \code{\link[tibble:tibble]{tibble}}, e.g.
-as produced by \code{\link[=get_hubverse_quantile_table]{get_hubverse_quantile_table()}}.}
+as produced by \code{\link[=get_hubverse_quantile_table]{get_hubverse_quantile_table()}}, with columns including
+\code{location}, \code{target_end_date}, \code{output_type}, \code{output_type_id},
+and \code{value}.}
 
 \item{quantile_tol}{Round quantile level values to this many
 decimal places, to avoid problems with floating point number
 equality comparisons. Passed as the \code{digits} argument to
 \code{\link[base:Round]{base::round()}}. Default 10.}
+
+\item{observation_table}{observations, as a
+\code{\link[tibble:tibble]{tibble}}.}
+
+\item{obs_value_column}{Name of the column containing
+observed values in the \code{observed} table, as a string.
+Default \code{"value"}}
+
+\item{obs_date_column}{Name of the column containing
+date values in the \code{observed} table, as a string.
+Default \code{"date"}.}
+
+\item{id_cols}{Additional id columns for joining the
+\verb{observation table} to the \code{hubverse_quantile_table}.
+Passed to \code{\link[=hubverse_table_with_obs]{hubverse_table_with_obs()}}. Default
+\code{c("location", "target")}.}
 }
 \value{
 A \code{\link[data.table:data.table]{data.table}} for scoring,
@@ -30,6 +48,5 @@ Expects quantile forecast output in hubverse format
 and an observed data table with location, date, and value columns.
 The column names in the observed data table can be configured;
 defaults are \code{"location"}, \code{"date"}, and
-\code{"value"}, respectively (i.e. direct correspondence with
-standard hub target data tables).
+\code{"value"}, respectively.
 }

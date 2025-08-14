@@ -6,14 +6,16 @@
 quantile forecasts from a local copy of
 a hub.}
 \usage{
-hub_to_scorable_quantiles(hub_path, as_of = "latest", ...)
+hub_to_scorable_quantiles(hub_path, quantile_tol = 10)
 }
 \arguments{
 \item{hub_path}{Local path to a hubverse-style
 forecast hub.}
 
-\item{...}{keyword arguments passed to
-\code{\link[=quantile_table_to_scorable]{quantile_table_to_scorable()}}.}
+\item{quantile_tol}{Round quantile level values to this many
+decimal places, to avoid problems with floating point number
+equality comparisons. Passed as the \code{digits} argument to
+\code{\link[base:Round]{base::round()}}. Default 10.}
 }
 \value{
 Scorable table, as the output of
