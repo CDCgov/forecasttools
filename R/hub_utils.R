@@ -120,7 +120,7 @@ hub_target_data_as_of <- function(
   vintaged <- "as_of" %in% colnames(hub_target_data)
   if (vintaged) {
     if (as_of == "latest") {
-      as_of <- timeseries |>
+      as_of <- hub_target_data |>
         dplyr::summarise(max_date = max(.data$as_of)) |>
         dplyr::collect() |>
         dplyr::pull() |>
