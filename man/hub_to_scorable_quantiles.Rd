@@ -6,10 +6,10 @@
 quantile forecasts from a local copy of
 a hub.}
 \usage{
-hub_to_scorable_quantiles(hub_path, ...)
+hub_to_scorable_quantiles(hub_path, as_of = "latest", ...)
 }
 \arguments{
-\item{hub_path}{Local path to hubverse-style
+\item{hub_path}{Local path to a hubverse-style
 forecast hub.}
 
 \item{...}{keyword arguments passed to
