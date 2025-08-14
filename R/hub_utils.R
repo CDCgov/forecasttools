@@ -120,7 +120,11 @@ hub_target_data_as_of <- function(
   vintaged <- "as_of" %in% colnames(hub_target_data)
   if (vintaged) {
     if (as_of == "latest") {
-      as_of <- max(as.Date(hub_target_data$as_of))
+      as_of <- timeseries |>
+        dplyr::summarise(max_date = max(.data$as_of)) |>
+        dplyr::collect() |>
+        dplyr::pull() |>
+        as.Date()
     }
     checkmate::assert_date(as_of)
     hub_target_data <- dplyr::filter(
