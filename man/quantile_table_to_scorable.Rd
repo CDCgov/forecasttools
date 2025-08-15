@@ -2,7 +2,7 @@
 % Please edit documentation in R/hubverse_to_scorable.R
 \name{quantile_table_to_scorable}
 \alias{quantile_table_to_scorable}
-\title{create a \code{scoringutils}-ready table.}
+\title{Create a \code{scoringutils}-ready quantile table from a hubverse table}
 \usage{
 quantile_table_to_scorable(
   hubverse_quantile_table,
@@ -51,6 +51,5 @@ Expects quantile forecast output in hubverse format
 and an observed data table with location, date, and value columns.
 The column names in the observed data table can be configured;
 defaults are \code{"location"}, \code{"date"}, and
-\code{"value"}, respectively (i.e. direct correspondence with
-standard hub target data tables).
+\code{"value"}, respectively.
 }

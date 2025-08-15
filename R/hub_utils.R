@@ -44,9 +44,7 @@ update_hub <- function(hub_path) {
   }
 }
 
-#' Collect and reformat hub forecasts for scoring.
-#'
-#' Gather hub quantile forecasts.
+#' Collect and reformat hub quantile forecasts for scoring.
 #'
 #' @param hub_path Local path to hub
 #'
@@ -59,6 +57,7 @@ gather_hub_quantile_forecasts <- function(hub_path) {
     hubData::collect_hub()
   return(forecasts)
 }
+
 
 #' Gather location data from a forecast hub.
 #'
@@ -97,29 +96,61 @@ gather_hub_location_data <- function(
   return(location_data)
 }
 
-#' Gather target truth data from a forecast hub.
+#' Filter to a given vintage of hub target data and drop the `as_of`
+#' column.
 #'
-#' @param hub_path Local path to hub.
-#' @param target_data_rel_path The path to the target
-#' data file relative to forecast hub root directory.
-#' Defaults to the path in the FluSight Forecast Hub.
-#' @return Table of target data
+#' This function succeeds silently on unvintaged target data tables
+#' provided the user requests the latest available data. Otherwise,
+#' it raises an error when the data set is not vintaged. It is designed
+#' to work either with concrete dataframes or with the lazy API Arrow
+#' datasets returned by [hubData::connect_target_times()] and
+#' [hubData::connect_target_oracle_output()]. In the arrow case, it
+#' will not execute the query (i.e. you must still call [dplyr::collect()]
+#' or similar to instantiate the results.
+#'
+#' @param hub_target_data Table of hub target data to filter
+#' @param as_of As of date to filter to, as an object coercible by
+#' [as.Date()], or "latest" to filter to the most recent available
+#' vintage. Default `"latest"`.
+#' @param .drop Drop the `as_of` column once the dataset
+#' has been filtered to a specific vintage? Default `TRUE`.
+#' @return The specific requested vintage of target data,
+#' potentially with the `as_of` column removed.
 #' @export
-gather_hub_target_data <- function(
-  hub_path,
-  target_data_rel_path = fs::path(
-    "target-data",
-    "target-hospital-admissions.csv"
-  )
+hub_target_data_as_of <- function(
+  hub_target_data,
+  as_of = "latest",
+  .drop = TRUE
 ) {
-  target_data_path <- fs::path(hub_path, target_data_rel_path)
-  if (!fs::file_exists(target_data_path)) {
-    cfl <- target_data_path
+  checkmate::assert_scalar(as_of)
+  vintaged <- "as_of" %in% colnames(hub_target_data)
+  if (vintaged) {
+    if (as.character(as_of) == "latest") {
+      as_of <- hub_target_data |>
+        dplyr::summarise(max_date = max(.data$as_of)) |>
+        dplyr::collect() |>
+        dplyr::pull()
+    }
+    hub_target_data <- dplyr::filter(
+      hub_target_data,
+      as.Date(.data$as_of) == as.Date(!!as_of)
+    )
+  } else if (as.character(as_of) != "latest") {
     cli::cli_abort(
-      "Cannot find target data file at {.path {target_data_path}}."
+      paste0(
+        "Requested an 'as_of' date other than the default 'latest', ",
+        "but the provided hubverse target data table does not appear ",
+        "to be vintaged. It has no 'as_of' column."
+      )
     )
   }
 
-  target_data <- read_tabular_file(target_data_path)
-  return(target_data)
+  if (.drop) {
+    hub_target_data <- dplyr::select(
+      hub_target_data,
+      -tidyselect::any_of("as_of")
+    )
+  }
+
+  return(hub_target_data)
 }

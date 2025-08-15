@@ -235,3 +235,199 @@ testthat::test_that(
     )
   }
 )
+
+test_that(
+  paste0(
+    "with_hubverse_oracle_output() raises errors ",
+    "for incompatible column names or types"
+  ),
+  {
+    # Test case: oracle_value column present in hubverse_table
+    hubverse_table <- tibble::tibble(
+      location = "US",
+      target_end_date = as.Date("2023-01-01"),
+      target = "wk inc flu hosp",
+      output_type = "quantile",
+      output_type_id = "0.5",
+      value = 100,
+    )
+
+    oracle_output_table <- tibble::tibble(
+      location = "US",
+      target_end_date = as.Date("2023-01-01"),
+      target = "wk inc flu hosp",
+      output_type = "quantile",
+      output_type_id = "0.5",
+      oracle_value = 95
+    )
+
+    result <- with_hubverse_oracle_output(hubverse_table, oracle_output_table)
+    expect_equal(result, hubverse_table |> dplyr::mutate(oracle_value = 95))
+
+    expect_error(
+      with_hubverse_oracle_output(
+        hubverse_table |> dplyr::mutate(oracle_value = 503),
+        oracle_output_table
+      ),
+      "oracle_value"
+    )
+    expect_error(
+      with_hubverse_oracle_output(
+        hubverse_table,
+        oracle_output_table |> dplyr::mutate(extra_column = "not in table")
+      ),
+      "extra_column"
+    )
+    expect_error(
+      with_hubverse_oracle_output(
+        hubverse_table,
+        oracle_output_table |>
+          dplyr::mutate(target_end_date = as.character(.data$target_end_date))
+      ),
+      "incompatible types"
+    )
+  }
+)
+
+test_that("with_hubverse_oracle_output handles mixed output types correctly", {
+  # hubverse table with mixed output types and out of order levels
+  hubverse_table <- tibble::tibble(
+    location = rep("US", 7),
+    target_end_date = rep(as.Date("2023-01-01"), 7),
+    target = c(
+      "wk inc flu ed visits",
+      "wk inc flu hosp",
+      "wk inc flu hosp",
+      "wk flu burden level",
+      "wk inc flu hosp",
+      "wk flu burden level",
+      "wk inc flu ed visits"
+    ),
+    output_type = c(
+      "cdf",
+      "quantile",
+      "quantile",
+      "pmf",
+      "quantile",
+      "pmf",
+      "cdf"
+    ),
+    output_type_id = c("200", "0.5", "0.75", "high", "0.25", "low", "105"),
+    value = c(0.95, 100, 120, 0.7, 80, 0.3, 0.8)
+  )
+
+  oracle_output <- tibble::tibble(
+    location = c("US", "US", "US"),
+    target_end_date = c(
+      as.Date("2023-01-01"),
+      as.Date("2023-01-01"),
+      as.Date("2023-01-01")
+    ),
+    target = c(
+      "wk inc flu hosp",
+      "wk flu burden level",
+      "wk inc flu ed visits"
+    ),
+    output_type = c("quantile", "pmf", "cdf"),
+    output_type_id = c(NA_character_, "low", 105),
+    # NA for quantile, specific IDs for pmf/cdf
+    oracle_value = c(95, 0.4, 0.8)
+  )
+
+  result <- with_hubverse_oracle_output(hubverse_table, oracle_output)
+
+  # all original rows preserved, oracle_value column added
+  expect_true("oracle_value" %in% names(result))
+  expect_equal(nrow(result), 7)
+
+  ## non-"need_id" rows (here "quantile") are handled correctly
+  ## despite the NA output_type_ids in the oracle table
+  quantile_rows <- dplyr::filter(result, .data$output_type == "quantile")
+  expect_equal(quantile_rows$oracle_value, rep(95, 3))
+  expect_true(all(!is.na(quantile_rows$output_type_id)))
+
+  ## Check that pmf row with matching output_type_id gets correct oracle_value
+  pmf_low_row <- dplyr::filter(
+    result,
+    .data$output_type == "pmf",
+    .data$output_type_id == "low"
+  )
+  expect_equal(pmf_low_row$oracle_value, 0.4)
+
+  ## Check while pmf row with non-matching output_type_id gets NA oracle_value
+
+  pmf_high_row <- dplyr::filter(
+    result,
+    .data$output_type == "pmf",
+    .data$output_type_id == "high"
+  )
+  expect_true(is.na(pmf_high_row$oracle_value))
+
+  ## cdf row with matching output_type_id gets correct oracle_value
+  cdf_row_match <- dplyr::filter(
+    result,
+    .data$output_type == "cdf",
+    .data$output_type_id == "105"
+  )
+  expect_equal(cdf_row_match$oracle_value, 0.8)
+
+  ## Check that cdf row with unmatched output_type_id gets NA
+  cdf_row_match <- dplyr::filter(
+    result,
+    .data$output_type == "cdf",
+    .data$output_type_id == "200"
+  )
+  expect_true(is.na(cdf_row_match$oracle_value))
+})
+
+test_that("with_hubverse_oracle_output preserves all hubverse table rows", {
+  hubverse_table <- tibble::tibble(
+    location = "US",
+    target_end_date = as.Date(c("2023-01-01", "2023-01-01", "2023-02-02")),
+    target = "wk inc flu hosp",
+    output_type = "quantile",
+    output_type_id = c("0.25", "0.5", "0.75"),
+    value = c(80, 100, 120)
+  )
+
+  # Oracle output only covers some dates
+  oracle_output <- tibble::tibble(
+    location = "US",
+    target_end_date = as.Date("2023-01-01"),
+    target = "wk inc flu hosp",
+    output_type = "quantile",
+    output_type_id = NA_character_,
+    oracle_value = 95
+  )
+
+  result <- with_hubverse_oracle_output(hubverse_table, oracle_output)
+
+  # All original rows should be preserved, including those that do not match
+  expect_equal(nrow(result), 3)
+  expect_equal(result$oracle_value, c(95, 95, NA))
+})
+
+test_that("with_hubverse_oracle_output handles empty oracle output", {
+  hubverse_table <- tibble::tibble(
+    location = "US",
+    target_end_date = as.Date("2023-01-01"),
+    target = "wk inc flu hosp",
+    output_type = "quantile",
+    output_type_id = "0.5",
+    value = 100
+  )
+
+  oracle_output <- tibble::tibble(
+    location = character(0),
+    target_end_date = as.Date(character(0)),
+    target = character(0),
+    output_type = character(0),
+    output_type_id = character(0),
+    oracle_value = numeric(0)
+  )
+
+  result <- with_hubverse_oracle_output(hubverse_table, oracle_output)
+
+  expect_equal(nrow(result), 1)
+  expect_true(is.na(result$oracle_value))
+})

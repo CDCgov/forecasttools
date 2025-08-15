@@ -42,7 +42,7 @@ download_hub(
 )
 ```
 
-For reproducibility, in this vignette we will examine the Hub as of a specific [git commit](https://github.com/git-guides/git-commit), [`6ae6919`](https://github.com/cdcepi/FluSight-forecast-hub/commit/6ae69198654).
+For reproducibility, in this vignette we will examine the Hub as of a specific [git commit](https://github.com/git-guides/git-commit), [`b311e92`](https://github.com/cdcepi/FluSight-forecast-hub/commit/b311e92).
 ```{r, include = FALSE}
 ## use a specific commit to future-proof the vignette
 gert::git_branch_create(
@@ -50,38 +50,27 @@ gert::git_branch_create(
   repo = hub_path,
   force = FALSE,
   checkout = TRUE,
-  ref = "6ae6919"
+  ref = "b311e92"
 )
 ```
 
-As of [`6ae6919`](https://github.com/cdcepi/FluSight-forecast-hub/commit/6ae69198654), the FluSight Hub accepted quantile forecasts for a single "target" quantity: epiweekly incident Influenza hospital admissions. It provides a timeseries of that data in a file named [`target-data/target-hospital-admissions.csv`](https://github.com/cdcepi/FluSight-forecast-hub/blob/6ae6919865417a2557773faa5f7354a0329baa4c/target-data/target-hospital-admissions.csv).
+The schema for both forecasts and ["target data"](https://docs.hubverse.io/en/latest/user-guide/target-data.html) is standardized across Hubverse hubs. There are two [standard formats for Hubverse target data](https://docs.hubverse.io/en/latest/user-guide/target-data.html#uses-of-target-time-series-data-and-oracle-output): "timeseries" format and "oracle output" format. To work with `hub_to_scorable_quantiles()`, a forecast hub must provide "oracle output" format target data.
 
-The schema for forecasts is standardized across Hubverse Hubs, but the schema for target data is not (yet). For that reason `hub_to_scorable_quantiles()` asks you to provide:
+As of [`b311e92`](https://github.com/cdcepi/FluSight-forecast-hub/commit/b311e92), the FluSight Hub accepted quantile forecasts for a single "target" quantity: epiweekly incident influenza hospital admissions. It provided a oracle output target data in a file called [`oracle-output.csv`](https://github.com/cdcepi/FluSight-forecast-hub/blob/b311e926ca3995d0c16f5a3d626665959d52f387/target-data/oracle-output.csv).
 
-  - `target_data_rel_path`: a path to the target data you want relative to the Hub root directory.
-  - `obs_date_col`: the name of the column in the target data table that corresponds to the `target_end_date` for forecasts. Default `"date"`.
-  - `obs_value_col`: the name of the column in the target data table that corresponds to observed values of the target quantity. Default `"value"`.
-  - `id_cols`: any additional ID columns besides the dates that should be used to join the target data to the forecast data. Default `c("target", "location")`.
-
-
-For the FluSight hub target data, the date column is `"date"` and the value column is `"value"`, so we will leave those defaults. Forecasts are stratified by `"location"` but not by target, so we'll use that as an additional ID column.
+`hub_to_scorable_quantiles()` just needs to be pointed at the local copy of the Hub, and it will extract available quantile forecasts (via `hubData::connect_hub()`), combine them with the appropriate associated target data fetched from the "oracle output" (via `hubData::connect_target_oracle_output()`), and produce a `scoringutils`-ready table via `scoringutils::as_forecast_quantile()`:
 
 ```{r}
-target_data_path <- fs::path("target-data",
-  "target-hospital-admissions",
-  ext = "csv"
-)
-forecast_and_target <- hub_to_scorable_quantiles(hub_path,
-  target_data_rel_path =
-    target_data_path,
-  id_cols = "location"
-)
+forecast_and_target <- hub_to_scorable_quantiles(hub_path)
+
+tail(forecast_and_target)
 ```
+`hub_to_scorable_quantiles()` performs a [left join](https://dplyr.tidyverse.org/reference/mutate-joins.html) of the forecast data to the target data, so the table includes forcasts for which there is no available evaluation data, with the `observed` column set to `NA`. `scoringutils` handles this.
 
-`hub_to_scorable_quantiles()` outputs a `scoringutils` object, specifically the output of `scoringutils::as_forecast_quantile()`. Note that while `hubData::collect_hub()` identifies individual models with a `model_id` column, `hub_to_scorable_quantiles()` renames this to the `scoringutils` standard `model` column.
+Note that while the `hubData` package identifies individual models with a `model_id` column, `hub_to_scorable_quantiles()` renames this to the `scoringutils` standard column name for models: `model`.
 
 
-There were `r forecast_and_target$model |> unique() |> length()` different models that had been submitted to FluSight as of the [commit examined in this vignette](https://github.com/cdcepi/FluSight-forecast-hub/commit/6ae69198654)
+There were `r forecast_and_target$model |> unique() |> length()` different models that had submitted quantile forecasts to FluSight as of [`b311e92`](https://github.com/cdcepi/FluSight-forecast-hub/commit/b311e92).
 
 ```{r}
 unique(forecast_and_target$model)

@@ -3,8 +3,7 @@
 \docType{data}
 \name{hubverse_std_colnames}
 \alias{hubverse_std_colnames}
-\title{Internal and user-exposed constants for forecasttools.
-Names of the standard columns for hubverse tables.
+\title{Names of the standard columns for hubverse tables.
 Alias for \link[hubUtils:std_colnames]{hubUtils::std_colnames}.}
 \format{
 An object of class \code{character} of length 4.
@@ -13,7 +12,6 @@ An object of class \code{character} of length 4.
 hubverse_std_colnames
 }
 \description{
-Internal and user-exposed constants for forecasttools.
 Names of the standard columns for hubverse tables.
 Alias for \link[hubUtils:std_colnames]{hubUtils::std_colnames}.
 }

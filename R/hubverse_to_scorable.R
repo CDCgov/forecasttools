@@ -87,17 +87,73 @@ hubverse_table_with_obs <- function(
   ))
 }
 
+#' Join hubverse oracle output to a hubverse forecast table for scoring.
+#'
+#' @param hubverse_table Hubverse format table of forecasts
+#' @param oracle_output_table Oracle output table to join to the forecast table.
+#' @return The joined table, as a [`tibble`][tibble::tibble()].
+#' @examples
+#'
+#' with_hubverse_oracle_output(hubExamples::forecast_outputs,
+#'   hubExamples::forecast_oracle_output)
+#'
+#' @export
+with_hubverse_oracle_output <- function(hubverse_table, oracle_output_table) {
+  ## check tables have compatible schemas
+  checkmate::assert_names(
+    names(hubverse_table),
+    disjunct.from = "oracle_value"
+  )
+  checkmate::assert_names(
+    names(oracle_output_table),
+    subset.of = c(names(hubverse_table), "oracle_value")
+  )
+  assert_hubverse_output_types(hubverse_table$output_type)
+  assert_hubverse_output_types(oracle_output_table$output_type)
 
-#' create a `scoringutils`-ready table.
+  ## partition problem according to whether or not output_type_id should
+  ## be a join column. In the standard hubverse schema NA output_type_id
+  ## for an oracle output means that that the single oracle_value should
+  ## be associated to any and all available output_type_id levels from
+  ## the forecast (e.g. if output type = "quantile" or "sample").
+  ## A non-NA oracle_output output_type_id value means that the oracle_value
+  ## should be associated _only_ to that output_type_id level from the forecast.
+  needs_id <- c(
+    "pmf",
+    "cdf"
+  )
+  std_join_cols <- setdiff(
+    names(oracle_output_table),
+    c("output_type_id", "oracle_value")
+  )
+  needs_id_rows <- function(x) {
+    dplyr::filter(x, .data$output_type %in% !!needs_id)
+  }
+  no_needs_id_rows <- function(x) {
+    dplyr::filter(x, !.data$output_type %in% !!needs_id)
+  }
+  needs_id_partition <- dplyr::left_join(
+    needs_id_rows(hubverse_table),
+    needs_id_rows(oracle_output_table),
+    by = c(std_join_cols, "output_type_id")
+  )
+  no_needs_id_partition <- dplyr::left_join(
+    no_needs_id_rows(hubverse_table),
+    no_needs_id_rows(oracle_output_table) |>
+      dplyr::select(-"output_type_id"),
+    by = std_join_cols
+  )
+  return(dplyr::bind_rows(needs_id_partition, no_needs_id_partition))
+}
+
+#' Create a `scoringutils`-ready quantile table from a hubverse table
 #'
 #' Expects quantile forecast output in hubverse format
 #' (e.g. as created by [get_hubverse_quantile_table()])
 #' and an observed data table with location, date, and value columns.
 #' The column names in the observed data table can be configured;
 #' defaults are `"location"`, `"date"`, and
-#' `"value"`, respectively (i.e. direct correspondence with
-#' standard hub target data tables).
-#'
+#' `"value"`, respectively.
 #' @param hubverse_quantile_table quantile forecasts,
 #' as a hubverse-format [`tibble`][tibble::tibble()], e.g.
 #' as produced by [get_hubverse_quantile_table()], with columns including
@@ -153,6 +209,7 @@ quantile_table_to_scorable <- function(
   return(scorable)
 }
 
+#'
 
 #' Create a table for scoring hub model
 #' quantile forecasts from a local copy of
@@ -161,37 +218,43 @@ quantile_table_to_scorable <- function(
 #' Requires a local version of the
 #' forecast hub at `hub_path`.
 #'
-#' @param hub_path Local path to hubverse-style
+#' @param hub_path Local path to a hubverse-style
 #' forecast hub.
-#' @param target_data_rel_path Path to the target data
-#' file within the hub, relative to the Hub root.
-#' Defaults to the path in the FluSight Forecast Hub.
-#' Passed to [gather_hub_target_data()].
-#' @param ... keyword arguments passed to
-#' [quantile_table_to_scorable()].
+#' @param quantile_tol Round quantile level values to this many
+#' decimal places, to avoid problems with floating point number
+#' equality comparisons. Passed as the `digits` argument to
+#' [base::round()]. Default 10.
 #' @return Scorable table, as the output of
 #' [scoringutils::as_forecast_quantile()].
 #' @export
-hub_to_scorable_quantiles <-
-  function(
-    hub_path,
-    target_data_rel_path = fs::path(
-      "target-data",
-      "target-hospital-admissions.csv"
-    ),
-    ...
-  ) {
-    quantile_forecasts <- gather_hub_quantile_forecasts(hub_path) |>
-      dplyr::rename(model = "model_id")
-    target_data <- gather_hub_target_data(
-      hub_path,
-      target_data_rel_path = target_data_rel_path
-    )
-    scorable <- quantile_table_to_scorable(
-      quantile_forecasts,
-      target_data,
-      ...
+hub_to_scorable_quantiles <- function(
+  hub_path,
+  quantile_tol = 10
+) {
+  quantile_forecasts <- gather_hub_quantile_forecasts(hub_path) |>
+    dplyr::rename(model = "model_id")
+  oracle_output <- hubData::connect_target_oracle_output(hub_path) |>
+    dplyr::filter(.data$output_type == "quantile") |>
+    hub_target_data_as_of("latest") |>
+    dplyr::collect()
+  ## We force-filter the oracle output to the latest vintage whenever
+  ## data are versioned (often oracle output data will not be,
+  ## but the hubverse schema currently permits it).
+  ##
+  ## Since scoring against a vintage of evaluation data other than the
+  ## latest available is rarely desirable, we force the user to do so
+  ## manually.
+  scorable <- quantile_forecasts |>
+    with_hubverse_oracle_output(oracle_output) |>
+    dplyr::mutate(
+      output_type_id = as.numeric(.data$output_type_id) |>
+        round(digits = !!quantile_tol)
+    ) |>
+    scoringutils::as_forecast_quantile(
+      predicted = "value",
+      observed = "oracle_value",
+      quantile_level = "output_type_id"
     )
 
-    return(scorable)
-  }
+  return(scorable)
+}
