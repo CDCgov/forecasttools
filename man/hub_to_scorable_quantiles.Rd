@@ -6,23 +6,16 @@
 quantile forecasts from a local copy of
 a hub.}
 \usage{
-hub_to_scorable_quantiles(
-  hub_path,
-  target_data_rel_path = fs::path("target-data", "target-hospital-admissions.csv"),
-  ...
-)
+hub_to_scorable_quantiles(hub_path, quantile_tol = 10)
 }
 \arguments{
-\item{hub_path}{Local path to hubverse-style
+\item{hub_path}{Local path to a hubverse-style
 forecast hub.}
 
-\item{target_data_rel_path}{Path to the target data
-file within the hub, relative to the Hub root.
-Defaults to the path in the FluSight Forecast Hub.
-Passed to \code{\link[=gather_hub_target_data]{gather_hub_target_data()}}.}
-
-\item{...}{keyword arguments passed to
-\code{\link[=quantile_table_to_scorable]{quantile_table_to_scorable()}}.}
+\item{quantile_tol}{Round quantile level values to this many
+decimal places, to avoid problems with floating point number
+equality comparisons. Passed as the \code{digits} argument to
+\code{\link[base:Round]{base::round()}}. Default 10.}
 }
 \value{
 Scorable table, as the output of

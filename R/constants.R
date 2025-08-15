@@ -1,5 +1,18 @@
 #' Internal and user-exposed constants for forecasttools.
 
+#' Names of the valid output_type values for hubverse tables.
+#'
+#' @export
+hubverse_output_types <- c(
+  "mean",
+  "median",
+  "quantile",
+  "cdf",
+  "pmf",
+  "sample"
+)
+
+
 #' Names of the standard columns for hubverse tables.
 #' Alias for [hubUtils::std_colnames].
 #'
