@@ -1,6 +1,6 @@
 Package: forecasttools
 Title: R Toolbox for Short-Term Infectious Disease Forecasting
-Version: 0.1.6
+Version: 0.1.7
 Authors@R:
     c(person("Dylan", "Morris",
     email = "dzl1@cdc.gov",

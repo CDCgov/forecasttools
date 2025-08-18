@@ -1,3 +1,10 @@
+# forecasttools 0.1.7
+* New `ggplot2` helper functions and custom geometric objects: `sym_limits()`, `geom_path_point()`, `geom_line_point()`
+* New plotting function for forecast evaluation: `plot_pred_obs_pointinterval()`
+* New forecast scoring helper functions: `summarize_scores_with_baseline()`, `get_shared_forecasts()`, `get_subset_forecasts()`, `filter_to_shared_forecasts()`, `filter_to_subset_forecasts()`.
+* New Hubverse to scorable table approach leverging the hubverse "oracle output" target data format.
+* Refactor of `data.cdc.gov` data pull helper functions. Deprecation of `pull_nhsn()` in favor of new function `pull_data_cdc_gov_dataset()`.
+
 # forecasttools 0.1.6
 * New function: `modify_reference_date()`
 * BREAKING CHANGE: Various epiweek/epiyear functions no longer default to the `MMWR` epiweek standard and require the user to specify a standard explicitly. To restore previous behavior, set `epiweek_standard = "MMWR"` explicitly.
