@@ -52,6 +52,33 @@ test_that(
   }
 )
 
+test_that("read_tabular handles timezones correctly in parquet files", {
+  non_utc_tz <- "Asia/Tokyo"
+  timestap_df_no_tz <- tibble::tibble(
+    id = 1:5,
+    timestamp = as.POSIXct(c(
+      "2023-01-01 10:00:00",
+      "2023-01-02 11:00:00",
+      "2023-01-03 12:00:00",
+      "2023-01-04 13:00:00",
+      "2023-01-05 14:00:00"
+    ))
+  )
+
+  timestap_df_with_tz <- timestap_df_no_tz |>
+    dplyr::mutate(timestamp = lubridate::with_tz(timestamp, non_utc_tz))
+
+  outpath1 <- withr::local_tempfile(fileext = ".parquet")
+  arrow::write_parquet(timestap_df_no_tz, outpath1)
+  result <- read_tabular(outpath1)
+  expect_equal(result$timestamp |> lubridate::tz() |> unique(), "UTC")
+
+  outpath2 <- withr::local_tempfile(fileext = ".parquet")
+  arrow::write_parquet(timestap_df_with_tz, outpath2)
+  result <- read_tabular(outpath2)
+  expect_equal(result$timestamp |> lubridate::tz() |> unique(), non_utc_tz)
+})
+
 test_that("sym_limits has expected manual properties", {
   withr::with_seed(5, {
     rand_vals <- rnorm(100, sd = 100)
