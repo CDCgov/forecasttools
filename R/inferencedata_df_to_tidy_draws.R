@@ -68,13 +68,7 @@ inferencedata_to_tidy_draws <- function(idata) {
       c(".chain", ".iteration"),
       \(x) as.integer(x + 1) # convert to 1-indexed
     )) |>
-    dplyr::mutate(
-      .draw = tidybayes:::draw_from_chain_and_iteration_(
-        .data$.chain,
-        .data$.iteration
-      ),
-      .after = ".iteration"
-    ) |>
+    tidybayes::combine_chains() |>
     tidyr::pivot_longer(
       -tidyselect::starts_with("."),
       names_sep = "\\|",
