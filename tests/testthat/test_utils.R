@@ -52,31 +52,89 @@ test_that(
   }
 )
 
-test_that("read_tabular handles timezones correctly in parquet files", {
-  non_utc_tz <- "Asia/Tokyo"
-  timestap_df_no_tz <- tibble::tibble(
-    id = 1:5,
-    timestamp = as.POSIXct(c(
-      "2023-01-01 10:00:00",
-      "2023-01-02 11:00:00",
-      "2023-01-03 12:00:00",
-      "2023-01-04 13:00:00",
-      "2023-01-05 14:00:00"
-    ))
+non_utc_tz <- "Asia/Tokyo"
+timestamp_col_name <- "timestamp"
+
+timestamp_wo_tz_tbl <- tibble::tibble(
+  id = 1:5,
+  !!timestamp_col_name := as.POSIXct(c(
+    "2023-01-01 10:00:00",
+    "2023-01-02 11:00:00",
+    "2023-01-03 12:00:00",
+    "2023-01-04 13:00:00",
+    "2023-01-05 14:00:00"
+  ))
+)
+
+timestamp_w_tz_tbl <- timestamp_wo_tz_tbl |>
+  dplyr::mutate(
+    !!timestamp_col_name := lubridate::with_tz(.data$timestamp, non_utc_tz)
   )
 
-  timestap_df_with_tz <- timestap_df_no_tz |>
-    dplyr::mutate(timestamp = lubridate::with_tz(timestamp, non_utc_tz))
+timestamp_wo_tz_tbl_arrow <- arrow::arrow_table(timestamp_wo_tz_tbl)
+timestamp_w_tz_tbl_arrow <- arrow::arrow_table(timestamp_w_tz_tbl)
 
-  outpath1 <- withr::local_tempfile(fileext = ".parquet")
-  arrow::write_parquet(timestap_df_no_tz, outpath1)
-  result <- read_tabular(outpath1)
-  expect_equal(result$timestamp |> lubridate::tz() |> unique(), "UTC")
+test_that("get_ts_tz_from_arrow_tbl works as expected", {
+  expect_equal(
+    get_ts_tz_from_arrow_tbl(timestamp_wo_tz_tbl_arrow),
+    rlang::set_names("", timestamp_col_name)
+  )
+  expect_equal(
+    get_ts_tz_from_arrow_tbl(timestamp_w_tz_tbl_arrow),
+    rlang::set_names(non_utc_tz, timestamp_col_name)
+  )
+})
 
-  outpath2 <- withr::local_tempfile(fileext = ".parquet")
-  arrow::write_parquet(timestap_df_with_tz, outpath2)
-  result <- read_tabular(outpath2)
-  expect_equal(result$timestamp |> lubridate::tz() |> unique(), non_utc_tz)
+test_that("get_cols_wo_tz_from_arrow_tbl works as expected", {
+  expect_equal(
+    get_cols_wo_tz_from_arrow_tbl(timestamp_wo_tz_tbl_arrow),
+    timestamp_col_name
+  )
+  expect_equal(
+    get_cols_wo_tz_from_arrow_tbl(timestamp_w_tz_tbl_arrow),
+    character(0)
+  )
+})
+
+
+test_that("read_tabular handles timezones correctly in parquet files", {
+  outpath_wo_tz <- withr::local_tempfile(fileext = ".parquet")
+  arrow::write_parquet(timestamp_wo_tz_tbl, outpath_wo_tz)
+
+  expect_equal(
+    read_pq_with_tz_correction(outpath_wo_tz) |>
+      dplyr::pull(timestamp_col_name) |>
+      lubridate::tz() |>
+      unique(),
+    "UTC"
+  )
+
+  expect_equal(
+    read_tabular(outpath_wo_tz) |>
+      dplyr::pull(timestamp_col_name) |>
+      lubridate::tz() |>
+      unique(),
+    "UTC"
+  )
+
+  outpath_w_tz <- withr::local_tempfile(fileext = ".parquet")
+  arrow::write_parquet(timestamp_w_tz_tbl, outpath_w_tz)
+
+  expect_equal(
+    read_pq_with_tz_correction(outpath_w_tz) |>
+      dplyr::pull(timestamp_col_name) |>
+      lubridate::tz() |>
+      unique(),
+    non_utc_tz
+  )
+
+  expect_equal(
+    read_tabular(outpath_w_tz) |>
+      dplyr::pull(timestamp_col_name) |>
+      lubridate::tz() |>
+      unique(),
+    non_utc_tz
+  )
 })
 
 test_that("sym_limits has expected manual properties", {
