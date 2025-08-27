@@ -140,7 +140,7 @@ get_ts_tz_from_arrow_tbl <- function(arrow_tbl) {
   purrr::map_chr(arrow_tbl$schema$fields, \(x) {
     tryCatch(x$type$timezone(), error = function(e) NA)
   }) |>
-    purrr::set_names(colnames(arrow_tbl)) |>
+    rlang::set_names(colnames(arrow_tbl)) |>
     purrr::discard(is.na)
 }
 

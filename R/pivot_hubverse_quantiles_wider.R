@@ -58,7 +58,7 @@ pivot_hubverse_quantiles_wider <- function(
   }
 
   ## create an inverse mapping for pivot_quantiles
-  pivot_quant_map <- purrr::set_names(
+  pivot_quant_map <- rlang::set_names(
     names(pivot_quantiles),
     pivot_quantiles
   )
