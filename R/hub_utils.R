@@ -103,7 +103,7 @@ gather_hub_location_data <- function(
 #' provided the user requests the latest available data. Otherwise,
 #' it raises an error when the data set is not vintaged. It is designed
 #' to work either with concrete dataframes or with the lazy API Arrow
-#' datasets returned by [hubData::connect_target_times()] and
+#' datasets returned by [hubData::connect_target_timeseries()] and
 #' [hubData::connect_target_oracle_output()]. In the arrow case, it
 #' will not execute the query (i.e. you must still call [dplyr::collect()]
 #' or similar to instantiate the results.

@@ -29,7 +29,7 @@ cdc_hub_additional_colnames <- c(
   "target_end_date",
   "location"
 ) |>
-  purrr::set_names()
+  rlang::set_names()
 
 #' Names of standard columns for the
 #' the CDC FluSight and COVID-19 Forecast Hubs, with

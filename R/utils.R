@@ -136,6 +136,31 @@ soql_nullable_select <- function(soql_list, columns) {
   )
 }
 
+get_ts_tz_from_arrow_tbl <- function(arrow_tbl) {
+  purrr::map_chr(arrow_tbl$schema$fields, \(x) {
+    tryCatch(x$type$timezone(), error = function(e) NA)
+  }) |>
+    rlang::set_names(colnames(arrow_tbl)) |>
+    purrr::discard(is.na)
+}
+
+get_cols_wo_tz_from_arrow_tbl <- function(arrow_tbl) {
+  get_ts_tz_from_arrow_tbl(arrow_tbl) |>
+    purrr::keep(\(x) x == "") |>
+    names()
+}
+
+read_pq_with_tz_correction <- function(file, ...) {
+  arrow_tbl <- arrow::read_parquet(file, ..., as_data_frame = FALSE)
+
+  arrow_tbl |>
+    tibble::as_tibble() |>
+    dplyr::mutate(dplyr::across(
+      get_cols_wo_tz_from_arrow_tbl(arrow_tbl),
+      \(x) lubridate::with_tz(x, tzone = "UTC")
+    ))
+}
+
 #' Read from or write to tabular files, with
 #' file format inferred from the file extension.
 #'
@@ -162,7 +187,7 @@ read_tabular <- function(path_to_file, ...) {
   file_readers <- c(
     "tsv" = readr::read_tsv,
     "csv" = readr::read_csv,
-    "parquet" = arrow::read_parquet
+    "parquet" = read_pq_with_tz_correction
   )
 
   checkmate::assert_names(file_format, subset.of = names(file_readers))

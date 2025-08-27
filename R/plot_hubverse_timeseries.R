@@ -289,7 +289,7 @@ plot_hubverse_file_quantiles <- function(
   }
 
   list_of_plots <- purrr::map(
-    location_vector |> purrr::set_names(),
+    location_vector |> rlang::set_names(),
     \(loc) {
       plot_hubverse_loc_quant_ts(
         loc,

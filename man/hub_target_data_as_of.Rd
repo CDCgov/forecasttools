@@ -10,8 +10,9 @@ hub_target_data_as_of(hub_target_data, as_of = "latest", .drop = TRUE)
 \arguments{
 \item{hub_target_data}{Table of hub target data to filter}
 
-\item{as_of}{As of date to filter to. If \code{"latest"} (default)
-use the latest available vintage.}
+\item{as_of}{As of date to filter to, as an object coercible by
+\code{\link[=as.Date]{as.Date()}}, or "latest" to filter to the most recent available
+vintage. Default \code{"latest"}.}
 
 \item{.drop}{Drop the \code{as_of} column once the dataset
 has been filtered to a specific vintage? Default \code{TRUE}.}
@@ -23,5 +24,10 @@ potentially with the \code{as_of} column removed.
 \description{
 This function succeeds silently on unvintaged target data tables
 provided the user requests the latest available data. Otherwise,
-it raises an error when the data set is not vintaged.
+it raises an error when the data set is not vintaged. It is designed
+to work either with concrete dataframes or with the lazy API Arrow
+datasets returned by \code{\link[hubData:connect_target_timeseries]{hubData::connect_target_timeseries()}} and
+\code{\link[hubData:connect_target_oracle_output]{hubData::connect_target_oracle_output()}}. In the arrow case, it
+will not execute the query (i.e. you must still call \code{\link[dplyr:compute]{dplyr::collect()}}
+or similar to instantiate the results.
 }
