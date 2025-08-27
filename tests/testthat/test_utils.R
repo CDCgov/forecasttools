@@ -97,7 +97,8 @@ test_that("get_cols_wo_tz_from_arrow_tbl works as expected", {
 })
 
 
-test_that("read_tabular handles timezones correctly in parquet files", {
+test_that("read_pq_with_tz_correction and read_tabular handle
+timezones correctly in parquet files", {
   outpath_wo_tz <- withr::local_tempfile(fileext = ".parquet")
   arrow::write_parquet(timestamp_wo_tz_tbl, outpath_wo_tz)
 
