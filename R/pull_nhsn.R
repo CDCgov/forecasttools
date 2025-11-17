@@ -79,7 +79,7 @@ pull_nhsn <- function(
   lifecycle::deprecate_warn(
     "0.1.7",
     "pull_nhsn()",
-    details = "Use pull_data_cdc_gov_dataset("nhsn_hrd_prelim") instead."
+    details = 'Use pull_data_cdc_gov_dataset("nhsn_hrd_prelim") instead.'
   )
   df <- nhsn_soda_query(
     api_endpoint,
