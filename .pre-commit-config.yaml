@@ -14,7 +14,7 @@ repos:
 #####
 # R
 -   repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.4.3.9015
+    rev: v0.4.3.9017
     hooks:
       - id: deps-in-desc
         args: [--allow_private_imports]
