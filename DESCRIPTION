@@ -71,7 +71,7 @@ VignetteBuilder:
     knitr
 URL: https://cdcgov.github.io/forecasttools/, https://github.com/CDCgov/forecasttools/
 Depends:
-    R (>= 4.1.0)
+    R (>= 4.5.0)
 LazyData: true
 Remotes:
     hubverse-org/hubData,
