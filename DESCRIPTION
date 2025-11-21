@@ -52,7 +52,8 @@ Imports:
     stringr,
     tibble,
     tidyselect,
-    vctrs
+    vctrs,
+    forcats (>= 1.0.1)
 Suggests:
     data.table,
     tidybayes,
