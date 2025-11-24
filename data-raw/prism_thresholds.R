@@ -1,6 +1,3 @@
-#' When there is an appropriate online endpoint for these
-#' thresholds, this this script will be updated to point there.
-#' For now, it reads from bundled .tsv's in inst/extdata
 prism_dfs <-
   tibble::tibble(
     "file_path" = fs::path("inst", "extdata") |>
