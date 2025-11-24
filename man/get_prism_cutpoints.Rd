@@ -3,31 +3,32 @@
 \name{get_prism_cutpoints}
 \alias{get_prism_cutpoints}
 \title{Get PRISM activity level cutpoints for given
-diseases and locations}
+disease and location}
 \usage{
-get_prism_cutpoints(locations, diseases)
+get_prism_cutpoints(location, disease, as_of = lubridate::today())
 }
 \arguments{
-\item{locations}{location(s) for which to return the cutpoints.
-A location two-letter abbreviation as in the \code{short_name}
-column of \link{us_location_table}, or an array
-of those abbreviations.}
+\item{location}{location(s) for which to return the cutpoints, as
+a two-letter abbreviation. Use \link{us_location_recode} with
+\code{location_output_format = "abbr"} to convert to this format.}
 
-\item{diseases}{disease(s) for which to return the cutpoints.
+\item{disease}{disease(s) for which to return the cutpoints.
 One of \code{"ARI"}, \code{"COVID-19"}, \code{"Influenza"}, or \code{"RSV"}, or
-an array of those values.}
+an array of those value.}
+
+\item{as_of}{date for which the cutpoints are valid. Defaults to today.}
 }
 \value{
-The cutpoints, as an ordered list of vectors.
+The cutpoints, as a list of vectors.
 }
 \description{
 Get PRISM activity level cutpoints for given
-diseases and locations
+disease and location
 }
 \examples{
 get_prism_cutpoints("WA", "Influenza")
 
 get_prism_cutpoints(c("US", "WA"), "COVID-19")
 
-get_prism_cutpoints(c("US", "WA"), c("ARI", "RSV"))
+get_prism_cutpoints(c("US", "WA"), c("ARI", "RSV"), as.Date("2025-01-01"))
 }

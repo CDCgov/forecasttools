@@ -2,24 +2,24 @@
 % Please edit documentation in R/categorize_prism.R
 \name{categorize_prism}
 \alias{categorize_prism}
-\title{Categorize a vector of values into PRISM
+\title{Categorize a vector of value into PRISM
 activity level bins.}
 \usage{
 categorize_prism(
-  values,
-  locations,
-  diseases,
+  value,
+  location,
+  disease,
   prism_bin_names = default_prism_bin_names
 )
 }
 \arguments{
-\item{values}{values to categorize}
+\item{value}{value to categorize}
 
-\item{locations}{vector of locations of length equal to
-\code{values} or a single location for all \code{values}.}
+\item{location}{vector of location of length equal to
+\code{value} or a single location for all \code{value}.}
 
-\item{diseases}{vector of diseases of length equal to
-\code{values} or a single disease for all \code{values}.}
+\item{disease}{vector of disease of length equal to
+\code{value} or a single disease for all \code{value}.}
 
 \item{prism_bin_names}{Bin names for the PRISM bins.
 in order from lowest to highest. Must be a vector of
@@ -30,7 +30,7 @@ Defaults to the standard PRISM bin names in title case:
 }
 \value{
 A factor vector of category labels, equal in length
-to the input vector \code{values}.
+to the input vector \code{value}.
 }
 \description{
 Uses \code{\link[=categorize_vector]{categorize_vector()}} and \code{\link[=get_prism_cutpoints]{get_prism_cutpoints()}}.

@@ -7,11 +7,13 @@
 #'
 #' @param location_format the format string to convert.
 #' Valid values are:
-#' -`"abbr"` or `"short_name"`: USPS 2-letter abbreviation
-#' - `"code"` or `"hub"`: Legacy 2-digit FIPS code for states and territories,
-#' `US` for the US as a whole, the schema typically used in forecast
-#' hubs.
-#' - `"long_name"` or `"name"`: Full location name, as a string.
+#' \itemize{
+#'   \item `"abbr"` or `"short_name"`: USPS 2-letter abbreviation
+#'   \item `"code"` or `"hub"`: Legacy 2-digit FIPS code for states and
+#' territories, `US` for the US as a whole, the schema typically used in
+#' forecast hubs.
+#'   \item `"long_name"` or `"name"`: Full location name, as a string.
+#' }
 #'
 #' @return the corresponding column name in
 #' [forecasttools::us_location_table].

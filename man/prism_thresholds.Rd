@@ -5,7 +5,7 @@
 \alias{prism_thresholds}
 \title{PRISM respiratory virus activity level thresholds}
 \format{
-An object of class \code{array} of dimension 53 x 4 x 6.
+An object of class \code{array} of dimension 6 x 4 x 53 x 2.
 }
 \source{
 <data-raw/prism_thresholds.R>

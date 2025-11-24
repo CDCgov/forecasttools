@@ -13,11 +13,11 @@ to_location_table_column(location_format)
 \arguments{
 \item{location_format}{the format string to convert.
 Valid values are:
--\code{"abbr"} or \code{"short_name"}: USPS 2-letter abbreviation
 \itemize{
-\item \code{"code"} or \code{"hub"}: Legacy 2-digit FIPS code for states and territories,
-\code{US} for the US as a whole, the schema typically used in forecast
-hubs.
+\item \code{"abbr"} or \code{"short_name"}: USPS 2-letter abbreviation
+\item \code{"code"} or \code{"hub"}: Legacy 2-digit FIPS code for states and
+territories, \code{US} for the US as a whole, the schema typically used in
+forecast hubs.
 \item \code{"long_name"} or \code{"name"}: Full location name, as a string.
 }}
 }
