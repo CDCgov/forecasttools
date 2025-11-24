@@ -1,7 +1,7 @@
 #' When there is an appropriate online endpoint for these
 #' thresholds, this this script will be updated to point there.
 #' For now, it reads from bundled .tsv's in inst/extdata
-prop_thresholds <-
+prism_dfs <-
   tibble::tibble(
     "file_path" = fs::path("inst", "extdata") |>
       fs::dir_ls()
@@ -20,9 +20,23 @@ prop_thresholds <-
       as.Date()
   ) |>
   dplyr::mutate(
-    dat = purrr::map(file_path, readr::read_tsv, show_col_types = FALSE)
+    dat = purrr::map(file_path, \(x) {
+      readr::read_tsv(x, show_col_types = FALSE) |>
+        dplyr::arrange(.data$disease, .data$state_abb)
+    })
   ) |>
-  dplyr::select(-file_path) |>
+  dplyr::select(-file_path)
+
+# Expect constituent data frames are only different in their perc_levels.
+prism_dfs$dat |>
+  purrr::map(\(x) {
+    dplyr::mutate(x, dplyr::across(dplyr::starts_with("perc_level_"), \(y) NA))
+  }) |>
+  dplyr::n_distinct() |>
+  testthat::expect_equal(1)
+
+prop_thresholds <-
+  prism_dfs |>
   tidyr::unnest("dat") |>
   dplyr::mutate(dplyr::across(
     dplyr::where(is.character),
