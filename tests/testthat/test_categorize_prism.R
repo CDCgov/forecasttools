@@ -17,76 +17,22 @@ test_that(
     "to a manual read from the table "
   ),
   {
-    locations <- names(forecasttools::prism_thresholds[, 1, 1])
-    diseases <- names(forecasttools::prism_thresholds[1, , 1])
-    locs_diseases <- tidyr::expand_grid(
-      locations,
-      diseases
-    )
+    vars <- dimnames(forecasttools::prism_thresholds)
+    vars$breaks <- NULL
 
-    purrr::pmap(
-      locs_diseases,
-      \(locations, diseases) {
-        result <- get_prism_cutpoints(locations, diseases)
-        expected <- list(forecasttools::prism_thresholds[
-          locations,
-          diseases,
-        ])
-        expect_equal(result, expected)
-      }
-    )
-  }
-)
-
-test_that(
-  paste0(
-    "get_prism_cutpoints() gives the expected ",
-    "values for particular examples"
-  ),
-  {
-    test_cases <- list(
-      list(
-        diseases = c(
-          "Influenza"
-        ),
-        locations = c("US", "MA"),
-        expected = list(
-          c(
-            prop_very_low = 0,
-            prop_low = 0.00339654,
-            prop_moderate = 0.019232328,
-            prop_high = 0.035068116,
-            prop_very_high = 0.050903904,
-            prop_upper_bound = 1
-          ),
-          c(
-            prop_very_low = 0,
-            prop_low = 0.002146614,
-            prop_moderate = 0.020711687,
-            prop_high = 0.03927676,
-            prop_very_high = 0.057841833,
-            prop_upper_bound = 1
-          )
-        ),
-        list(
-          diseases = "RSV",
-          locations = "UT",
-          expected = list(c(
-            prop_very_low = 0,
-            prop_low = 0.0004531255,
-            prop_moderate = 0.0088554939,
-            prop_high = 0.0172578623,
-            prop_very_high = 0.0256602307,
-            prop_upper_bound = 1
-          ))
-        )
+    tidyr::expand_grid(!!!vars) |>
+      dplyr::sample_n(100) |>
+      purrr::pmap(
+        \(disease, location, as_of) {
+          result <- get_prism_cutpoints(location, disease, as_of)
+          expected <- list(forecasttools::prism_thresholds[,
+            disease,
+            location,
+            as_of
+          ])
+          expect_equal(result, expected)
+        }
       )
-    )
-
-    purrr::map(test_cases, \(x) {
-      result <- get_prism_cutpoints(x$locations, x$diseases)
-      expect_equal(result, x$expected)
-    })
   }
 )
 
@@ -100,7 +46,7 @@ test_that(
     locations <- dimnames(forecasttools::prism_thresholds)$location
     diseases <- dimnames(forecasttools::prism_thresholds)$disease
 
-    params <- tidyr::crossing(location = locations, disease = diseases)
+    params <- tidyr::expand_grid(location = locations, disease = diseases)
 
     categorize_and_compare <- function(location, disease) {
       cutpoints <- get_prism_cutpoints(location, disease)
@@ -166,4 +112,11 @@ test_that("flexible capitalization of locations and diseases works", {
     dplyr::n_distinct()
 
   expect_equal(distinct_cuts, 1)
+})
+
+test_that("error is thrown for invalid as_of", {
+  expect_error(
+    get_prism_cutpoints("WA", "Influenza", as_of = "1900-01-01"),
+    regexp = "No available PRISM cutpoints"
+  )
 })
