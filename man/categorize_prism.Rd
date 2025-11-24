@@ -9,6 +9,7 @@ categorize_prism(
   value,
   location,
   disease,
+  as_of = lubridate::today(),
   prism_bin_names = default_prism_bin_names
 )
 }
@@ -20,6 +21,9 @@ categorize_prism(
 
 \item{disease}{vector of disease of length equal to
 \code{value} or a single disease for all \code{value}.}
+
+\item{as_of}{date for which to get the PRISM cutpoints.
+Defaults to today.}
 
 \item{prism_bin_names}{Bin names for the PRISM bins.
 in order from lowest to highest. Must be a vector of

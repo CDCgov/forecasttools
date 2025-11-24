@@ -69,6 +69,8 @@ get_prism_cutpoints <- function(location, disease, as_of = lubridate::today()) {
 #' `value` or a single location for all `value`.
 #' @param disease vector of disease of length equal to
 #' `value` or a single disease for all `value`.
+#' @param as_of date for which to get the PRISM cutpoints.
+#' Defaults to today.
 #' @param prism_bin_names Bin names for the PRISM bins.
 #' in order from lowest to highest. Must be a vector of
 #' length 5. `list(prism_bin_names)` will be passed as the
@@ -82,9 +84,10 @@ categorize_prism <- function(
   value,
   location,
   disease,
+  as_of = lubridate::today(),
   prism_bin_names = default_prism_bin_names
 ) {
-  cutpoints <- get_prism_cutpoints(location, disease)
+  cutpoints <- get_prism_cutpoints(location, disease, as_of)
 
   return(categorize_vector(
     value,
