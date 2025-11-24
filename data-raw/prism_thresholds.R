@@ -75,4 +75,26 @@ prism_thresholds <- array(
   dimnames = dims
 )
 
+# test that array construction is correct
+purrr::walk(1:1000, \(i) {
+  tmp_sample <- dims |> purrr::map_chr(\(x) sample(x, 1))
+
+  testthat::expect_identical(
+    prism_thresholds[,
+      tmp_sample[["disease"]],
+      tmp_sample[["location"]],
+      tmp_sample[["as_of"]]
+    ] |>
+      unname(),
+
+    prop_thresholds |>
+      dplyr::filter(
+        as_of == as.Date(tmp_sample[["as_of"]]),
+        disease == tmp_sample[["disease"]],
+        location == tmp_sample[["location"]]
+      ) |>
+      dplyr::pull(value)
+  )
+})
+
 usethis::use_data(prism_thresholds, overwrite = TRUE)
