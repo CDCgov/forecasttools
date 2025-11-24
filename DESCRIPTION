@@ -38,7 +38,6 @@ Imports:
     gridExtra,
     httr2,
     hubData (>= 0.2.0),
-    hubUtils,
     lifecycle,
     lubridate,
     methods,
@@ -52,8 +51,7 @@ Imports:
     stringr,
     tibble,
     tidyselect,
-    vctrs,
-    forcats (>= 1.0.1)
+    vctrs
 Suggests:
     data.table,
     tidybayes,
@@ -67,7 +65,9 @@ Suggests:
     testthat (>= 3.0.0),
     rcmdcheck,
     withr,
-    httptest2
+    httptest2,
+    forcats,
+    hubUtils
 VignetteBuilder:
     knitr
 URL: https://cdcgov.github.io/forecasttools/, https://github.com/CDCgov/forecasttools/
