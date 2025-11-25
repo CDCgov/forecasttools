@@ -137,7 +137,7 @@ test_that(
 
       result <- us_location_recode(in_vec, input, output)
       expect_equal(length(result), length(in_vec))
-      expect_true(any(is.na(expected)))
+      expect_true(anyNA(expected))
       expect_equal(result, expected)
     })
   }

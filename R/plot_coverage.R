@@ -70,7 +70,7 @@ plot_coverage_by_date <- function(
 
   ## facet wrap if one or many group cols, facet grid
   ## if exactly two
-  if (length(group_cols) == 1 || length(group_cols > 2)) {
+  if (length(group_cols) == 1 || length(group_cols) > 2) {
     fig <- fig + ggplot2::facet_wrap(group_cols)
   } else if (length(group_cols) == 2) {
     fig <- fig +
