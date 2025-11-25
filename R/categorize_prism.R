@@ -1,4 +1,4 @@
-#' Get PRISM activity level cutpoints for given
+#' Get PRISM activity level cutpoints given
 #' disease and location
 #'
 #' @param disease disease(s) for which to return the cutpoints.
