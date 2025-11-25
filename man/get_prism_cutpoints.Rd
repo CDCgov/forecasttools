@@ -2,7 +2,7 @@
 % Please edit documentation in R/categorize_prism.R
 \name{get_prism_cutpoints}
 \alias{get_prism_cutpoints}
-\title{Get PRISM activity level cutpoints for given
+\title{Get PRISM activity level cutpoints given
 disease and location}
 \usage{
 get_prism_cutpoints(location, disease, as_of = lubridate::today())
@@ -14,7 +14,7 @@ a two-letter abbreviation. Use \link{us_location_recode} with
 
 \item{disease}{disease(s) for which to return the cutpoints.
 One of \code{"ARI"}, \code{"COVID-19"}, \code{"Influenza"}, or \code{"RSV"}, or
-an array of those value.}
+an array of those values.}
 
 \item{as_of}{date for which the cutpoints are valid. Defaults to today.}
 }
@@ -22,7 +22,7 @@ an array of those value.}
 The cutpoints, as a list of vectors.
 }
 \description{
-Get PRISM activity level cutpoints for given
+Get PRISM activity level cutpoints given
 disease and location
 }
 \examples{
