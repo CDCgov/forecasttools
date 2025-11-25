@@ -10,8 +10,8 @@ withr::with_seed(5, {
     t()
   ## need lower and upper bound cutpoints in addition to one
   ## for each label
-  lab_no <- sample(
-    1:(5 * n_to_categorize * n_categories),
+  lab_no <- sample.int(
+    5 * n_to_categorize * n_categories,
     n_to_categorize * n_categories,
     replace = FALSE
   )

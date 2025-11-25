@@ -16,7 +16,7 @@ create_hubverse_table <- function(
     dplyr::group_by(reference_date, horizon, location, target) |>
     dplyr::mutate(
       value = sort(
-        sample(1:100, dplyr::n(), replace = TRUE),
+        sample.int(100, dplyr::n(), replace = TRUE),
         decreasing = FALSE
       ),
       output_type = "quantile",
@@ -38,7 +38,7 @@ create_observation_data <- function(
     location = location,
     target = target
   ) |>
-    dplyr::mutate(value = sample(1:100, dplyr::n(), replace = TRUE))
+    dplyr::mutate(value = sample.int(100, dplyr::n(), replace = TRUE))
   return(data)
 }
 
@@ -344,7 +344,7 @@ test_that("with_hubverse_oracle_output handles mixed output types correctly", {
   ## despite the NA output_type_ids in the oracle table
   quantile_rows <- dplyr::filter(result, .data$output_type == "quantile")
   expect_equal(quantile_rows$oracle_value, rep(95, 3))
-  expect_true(all(!is.na(quantile_rows$output_type_id)))
+  expect_true(!anyNA(quantile_rows$output_type_id))
 
   ## Check that pmf row with matching output_type_id gets correct oracle_value
   pmf_low_row <- dplyr::filter(
