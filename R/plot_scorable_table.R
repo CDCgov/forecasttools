@@ -395,7 +395,6 @@ plot_pred_obs_pointintervals <- function(
       mapping = ggplot2::aes(
         x = .data$target_end_date,
         y = .data$value,
-        group = .data$plot_group,
         shape = .data$type,
       )
     ) +
