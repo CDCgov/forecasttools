@@ -344,7 +344,7 @@ test_that("with_hubverse_oracle_output handles mixed output types correctly", {
   ## despite the NA output_type_ids in the oracle table
   quantile_rows <- dplyr::filter(result, .data$output_type == "quantile")
   expect_equal(quantile_rows$oracle_value, rep(95, 3))
-  expect_true(!anyNA(quantile_rows$output_type_id))
+  expect_false(anyNA(quantile_rows$output_type_id))
 
   ## Check that pmf row with matching output_type_id gets correct oracle_value
   pmf_low_row <- dplyr::filter(
