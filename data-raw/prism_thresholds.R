@@ -1,55 +1,97 @@
-#' When there is an appropriate online endpoint for these
-#' thresholds, this this script will be updated to point there.
-#' For now, it reads from a bundled .tsv in inst/extdata
+prism_dfs <-
+  tibble::tibble(
+    "file_path" = fs::path("inst", "extdata") |>
+      fs::dir_ls()
+  ) |>
+  dplyr::filter(
+    file_path |>
+      fs::path_file() |>
+      stringr::str_detect(
+        "^prism_thresholds_\\d{4}-\\d{2}-\\d{2}\\.tsv$"
+      )
+  ) |>
+  dplyr::mutate(
+    as_of = file_path |>
+      fs::path_file() |>
+      stringr::str_extract("\\d{4}-\\d{2}-\\d{2}") |>
+      as.Date()
+  ) |>
+  dplyr::mutate(
+    dat = purrr::map(file_path, \(x) {
+      readr::read_tsv(x, show_col_types = FALSE) |>
+        dplyr::arrange(.data$disease, .data$state_abb)
+    })
+  ) |>
+  dplyr::select(-file_path)
 
-thresholds <- readr::read_tsv(
-  fs::path(
-    "inst",
-    "extdata",
-    "prism_thresholds",
-    ext = "tsv"
-  ),
-  show_col_types = FALSE
-) |>
+# Expect constituent data frames are only different in their perc_levels.
+prism_dfs$dat |>
+  purrr::map(\(x) {
+    dplyr::mutate(x, dplyr::across(dplyr::starts_with("perc_level_"), \(y) NA))
+  }) |>
+  dplyr::n_distinct() |>
+  testthat::expect_equal(1)
+
+prop_thresholds <-
+  prism_dfs |>
+  tidyr::unnest("dat") |>
   dplyr::mutate(dplyr::across(
     dplyr::where(is.character),
     stringr::str_to_lower
-  ))
+  )) |>
+  dplyr::mutate(dplyr::across(
+    dplyr::starts_with("perc_level_"),
+    \(x) x / 100
+  )) |>
+  dplyr::rename_with(
+    \(x) stringr::str_replace(x, "perc_level_", "prop_"),
+    dplyr::starts_with("perc_level_")
+  ) |>
+  dplyr::rename("location" = "state_abb") |>
+  dplyr::mutate("prop_very_low" = 0, .after = "location") |>
+  dplyr::mutate("prop_upper_bound" = 1) |>
+  tidyr::pivot_longer(
+    cols = dplyr::starts_with("prop_"),
+    names_to = "breaks",
+    values_to = "value"
+  ) |>
+  dplyr::mutate(breaks = forcats::fct_inorder(breaks)) |>
+  dplyr::arrange(as_of, location, disease, breaks) |>
+  dplyr::select("as_of", "location", "disease", "breaks", dplyr::everything())
 
-## Transform thresholds from percentage to proportion
-prop_thresholds <- thresholds |>
-  dplyr::transmute(
-    disease,
-    location = state_abb,
-    prop_very_low = 0,
-    prop_low = perc_level_low / 100,
-    prop_moderate = perc_level_moderate / 100,
-    prop_high = perc_level_high / 100,
-    prop_very_high = perc_level_very_high / 100,
-    prop_upper_bound = 1
+# convert to array
+dims <- prop_thresholds |>
+  dplyr::select(-value) |>
+  purrr::map(unique) |>
+  purrr::map(as.character) |>
+  rev()
+
+prism_thresholds <- array(
+  data = prop_thresholds$value,
+  dim = lengths(dims),
+  dimnames = dims
+)
+
+# test that array construction is correct
+purrr::walk(1:1000, \(i) {
+  tmp_sample <- dims |> purrr::map_chr(\(x) sample(x, 1))
+
+  testthat::expect_identical(
+    prism_thresholds[,
+      tmp_sample[["disease"]],
+      tmp_sample[["location"]],
+      tmp_sample[["as_of"]]
+    ] |>
+      unname(),
+
+    prop_thresholds |>
+      dplyr::filter(
+        as_of == as.Date(tmp_sample[["as_of"]]),
+        disease == tmp_sample[["disease"]],
+        location == tmp_sample[["location"]]
+      ) |>
+      dplyr::pull(value)
   )
-
-#' Transform thresholds from flat table to
-#' multi-dimensional array, via a nested list.
-#'
-#' Method for conversion to multi-dim array:
-#' 1. Transform the long-form tabular data to a
-#' nested named list (via nest() and deframe())
-#' 2. Transform the nested named list to a multi-dimensional
-#' array with dimension names (via simplify2array() and unlist())
-#' 3. Order and name the dimensions of that array.
-
-thresholds_nested_list <- prop_thresholds |>
-  tidyr::nest(breaks = dplyr::starts_with("prop_")) |>
-  tidyr::nest(loc_breaks = c(location, breaks)) |>
-  tibble::deframe() |>
-  purrr::map(tibble::deframe) # yields a nested list of tibbles
-
-prism_thresholds <- thresholds_nested_list |>
-  simplify2array() |> # yields a 2D array of length-1 tibbles
-  apply(1:2, unlist) |> # yields a 3D array
-  aperm(c(2, 3, 1)) # orders 3D array dimensions as desired
-
-names(dimnames(prism_thresholds)) <- c("location", "disease", "breaks")
+})
 
 usethis::use_data(prism_thresholds, overwrite = TRUE)
