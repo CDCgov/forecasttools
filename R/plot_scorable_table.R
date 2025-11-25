@@ -377,48 +377,67 @@ plot_pred_obs_pointintervals <- function(
     require_all_medians = FALSE,
     require_all_widths = FALSE,
     quantile_tol = quantile_tol
-  )
+  ) |>
+    dplyr::rename("value" = "predicted") |>
+    dplyr::mutate(type = "predicted")
   ## workaround for overplotting issue with `geom_pointinterval` when there
   ## are infinite values, which can cause the mini-point to appear on top of
   ## the full size point, instead of behind.
 
   obs <- dplyr::select(
     to_plot,
-    c("target_end_date", "observed", "plot_group", "horizon")
-  )
+    c("target_end_date", "value" = "observed", "plot_group", "horizon")
+  ) |>
+    dplyr::mutate(type = "observed")
 
-  plot <- ggplot2::ggplot(
-    data = qi,
-    mapping = ggplot2::aes(x = .data$target_end_date, group = .data$plot_group)
-  ) +
-    ggdist::geom_pointinterval(
+  plot <-
+    ggplot2::ggplot(
       mapping = ggplot2::aes(
-        y = .data$predicted,
+        x = .data$target_end_date,
+        y = .data$value,
+        group = .data$plot_group,
+        shape = .data$type,
+      )
+    ) +
+    ggdist::geom_pointinterval(
+      data = qi,
+      mapping = ggplot2::aes(
         ymin = .data$.lower,
         ymax = .data$.upper
       ),
-      shape = predicted_point_shape,
       point_size = predicted_point_size,
       point_fill = predicted_point_fill,
-      interval_color = predicted_interval_color
+      interval_color = predicted_interval_color,
     ) +
     forecasttools::geom_line_point(
       data = obs,
-      mapping = ggplot2::aes(y = .data$observed),
-      shape = observed_point_shape,
       linetype = observed_linetype,
       linewidth = observed_linewidth,
       size = observed_point_size,
       fill = observed_point_fill,
-      color = observed_linecolor
+      color = observed_linecolor,
+      key_glyph = "point"
     ) +
-    ggplot2::labs(x = x_label, y = y_label) +
-    ggplot2::scale_y_continuous(transform = y_transform) +
+    ggplot2::scale_x_date(x_label) +
+    ggplot2::scale_y_continuous(
+      y_label,
+      labels = scales::label_comma(),
+      transform = y_transform
+    ) +
+    ggplot2::scale_shape_manual(
+      "Type",
+      values = c(
+        "observed" = observed_point_shape,
+        "predicted" = predicted_point_shape
+      ),
+      label = stringr::str_to_title
+    ) +
     ggplot2::facet_grid(
       .data$horizon ~ .data$plot_group,
       labeller = ggplot2::labeller(horizon = ggplot2::label_both)
     ) +
-    theme_forecasttools()
+    theme_forecasttools() +
+    ggplot2::theme(legend.position = "bottom")
 
   return(plot)
 }
