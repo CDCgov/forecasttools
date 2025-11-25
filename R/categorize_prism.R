@@ -3,7 +3,7 @@
 #'
 #' @param disease disease(s) for which to return the cutpoints.
 #' One of `"ARI"`, `"COVID-19"`, `"Influenza"`, or `"RSV"`, or
-#' an array of those value.
+#' an array of those values.
 #' @param location location(s) for which to return the cutpoints, as
 #' a two-letter abbreviation. Use [forecasttools::us_location_recode] with
 #' `location_output_format = "abbr"` to convert to this format.
