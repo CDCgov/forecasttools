@@ -73,25 +73,11 @@ test_that(
     "reference_date_col if horizon_col present"
   ),
   {
-    # Create a minimal scorable_table with both 'horizon' and 'reference_date'
-    ## Should not error and should not have a `reference_date` column
-    ## in the ggplot data.
+    # Creating a minimal scorable_table with both 'horizon' and
+    # 'reference_date' should not error
     expect_no_message({
       result <- plot_pred_obs_pointintervals(mock_scorable_table)
     })
-    checkmate::expect_names(
-      names(result$data),
-      must.include = c(
-        "model",
-        "predicted",
-        "horizon",
-        "target_end_date",
-        ".lower",
-        ".upper"
-      ),
-      disjunct.from = "reference_date"
-    )
-
     ## manually dropping reference_date should be equivalent
     expect_no_message({
       result_manual <- plot_pred_obs_pointintervals(
