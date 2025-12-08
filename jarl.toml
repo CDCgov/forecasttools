@@ -1,3 +1,4 @@
 [lint]
 default-exclude = true
 assignment = "<-"
+exclude = ["data-raw/ex_inferencedata_dataframe.R"]
