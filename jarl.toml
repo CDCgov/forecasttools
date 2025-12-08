@@ -1,0 +1,4 @@
+[lint]
+default-exclude = true
+assignment = "<-"
+exclude = ["data-raw/**"]
