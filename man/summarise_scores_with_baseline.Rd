@@ -24,8 +24,8 @@ summarize_scores_with_baseline(
 )
 }
 \arguments{
-\item{scores}{A scoring object containing the scoring table with
-quantile scores.}
+\item{scores}{A table of scores, as the output of
+\code{\link[scoringutils:score]{scoringutils::score()}}.}
 
 \item{baseline}{Name of the baseline, as a string. Should be
 an element of the column defined by the \code{compare} argument.}

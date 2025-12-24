@@ -4,8 +4,8 @@
 #' [scoringutils::get_pairwise_comparisons()] that automatically
 #' adds relative metrics with a baseline.
 #'
-#' @param scores A scoring object containing the scoring table with
-#' quantile scores.
+#' @param scores A table of scores, as the output of
+#' [scoringutils::score()].
 #' @param baseline Name of the baseline, as a string. Should be
 #' an element of the column defined by the `compare` argument.
 #' @param compare Column name of the column that uniquely
