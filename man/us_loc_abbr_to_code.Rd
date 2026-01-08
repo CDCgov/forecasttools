@@ -13,6 +13,7 @@ us_loc_abbr_to_code(abbr)
 \value{
 vector of the same length recoded as hub-style
 location codes
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
 \description{
 Given a vector of state/territory two-letter
