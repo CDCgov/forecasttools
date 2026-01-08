@@ -1,7 +1,11 @@
 test_that("us_location_table abbr and hrd columns differ only in 'US' versus 'USA'", {
   expect_equal(
     us_location_table$abbr,
-    stringr::str_sub(us_location_table$hrd, 1, 2) # remove "A" from "USA"
+    dplyr::case_match(
+      us_location_table$hrd,
+      "USA" ~ "US",
+      .default = us_location_table$hrd
+    ) # "USA" --> "US"
   )
 })
 
@@ -131,10 +135,10 @@ test_that(
       name = c("United States", "AL", "Alabama", "Wyoming"), # "AL" is invalid
       hrd = c("USA", "AL", "TX", "US") # "US" is invalid
     )
-
+    encoding_options <- c("abbr", "code", "name", "hrd")
     io <- tidyr::crossing(
-      input = c("abbr", "code", "name", "hrd"),
-      output = c("abbr", "code", "name", "hrd")
+      input = encoding_options,
+      output = encoding_options
     )
 
     purrr::pwalk(io, \(input, output) {
