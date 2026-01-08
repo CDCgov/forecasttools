@@ -116,7 +116,8 @@ test_that("flexible capitalization of locations and diseases works", {
 
 test_that("error is thrown for invalid as_of", {
   expect_error(
-    get_prism_cutpoints("WA", "Influenza", as_of = "1900-01-01"),
+      get_prism_cutpoints("WA", "Influenza", as_of = "1900-01-01") |>
+      suppressWarnings(),
     regexp = "No available PRISM cutpoints"
   )
 })
