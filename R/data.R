@@ -5,10 +5,11 @@
 #' United States as a whole.
 #'
 #' @format
-#' A tibble with 58 rows and 3 columns:
+#' A tibble with 58 rows and 4 columns:
 #' \describe{
 #'   \item{code}{2-character location code}
 #'   \item{abbr}{2-character location abbreviation}
+#'   \item{hrd}{location abbreviation as in the `jurisdiction` column of the NHSN Hospital Respiratory Data (HRD) dataset. Same as `abbr` for subnational jurisdictions, but `USA` for the United States as a whole.}
 #'   \item{name}{Full name of the location}
 #' }
 #' @source <https://www2.census.gov/geo/docs/reference/state.txt>

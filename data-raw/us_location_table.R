@@ -1,6 +1,7 @@
 nation <- tibble::tibble(
   code = "US",
   abbr = "US",
+  hrd = "USA",
   name = "United States"
 )
 
@@ -11,6 +12,7 @@ states <- readr::read_delim(
   dplyr::select(
     code = STATE,
     abbr = STUSAB,
+    hrd = STUSAB,
     name = STATE_NAME
   )
 
