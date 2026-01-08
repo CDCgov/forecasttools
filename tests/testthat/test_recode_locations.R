@@ -1,8 +1,8 @@
 test_that("us_location_table abbr and hrd columns differ only in 'US' versus 'USA'", {
-    expect_equal(
-              us_location_table$abbr,
-        stringr::str_sub(us_location_table$hrd, 1, 2) # remove "A" from "USA"
-    )
+  expect_equal(
+    us_location_table$abbr,
+    stringr::str_sub(us_location_table$hrd, 1, 2) # remove "A" from "USA"
+  )
 })
 
 test_that(
