@@ -16,8 +16,11 @@ Valid values are:
 \itemize{
 \item \code{"abbr"} or \code{"short_name"}: USPS 2-letter abbreviation
 \item \code{"code"} or \code{"hub"}: Legacy 2-digit FIPS code for states and
-territories, \code{US} for the US as a whole, the schema typically used in
+territories and \code{US} for the US as a whole, the schema typically used in
 forecast hubs.
+\item \code{"hrd"}: USPS 2-letter abbreviation for subnational states and
+territories and \code{USA} for the US as a whole, the schema used by the NHSN
+Hospital Respiratory Data (HRD) dataset.
 \item \code{"long_name"} or \code{"name"}: Full location name, as a string.
 }}
 }

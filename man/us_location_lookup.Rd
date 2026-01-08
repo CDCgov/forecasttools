@@ -48,6 +48,8 @@ us_location_lookup(c("01", "05", "US", "05"), "code", "name")
 
 us_location_lookup(c("01", "05", "US", "05"), "code", c("abbr", "name"))
 
+us_location_lookup(c("USA", "05", "05"), "code", "hrd")
+
 us_location_lookup(c("Alaska", "Hawaii"), "name", c("code", "abbr"))
 
 }

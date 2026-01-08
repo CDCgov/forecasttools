@@ -10,6 +10,7 @@ test_that(
     expect_equal(to_us_location_table_column("hub"), "code")
     expect_equal(to_us_location_table_column("name"), "name")
     expect_equal(to_us_location_table_column("long_name"), "name")
+    expect_equal(to_us_location_table_column("hrd"), "hrd")
     expect_equal(
       to_us_location_table_column(
         c("long_name", "name", "abbr")
@@ -120,12 +121,13 @@ test_that(
     input_vecs <- list(
       abbr = c("MA", "TX", "PR", "ZZ"), # "ZZ" is invalid
       code = c("25", "48", "XX", 72), # "XX" is invalid
-      name = c("United States", "AL", "Alabama", "Wyoming") # "AL" is invalid
+      name = c("United States", "AL", "Alabama", "Wyoming"), # "AL" is invalid
+      hrd = c("USA", "AL", "TX", "US") # "US" is invalid
     )
 
     io <- tidyr::crossing(
-      input = c("abbr", "code", "name"),
-      output = c("abbr", "code", "name")
+      input = c("abbr", "code", "name", "hrd"),
+      output = c("abbr", "code", "name", "hrd")
     )
 
     purrr::pwalk(io, \(input, output) {
