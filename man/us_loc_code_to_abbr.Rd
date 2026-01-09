@@ -13,6 +13,7 @@ us_loc_code_to_abbr(code)
 \value{
 vector of the same length recoded as USPS
 two letter abbreviations.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
 \description{
 Given a vector of US location

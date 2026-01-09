@@ -37,7 +37,15 @@ to_us_location_table_column <- function(location_format) {
 }
 
 #' @rdname to_us_location_table_column
-to_location_table_column <- to_us_location_table_column
+to_location_table_column <- function(location_format) {
+  lifecycle::deprecate_warn(
+    "0.1.8",
+    "to_location_table_column()",
+    details = "Use `to_us_location_table_column()` instead"
+  )
+
+  return(to_us_location_table_column(location_format))
+}
 
 #' Look up rows of the USA location table
 #' corresponding to the entries of a given
@@ -105,6 +113,11 @@ location_lookup <- function(
   location_input_format,
   location_output_format = NULL
 ) {
+  lifecycle::deprecate_warn(
+    "0.1.8",
+    "location_lookup()",
+    details = "Use `us_location_lookup()`, which always returns a `tibble` instead."
+  )
   result <- us_location_lookup(
     location,
     location_input_format,
@@ -171,9 +184,16 @@ us_location_recode <- function(
 #' @param abbr vector of USPS two letter name abbreviations
 #' @return vector of the same length recoded as hub-style
 #' location codes
+#' `r lifecycle::badge("deprecated")`
 #' @export
 #' @seealso [us_location_lookup()]
 us_loc_abbr_to_code <- function(abbr) {
+  lifecycle::deprecate_warn(
+    "0.1.8",
+    "us_loc_abbr_to_code(x)",
+    details = "Use `us_location_recode(x, 'abbr', 'hub')` instead."
+  )
+
   return(us_location_recode(abbr, "abbr", "hub"))
 }
 
@@ -189,8 +209,15 @@ us_loc_abbr_to_code <- function(abbr) {
 #' @param code vector of location codes
 #' @return vector of the same length recoded as USPS
 #' two letter abbreviations.
+#' `r lifecycle::badge("deprecated")`
 #' @export
 #' @seealso [us_location_recode()]
 us_loc_code_to_abbr <- function(code) {
+  lifecycle::deprecate_warn(
+    "0.1.8",
+    "us_loc_code_to_abbr(x)",
+    details = "Use `us_location_recode(x, 'hub', 'abbr')` instead."
+  )
+
   return(us_location_recode(code, "hub", "abbr"))
 }
