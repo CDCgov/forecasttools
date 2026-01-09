@@ -10,8 +10,11 @@
 #' \itemize{
 #'   \item `"abbr"` or `"short_name"`: USPS 2-letter abbreviation
 #'   \item `"code"` or `"hub"`: Legacy 2-digit FIPS code for states and
-#' territories, `US` for the US as a whole, the schema typically used in
+#' territories and `US` for the US as a whole, the schema typically used in
 #' forecast hubs.
+#'  \item `"hrd"`: USPS 2-letter abbreviation for subnational states and
+#' territories and `USA` for the US as a whole, the schema used by the NHSN
+#' Hospital Respiratory Data (HRD) dataset.
 #'   \item `"long_name"` or `"name"`: Full location name, as a string.
 #' }
 #'
@@ -25,6 +28,7 @@ to_us_location_table_column <- function(location_format) {
     "code" = "code",
     "hub" = "code",
     "name" = "name",
+    "hrd" = "hrd",
     "long_name" = "name"
   )
   checkmate::assert_names(location_format, subset.of = names(col_keys))
@@ -76,6 +80,8 @@ to_location_table_column <- function(location_format) {
 #' us_location_lookup(c("01", "05", "US", "05"), "code", "name")
 #'
 #' us_location_lookup(c("01", "05", "US", "05"), "code", c("abbr", "name"))
+#'
+#' us_location_lookup(c("USA", "05", "05"), "code", "hrd")
 #'
 #' us_location_lookup(c("Alaska", "Hawaii"), "name", c("code", "abbr"))
 #'
@@ -146,6 +152,8 @@ location_lookup <- function(
 #' us_location_recode(c("01", "05", "US", "05"), "code", "name")
 #'
 #' us_location_recode(c("AK", "US", "HI", "AK"), "abbr", "code")
+#'
+#' us_location_recode(c("AK", "US", "HI", "AK"), "abbr", "hrd")
 #'
 #' us_location_recode("AK", "abbr", "name")
 #'

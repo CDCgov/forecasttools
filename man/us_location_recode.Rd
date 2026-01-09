@@ -30,6 +30,8 @@ us_location_recode(c("01", "05", "US", "05"), "code", "name")
 
 us_location_recode(c("AK", "US", "HI", "AK"), "abbr", "code")
 
+us_location_recode(c("AK", "US", "HI", "AK"), "abbr", "hrd")
+
 us_location_recode("AK", "abbr", "name")
 
 }
