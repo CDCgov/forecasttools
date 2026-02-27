@@ -39,7 +39,7 @@ test_that(
           "baseline_metric"
         ) |>
         dplyr::inner_join(scores, by = join_key) |>
-        scoringutils:::as_scores(
+        scoringutils::as_scores(
           metrics = c(
             scoringutils::get_metrics(scores),
             "baseline_metric"
@@ -51,7 +51,7 @@ test_that(
             .data$baseline_metric
         ) |>
         dplyr::select(-"baseline_metric") |>
-        scoringutils:::as_scores(
+        scoringutils::as_scores(
           metrics = scoringutils::get_metrics(scores)
         )
 
