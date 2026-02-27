@@ -1,3 +1,4 @@
+# jarl-ignore-file internal_function: okay for testing
 test_that(
   paste0("Summarise scores with baseline agrees with manual calculation"),
   {
