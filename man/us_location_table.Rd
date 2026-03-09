@@ -9,7 +9,7 @@ A tibble with 58 rows and 4 columns:
 \describe{
 \item{code}{2-character location code}
 \item{abbr}{2-character location abbreviation}
-\item{hrd}{location abbreviation abbreviation as in the \code{jurisdiction} column of the NHSN Hospital Respiratory Data (HRD) dataset. Same as \code{abbr} for subnational jurisdictions, but \code{USA} for the United States as a whole.}
+\item{hrd}{location abbreviation as in the \code{jurisdiction} column of the NHSN Hospital Respiratory Data (HRD) dataset. Same as \code{abbr} for subnational jurisdictions, but \code{USA} for the United States as a whole.}
 \item{name}{Full name of the location}
 }
 }
