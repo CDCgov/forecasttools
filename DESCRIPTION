@@ -74,8 +74,8 @@ URL: https://cdcgov.github.io/forecasttools/, https://github.com/CDCgov/forecast
 Depends:
     R (>= 4.5.0)
 LazyData: true
-Repositories:
-    hubverse-org = https://hubverse-org.r-universe.dev,
-    CRAN = https://cloud.r-project.org
+Remotes:
+    github::hubverse-org/hubData@v2.1.0,
+    github::hubverse-org/hubExamples@v1.0.0
 BugReports: https://github.com/CDCgov/forecasttools/issues
 Config/testthat/edition: 3
