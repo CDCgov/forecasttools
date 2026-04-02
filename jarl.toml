@@ -1,3 +1,4 @@
 [lint]
 default-exclude = true
 exclude = ["data-raw/**"]
+include = ["**/*.R"]
