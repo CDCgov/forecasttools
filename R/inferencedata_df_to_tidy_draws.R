@@ -29,11 +29,6 @@ format_split_text <- function(x, concat_char = "|") {
 #' @param column_names A character vector of InferenceData column names
 #'
 #' @return A character vector of tidy column names
-#' @examples
-#' forecasttools:::idata_names_to_tidy_names(c(
-#'   "('group', 'var_name')",
-#'   "group|var_name[i_name, j_name]"
-#' ))
 idata_names_to_tidy_names <- function(column_names) {
   column_names |>
     stringr::str_remove_all("^\\(|\\)$") |>
