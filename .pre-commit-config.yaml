@@ -17,7 +17,7 @@ repos:
     hooks:
       - id: air-format
   - repo: https://github.com/etiennebacher/jarl-pre-commit
-    rev: 0.5.0
+    rev: 31002db1c54cba36c85efc2c10f6c913009d2bb7
     hooks:
       - id: jarl-check
         args: ["--fix"]
