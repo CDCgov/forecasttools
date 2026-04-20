@@ -1,16 +1,18 @@
 # jarl-ignore-file internal_function: okay for testing
 test_that("Summarise scores with baseline agrees with manual calculation", {
-  scoringutils::get_metrics(example_sample_discrete) |>
+  discrete_sample_metrics <- scoringutils::get_metrics(
+    scoringutils::example_sample_discrete
+  ) |>
     purrr::discard_at("log_score")
   # avoid warning with discrete sample forecasts,
   # for which log score is still a default metric.
+
   summary_test_case <- function(
     to_score,
     baseline,
     compare,
     metric_to_compare,
     by,
-    metrics = NULL,
     ...
   ) {
     scores <- scoringutils::score(to_score, ...)
@@ -96,7 +98,7 @@ test_that("Summarise scores with baseline agrees with manual calculation", {
     "model",
     "crps",
     c("target_type", "location"),
-    discrete_sample_metrics
+    metrics = discrete_sample_metrics
   )
   summary_test_case(
     scoringutils::example_sample_discrete |>
