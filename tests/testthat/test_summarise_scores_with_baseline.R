@@ -10,7 +10,11 @@ test_that(
       by,
       ...
     ) {
-      scores <- scoringutils::score(to_score)
+      metrics <- scoringutils::get_metrics(to_score) |>
+        purrr::discard_at("log_score")
+      # avoid warning with discrete sample forecasts,
+      # for which log score is still a default metric.
+      scores <- scoringutils::score(to_score, metrics = metrics)
       forecast_unit <- scoringutils::get_forecast_unit(scores)
       join_key <- forecast_unit |> purrr::discard(~ . == compare)
       scaled_rel_skill_col <- glue::glue(
@@ -121,7 +125,7 @@ test_that(
         "crps",
         "target_type"
       ),
-      "More than one non-baseline"
+      "not enough comparators"
     )
 
     expect_error(
