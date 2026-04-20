@@ -121,7 +121,7 @@ test_that(
         "crps",
         "target_type"
       ),
-      "More than one non-baseline"
+      "not enough comparators"
     )
 
     expect_error(
