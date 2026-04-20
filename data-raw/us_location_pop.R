@@ -19,7 +19,7 @@ get_latest_population <- function(geography) {
           dplyr::filter(.data$variable == "POPESTIMATE") |>
           dplyr::rename_with(stringr::str_to_lower) |>
           dplyr::select("name", population = "value") |>
-          dplyr::muate(population = as.integer(.data$population))
+          dplyr::mutate(population = as.integer(.data$population))
       )
     }
   }
