@@ -56,7 +56,7 @@ Suggests:
     data.table,
     forcats,
     httptest2,
-    hubUtils
+    hubUtils,
     hubExamples,
     kableExtra,
     knitr,
