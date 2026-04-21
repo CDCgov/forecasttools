@@ -16,6 +16,22 @@
 #' @source data-raw/us_location_table.R
 "us_location_table"
 
+#' Population estimates for US locations
+#'
+#' A table of population estimates for the United States as a whole
+#' and for US states, using the most recent Census Population Estimates
+#' Program vintage available when the dataset was generated.
+#'
+#' @format
+#' A tibble with 53 rows and 2 columns:
+#' \describe{
+#'   \item{name}{Full name of the location}
+#'   \item{population}{Estimated population count}
+#' }
+#' @source Census Population Estimates Program via `tidycensus::get_estimates()`
+#' @source data-raw/us_location_pop.R
+"us_location_pop"
+
 #' An example daily-resolution set of forecast trajectories for influenza.
 #'
 #' 53 US states and territories are represented, coded according to their
