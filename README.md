@@ -9,7 +9,7 @@ This in-progress R package provides functions for short-term forecasting within 
 ### via `pak` (recommended)
 We recommend installing `forecasttools` via [`pak`](https://pak.r-lib.org/). If you do not yet have `pak`, you should be able to install it with `install.packages('pak')`.
 
-Once `pak` is installed, run the following in an R session to install the latest release of `forecasttools`
+Once `pak` is installed, run the following in an R session to install the latest release of `forecasttools`:
 
 ```R
 pak::pkg_install('cdcgov/forecasttools@*release')
