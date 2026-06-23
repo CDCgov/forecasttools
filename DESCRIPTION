@@ -24,7 +24,7 @@ Description: A collection of tools for short-term forecasting within CFA Predict
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports:
     checkmate,
     cli,
@@ -46,7 +46,7 @@ Imports:
     readr,
     rlang,
     scales,
-    scoringutils,
+    scoringutils (>= 2.2.0),
     soql,
     stringr,
     tibble,
@@ -54,29 +54,27 @@ Imports:
     vctrs
 Suggests:
     data.table,
-    tidybayes,
-    hubExamples,
-    knitr,
-    kableExtra,
-    rmarkdown,
-    tidyr,
-    roxygen2,
-    usethis,
-    testthat (>= 3.0.0),
-    rcmdcheck,
-    withr,
-    httptest2,
     forcats,
-    hubUtils
+    httptest2,
+    hubUtils,
+    hubExamples,
+    kableExtra,
+    knitr,
+    rcmdcheck,
+    rmarkdown,
+    roxygen2,
+    testthat (>= 3.0.0),
+    tidybayes,
+    tidycensus,
+    tidyr,
+    usethis,
+    withr,
 VignetteBuilder:
     knitr
 URL: https://cdcgov.github.io/forecasttools/, https://github.com/CDCgov/forecasttools/
 Depends:
     R (>= 4.5.0)
 LazyData: true
-Remotes:
-    hubverse-org/hubData,
-    hubverse-org/hubUtils,
-    hubverse-org/hubExamples
+Additional_repositories: https://hubverse-org.r-universe.dev
 BugReports: https://github.com/CDCgov/forecasttools/issues
 Config/testthat/edition: 3
