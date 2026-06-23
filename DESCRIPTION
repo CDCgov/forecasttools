@@ -77,6 +77,5 @@ Depends:
 LazyData: true
 Remotes:
     github::hubverse-org/hubData@*release
-Additional_repositories: https://hubverse-org.r-universe.dev
 BugReports: https://github.com/CDCgov/forecasttools/issues
 Config/testthat/edition: 3
