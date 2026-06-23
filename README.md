@@ -9,17 +9,17 @@ This in-progress R package provides functions for short-term forecasting within 
 ### via `pak` (recommended)
 We recommend installing `forecasttools` via [`pak`](https://pak.r-lib.org/). If you do not yet have `pak`, you should be able to install it with `install.packages('pak')`.
 
-Once `pak` is installed, run the following in an R session:
+Once `pak` is installed, run the following in an R session to install the latest release of `forecasttools`:
 
 ```R
-pak::pkg_install('cdcgov/forecasttools')
+pak::pkg_install('cdcgov/forecasttools@*release')
 ```
 
 ### via `remotes`
 You can also install `forecasttools` using the `remotes` R package (which itself can be installed with `install.packages('remotes')`):
 
 ``` r
-remotes::install_github('cdcgov/forecasttools')
+remotes::install_github('cdcgov/forecasttools@*release')
 
 ```
 
