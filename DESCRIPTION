@@ -46,7 +46,7 @@ Imports:
     readr,
     rlang,
     scales,
-    scoringutils,
+    scoringutils (>= 2.2.0),
     soql,
     stringr,
     tibble,
@@ -54,20 +54,21 @@ Imports:
     vctrs
 Suggests:
     data.table,
-    tidybayes,
-    hubExamples,
-    knitr,
-    kableExtra,
-    rmarkdown,
-    tidyr,
-    roxygen2,
-    usethis,
-    testthat (>= 3.0.0),
-    rcmdcheck,
-    withr,
-    httptest2,
     forcats,
-    hubUtils
+    httptest2,
+    hubUtils,
+    hubExamples,
+    kableExtra,
+    knitr,
+    rcmdcheck,
+    rmarkdown,
+    roxygen2,
+    testthat (>= 3.0.0),
+    tidybayes,
+    tidycensus,
+    tidyr,
+    usethis,
+    withr,
 VignetteBuilder:
     knitr
 URL: https://cdcgov.github.io/forecasttools/, https://github.com/CDCgov/forecasttools/
