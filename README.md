@@ -22,7 +22,7 @@ pak::pkg_install('cdcgov/forecasttools@*release')
 You can also install `forecasttools` using the `remotes` R package. `remotes` can be installed with `install.packages('remotes')`.
 
 ``` r
-remotes::install_github('cdcgov/forecasttools@*release', repos = c(hubverse = 'https://hubverse-org.r-universe.dev', getOption('repos')))
+remotes::install_github('cdcgov/forecasttools@*release')
 ```
 
 ## Documentation and vignettes
