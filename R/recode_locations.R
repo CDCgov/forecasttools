@@ -190,7 +190,7 @@ us_location_recode <- function(
 us_loc_abbr_to_code <- function(abbr) {
   lifecycle::deprecate_warn(
     "0.1.8",
-    "us_loc_abbr_to_code(x)",
+    "us_loc_abbr_to_code()",
     details = "Use `us_location_recode(x, 'abbr', 'hub')` instead."
   )
 
@@ -215,7 +215,7 @@ us_loc_abbr_to_code <- function(abbr) {
 us_loc_code_to_abbr <- function(code) {
   lifecycle::deprecate_warn(
     "0.1.8",
-    "us_loc_code_to_abbr(x)",
+    "us_loc_code_to_abbr()",
     details = "Use `us_location_recode(x, 'hub', 'abbr')` instead."
   )
 

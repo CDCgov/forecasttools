@@ -1,6 +1,11 @@
 test_that("inferencedata_to_tidy_draws converts data correctly", {
   data("ex_inferencedata_dataframe")
-  result <- inferencedata_to_tidy_draws(ex_inferencedata_dataframe)
+  expect_warning(
+    {
+      result <- inferencedata_to_tidy_draws(ex_inferencedata_dataframe)
+    },
+    "deprecated"
+  )
 
   expect_setequal(colnames(result), c("group", "data"))
   expect_setequal(result$group, c("posterior", "predictions"))
