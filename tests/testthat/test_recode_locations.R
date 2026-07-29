@@ -111,10 +111,17 @@ test_that(
 test_that(
   paste0(
     "to_location_table_column is an alias ",
-    "for to_us_location_table_column"
+    "for to_us_location_table_column but has a deprecation",
+    "warning"
   ),
   {
-    expect_identical(to_us_location_table_column, to_location_table_column)
+    expect_warning(
+      {
+        result <- to_location_table_column("hub")
+      },
+      "deprecated"
+    )
+    expect_equal(result, to_us_location_table_column("hub"))
   }
 )
 
