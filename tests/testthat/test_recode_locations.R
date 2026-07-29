@@ -1,12 +1,8 @@
 test_that("us_location_table abbr and hrd columns differ only in 'US' versus 'USA'", {
   expect_equal(
     us_location_table$abbr,
-    dplyr::case_match(
-      us_location_table$hrd,
-      "USA" ~ "US",
-      .default = us_location_table$hrd
-    ) # "USA" --> "US"
-  )
+    dplyr::replace_values(us_location_table$hrd, "USA" ~ "US")
+  ) # "USA" --> "US"
 })
 
 test_that(

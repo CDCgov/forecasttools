@@ -135,7 +135,7 @@ GeomLinePoint <- ggplot2::ggproto(
 #'     2,       0,  "a",
 #'     3,    -0.5,  "a",
 #'     1,    0.01,  "b",
-#'     3,   -.520,  "b",
+#'     3,   -0.520,  "b",
 #'     2,     0.02,  "b")
 #'
 #' # standard approach causes points to "interrupt"

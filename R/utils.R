@@ -295,7 +295,7 @@ read_tabular_file <- read_tabular
 #' plot <- ggplot(
 #'     data = data,
 #'     mapping = aes(x = x, y = y)) +
-#'     geom_hline(yintercept = 2, size = 2, linetype = "dashed") +
+#'     geom_hline(yintercept = 2, linewidth = 2, linetype = "dashed") +
 #'     geom_point(size = 4) +
 #'     coord_cartesian(ylim = sym_limits(data$y, center = 2)) +
 #'     theme_forecasttools()
@@ -305,7 +305,7 @@ read_tabular_file <- read_tabular
 #' plot_log <- ggplot(
 #'     data = data_log,
 #'     mapping = aes(x = x, y = y)) +
-#'     geom_hline(yintercept = 1, size = 2, linetype = "dashed") +
+#'     geom_hline(yintercept = 1, linewidth = 2, linetype = "dashed") +
 #'     geom_point(size = 4) +
 #'     scale_y_continuous(transform = "log10") +
 #'     coord_cartesian(ylim = sym_limits(data_log$y, transform = "log10")) +
