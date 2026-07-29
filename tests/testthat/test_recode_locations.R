@@ -82,7 +82,12 @@ test_that(
   ),
   {
     abbrs <- c(rep("MA", 5), "CA", "MT", "MA")
-    result_vec <- location_lookup(abbrs, "abbr", "code")
+    expect_warning(
+      {
+        result_vec <- location_lookup(abbrs, "abbr", "code")
+      },
+      "deprecated"
+    )
     expect_type(result_vec, "character")
     expect_equal(
       result_vec,
@@ -90,10 +95,15 @@ test_that(
         dplyr::pull()
     )
 
-    result_tbl <- location_lookup(
-      abbrs,
-      "abbr",
-      c("code", "name", "long_name")
+    expect_warning(
+      {
+        result_tbl <- location_lookup(
+          abbrs,
+          "abbr",
+          c("code", "name", "long_name")
+        )
+      },
+      "deprecated"
     )
     expect_s3_class(result_tbl, "tbl")
 
@@ -111,10 +121,17 @@ test_that(
 test_that(
   paste0(
     "to_location_table_column is an alias ",
-    "for to_us_location_table_column"
+    "for to_us_location_table_column but has a deprecation",
+    "warning"
   ),
   {
-    expect_identical(to_us_location_table_column, to_location_table_column)
+    expect_warning(
+      {
+        result <- to_location_table_column("hub")
+      },
+      "deprecated"
+    )
+    expect_equal(result, to_us_location_table_column("hub"))
   }
 )
 
@@ -161,13 +178,27 @@ test_that(
     abbrs <- c("MA", "TX", "PR", "ZZ") # "ZZ" is invalid
     codes <- c("25", "48", "XX", 72) # "XX" is invalid
 
+    expect_warning(
+      {
+        result_abbr_to_code <- us_loc_abbr_to_code(abbrs)
+      },
+      "deprecated"
+    )
+
+    expect_warning(
+      {
+        result_code_to_abbr <- us_loc_code_to_abbr(codes)
+      },
+      "deprecated"
+    )
+
     expect_equal(
       us_location_recode(abbrs, "abbr", "code"),
-      us_loc_abbr_to_code(abbrs)
+      result_abbr_to_code
     )
     expect_equal(
       us_location_recode(codes, "code", "abbr"),
-      us_loc_code_to_abbr(codes)
+      result_code_to_abbr
     )
   }
 )

@@ -50,6 +50,12 @@ idata_names_to_tidy_names <- function(column_names) {
 #' @export
 
 inferencedata_to_tidy_draws <- function(idata) {
+  lifecycle::deprecate_warn(
+    "0.1.8",
+    "inferencedata_to_tidy_draws()",
+    details = "Convert directly in Python using polarbayes (https://github.com/cdcgov/polarbayes) or a similar tool"
+  )
+
   idata |>
     dplyr::rename(
       .chain = "chain",
