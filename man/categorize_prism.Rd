@@ -10,7 +10,9 @@ categorize_prism(
   location,
   disease,
   as_of = lubridate::today(),
-  prism_bin_names = default_prism_bin_names
+  prism_bin_names = default_prism_bin_names,
+  signal = lifecycle::deprecated(),
+  unit = NULL
 )
 }
 \arguments{
@@ -31,6 +33,23 @@ length 5. \code{list(prism_bin_names)} will be passed as the
 \code{label_sets} argument to \code{\link[=categorize_vector]{categorize_vector()}}.
 Defaults to the standard PRISM bin names in title case:
 \code{default_prism_bin_names}.}
+
+\item{signal}{surveillance signal for which to
+return the cutpoints. One of \code{"NSSP"} (proportions
+of emergency department visits) or \code{"NHSN"} (weekly
+hospital admissions). If not given, defaults to
+\code{"NSSP"} with a deprecation warning; a future
+version will require it.}
+
+\item{unit}{unit in which to return the cutpoints.
+\code{"prop"} for NSSP; \code{"count"} (weekly hospital
+admissions) or \code{"rate"} (weekly hospital admissions
+per 100K population) for NHSN. If \code{NULL} (the
+default), uses the default unit for \code{signal} given
+in \link{default_prism_units}. CDC defines the NHSN cut
+points on rates and scales them by population to get
+counts, so \code{"count"} and \code{"rate"} assign identical
+activity levels to the same underlying data.}
 }
 \value{
 A factor vector of category labels, equal in length

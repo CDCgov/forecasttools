@@ -48,3 +48,17 @@ flusight_std_colnames <- cdc_hub_std_colnames
 #' Names of PRISM bins
 #' @export
 default_prism_bin_names <- c("Very Low", "Low", "Moderate", "High", "Very High")
+
+
+default_prism_signal <- "nssp"
+
+prism_signal_deprecation_details <- glue::glue(
+  'Defaulting to `signal = "{default_prism_signal}"`. ',
+  "PRISM thresholds are now available for both NSSP and NHSN."
+)
+
+#' Default threshold unit for each PRISM surveillance
+#' signal.
+#'
+#' @export
+default_prism_units <- c("nssp" = "prop", "nhsn" = "count")

@@ -5,7 +5,7 @@
 \alias{prism_thresholds}
 \title{PRISM respiratory virus activity level thresholds}
 \format{
-An object of class \code{array} of dimension 6 x 4 x 53 x 2.
+An object of class \code{list} of length 2.
 }
 \source{
 <data-raw/prism_thresholds.R>
@@ -14,22 +14,36 @@ An object of class \code{array} of dimension 6 x 4 x 53 x 2.
 prism_thresholds
 }
 \description{
-A multi-dimensional array with PRISM
-respiratory virus activity level thresholds.
-Dimensions, in order, are \code{location},
-\code{disease}, and \code{breaks}.
+A named list of multi-dim arrays with PRISM
+respiratory virus activity level thresholds, one
+array per surveillance signal:
+\describe{
+\item{nssp}{Emergency department visit thresholds.
+Dimensions: \code{breaks}, \code{disease}, \code{location}, and
+\code{as_of}.}
+\item{nhsn}{Hospital admission thresholds. Dimensions:
+\code{breaks}, \code{disease}, \code{location}, \code{as_of}, and \code{unit}.}
+}
 }
 \details{
+Values of \code{breaks}: \code{prop_very_low}, \code{prop_low},
+\code{prop_moderate}, \code{prop_high}, \code{prop_very_high}, and
+\code{prop_upper_bound} for \code{nssp}, whose thresholds are all
+proportions; and \code{very_low}, \code{low}, \code{moderate}, \code{high},
+\code{very_high}, and \code{upper_bound} for \code{nhsn}.
+
 Values of \code{disease} are \code{Influenza}, \code{COVID-19},
 \code{RSV}, and \code{ARI} (acute respiratory infections).
 
-Values of \code{breaks} are \code{prop_very_low},
-\code{prop_low}, \code{prop_moderate}, \code{prop_high},
-\code{prop_very_high}, and \code{prop_upper_bound}.
-
 Values of \code{location} are US jurisdictions
-and the United States as a whole, using
-USPS two-letter codes (the values of \code{abbr})
-in \link{us_location_table}.
+and the United States, using FIPS two-letter codes
+(the values of \code{abbr}) in \link{us_location_table}.
+
+Values of \code{as_of} are the dates from which a
+given set of thresholds is valid.
+
+Values of \code{unit}, for \code{nhsn}, are \code{count} (weekly
+hospital admissions) and \code{rate} (weekly hospital
+admissions per 100K population).s
 }
 \keyword{datasets}

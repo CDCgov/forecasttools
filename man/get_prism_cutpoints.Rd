@@ -3,32 +3,52 @@
 \name{get_prism_cutpoints}
 \alias{get_prism_cutpoints}
 \title{Get PRISM activity level cutpoints given
-disease and location}
+disease and location.}
 \usage{
-get_prism_cutpoints(location, disease, as_of = lubridate::today())
+get_prism_cutpoints(
+  location,
+  disease,
+  as_of = lubridate::today(),
+  signal = lifecycle::deprecated(),
+  unit = NULL
+)
 }
 \arguments{
-\item{location}{location(s) for which to return the cutpoints, as
-a two-letter abbreviation. Use \link{us_location_recode} with
-\code{location_output_format = "abbr"} to convert to this format.}
+\item{location}{location(s) for which to return the
+cutpoints, as a two-letter abbreviation. Use
+\link{us_location_recode} with
+\code{location_output_format = "abbr"} to convert to this
+format. N.B. NHSN covers fewer locations than NSSP.}
 
-\item{disease}{disease(s) for which to return the cutpoints.
-One of \code{"ARI"}, \code{"COVID-19"}, \code{"Influenza"}, or \code{"RSV"}, or
-an array of those values.}
+\item{disease}{disease(s) for which to return the
+cutpoints. One of \code{"ARI"}, \code{"COVID-19"},
+\code{"Influenza"}, or \code{"RSV"}, or an array of those
+values. NHSN provides no \code{"ARI"} thresholds.}
 
-\item{as_of}{date for which the cutpoints are valid. Defaults to today.}
+\item{as_of}{date for which the cutpoints are valid.
+Defaults to today.}
+
+\item{signal}{surveillance signal for which to
+return the cutpoints. One of \code{"NSSP"} (proportions
+of emergency department visits) or \code{"NHSN"} (weekly
+hospital admissions). If not given, defaults to
+\code{"NSSP"} with a deprecation warning; a future
+version will require it.}
+
+\item{unit}{unit in which to return the cutpoints.
+\code{"prop"} for NSSP; \code{"count"} (weekly hospital
+admissions) or \code{"rate"} (weekly hospital admissions
+per 100K population) for NHSN. If \code{NULL} (the
+default), uses the default unit for \code{signal} given
+in \link{default_prism_units}. CDC defines the NHSN cut
+points on rates and scales them by population to get
+counts, so \code{"count"} and \code{"rate"} assign identical
+activity levels to the same underlying data.}
 }
 \value{
 The cutpoints, as a list of vectors.
 }
 \description{
 Get PRISM activity level cutpoints given
-disease and location
-}
-\examples{
-get_prism_cutpoints("WA", "Influenza")
-
-get_prism_cutpoints(c("US", "WA"), "COVID-19")
-
-get_prism_cutpoints(c("US", "WA"), c("ARI", "RSV"), as.Date("2025-01-01"))
+disease and location.
 }

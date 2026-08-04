@@ -61,22 +61,35 @@
 
 #' PRISM respiratory virus activity level thresholds
 #'
-#' A multi-dimensional array with PRISM
-#' respiratory virus activity level thresholds.
-#' Dimensions, in order, are `location`,
-#' `disease`, and `breaks`.
+#' A named list of multi-dim arrays with PRISM
+#' respiratory virus activity level thresholds, one
+#' array per surveillance signal:
+#' \describe{
+#'   \item{nssp}{Emergency department visit thresholds.
+#'   Dimensions: `breaks`, `disease`, `location`, and
+#'   `as_of`.}
+#'   \item{nhsn}{Hospital admission thresholds. Dimensions:
+#'   `breaks`, `disease`, `location`, `as_of`, and `unit`.}
+#' }
+#'
+#' Values of `breaks`: `prop_very_low`, `prop_low`,
+#' `prop_moderate`, `prop_high`, `prop_very_high`, and
+#' `prop_upper_bound` for `nssp`, whose thresholds are all
+#' proportions; and `very_low`, `low`, `moderate`, `high`,
+#' `very_high`, and `upper_bound` for `nhsn`.
 #'
 #' Values of `disease` are `Influenza`, `COVID-19`,
 #' `RSV`, and `ARI` (acute respiratory infections).
 #'
-#' Values of `breaks` are `prop_very_low`,
-#' `prop_low`, `prop_moderate`, `prop_high`,
-#' `prop_very_high`, and `prop_upper_bound`.
-#'
 #' Values of `location` are US jurisdictions
-#' and the United States as a whole, using
-#' USPS two-letter codes (the values of `abbr`)
-#' in [us_location_table].
+#' and the United States, using FIPS two-letter codes
+#' (the values of `abbr`) in [us_location_table].
 #'
+#' Values of `as_of` are the dates from which a
+#' given set of thresholds is valid.
+#'
+#' Values of `unit`, for `nhsn`, are `count` (weekly
+#' hospital admissions) and `rate` (weekly hospital
+#' admissions per 100K population).s
 #' @source <data-raw/prism_thresholds.R>
 "prism_thresholds"
