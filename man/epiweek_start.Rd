@@ -17,7 +17,7 @@ week, starts on Monday). Not case-sensitive.}
 \value{
 the start day of the week for the
 epiweek standard, as an integer that can be passed to
-\code{\link[lubridate:day]{lubridate::wday()}} as the \code{week_start} argument.
+\code{\link[lubridate:wday]{lubridate::wday()}} as the \code{week_start} argument.
 }
 \description{
 Get the starting or ending day of the
@@ -27,7 +27,7 @@ standards. Returns the day of the week index
 as an integer that can be passed to
 \code{\link[lubridate:lubridate-package]{lubridate}} functions as a
 day-of-the-week index (e.g. as the
-\code{week_start} argument to \code{\link[lubridate:day]{lubridate::wday()}}):
+\code{week_start} argument to \code{\link[lubridate:wday]{lubridate::wday()}}):
 1 for Monday, 2 for Tuesday, ... 7 for Sunday.
 }
 \examples{

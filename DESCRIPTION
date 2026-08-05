@@ -24,7 +24,6 @@ Description: A collection of tools for short-term forecasting within CFA Predict
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Imports:
     checkmate,
     cli,
@@ -78,3 +77,4 @@ LazyData: true
 Additional_repositories: https://hubverse-org.r-universe.dev
 BugReports: https://github.com/CDCgov/forecasttools/issues
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

@@ -62,23 +62,23 @@ entries of the output list. See \code{\link[=to_us_location_table_column]{to_us_
 for valid formats.}
 
 \item{y_transform}{axis transform passed as the \code{transform}
-argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default \code{"log10"}.}
+argument to \code{\link[ggplot2:scale_y_continuous]{ggplot2::scale_y_continuous()}}. Default \code{"log10"}.}
 
 \item{linewidth}{\code{linewidth} parameter passed to
-\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}. Default \code{2}.}
+\code{\link[ggplot2:geom_line]{ggplot2::geom_line()}}. Default \code{2}.}
 
 \item{pointsize}{\code{size} parameter passed to
 \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}. Default \code{4}.}
 
 \item{forecast_linecolor}{\code{color} parameter
-passed to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}} for plotting forecasts.
+passed to \code{\link[ggplot2:geom_line]{ggplot2::geom_line()}} for plotting forecasts.
 Default \code{"darkblue"}.}
 
 \item{forecast_pointcolor}{\code{color} parameter passed to
 \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} for plotting forecasts.
 Default \code{"darkblue"}.}
 
-\item{obs_linecolor}{\code{color} parameter passed to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}
+\item{obs_linecolor}{\code{color} parameter passed to \code{\link[ggplot2:geom_line]{ggplot2::geom_line()}}
 for plotting observed data. Default \code{"black"}.}
 
 \item{obs_pointcolor}{\code{color} parameter passed to
