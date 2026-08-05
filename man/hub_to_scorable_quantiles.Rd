@@ -15,7 +15,7 @@ forecast hub.}
 \item{quantile_tol}{Round quantile level values to this many
 decimal places, to avoid problems with floating point number
 equality comparisons. Passed as the \code{digits} argument to
-\code{\link[base:Round]{base::round()}}. Default 10.}
+\code{\link[base:round]{base::round()}}. Default 10.}
 }
 \value{
 Scorable table, as the output of

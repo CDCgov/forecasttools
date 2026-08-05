@@ -83,7 +83,7 @@ column, pass that column name again, or pass \code{""}.}
 \code{"Target"}.}
 
 \item{y_transform}{Transformation for the y axis in the plot.
-Passed as the \code{transform} argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}
+Passed as the \code{transform} argument to \code{\link[ggplot2:scale_y_continuous]{ggplot2::scale_y_continuous()}}
 Default \code{"log10"}.}
 
 \item{quantile_tol}{Round quantile level values to this many
@@ -92,7 +92,7 @@ equality comparisons. Affects both the target quantile level
 values determined from \code{prediction_interval_width} and the
 quantile level values in the \code{quantile_level_col} column of
 \code{scorable_table}. Passed as the \code{digits} argument to
-\code{\link[base:Round]{base::round()}}. Default 10.}
+\code{\link[base:round]{base::round()}}. Default 10.}
 }
 \value{
 The plot, as a \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} object.
