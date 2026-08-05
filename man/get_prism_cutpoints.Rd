@@ -9,8 +9,7 @@ get_prism_cutpoints(
   location,
   disease,
   as_of = lubridate::today(),
-  signal = lifecycle::deprecated(),
-  unit = NULL
+  signal = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -18,7 +17,7 @@ get_prism_cutpoints(
 cutpoints, as a two-letter abbreviation. Use
 \link{us_location_recode} with
 \code{location_output_format = "abbr"} to convert to this
-format. N.B. NHSN covers fewer locations than NSSP.}
+format.}
 
 \item{disease}{disease(s) for which to return the
 cutpoints. One of \code{"ARI"}, \code{"COVID-19"},
@@ -31,19 +30,9 @@ Defaults to today.}
 \item{signal}{surveillance signal for which to
 return the cutpoints. One of \code{"NSSP"} (proportions
 of emergency department visits) or \code{"NHSN"} (weekly
-hospital admissions). If not given, defaults to
-\code{"NSSP"} with a deprecation warning; a future
-version will require it.}
-
-\item{unit}{unit in which to return the cutpoints.
-\code{"prop"} for NSSP; \code{"count"} (weekly hospital
-admissions) or \code{"rate"} (weekly hospital admissions
-per 100K population) for NHSN. If \code{NULL} (the
-default), uses the default unit for \code{signal} given
-in \link{default_prism_units}. CDC defines the NHSN cut
-points on rates and scales them by population to get
-counts, so \code{"count"} and \code{"rate"} assign identical
-activity levels to the same underlying data.}
+hospital admissions per 100k population). If not
+given, defaults to \code{"NSSP"} with a deprecation
+warning (a future version will require it).}
 }
 \value{
 The cutpoints, as a list of vectors.

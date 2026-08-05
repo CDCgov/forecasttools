@@ -1,30 +1,3 @@
-#' Lookup one set of cutpoints in a signal's threshold
-#' array, using that array's `unit` dimension (only if
-#' it has one).
-#'
-#' @param thresholds one signal's cutpoint array.
-#' @param disease disease to look up.
-#' @param location location to look up.
-#' @param as_of `as_of` date to look up, as a string.
-#' @param unit unit to look up.
-#' @return the cutpoints, as a numeric vector.
-index_prism_thresholds <- function(
-  thresholds,
-  disease,
-  location,
-  as_of,
-  unit
-) {
-  index <- list(thresholds, TRUE, disease, location, as_of)
-
-  if ("unit" %in% names(dimnames(thresholds))) {
-    index <- c(index, list(unit))
-  }
-
-  return(do.call("[", index))
-}
-
-
 #' Get PRISM activity level cutpoints given
 #' disease and location.
 #'
@@ -36,24 +9,15 @@ index_prism_thresholds <- function(
 #' cutpoints, as a two-letter abbreviation. Use
 #' [forecasttools::us_location_recode] with
 #' `location_output_format = "abbr"` to convert to this
-#' format. N.B. NHSN covers fewer locations than NSSP.
+#' format.
 #' @param as_of date for which the cutpoints are valid.
 #' Defaults to today.
 #' @param signal surveillance signal for which to
 #' return the cutpoints. One of `"NSSP"` (proportions
 #' of emergency department visits) or `"NHSN"` (weekly
-#' hospital admissions). If not given, defaults to
-#' `"NSSP"` with a deprecation warning; a future
-#' version will require it.
-#' @param unit unit in which to return the cutpoints.
-#' `"prop"` for NSSP; `"count"` (weekly hospital
-#' admissions) or `"rate"` (weekly hospital admissions
-#' per 100K population) for NHSN. If `NULL` (the
-#' default), uses the default unit for `signal` given
-#' in [default_prism_units]. CDC defines the NHSN cut
-#' points on rates and scales them by population to get
-#' counts, so `"count"` and `"rate"` assign identical
-#' activity levels to the same underlying data.
+#' hospital admissions per 100k population). If not
+#' given, defaults to `"NSSP"` with a deprecation
+#' warning (a future version will require it).
 #' @return The cutpoints, as a list of vectors.
 #'
 #' @export
@@ -61,8 +25,7 @@ get_prism_cutpoints <- function(
   location,
   disease,
   as_of = lubridate::today(),
-  signal = lifecycle::deprecated(),
-  unit = NULL
+  signal = lifecycle::deprecated()
 ) {
   if (!lifecycle::is_present(signal)) {
     lifecycle::deprecate_warn(
@@ -80,16 +43,6 @@ get_prism_cutpoints <- function(
     what = "signal"
   )
   thresholds <- forecasttools::prism_thresholds[[target_signal]]
-
-  target_unit <- stringr::str_to_lower(
-    unit %||% default_prism_units[[target_signal]]
-  )
-  checkmate::assert_names(
-    target_unit,
-    subset.of = dimnames(thresholds)$unit %||%
-      default_prism_units[[target_signal]],
-    what = "unit"
-  )
 
   target_location <- stringr::str_to_lower(location)
   target_disease <- stringr::str_to_lower(disease)
@@ -127,7 +80,7 @@ get_prism_cutpoints <- function(
   )
 
   return(purrr::map2(target_disease, target_location, \(x, y) {
-    index_prism_thresholds(thresholds, x, y, target_as_of, target_unit)
+    thresholds[, x, y, target_as_of]
   }))
 }
 
@@ -160,8 +113,7 @@ categorize_prism <- function(
   disease,
   as_of = lubridate::today(),
   prism_bin_names = default_prism_bin_names,
-  signal = lifecycle::deprecated(),
-  unit = NULL
+  signal = lifecycle::deprecated()
 ) {
   if (!lifecycle::is_present(signal)) {
     lifecycle::deprecate_warn(
@@ -176,8 +128,7 @@ categorize_prism <- function(
     location,
     disease,
     as_of,
-    signal = signal,
-    unit = unit
+    signal = signal
   )
 
   return(categorize_vector(
