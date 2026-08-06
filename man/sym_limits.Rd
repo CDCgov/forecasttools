@@ -11,7 +11,7 @@ sym_limits(values, transform = "identity", center = NULL)
 \item{values}{Vector of values.}
 
 \item{transform}{Transformation to apply to the values.
-Passed to \code{\link[scales:new_transform]{scales::as.transform()}}. Default \code{"identity"}.}
+Passed to \code{\link[scales:as.transform]{scales::as.transform()}}. Default \code{"identity"}.}
 
 \item{center}{Custom center value for the span
 on the \emph{untransformed} scale. If not specified,

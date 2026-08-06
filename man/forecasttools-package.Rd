@@ -22,6 +22,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Dylan Morris \email{dzl1@cdc.gov}
   \item Samuel Brand \email{usi1@cdc.gov}
   \item Damon Bayer \email{xum8@cdc.gov}
 }

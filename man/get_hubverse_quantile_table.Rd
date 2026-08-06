@@ -101,7 +101,7 @@ for which FluSight does not currently accept forecasts).}
 be, as an integer?}
 
 \item{week_start}{Starting day of the week relative to
-Monday, as an integer. See the \code{\link[lubridate:day]{lubridate::wday()}} documentation for details.}
+Monday, as an integer. See the \code{\link[lubridate:wday]{lubridate::wday()}} documentation for details.}
 }
 \value{
 a properly formatted table, as a \code{\link[tibble:tibble]{tibble}}.

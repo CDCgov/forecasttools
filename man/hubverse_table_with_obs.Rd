@@ -40,9 +40,9 @@ value column in a standard hubverse table. Default \code{"observed"}.}
 
 \item{join}{Which SQL-style \code{dplyr} \link[dplyr:mutate-joins]{mutating join}
 function to use when joining the tables. Options are \code{"full"}
-(for \code{\link[dplyr:mutate-joins]{dplyr::full_join()}}), \code{"left"} (\code{\link[dplyr:mutate-joins]{dplyr::left_join()}}),
-\code{"right"} (\code{\link[dplyr:mutate-joins]{dplyr::right_join()}}), and \code{"inner"}
-(\code{\link[dplyr:mutate-joins]{dplyr::inner_join()}}).
+(for \code{\link[dplyr:full_join]{dplyr::full_join()}}), \code{"left"} (\code{\link[dplyr:left_join]{dplyr::left_join()}}),
+\code{"right"} (\code{\link[dplyr:right_join]{dplyr::right_join()}}), and \code{"inner"}
+(\code{\link[dplyr:inner_join]{dplyr::inner_join()}}).
 In the join, the hubverse forecast table is the left table
 (\code{x}) and the observation table is the right table (\code{y}).
 Default \code{"full"} (i.e. keep all forecasts and observations,
