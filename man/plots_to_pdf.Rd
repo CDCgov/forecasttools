@@ -21,11 +21,11 @@ plots_to_pdf(
 end in \code{.pdf}.}
 
 \item{nrow}{Number of rows of plots per page
-(passed to \code{\link[gridExtra:arrangeGrob]{gridExtra::marrangeGrob()}})
+(passed to \code{\link[gridExtra:marrangeGrob]{gridExtra::marrangeGrob()}})
 Default \code{1}.}
 
 \item{ncol}{Number of columns of plots per page
-(passed to \code{\link[gridExtra:arrangeGrob]{gridExtra::marrangeGrob()}}).
+(passed to \code{\link[gridExtra:marrangeGrob]{gridExtra::marrangeGrob()}}).
 Default \code{1}.}
 
 \item{width}{page width in device units (passed to
