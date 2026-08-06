@@ -56,9 +56,3 @@ prism_signal_deprecation_details <- glue::glue(
   'Defaulting to `signal = "{default_prism_signal}"`. ',
   "PRISM thresholds are now available for both NSSP and NHSN."
 )
-
-#' Default threshold unit for each PRISM surveillance
-#' signal.
-#'
-#' @export
-default_prism_units <- c("nssp" = "prop", "nhsn" = "count")
