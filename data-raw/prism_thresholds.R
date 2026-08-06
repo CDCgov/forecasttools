@@ -1,18 +1,9 @@
+prism_dim_cols <- c("breaks", "disease", "location", "as_of")
+
 prism_signal_specs <- list(
-  "nssp" = list(
-    dim_cols = c("breaks", "disease", "location", "as_of"),
-    break_prefix = "prop_"
-  ),
-  "nhsn" = list(
-    dim_cols = c("breaks", "disease", "location", "as_of", "unit"),
-    break_prefix = ""
-  )
+  "nssp" = list(break_prefix = "prop_", upper_bound = 1),
+  "nhsn" = list(break_prefix = "", upper_bound = Inf)
 )
-
-
-prism_upper_bound <- function(unit) {
-  dplyr::if_else(unit == "prop", 1, Inf)
-}
 
 
 normalize_thresholds <- function(dat, signal) {
@@ -25,14 +16,21 @@ normalize_thresholds <- function(dat, signal) {
       dplyr::rename_with(
         \(x) stringr::str_remove(x, "^perc_"),
         dplyr::starts_with("perc_level_")
-      ) |>
-      dplyr::mutate("unit" = "prop")
+      )
+  }
+
+  if (signal == "nhsn") {
+    dat <- dat |>
+      dplyr::filter(.data$unit == "rate") |>
+      dplyr::select(-"unit", -"total_population", -"hhs_region")
   }
 
   dat |>
     dplyr::rename("location" = "state_abb") |>
     dplyr::mutate("level_very_low" = 0, .before = "level_low") |>
-    dplyr::mutate("level_upper_bound" = prism_upper_bound(.data$unit))
+    dplyr::mutate(
+      "level_upper_bound" = prism_signal_specs[[signal]]$upper_bound
+    )
 }
 
 
@@ -45,26 +43,6 @@ prism_signal_long <- function(dat, signal_name) {
         \(x) paste0(prism_signal_specs[[signal_name]]$break_prefix, x)
       )
     )
-}
-
-
-array_slice <- function(thresholds, slice_dims) {
-  return(unname(
-    do.call("[", c(list(thresholds), list(TRUE), as.list(slice_dims)))
-  ))
-}
-
-
-long_slice <- function(dat, slice_dims) {
-  purrr::reduce(
-    names(slice_dims),
-    \(acc, dim_name) {
-      acc[as.character(acc[[dim_name]]) == slice_dims[[dim_name]], ]
-    },
-    .init = dat
-  ) |>
-    dplyr::arrange(.data$breaks) |>
-    dplyr::pull("value")
 }
 
 
@@ -160,7 +138,7 @@ prism_thresholds <-
   purrr::map(\(signal_name) {
     long_thresholds |>
       prism_signal_long(signal_name) |>
-      thresholds_to_array(prism_signal_specs[[signal_name]]$dim_cols)
+      thresholds_to_array(prism_dim_cols)
   })
 
 prism_thresholds |>
@@ -169,14 +147,26 @@ prism_thresholds |>
 # test that array construction is correct
 purrr::iwalk(prism_thresholds, \(thresholds, signal_name) {
   dat <- prism_signal_long(long_thresholds, signal_name)
+  dims <- dimnames(thresholds)
 
   purrr::walk(1:1000, \(i) {
-    tmp_sample <- dimnames(thresholds) |> purrr::map_chr(\(x) sample(x, 1))
-    slice_dims <- tmp_sample[names(tmp_sample) != "breaks"]
+    tmp_sample <- dims |> purrr::map_chr(\(x) sample(x, 1))
 
     testthat::expect_identical(
-      array_slice(thresholds, slice_dims),
-      long_slice(dat, slice_dims)
+      thresholds[,
+        tmp_sample[["disease"]],
+        tmp_sample[["location"]],
+        tmp_sample[["as_of"]]
+      ] |>
+        unname(),
+
+      dat |>
+        dplyr::filter(
+          .data$as_of == as.Date(tmp_sample[["as_of"]]),
+          .data$disease == tmp_sample[["disease"]],
+          .data$location == tmp_sample[["location"]]
+        ) |>
+        dplyr::pull("value")
     )
   })
 })
