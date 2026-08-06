@@ -104,8 +104,6 @@ export(with_hubverse_oracle_output)
 export(write_tabular)
 export(write_tabular_file)
 importFrom(lifecycle,deprecated)
-importFrom(rlang,
-  "%||%",
-  ":=",
-  .data
-)
+importFrom(rlang,"%||%")
+importFrom(rlang,":=")
+importFrom(rlang,.data)

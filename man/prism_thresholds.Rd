@@ -14,36 +14,37 @@ An object of class \code{list} of length 2.
 prism_thresholds
 }
 \description{
-A named list of multi-dim arrays with PRISM
+A named list of multi-dimensional arrays with PRISM
 respiratory virus activity level thresholds, one
 array per surveillance signal:
 \describe{
-\item{nssp}{Emergency department visit thresholds.
-Dimensions: \code{breaks}, \code{disease}, \code{location}, and
-\code{as_of}.}
-\item{nhsn}{Hospital admission thresholds. Dimensions:
-\code{breaks}, \code{disease}, \code{location}, \code{as_of}, and \code{unit}.}
+\item{nssp}{Emergency department visit thresholds,
+as proportions of visits.}
+\item{nhsn}{Hospital admission thresholds, as
+weekly admissions per 100K population.}
 }
 }
 \details{
-Values of \code{breaks}: \code{prop_very_low}, \code{prop_low},
+Both arrays have the same dimensions, in order:
+\code{breaks}, \code{disease}, \code{location}, and \code{as_of}.
+
+Values of \code{breaks} are \code{prop_very_low}, \code{prop_low},
 \code{prop_moderate}, \code{prop_high}, \code{prop_very_high}, and
-\code{prop_upper_bound} for \code{nssp}, whose thresholds are all
-proportions; and \code{very_low}, \code{low}, \code{moderate}, \code{high},
-\code{very_high}, and \code{upper_bound} for \code{nhsn}.
+\code{prop_upper_bound} for \code{nssp}; and \code{very_low}, \code{low},
+\code{moderate}, \code{high}, \code{very_high}, and \code{upper_bound}
+for \code{nhsn}.
 
 Values of \code{disease} are \code{Influenza}, \code{COVID-19},
-\code{RSV}, and \code{ARI} (acute respiratory infections).
+\code{RSV}, and \code{ARI} (acute respiratory infections) (
+\code{nhsn} provides no \code{ARI} thresholds).
 
-Values of \code{location} are US jurisdictions
-and the United States, using FIPS two-letter codes
+Values of \code{location} are US jurisdictions and the
+United States as a whole, using two-letter codes
 (the values of \code{abbr}) in \link{us_location_table}.
+\code{nhsn} provides no thresholds for \code{GU}, \code{MO}, \code{WY},
+or \code{US}.
 
 Values of \code{as_of} are the dates from which a
 given set of thresholds is valid.
-
-Values of \code{unit}, for \code{nhsn}, are \code{count} (weekly
-hospital admissions) and \code{rate} (weekly hospital
-admissions per 100K population).s
 }
 \keyword{datasets}

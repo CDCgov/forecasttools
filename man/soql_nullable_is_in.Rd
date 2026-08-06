@@ -22,7 +22,7 @@ A new \code{\link[soql:soql]{soql::soql()}} object with the filter added,
 or simply the input object if \code{match_value} is \code{NULL}.
 }
 \description{
-An is in statement is a \code{\link[soql:soql_where]{soql::soql_where()}} statement
+An is in statement is a \code{\link[soql:soql_queries]{soql::soql_where()}} statement
 that requires the values of a given column to match one of the
 entries of a vector of \code{match_values}.
 }

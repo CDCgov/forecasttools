@@ -45,11 +45,11 @@ otherwise will error. Default \code{TRUE}.}
 \item{quantile_tol}{Round values in the \code{quantile_level_col} to
 this many decimal places, to avoid problems with floating point number
 equality comparisons. Passed as the \code{digits} argument to
-\code{\link[base:round]{base::round()}}. Default 10.}
+\code{\link[base:Round]{base::round()}}. Default 10.}
 }
 \value{
 A \code{\link[tibble:tibble]{tibble}} in the output format of
-\code{\link[ggdist:median_qi]{ggdist::median_qi()}}
+\code{\link[ggdist:point_interval]{ggdist::median_qi()}}
 }
 \description{
 Expects a tidy quantile table (e.g. a hubverse quantile table or the

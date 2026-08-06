@@ -141,7 +141,7 @@ Adding \code{geom_path_point()} or \code{geom_line_point()} to a
 \code{\link[ggplot2:ggplot]{ggplot}} is similar to adding
 \code{\link[ggplot2:geom_path]{geom_path()}} followed by
 \code{\link[ggplot2:geom_point]{geom_point()}} or
-\code{\link[ggplot2:geom_line]{geom_line()}} followed by
+\code{\link[ggplot2:geom_path]{geom_line()}} followed by
 \code{\link[ggplot2:geom_point]{geom_point()}}, respectively.
 The difference is that that with the unified \code{geom_path_point()}
 and \code{geom_line_point()} geoms, paths/lines and points are
@@ -152,7 +152,7 @@ See Details for a discussion of why this can matter in practice.
 \details{
 Plotting with a single layer is important when the user wants
 points and lines to be stacked ("z-ordered") \emph{together} by
-\link[ggplot2:group]{group}, i.e. all points and lines representing
+\link[ggplot2:aes_group_order]{group}, i.e. all points and lines representing
 group 1 to be below all points and lines in group 2, et cetera.
 With the standard \code{geom_line() + geom_point()} approach, all
 points (z-ordered by group) will be plotted on top of all lines

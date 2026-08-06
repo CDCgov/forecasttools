@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{soql_nullable_select}
 \alias{soql_nullable_select}
-\title{Add a \code{\link[soql:soql_select]{soql::soql_select()}} statement to a query
+\title{Add a \code{\link[soql:soql_queries]{soql::soql_select()}} statement to a query
 to select a set of columns \code{columns}, or return
 the original query if \code{columns} is \code{NULL}.}
 \usage{
@@ -20,7 +20,7 @@ A new \code{\link[soql:soql]{soql::soql()}} object with the selection statement
 added, or the input object if \code{columns} is \code{NULL}.
 }
 \description{
-Add a \code{\link[soql:soql_select]{soql::soql_select()}} statement to a query
+Add a \code{\link[soql:soql_queries]{soql::soql_select()}} statement to a query
 to select a set of columns \code{columns}, or return
 the original query if \code{columns} is \code{NULL}.
 }

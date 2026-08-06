@@ -14,8 +14,8 @@ week, starts on Monday). Not case-sensitive. Must be a
 single value.}
 }
 \value{
-A function, either \code{\link[lubridate:epiyear]{lubridate::epiyear()}} or
-\code{\link[lubridate:isoyear]{lubridate::isoyear()}}, depending on the value of
+A function, either \code{\link[lubridate:year]{lubridate::epiyear()}} or
+\code{\link[lubridate:year]{lubridate::isoyear()}}, depending on the value of
 \code{epiweek_standard}
 }
 \description{

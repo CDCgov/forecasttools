@@ -11,49 +11,38 @@ categorize_prism(
   disease,
   as_of = lubridate::today(),
   prism_bin_names = default_prism_bin_names,
-  signal = lifecycle::deprecated(),
-  unit = NULL
+  signal = lifecycle::deprecated()
 )
 }
 \arguments{
 \item{value}{value to categorize}
 
-\item{location}{vector of location of length equal to
-\code{value} or a single location for all \code{value}.}
+\item{location}{vector of location of length equal
+to \code{value} or a single location for all \code{value}.}
 
 \item{disease}{vector of disease of length equal to
 \code{value} or a single disease for all \code{value}.}
 
-\item{as_of}{date for which to get the PRISM cutpoints.
-Defaults to today.}
+\item{as_of}{date for which to get the PRISM
+cutpoints. Defaults to today.}
 
 \item{prism_bin_names}{Bin names for the PRISM bins.
 in order from lowest to highest. Must be a vector of
-length 5. \code{list(prism_bin_names)} will be passed as the
-\code{label_sets} argument to \code{\link[=categorize_vector]{categorize_vector()}}.
-Defaults to the standard PRISM bin names in title case:
-\code{default_prism_bin_names}.}
+length 5. \code{list(prism_bin_names)} will be passed as
+the \code{label_sets} argument to \code{\link[=categorize_vector]{categorize_vector()}}.
+Defaults to the standard PRISM bin names in title
+case: \code{default_prism_bin_names}.}
 
 \item{signal}{surveillance signal for which to
 return the cutpoints. One of \code{"NSSP"} (proportions
 of emergency department visits) or \code{"NHSN"} (weekly
-hospital admissions). If not given, defaults to
-\code{"NSSP"} with a deprecation warning; a future
-version will require it.}
-
-\item{unit}{unit in which to return the cutpoints.
-\code{"prop"} for NSSP; \code{"count"} (weekly hospital
-admissions) or \code{"rate"} (weekly hospital admissions
-per 100K population) for NHSN. If \code{NULL} (the
-default), uses the default unit for \code{signal} given
-in \link{default_prism_units}. CDC defines the NHSN cut
-points on rates and scales them by population to get
-counts, so \code{"count"} and \code{"rate"} assign identical
-activity levels to the same underlying data.}
+hospital admissions per 100k population). If not
+given, defaults to \code{"NSSP"} with a deprecation
+warning (a future version will require it).}
 }
 \value{
-A factor vector of category labels, equal in length
-to the input vector \code{value}.
+A factor vector of category labels, equal in
+length to the input vector \code{value}.
 }
 \description{
 Uses \code{\link[=categorize_vector]{categorize_vector()}} and \code{\link[=get_prism_cutpoints]{get_prism_cutpoints()}}.

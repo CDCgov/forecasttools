@@ -14,7 +14,7 @@ to get available quantile intervals.}
 \item{quantile_tol}{Round quantile level values to this many
 decimal places, to avoid problems with floating point number
 equality comparisons. Passed as the \code{digits} argument to
-\code{\link[base:round]{base::round()}}. Default 10.}
+\code{\link[base:Round]{base::round()}}. Default 10.}
 }
 \value{
 A vector of widths that can be computed.

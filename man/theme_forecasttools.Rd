@@ -14,5 +14,5 @@ The theme, which can be added to a ggplot
 object.
 }
 \description{
-Built on top of \code{\link[ggplot2:theme_minimal]{ggplot2::theme_minimal()}}
+Built on top of \code{\link[ggplot2:ggtheme]{ggplot2::theme_minimal()}}
 }

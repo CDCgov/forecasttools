@@ -28,6 +28,6 @@ it raises an error when the data set is not vintaged. It is designed
 to work either with concrete dataframes or with the lazy API Arrow
 datasets returned by \code{\link[hubData:connect_target_timeseries]{hubData::connect_target_timeseries()}} and
 \code{\link[hubData:connect_target_oracle_output]{hubData::connect_target_oracle_output()}}. In the arrow case, it
-will not execute the query (i.e. you must still call \code{\link[dplyr:collect]{dplyr::collect()}}
+will not execute the query (i.e. you must still call \code{\link[dplyr:compute]{dplyr::collect()}}
 or similar to instantiate the results.
 }

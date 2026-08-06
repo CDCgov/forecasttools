@@ -14,7 +14,7 @@ assert_hubverse_output_types(x)
 \code{x}, invisibly, on assertion success, or throw an error.
 }
 \description{
-Wraps \code{\link[checkmate:assert_names]{checkmate::assert_names()}}.
+Wraps \code{\link[checkmate:checkNames]{checkmate::assert_names()}}.
 }
 \examples{
 

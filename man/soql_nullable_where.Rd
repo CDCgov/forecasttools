@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{soql_nullable_where}
 \alias{soql_nullable_where}
-\title{Add a \code{\link[soql:soql_where]{soql::soql_where()}} statement to a SOQL query,
+\title{Add a \code{\link[soql:soql_queries]{soql::soql_where()}} statement to a SOQL query,
 or return the original query if \code{where_value} is  \code{NULL}.}
 \usage{
 soql_nullable_where(soql_list, column, comparison_operator, where_value)
@@ -12,11 +12,11 @@ soql_nullable_where(soql_list, column, comparison_operator, where_value)
 can be piped in. If one hasn't been
 created yet, use or pipe in \code{\link[soql:soql]{soql::soql()}}.}
 
-\item{column}{column name for the \code{\link[soql:soql_where]{soql::soql_where()}} component
+\item{column}{column name for the \code{\link[soql:soql_queries]{soql::soql_where()}} component
 of the query, as a string.}
 
 \item{comparison_operator}{comparison operator for the
-\code{\link[soql:soql_where]{soql::soql_where()}} component of the query, as a string.}
+\code{\link[soql:soql_queries]{soql::soql_where()}} component of the query, as a string.}
 
 \item{where_value}{A value for the comparison, or \code{NULL}
 for no filtering.}
@@ -26,6 +26,6 @@ A new \code{\link[soql:soql]{soql::soql()}} object with the filter added, or
 simply the input object if \code{where_value} is \code{NULL}.
 }
 \description{
-Add a \code{\link[soql:soql_where]{soql::soql_where()}} statement to a SOQL query,
+Add a \code{\link[soql:soql_queries]{soql::soql_where()}} statement to a SOQL query,
 or return the original query if \code{where_value} is  \code{NULL}.
 }
