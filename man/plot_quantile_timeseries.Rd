@@ -31,7 +31,7 @@ containing indicating which quantile level the row contains,
 as a string.}
 
 \item{linewidth}{\code{linewidth} parameter passed to
-\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}. Default \code{2}.}
+\code{\link[ggplot2:geom_line]{ggplot2::geom_line()}}. Default \code{2}.}
 
 \item{pointsize}{\code{size} parameter passed to
 \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} Default \code{4}.}
@@ -40,7 +40,7 @@ as a string.}
 \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} Default \code{"darkblue"}.}
 
 \item{linecolor}{\code{color} parameter passed to
-\code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}. Default \code{"darkblue"}.}
+\code{\link[ggplot2:geom_line]{ggplot2::geom_line()}}. Default \code{"darkblue"}.}
 }
 \value{
 The plot, as a ggplot object.

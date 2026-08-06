@@ -45,11 +45,11 @@ date. These will become facets in the output ggplot. Default
 forecast horizon.}
 
 \item{y_transform}{transform for the y axis, a string. Passed
-as the \code{transform} argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.
+as the \code{transform} argument to \code{\link[ggplot2:scale_y_continuous]{ggplot2::scale_y_continuous()}}.
 Default \code{"identity"}.}
 
 \item{y_labels}{labeling scheme for the y axis. Passed as
-the \code{labels} argument to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}. Default
+the \code{labels} argument to \code{\link[ggplot2:scale_y_continuous]{ggplot2::scale_y_continuous()}}. Default
 \code{\link[scales:label_percent]{scales::label_percent()}}.}
 }
 \value{
