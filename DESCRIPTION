@@ -50,7 +50,8 @@ Imports:
     stringr,
     tibble,
     tidyselect,
-    vctrs
+    vctrs,
+    distfromq
 Suggests:
     data.table,
     forcats,
