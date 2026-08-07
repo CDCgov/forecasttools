@@ -66,30 +66,26 @@ thresholds_to_array <- function(dat, dim_cols) {
 
 prism_files <-
   tibble::tibble(
-    "file_path" = fs::path("inst", "extdata") |>
-      fs::dir_ls()
-  ) |>
-  dplyr::filter(
-    file_path |>
-      fs::path_file() |>
-      stringr::str_detect(
-        "^prism_thresholds_[a-z]+_\\d{4}-\\d{2}-\\d{2}\\.tsv$"
-      )
+    "file_path" = fs::path("inst", "extdata", "prism_thresholds") |>
+      fs::dir_ls(recurse = TRUE, glob = "*.tsv")
   ) |>
   dplyr::mutate(
-    signal = file_path |>
+    signal = .data$file_path |>
+      fs::path_dir() |>
+      fs::path_file(),
+    as_of = .data$file_path |>
       fs::path_file() |>
-      stringr::str_extract("(?<=^prism_thresholds_)[a-z]+"),
-    as_of = file_path |>
-      fs::path_file() |>
-      stringr::str_extract("\\d{4}-\\d{2}-\\d{2}") |>
-      as.Date(),
-    dat = purrr::map(file_path, \(x) {
+      fs::path_ext_remove() |>
+      lubridate::ymd(),
+    dat = purrr::map(.data$file_path, \(x) {
       readr::read_tsv(x, show_col_types = FALSE) |>
         dplyr::arrange(.data$disease, .data$state_abb)
     })
   ) |>
   dplyr::select(-"file_path")
+
+prism_files$as_of |>
+  checkmate::assert_date(any.missing = FALSE, .var.name = "as_of")
 
 
 prism_files$signal |>
