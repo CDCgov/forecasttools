@@ -41,6 +41,49 @@ test_that(
   }
 )
 
+test_that("label validation rejects invalid labels", {
+  levels <- c(0.001, 0.5, 0.9)
+  values <- c(5, 10, 15)
+  bins <- c(-1, 1, 2.5, 10, 30)
+
+  expect_error(
+    quantiles_to_category_cdf(
+      levels,
+      values,
+      bins,
+      labels = c("a", "b")
+    ),
+    "equal in length"
+  )
+  expect_error(
+    quantiles_to_category_cdf(
+      levels,
+      values,
+      bins,
+      labels = tibble::tibble(labels = 1:5)
+    ),
+    "equal in length"
+  )
+  expect_error(
+    quantiles_to_category_pmf(
+      levels,
+      values,
+      bins,
+      labels = c("a", "b", "c", "d", "e")
+    ),
+    "one fewer entry"
+  )
+  expect_error(
+    quantiles_to_category_pmf(
+      levels,
+      values,
+      bins,
+      labels = tibble::tibble(labels = 1:4)
+    ),
+    "one fewer entry"
+  )
+})
+
 
 test_that("support validation logic rejects invalid inputs", {
   levels <- c(0.25, 0.5, 0.75)
@@ -108,6 +151,7 @@ test_that("name handling works as expected", {
   values <- c(5, 5.005, 10.8)
   named_bins <- c("low" = 4, "medium" = 4.5, "high" = 10, "upper_bound" = 20)
   unnamed_bins <- unname(named_bins)
+  labels <- c("Custom Low", "Custom Medium", "Custom High", "Custom UB")
   expect_null(names(unnamed_bins))
 
   cdf_named <- quantiles_to_category_cdf(
@@ -115,26 +159,51 @@ test_that("name handling works as expected", {
     values,
     named_bins
   )
+  cdf_named_labeled <- quantiles_to_category_cdf(
+    levels,
+    values,
+    named_bins,
+    labels = labels
+  )
   cdf_unnamed <- quantiles_to_category_cdf(
     levels,
     values,
     unnamed_bins
+  )
+  cdf_unnamed_labeled <- quantiles_to_category_cdf(
+    levels,
+    values,
+    unnamed_bins,
+    labels = labels
   )
   pmf_named <- quantiles_to_category_pmf(
     levels,
     values,
     named_bins
   )
+  pmf_named_labeled <- quantiles_to_category_pmf(
+    levels,
+    values,
+    named_bins,
+    labels = head(labels, -1)
+  )
+
   pmf_unnamed <- quantiles_to_category_pmf(
     levels,
     values,
     unnamed_bins
   )
+  pmf_unnamed_labeled <- quantiles_to_category_pmf(
+    levels,
+    values,
+    unnamed_bins,
+    labels = head(labels, -1)
+  )
 
   expect_null(names(cdf_unnamed))
   expect_null(names(pmf_unnamed))
 
-  ## CDF names should be left endpoints
+  ## CDF autonames should be left endpoints
   ## and should include the upper bound. PMF
   ## names should exclude the upper bound.
   checkmate::expect_names(names(cdf_named), identical.to = names(named_bins))
@@ -144,8 +213,25 @@ test_that("name handling works as expected", {
       head(-1)
   ) # strip trailing entry
 
+  ## CDF and PMF label arguments should be respectd
+  checkmate::expect_names(names(cdf_named_labeled), identical.to = labels)
+  checkmate::expect_names(names(cdf_unnamed_labeled), identical.to = labels)
+  checkmate::expect_names(
+    names(pmf_named_labeled),
+    identical.to = head(labels, -1)
+  )
+  checkmate::expect_names(
+    names(pmf_named_labeled),
+    identical.to = head(labels, -1)
+  )
+
   ## apart from names themselves, results should be
-  ## same regardless of whether input bins were named
+  ## same regardless of whether input bins were autonamed
+  ## or labeled
   expect_equal(unname(cdf_named), cdf_unnamed)
+  expect_equal(unname(cdf_named_labeled), cdf_unnamed)
+  expect_equal(unname(cdf_unnamed_labeled), cdf_unnamed)
   expect_equal(unname(pmf_named), pmf_unnamed)
+  expect_equal(unname(pmf_named_labeled), pmf_unnamed)
+  expect_equal(unname(pmf_unnamed_labeled), pmf_unnamed)
 })

@@ -7,9 +7,21 @@
 or probability mass function from quantiles for a continuous
 variable.}
 \usage{
-quantiles_to_category_cdf(quantile_levels, values, category_cutpoints, ...)
+quantiles_to_category_cdf(
+  quantile_levels,
+  values,
+  category_cutpoints,
+  labels = names(category_cutpoints),
+  ...
+)
 
-quantiles_to_category_pmf(quantile_levels, values, category_cutpoints, ...)
+quantiles_to_category_pmf(
+  quantile_levels,
+  values,
+  category_cutpoints,
+  labels = names(head(category_cutpoints, -1)),
+  ...
+)
 }
 \arguments{
 \item{quantile_levels}{Vector of quantile levels, passed as
@@ -32,6 +44,15 @@ of the final bin, i.e. the upper bound of the underlying continuous
 variable's support, or \code{Inf} if there is no upper bound.
 Similarly, if there is no lower bound to the underlying variable's
 support, entry \eqn{1} should be \code{-Inf}.}
+
+\item{labels}{Labels for the CDF or PMF categories. For CDFs,
+the \code{labels} vector should be equal in length to the cutpoints vector.
+For PMFs, the labels vector should have one fewer entry than the
+cutpoints vector (since the last cutpoint is the right endpoint
+of the final bin). If no \code{labels} vector is specified,
+the function uses the names of the cutpoints vector itself,
+if any, and otherwise returns an unnamed vector. For PMFs,
+that means all cutpoint names \emph{except} the last.}
 
 \item{...}{Additional keyword arguments passed to
 \code{\link[distfromq:make_p_fn]{distfromq::make_p_fn()}}.}
@@ -61,7 +82,7 @@ The function will error if the input quantile values include
 values outside this support.
 
 The approximate continuous CDF will be estimated on the unconstrained
-real interval \eqn{(-\infty, -infty)} with an appropriate monotonic
+real interval \eqn{(-\infty, \infty)} with an appropriate monotonic
 transform for the support, picked via \code{\link[=get_transform_to_real_line]{get_transform_to_real_line()}}.
 It will then be evaluated against the transformed values of the
 cutpoints.

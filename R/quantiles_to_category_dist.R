@@ -43,6 +43,14 @@
 #' variable's support, or `Inf` if there is no upper bound.
 #' Similarly, if there is no lower bound to the underlying variable's
 #' support, entry \eqn{1} should be `-Inf`.
+#' @param labels Labels for the CDF or PMF categories. For CDFs,
+#' the `labels` vector should be equal in length to the cutpoints vector.
+#' For PMFs, the labels vector should have one fewer entry than the
+#' cutpoints vector (since the last cutpoint is the right endpoint
+#' of the final bin). If no `labels` vector is specified,
+#' the function uses the names of the cutpoints vector itself,
+#' if any, and otherwise returns an unnamed vector. For PMFs,
+#' that means all cutpoint names _except_ the last.
 #' @param ... Additional keyword arguments passed to
 #' [distfromq::make_p_fn()].
 #' @return The values of the approximate CDF or PMF for
@@ -71,6 +79,7 @@ quantiles_to_category_cdf <- function(
   quantile_levels,
   values,
   category_cutpoints,
+  labels = names(category_cutpoints),
   ...
 ) {
   support_lb <- min(category_cutpoints)
@@ -94,12 +103,27 @@ quantiles_to_category_cdf <- function(
     ))
   }
 
+  if (
+    !checkmate::test_character(
+      labels,
+      len = length(category_cutpoints),
+      null.ok = TRUE
+    )
+  ) {
+    cli::cli_abort(
+      paste0(
+        "{.arg labels} must be NULL or a character vector equal ",
+        "in length to the {.arg category_cutpoints} vector."
+      )
+    )
+  }
+
   transform <- get_transform_to_real_line(support_lb, support_ub)
 
   approx_cdf <- distfromq::make_p_fn(quantile_levels, transform(values), ...)
 
   cdf <- approx_cdf(transform(category_cutpoints))
-  return(purrr::set_names(cdf, names(category_cutpoints)))
+  return(purrr::set_names(cdf, labels))
 }
 
 #' @rdname quantiles_to_category_cdf
@@ -108,8 +132,25 @@ quantiles_to_category_pmf <- function(
   quantile_levels,
   values,
   category_cutpoints,
+  labels = names(head(category_cutpoints, -1)),
   ...
 ) {
+  if (
+    !checkmate::test_character(
+      labels,
+      len = length(category_cutpoints) - 1,
+      null.ok = TRUE
+    )
+  ) {
+    cli::cli_abort(
+      paste0(
+        "{.arg labels} must be NULL or a character vector ",
+        "with one fewer entry than ",
+        "the {.arg category_cutpoints} vector."
+      )
+    )
+  }
+
   cdf <- quantiles_to_category_cdf(
     quantile_levels,
     values,
@@ -118,9 +159,8 @@ quantiles_to_category_pmf <- function(
   )
 
   p_cat <- (dplyr::lead(cdf, 1, default = NA) - cdf) |>
-    purrr::set_names(names(cdf)) |>
-    ## vector names from `cdf`, not `lag(cdf, 1)`
-    utils::head(-1) # strip trailing NA
+    utils::head(-1) |> # strip trailing NA
+    purrr::set_names(labels)
 
   return(p_cat)
 }
