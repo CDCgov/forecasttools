@@ -20,7 +20,7 @@
 #' values outside this support.
 #'
 #' The approximate continuous CDF will be estimated on the unconstrained
-#' real interval \eqn{(-\infty, -infty)} with an appropriate monotonic
+#' real interval \eqn{(-\infty, \infty)} with an appropriate monotonic
 #' transform for the support, picked via [get_transform_to_real_line()].
 #' It will then be evaluated against the transformed values of the
 #' cutpoints.
