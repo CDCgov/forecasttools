@@ -1,8 +1,8 @@
-prism_dim_cols <- c("breaks", "disease", "location", "as_of")
+prism_dim_cols <- c("breaks", "disease", "location", "signal")
 
 prism_signal_specs <- list(
-  "nssp" = list(break_prefix = "prop_", upper_bound = 1),
-  "nhsn" = list(break_prefix = "", upper_bound = Inf)
+  "nssp" = list(upper_bound = 1),
+  "nhsn" = list(upper_bound = Inf)
 )
 
 
@@ -30,18 +30,6 @@ normalize_thresholds <- function(dat, signal) {
     dplyr::mutate("level_very_low" = 0, .before = "level_low") |>
     dplyr::mutate(
       "level_upper_bound" = prism_signal_specs[[signal]]$upper_bound
-    )
-}
-
-
-prism_signal_long <- function(dat, signal_name) {
-  dat |>
-    dplyr::filter(.data$signal == signal_name) |>
-    dplyr::mutate(
-      breaks = forcats::fct_relabel(
-        .data$breaks,
-        \(x) paste0(prism_signal_specs[[signal_name]]$break_prefix, x)
-      )
     )
 }
 
@@ -117,20 +105,19 @@ long_thresholds <-
   )
 
 prism_thresholds <-
-  names(prism_signal_specs) |>
-  rlang::set_names() |>
-  purrr::map(\(signal_name) {
-    long_thresholds |>
-      prism_signal_long(signal_name) |>
-      thresholds_to_array(prism_dim_cols)
-  })
+  long_thresholds |>
+  dplyr::group_by(.data$as_of) |>
+  dplyr::group_split() |>
+  rlang::set_names(
+    long_thresholds$as_of |> unique() |> sort() |> as.character()
+  ) |>
+  purrr::map(\(x) thresholds_to_array(x, prism_dim_cols))
 
 prism_thresholds |>
   purrr::walk(\(x) testthat::expect_false(anyNA(x)))
 
-# test that array construction is correct
-purrr::iwalk(prism_thresholds, \(thresholds, signal_name) {
-  dat <- prism_signal_long(long_thresholds, signal_name)
+purrr::iwalk(prism_thresholds, \(thresholds, as_of_name) {
+  dat <- dplyr::filter(long_thresholds, .data$as_of == as.Date(as_of_name))
   dims <- dimnames(thresholds)
 
   purrr::walk(1:1000, \(i) {
@@ -140,13 +127,13 @@ purrr::iwalk(prism_thresholds, \(thresholds, signal_name) {
       thresholds[,
         tmp_sample[["disease"]],
         tmp_sample[["location"]],
-        tmp_sample[["as_of"]]
+        tmp_sample[["signal"]]
       ] |>
         unname(),
 
       dat |>
         dplyr::filter(
-          .data$as_of == as.Date(tmp_sample[["as_of"]]),
+          .data$signal == tmp_sample[["signal"]],
           .data$disease == tmp_sample[["disease"]],
           .data$location == tmp_sample[["location"]]
         ) |>

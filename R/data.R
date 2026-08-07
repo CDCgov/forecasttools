@@ -63,22 +63,23 @@
 #'
 #' A named list of multi-dimensional arrays with PRISM
 #' respiratory virus activity level thresholds, one
-#' array per surveillance signal:
+#' array per `as_of` date. The names of the list are
+#' the dates from which a given set of thresholds is
+#' valid.
+#'
+#' Every array has the same dimensions, in order:
+#' `breaks`, `disease`, `location`, and `signal`.
+#'
+#' Values of `breaks` are `very_low`, `low`,
+#' `moderate`, `high`, `very_high`, and `upper_bound`.
+#'
+#' Values of `signal` are:
 #' \describe{
 #'   \item{nssp}{Emergency department visit thresholds,
-#'   as proportions of visits.}
+#'   as proportions of visits, bounded above by 1.}
 #'   \item{nhsn}{Hospital admission thresholds, as
 #'   weekly admissions per 100K population.}
 #' }
-#'
-#' Both arrays have the same dimensions, in order:
-#' `breaks`, `disease`, `location`, and `as_of`.
-#'
-#' Values of `breaks` are `prop_very_low`, `prop_low`,
-#' `prop_moderate`, `prop_high`, `prop_very_high`, and
-#' `prop_upper_bound` for `nssp`; and `very_low`, `low`,
-#' `moderate`, `high`, `very_high`, and `upper_bound`
-#' for `nhsn`.
 #'
 #' Values of `disease` are `Influenza`, `COVID-19`,
 #' `RSV`, and `ARI` (acute respiratory infections) (
@@ -90,8 +91,9 @@
 #' `nhsn` provides no thresholds for `GU`, `MO`, `WY`,
 #' or `US`.
 #'
-#' Values of `as_of` are the dates from which a
-#' given set of thresholds is valid.
+#' A given `as_of` array contains only the signals
+#' published on that date (`signal` coverage varies
+#' across the list).
 #'
 #' @source <data-raw/prism_thresholds.R>
 "prism_thresholds"

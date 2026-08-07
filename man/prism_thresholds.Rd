@@ -5,7 +5,7 @@
 \alias{prism_thresholds}
 \title{PRISM respiratory virus activity level thresholds}
 \format{
-An object of class \code{list} of length 2.
+An object of class \code{list} of length 3.
 }
 \source{
 <data-raw/prism_thresholds.R>
@@ -16,23 +16,24 @@ prism_thresholds
 \description{
 A named list of multi-dimensional arrays with PRISM
 respiratory virus activity level thresholds, one
-array per surveillance signal:
+array per \code{as_of} date. The names of the list are
+the dates from which a given set of thresholds is
+valid.
+}
+\details{
+Every array has the same dimensions, in order:
+\code{breaks}, \code{disease}, \code{location}, and \code{signal}.
+
+Values of \code{breaks} are \code{very_low}, \code{low},
+\code{moderate}, \code{high}, \code{very_high}, and \code{upper_bound}.
+
+Values of \code{signal} are:
 \describe{
 \item{nssp}{Emergency department visit thresholds,
-as proportions of visits.}
+as proportions of visits, bounded above by 1.}
 \item{nhsn}{Hospital admission thresholds, as
 weekly admissions per 100K population.}
 }
-}
-\details{
-Both arrays have the same dimensions, in order:
-\code{breaks}, \code{disease}, \code{location}, and \code{as_of}.
-
-Values of \code{breaks} are \code{prop_very_low}, \code{prop_low},
-\code{prop_moderate}, \code{prop_high}, \code{prop_very_high}, and
-\code{prop_upper_bound} for \code{nssp}; and \code{very_low}, \code{low},
-\code{moderate}, \code{high}, \code{very_high}, and \code{upper_bound}
-for \code{nhsn}.
 
 Values of \code{disease} are \code{Influenza}, \code{COVID-19},
 \code{RSV}, and \code{ARI} (acute respiratory infections) (
@@ -44,7 +45,8 @@ United States as a whole, using two-letter codes
 \code{nhsn} provides no thresholds for \code{GU}, \code{MO}, \code{WY},
 or \code{US}.
 
-Values of \code{as_of} are the dates from which a
-given set of thresholds is valid.
+A given \code{as_of} array contains only the signals
+published on that date (\code{signal} coverage varies
+across the list).
 }
 \keyword{datasets}
