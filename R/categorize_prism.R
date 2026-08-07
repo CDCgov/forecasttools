@@ -1,3 +1,10 @@
+default_prism_signal <- "nssp"
+
+prism_signal_deprecation_details <- glue::glue(
+  'Defaulting to `signal = "{default_prism_signal}"`. ',
+  "PRISM thresholds are now available for both NSSP and NHSN."
+)
+
 #' Get PRISM activity level cutpoints given
 #' disease and location.
 #'
