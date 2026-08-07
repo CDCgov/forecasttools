@@ -2,14 +2,14 @@
 % Please edit documentation in R/constants.R
 \name{cdc_hub_additional_colnames}
 \alias{cdc_hub_additional_colnames}
-\title{Names of additional standard columns for
-the CDC FluSight and COVID-19 Forecast Hubs
-beyond those in \link{hubverse_std_colnames}.}
+\title{Names of additional standard columns for the CDC
+FluSight and COVID-19 Forecast Hubs beyond those in
+\link{hubverse_std_colnames}.}
 \usage{
 cdc_hub_additional_colnames
 }
 \description{
-Names of additional standard columns for
-the CDC FluSight and COVID-19 Forecast Hubs
-beyond those in \link{hubverse_std_colnames}.
+Names of additional standard columns for the CDC
+FluSight and COVID-19 Forecast Hubs beyond those in
+\link{hubverse_std_colnames}.
 }

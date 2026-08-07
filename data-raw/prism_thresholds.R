@@ -57,6 +57,8 @@ thresholds_to_array <- function(dat, dim_cols) {
     purrr::map(as.character) |>
     rev()
 
+  checkmate::assert_true(nrow(sorted) == prod(lengths(dims)))
+
   return(array(
     data = sorted$value,
     dim = lengths(dims),
@@ -92,20 +94,6 @@ prism_files$signal |>
   unique() |>
   testthat::expect_setequal(names(prism_signal_specs))
 
-
-prism_files |>
-  dplyr::group_by(.data$signal) |>
-  dplyr::group_walk(\(x, ...) {
-    x$dat |>
-      purrr::map(\(y) {
-        dplyr::mutate(
-          y,
-          dplyr::across(dplyr::matches("level_"), \(z) NA)
-        )
-      }) |>
-      dplyr::n_distinct() |>
-      testthat::expect_equal(1)
-  })
 
 long_thresholds <-
   prism_files |>

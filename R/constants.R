@@ -19,9 +19,9 @@ hubverse_output_types <- c(
 #' @export
 hubverse_std_colnames <- hubUtils::std_colnames
 
-#' Names of additional standard columns for
-#' the CDC FluSight and COVID-19 Forecast Hubs
-#' beyond those in [hubverse_std_colnames].
+#' Names of additional standard columns for the CDC
+#' FluSight and COVID-19 Forecast Hubs beyond those in
+#' [hubverse_std_colnames].
 cdc_hub_additional_colnames <- c(
   "reference_date",
   "target",
@@ -31,9 +31,8 @@ cdc_hub_additional_colnames <- c(
 ) |>
   rlang::set_names()
 
-#' Names of standard columns for the
-#' the CDC FluSight and COVID-19 Forecast Hubs, with
-#' convenient aliases.
+#' Names of standard columns for the CDC FluSight and
+#' COVID-19 Forecast Hubs, with convenient aliases.
 #' @export
 cdc_hub_std_colnames <- c(hubverse_std_colnames, cdc_hub_additional_colnames)
 
@@ -48,11 +47,3 @@ flusight_std_colnames <- cdc_hub_std_colnames
 #' Names of PRISM bins
 #' @export
 default_prism_bin_names <- c("Very Low", "Low", "Moderate", "High", "Very High")
-
-
-default_prism_signal <- "nssp"
-
-prism_signal_deprecation_details <- glue::glue(
-  'Defaulting to `signal = "{default_prism_signal}"`. ',
-  "PRISM thresholds are now available for both NSSP and NHSN."
-)
