@@ -5,6 +5,47 @@ prism_signal_deprecation_details <- glue::glue(
   "PRISM thresholds are now available for both NSSP and NHSN."
 )
 
+prism_break_prefixes <- c("nssp" = "prop_", "nhsn" = "")
+
+prism_signal_as_ofs <- function() {
+  as_ofs <- names(forecasttools::prism_thresholds)
+  signals_by_as_of <- forecasttools::prism_thresholds |>
+    purrr::map(\(x) dimnames(x)$signal)
+
+  signals_by_as_of |>
+    unlist(use.names = FALSE) |>
+    unique() |>
+    rlang::set_names() |>
+    purrr::map(\(signal) {
+      lubridate::as_date(as_ofs[
+        purrr::map_lgl(signals_by_as_of, \(x) signal %in% x)
+      ])
+    })
+}
+
+prism_signals <- function() {
+  names(prism_signal_as_ofs())
+}
+
+resolve_prism_as_of <- function(signal, as_of, as_of_index) {
+  available_as_ofs <- as_of_index[[signal]]
+  usable_as_ofs <- available_as_ofs[as_of >= available_as_ofs]
+
+  if (length(usable_as_ofs) == 0) {
+    stop(
+      "No available PRISM cutpoints for signal ",
+      signal,
+      " as of date ",
+      as.character(as_of),
+      ". Earliest available date is ",
+      as.character(min(available_as_ofs)),
+      "."
+    )
+  }
+
+  return(as.character(max(usable_as_ofs)))
+}
+
 #' Get PRISM activity level cutpoints given
 #' disease and location.
 #'
@@ -17,15 +58,18 @@ prism_signal_deprecation_details <- glue::glue(
 #' [forecasttools::us_location_recode] with
 #' `location_output_format = "abbr"` to convert to this
 #' format.
-#' @param as_of date for which the cutpoints are valid.
-#' Defaults to today.
-#' @param signal surveillance signal for which to
+#' @param as_of date(s) for which the cutpoints are
+#' valid. Defaults to today.
+#' @param signal surveillance signal(s) for which to
 #' return the cutpoints. One of `"NSSP"` (proportions
 #' of emergency department visits) or `"NHSN"` (weekly
-#' hospital admissions per 100k population). If not
-#' given, defaults to `"NSSP"` with a deprecation
-#' warning (a future version will require it).
-#' @return The cutpoints, as a list of vectors.
+#' hospital admissions per 100k population), or an
+#' array of those values. If not given, defaults to
+#' `"NSSP"` with a deprecation warning (a future
+#' version will require it).
+#' @return The cutpoints, as a list of vectors. Names
+#' carry a `prop_` prefix for `"NSSP"`, whose thresholds
+#' are proportions, and are unprefixed for `"NHSN"`.
 #'
 #' @export
 get_prism_cutpoints <- function(
@@ -43,52 +87,46 @@ get_prism_cutpoints <- function(
     signal <- default_prism_signal
   }
 
+  as_of_index <- prism_signal_as_ofs()
+
   target_signal <- stringr::str_to_lower(signal)
   checkmate::assert_names(
     target_signal,
-    subset.of = names(forecasttools::prism_thresholds),
+    subset.of = names(as_of_index),
     what = "signal"
   )
-  thresholds <- forecasttools::prism_thresholds[[target_signal]]
 
   target_location <- stringr::str_to_lower(location)
   target_disease <- stringr::str_to_lower(disease)
 
   as_of <- lubridate::as_date(as_of)
 
-  checkmate::assert_scalar(as_of)
-  available_as_ofs <- thresholds |>
-    dimnames() |>
-    purrr::pluck("as_of") |>
-    lubridate::as_date()
+  return(purrr::pmap(
+    list(target_disease, target_location, target_signal, as_of),
+    \(disease, location, signal, as_of) {
+      thresholds <- forecasttools::prism_thresholds[[
+        resolve_prism_as_of(signal, as_of, as_of_index)
+      ]]
 
-  target_as_of <- max(available_as_ofs[as_of >= available_as_ofs]) |>
-    as.character()
+      checkmate::assert_names(
+        disease,
+        subset.of = dimnames(thresholds)$disease,
+        what = "disease"
+      )
+      checkmate::assert_names(
+        location,
+        subset.of = dimnames(thresholds)$location,
+        what = "location"
+      )
 
-  if (target_as_of == "-Inf") {
-    stop(
-      "No available PRISM cutpoints for as_of date ",
-      as.character(as_of),
-      ". Earliest available date is ",
-      as.character(min(available_as_ofs)),
-      "."
-    )
-  }
+      cutpoints <- thresholds[, disease, location, signal]
 
-  checkmate::assert_names(
-    target_disease,
-    subset.of = dimnames(thresholds)$disease,
-    what = "disease"
-  )
-  checkmate::assert_names(
-    target_location,
-    subset.of = dimnames(thresholds)$location,
-    what = "location"
-  )
-
-  return(purrr::map2(target_disease, target_location, \(x, y) {
-    thresholds[, x, y, target_as_of]
-  }))
+      rlang::set_names(
+        cutpoints,
+        glue::glue("{prism_break_prefixes[[signal]]}{names(cutpoints)}")
+      )
+    }
+  ))
 }
 
 #' Categorize a vector of value into PRISM

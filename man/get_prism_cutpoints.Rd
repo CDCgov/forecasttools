@@ -24,18 +24,21 @@ cutpoints. One of \code{"ARI"}, \code{"COVID-19"},
 \code{"Influenza"}, or \code{"RSV"}, or an array of those
 values. NHSN provides no \code{"ARI"} thresholds.}
 
-\item{as_of}{date for which the cutpoints are valid.
-Defaults to today.}
+\item{as_of}{date(s) for which the cutpoints are
+valid. Defaults to today.}
 
-\item{signal}{surveillance signal for which to
+\item{signal}{surveillance signal(s) for which to
 return the cutpoints. One of \code{"NSSP"} (proportions
 of emergency department visits) or \code{"NHSN"} (weekly
-hospital admissions per 100k population). If not
-given, defaults to \code{"NSSP"} with a deprecation
-warning (a future version will require it).}
+hospital admissions per 100k population), or an
+array of those values. If not given, defaults to
+\code{"NSSP"} with a deprecation warning (a future
+version will require it).}
 }
 \value{
-The cutpoints, as a list of vectors.
+The cutpoints, as a list of vectors. Names
+carry a \code{prop_} prefix for \code{"NSSP"}, whose thresholds
+are proportions, and are unprefixed for \code{"NHSN"}.
 }
 \description{
 Get PRISM activity level cutpoints given

@@ -33,12 +33,13 @@ the \code{label_sets} argument to \code{\link[=categorize_vector]{categorize_vec
 Defaults to the standard PRISM bin names in title
 case: \code{default_prism_bin_names}.}
 
-\item{signal}{surveillance signal for which to
+\item{signal}{surveillance signal(s) for which to
 return the cutpoints. One of \code{"NSSP"} (proportions
 of emergency department visits) or \code{"NHSN"} (weekly
-hospital admissions per 100k population). If not
-given, defaults to \code{"NSSP"} with a deprecation
-warning (a future version will require it).}
+hospital admissions per 100k population), or an
+array of those values. If not given, defaults to
+\code{"NSSP"} with a deprecation warning (a future
+version will require it).}
 }
 \value{
 A factor vector of category labels, equal in

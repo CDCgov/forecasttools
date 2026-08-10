@@ -19,55 +19,105 @@ break_names <- c(
   "upper_bound"
 )
 
-prism_signals <- names(forecasttools::prism_thresholds)
+prism_as_ofs <- names(forecasttools::prism_thresholds)
 
-signal_dimnames <- function(signal) {
-  return(dimnames(forecasttools::prism_thresholds[[signal]]))
+prism_signals <- forecasttools::prism_thresholds |>
+  purrr::map(\(x) dimnames(x)$signal) |>
+  unlist(use.names = FALSE) |>
+  unique()
+
+as_ofs_for_signal <- function(signal) {
+  forecasttools::prism_thresholds |>
+    purrr::keep(\(x) signal %in% dimnames(x)$signal) |>
+    names()
 }
 
-signal_param_grid <- function(signal) {
-  dims <- signal_dimnames(signal)
-  return(tidyr::expand_grid(
-    signal = signal,
-    location = dims$location,
-    disease = dims$disease
-  ))
+latest_as_of_for_signal <- function(signal) {
+  max(lubridate::as_date(as_ofs_for_signal(signal))) |> as.character()
+}
+
+signal_dimnames <- function(signal) {
+  dimnames(forecasttools::prism_thresholds[[latest_as_of_for_signal(signal)]])
+}
+
+query_date_for <- function(signal, as_of) {
+  vintages <- as_ofs_for_signal(signal) |> lubridate::as_date() |> sort()
+  as_of <- lubridate::as_date(as_of)
+  later_vintages <- vintages[vintages > as_of]
+
+  offset <- if (length(later_vintages) == 0) {
+    45
+  } else {
+    floor(as.numeric(min(later_vintages) - as_of) / 2)
+  }
+
+  return(as_of + offset)
+}
+
+as_of_grid <- function(as_of) {
+  dims <- dimnames(forecasttools::prism_thresholds[[as_of]])
+  return(
+    tidyr::expand_grid(
+      as_of = as_of,
+      signal = dims$signal,
+      location = dims$location,
+      disease = dims$disease
+    ) |>
+      dplyr::mutate(
+        query_date = purrr::map2_vec(
+          .data$signal,
+          .data$as_of,
+          query_date_for
+        )
+      )
+  )
 }
 
 prism_params <- prism_signals |>
-  purrr::map(signal_param_grid) |>
+  purrr::map(\(signal) {
+    dims <- signal_dimnames(signal)
+    tidyr::expand_grid(
+      signal = signal,
+      location = dims$location,
+      disease = dims$disease
+    )
+  }) |>
   purrr::list_rbind()
 
 
 test_that(
   paste0(
-    "get_prism_cutpoints() works identically ",
-    "to a manual read from the table "
+    "get_prism_cutpoints() resolves a date to its vintage and ",
+    "then reads identically to a manual read from the table "
   ),
   {
-    purrr::walk(prism_signals, \(signal) {
-      vars <- signal_dimnames(signal)
-      vars$breaks <- NULL
-
-      tidyr::expand_grid(!!!vars) |>
-        dplyr::sample_n(100) |>
-        purrr::pmap(
-          \(disease, location, as_of) {
-            result <- get_prism_cutpoints(
-              location,
-              disease,
-              as_of,
-              signal = signal
-            )
-            expected <- list(forecasttools::prism_thresholds[[signal]][,
-              disease,
-              location,
-              as_of
-            ])
-            expect_equal(result, expected)
-          }
-        )
-    })
+    prism_as_ofs |>
+      purrr::map(as_of_grid) |>
+      purrr::list_rbind() |>
+      dplyr::sample_n(100) |>
+      purrr::pmap(
+        \(as_of, signal, location, disease, query_date) {
+          result <- get_prism_cutpoints(
+            location,
+            disease,
+            query_date,
+            signal = signal
+          )
+          expected <- forecasttools::prism_thresholds[[as_of]][,
+            disease,
+            location,
+            signal
+          ]
+          prefix <- if (signal == "nssp") "prop_" else ""
+          expect_equal(
+            result,
+            list(rlang::set_names(
+              expected,
+              glue::glue("{prefix}{names(expected)}")
+            ))
+          )
+        }
+      )
   }
 )
 
@@ -127,7 +177,7 @@ test_that("NSSP and NHSN thresholds are on their documented scales", {
   nssp <- get_prism_cutpoints("CA", "Influenza", signal = "NSSP")[[1]]
   nhsn <- get_prism_cutpoints("CA", "Influenza", signal = "NHSN")[[1]]
 
-  expect_named(nssp, paste0("prop_", break_names))
+  expect_named(nssp, glue::glue("prop_{break_names}"))
   expect_named(nhsn, break_names)
 
   expect_equal(unname(nssp[["prop_upper_bound"]]), 1)
