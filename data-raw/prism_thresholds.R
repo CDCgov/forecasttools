@@ -105,12 +105,15 @@ long_thresholds <-
 
 prism_thresholds <-
   long_thresholds |>
-  dplyr::group_by(.data$as_of) |>
-  dplyr::group_split() |>
-  rlang::set_names(
-    long_thresholds$as_of |> unique() |> sort() |> as.character()
+  dplyr::arrange(.data$as_of) |>
+  tidyr::nest(.by = "as_of", .key = "thresholds") |>
+  dplyr::mutate(
+    thresholds = purrr::map(
+      .data$thresholds,
+      \(x) thresholds_to_array(x, prism_dim_cols)
+    )
   ) |>
-  purrr::map(\(x) thresholds_to_array(x, prism_dim_cols))
+  tibble::deframe()
 
 prism_thresholds |>
   purrr::walk(\(x) testthat::expect_false(anyNA(x)))

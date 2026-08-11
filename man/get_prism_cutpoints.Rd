@@ -36,9 +36,9 @@ array of those values. If not given, defaults to
 version will require it).}
 }
 \value{
-The cutpoints, as a list of vectors. Names
-carry a \code{prop_} prefix for \code{"NSSP"}, whose thresholds
-are proportions, and are unprefixed for \code{"NHSN"}.
+The cutpoints, as a list of vectors, named
+\code{very_low}, \code{low}, \code{moderate}, \code{high}, \code{very_high},
+and \code{upper_bound} for every signal.
 }
 \description{
 Get PRISM activity level cutpoints given

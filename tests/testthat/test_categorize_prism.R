@@ -108,14 +108,7 @@ test_that(
             location,
             signal
           ]
-          prefix <- if (signal == "nssp") "prop_" else ""
-          expect_equal(
-            result,
-            list(rlang::set_names(
-              expected,
-              glue::glue("{prefix}{names(expected)}")
-            ))
-          )
+          expect_equal(result, list(expected))
         }
       )
   }
@@ -177,10 +170,10 @@ test_that("NSSP and NHSN thresholds are on their documented scales", {
   nssp <- get_prism_cutpoints("CA", "Influenza", signal = "NSSP")[[1]]
   nhsn <- get_prism_cutpoints("CA", "Influenza", signal = "NHSN")[[1]]
 
-  expect_named(nssp, glue::glue("prop_{break_names}"))
+  expect_named(nssp, break_names)
   expect_named(nhsn, break_names)
 
-  expect_equal(unname(nssp[["prop_upper_bound"]]), 1)
+  expect_equal(unname(nssp[["upper_bound"]]), 1)
   expect_equal(unname(nhsn[["upper_bound"]]), Inf)
   expect_true(all(nssp[1:5] <= 1))
 })

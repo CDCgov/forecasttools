@@ -5,8 +5,6 @@ prism_signal_deprecation_details <- glue::glue(
   "PRISM thresholds are now available for both NSSP and NHSN."
 )
 
-prism_break_prefixes <- c("nssp" = "prop_", "nhsn" = "")
-
 prism_signal_as_ofs <- function() {
   as_ofs <- names(forecasttools::prism_thresholds)
   signals_by_as_of <- forecasttools::prism_thresholds |>
@@ -67,9 +65,9 @@ resolve_prism_as_of <- function(signal, as_of, as_of_index) {
 #' array of those values. If not given, defaults to
 #' `"NSSP"` with a deprecation warning (a future
 #' version will require it).
-#' @return The cutpoints, as a list of vectors. Names
-#' carry a `prop_` prefix for `"NSSP"`, whose thresholds
-#' are proportions, and are unprefixed for `"NHSN"`.
+#' @return The cutpoints, as a list of vectors, named
+#' `very_low`, `low`, `moderate`, `high`, `very_high`,
+#' and `upper_bound` for every signal.
 #'
 #' @export
 get_prism_cutpoints <- function(
@@ -119,12 +117,7 @@ get_prism_cutpoints <- function(
         what = "location"
       )
 
-      cutpoints <- thresholds[, disease, location, signal]
-
-      rlang::set_names(
-        cutpoints,
-        glue::glue("{prism_break_prefixes[[signal]]}{names(cutpoints)}")
-      )
+      thresholds[, disease, location, signal]
     }
   ))
 }
