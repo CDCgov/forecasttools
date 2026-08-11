@@ -32,29 +32,32 @@ normalize_thresholds <- function(dat, signal) {
 }
 
 
+prism_array_dims <- c("breaks", "disease", "location", "signal")
+
 thresholds_to_array <- function(dat) {
-  sorted <- dat |>
-    dplyr::arrange(
-      .data$signal,
-      .data$location,
-      .data$disease,
-      .data$breaks
-    ) |>
-    dplyr::select("signal", "location", "disease", "breaks", "value")
+  completeness <- dat |>
+    dplyr::summarise(
+      n = dplyr::n(),
+      expected = dplyr::n_distinct(.data$breaks) *
+        dplyr::n_distinct(.data$disease) *
+        dplyr::n_distinct(.data$location),
+      .by = "signal"
+    )
+  checkmate::assert_true(all(completeness$n == completeness$expected))
 
-  dims <- sorted |>
-    dplyr::select(-"value") |>
-    purrr::map(unique) |>
-    purrr::map(as.character) |>
-    rev()
+  labels <- dat |>
+    dplyr::select(dplyr::all_of(prism_array_dims)) |>
+    purrr::map(\(x) as.character(sort(unique(x))))
 
-  checkmate::assert_true(nrow(sorted) == prod(lengths(dims)))
+  cells <- dat |>
+    dplyr::select(dplyr::all_of(prism_array_dims)) |>
+    purrr::map2(labels, \(x, lab) match(as.character(x), lab)) |>
+    purrr::reduce(cbind)
 
-  return(array(
-    data = sorted$value,
-    dim = lengths(dims),
-    dimnames = dims
-  ))
+  thresholds <- array(NA_real_, dim = lengths(labels), dimnames = labels)
+  thresholds[cells] <- dat$value
+
+  return(thresholds)
 }
 
 prism_files <-
@@ -116,32 +119,35 @@ prism_thresholds <-
   ) |>
   tibble::deframe()
 
-prism_thresholds |>
-  purrr::walk(\(x) testthat::expect_false(anyNA(x)))
-
 purrr::iwalk(prism_thresholds, \(thresholds, as_of_name) {
   dat <- dplyr::filter(long_thresholds, .data$as_of == as.Date(as_of_name))
   dims <- dimnames(thresholds)
 
+  testthat::expect_equal(sum(!is.na(thresholds)), nrow(dat))
+
   purrr::walk(1:1000, \(i) {
     tmp_sample <- dims |> purrr::map_chr(\(x) sample(x, 1))
 
-    testthat::expect_identical(
-      thresholds[,
-        tmp_sample[["disease"]],
-        tmp_sample[["location"]],
-        tmp_sample[["signal"]]
-      ] |>
-        unname(),
+    actual <- thresholds[,
+      tmp_sample[["disease"]],
+      tmp_sample[["location"]],
+      tmp_sample[["signal"]]
+    ] |>
+      unname()
 
-      dat |>
-        dplyr::filter(
-          .data$signal == tmp_sample[["signal"]],
-          .data$disease == tmp_sample[["disease"]],
-          .data$location == tmp_sample[["location"]]
-        ) |>
-        dplyr::pull("value")
-    )
+    expected <- dat |>
+      dplyr::filter(
+        .data$signal == tmp_sample[["signal"]],
+        .data$disease == tmp_sample[["disease"]],
+        .data$location == tmp_sample[["location"]]
+      ) |>
+      dplyr::pull("value")
+
+    if (length(expected) == 0) {
+      testthat::expect_true(all(is.na(actual)))
+    } else {
+      testthat::expect_identical(actual, expected)
+    }
   })
 })
 

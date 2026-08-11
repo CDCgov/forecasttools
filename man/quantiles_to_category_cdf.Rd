@@ -89,7 +89,7 @@ cutpoints.
 }
 \examples{
 
-cutpoints <- get_prism_cutpoints("US", "COVID-19")[[1]]
+cutpoints <- get_prism_cutpoints("US", "COVID-19", signal = "NSSP")[[1]]
 quantile_levels <- c(0.25, 0.5, 0.75)
 values <- c(0.05, 0.2, 0.3)
 quantiles_to_category_cdf(

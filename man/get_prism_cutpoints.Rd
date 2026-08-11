@@ -24,8 +24,9 @@ cutpoints. One of \code{"ARI"}, \code{"COVID-19"},
 \code{"Influenza"}, or \code{"RSV"}, or an array of those
 values. NHSN provides no \code{"ARI"} thresholds.}
 
-\item{as_of}{date(s) for which the cutpoints are
-valid. Defaults to today.}
+\item{as_of}{single date for which the cutpoints are
+valid, applied to every \code{location}, \code{disease}, and
+\code{signal}. Defaults to today.}
 
 \item{signal}{surveillance signal(s) for which to
 return the cutpoints. One of \code{"NSSP"} (proportions
