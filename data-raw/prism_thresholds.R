@@ -1,5 +1,3 @@
-prism_dim_cols <- c("breaks", "disease", "location", "signal")
-
 prism_signal_specs <- list(
   "nssp" = list(upper_bound = 1),
   "nhsn" = list(upper_bound = Inf)
@@ -34,23 +32,29 @@ normalize_thresholds <- function(dat, signal) {
 }
 
 
-thresholds_to_array <- function(dat, dim_cols) {
-  labels <- dat |>
-    dplyr::select(dplyr::all_of(dim_cols)) |>
-    purrr::map(\(x) as.character(sort(unique(x))))
+thresholds_to_array <- function(dat) {
+  sorted <- dat |>
+    dplyr::arrange(
+      .data$signal,
+      .data$location,
+      .data$disease,
+      .data$breaks
+    ) |>
+    dplyr::select("signal", "location", "disease", "breaks", "value")
 
-  cells <- dat |>
-    dplyr::select(dplyr::all_of(dim_cols)) |>
-    purrr::map2(labels, \(x, lab) match(as.character(x), lab)) |>
-    purrr::reduce(cbind)
+  dims <- sorted |>
+    dplyr::select(-"value") |>
+    purrr::map(unique) |>
+    purrr::map(as.character) |>
+    rev()
 
-  thresholds <- array(NA_real_, dim = lengths(labels), dimnames = labels)
-  thresholds[cells] <- dat$value
+  checkmate::assert_true(nrow(sorted) == prod(lengths(dims)))
 
-  checkmate::assert_true(nrow(dat) == prod(lengths(labels)))
-  checkmate::assert_false(anyNA(thresholds))
-
-  return(thresholds)
+  return(array(
+    data = sorted$value,
+    dim = lengths(dims),
+    dimnames = dims
+  ))
 }
 
 prism_files <-
@@ -108,10 +112,7 @@ prism_thresholds <-
   dplyr::arrange(.data$as_of) |>
   tidyr::nest(.by = "as_of", .key = "thresholds") |>
   dplyr::mutate(
-    thresholds = purrr::map(
-      .data$thresholds,
-      \(x) thresholds_to_array(x, prism_dim_cols)
-    )
+    thresholds = purrr::map(.data$thresholds, thresholds_to_array)
   ) |>
   tibble::deframe()
 
