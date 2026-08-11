@@ -21,10 +21,6 @@ prism_signal_as_ofs <- function() {
     })
 }
 
-prism_signals <- function() {
-  names(prism_signal_as_ofs())
-}
-
 resolve_prism_as_of <- function(signal, as_of, as_of_index) {
   available_as_ofs <- as_of_index[[signal]]
   usable_as_ofs <- available_as_ofs[as_of >= available_as_ofs]
