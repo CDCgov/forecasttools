@@ -35,23 +35,22 @@ normalize_thresholds <- function(dat, signal) {
 
 
 thresholds_to_array <- function(dat, dim_cols) {
-  sorted <- dat |>
-    dplyr::select(dplyr::all_of(rev(dim_cols)), "value") |>
-    dplyr::arrange(dplyr::across(dplyr::all_of(rev(dim_cols))))
+  labels <- dat |>
+    dplyr::select(dplyr::all_of(dim_cols)) |>
+    purrr::map(\(x) as.character(sort(unique(x))))
 
-  dims <- sorted |>
-    dplyr::select(-"value") |>
-    purrr::map(unique) |>
-    purrr::map(as.character) |>
-    rev()
+  cells <- dat |>
+    dplyr::select(dplyr::all_of(dim_cols)) |>
+    purrr::map2(labels, \(x, lab) match(as.character(x), lab)) |>
+    purrr::reduce(cbind)
 
-  checkmate::assert_true(nrow(sorted) == prod(lengths(dims)))
+  thresholds <- array(NA_real_, dim = lengths(labels), dimnames = labels)
+  thresholds[cells] <- dat$value
 
-  return(array(
-    data = sorted$value,
-    dim = lengths(dims),
-    dimnames = dims
-  ))
+  checkmate::assert_true(nrow(dat) == prod(lengths(labels)))
+  checkmate::assert_false(anyNA(thresholds))
+
+  return(thresholds)
 }
 
 prism_files <-
