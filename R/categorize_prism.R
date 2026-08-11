@@ -112,6 +112,11 @@ get_prism_cutpoints <- function(
         subset.of = dimnames(thresholds)$location,
         what = "location"
       )
+      checkmate::assert_names(
+        signal,
+        subset.of = dimnames(thresholds)$signal,
+        what = "signal"
+      )
 
       thresholds[, disease, location, signal]
     }
