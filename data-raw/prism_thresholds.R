@@ -32,32 +32,35 @@ normalize_thresholds <- function(dat, signal) {
 }
 
 
-prism_array_dims <- c("breaks", "disease", "location", "signal")
-
 thresholds_to_array <- function(dat) {
-  completeness <- dat |>
-    dplyr::summarise(
-      n = dplyr::n(),
-      expected = dplyr::n_distinct(.data$breaks) *
-        dplyr::n_distinct(.data$disease) *
-        dplyr::n_distinct(.data$location),
-      .by = "signal"
-    )
-  checkmate::assert_true(all(completeness$n == completeness$expected))
+  sorted <- dat |>
+    tidyr::complete(
+      .data$signal,
+      .data$location,
+      .data$disease,
+      .data$breaks
+    ) |>
+    dplyr::arrange(
+      .data$signal,
+      .data$location,
+      .data$disease,
+      .data$breaks
+    ) |>
+    dplyr::select("signal", "location", "disease", "breaks", "value")
 
-  labels <- dat |>
-    dplyr::select(dplyr::all_of(prism_array_dims)) |>
-    purrr::map(\(x) as.character(sort(unique(x))))
+  dims <- sorted |>
+    dplyr::select(-"value") |>
+    purrr::map(unique) |>
+    purrr::map(as.character) |>
+    rev()
 
-  cells <- dat |>
-    dplyr::select(dplyr::all_of(prism_array_dims)) |>
-    purrr::map2(labels, \(x, lab) match(as.character(x), lab)) |>
-    purrr::reduce(cbind)
+  checkmate::assert_true(nrow(sorted) == prod(lengths(dims)))
 
-  thresholds <- array(NA_real_, dim = lengths(labels), dimnames = labels)
-  thresholds[cells] <- dat$value
-
-  return(thresholds)
+  return(array(
+    data = sorted$value,
+    dim = lengths(dims),
+    dimnames = dims
+  ))
 }
 
 prism_files <-
