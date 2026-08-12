@@ -36,51 +36,45 @@ latest_as_of_for_signal <- function(signal) {
   max(lubridate::as_date(as_ofs_for_signal(signal))) |> as.character()
 }
 
-signal_dimnames <- function(signal) {
-  dimnames(forecasttools::prism_thresholds[[latest_as_of_for_signal(signal)]])
-}
-
-query_date_for <- function(signal, as_of) {
-  vintages <- as_ofs_for_signal(signal) |> lubridate::as_date() |> sort()
-  as_of <- lubridate::as_date(as_of)
-  later_vintages <- vintages[vintages > as_of]
+query_date_for <- function(vintage) {
+  vintages <- prism_as_ofs |> lubridate::as_date() |> sort()
+  vintage <- lubridate::as_date(vintage)
+  later_vintages <- vintages[vintages > vintage]
 
   offset <- if (length(later_vintages) == 0) {
     45
   } else {
-    floor(as.numeric(min(later_vintages) - as_of) / 2)
+    floor(as.numeric(min(later_vintages) - vintage) / 2)
   }
 
-  return(as_of + offset)
+  return(vintage + offset)
 }
 
-as_of_grid <- function(as_of) {
-  dims <- dimnames(forecasttools::prism_thresholds[[as_of]])
-  return(
-    tidyr::expand_grid(
-      as_of = as_of,
-      signal = dims$signal,
-      location = dims$location,
-      disease = dims$disease
-    ) |>
-      dplyr::mutate(
-        query_date = purrr::map2_vec(
-          .data$signal,
-          .data$as_of,
-          query_date_for
-        )
-      )
-  )
+covered_combinations <- function(vintage) {
+  thresholds <- forecasttools::prism_thresholds[[vintage]]
+  dims <- dimnames(thresholds)
+  vintage_query_date <- query_date_for(vintage)
+
+  tidyr::expand_grid(
+    as_of = vintage,
+    signal = dims$signal,
+    location = dims$location,
+    disease = dims$disease
+  ) |>
+    dplyr::filter(purrr::pmap_lgl(
+      list(.data$disease, .data$location, .data$signal),
+      \(disease, location, signal) {
+        !anyNA(thresholds[, disease, location, signal])
+      }
+    )) |>
+    dplyr::mutate(query_date = vintage_query_date)
 }
 
 prism_params <- prism_signals |>
   purrr::map(\(signal) {
-    dims <- signal_dimnames(signal)
-    tidyr::expand_grid(
-      signal = signal,
-      location = dims$location,
-      disease = dims$disease
-    )
+    covered_combinations(latest_as_of_for_signal(signal)) |>
+      dplyr::filter(.data$signal == !!signal) |>
+      dplyr::select("signal", "location", "disease")
   }) |>
   purrr::list_rbind()
 
@@ -92,7 +86,7 @@ test_that(
   ),
   {
     prism_as_ofs |>
-      purrr::map(as_of_grid) |>
+      purrr::map(covered_combinations) |>
       purrr::list_rbind() |>
       dplyr::sample_n(100) |>
       purrr::pmap(
