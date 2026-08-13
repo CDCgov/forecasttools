@@ -59,41 +59,29 @@
 #' @source <data-raw/ex_inferencedata_dataframe.R>
 "ex_inferencedata_dataframe"
 
-#' PRISM respiratory virus activity level thresholds
+#' PRISM respiratory virus activity level thresholds.
 #'
-#' A named list of multi-dimensional arrays with PRISM
-#' respiratory virus activity level thresholds, one
-#' array per `as_of` date. The names of the list are
-#' the dates from which a given set of thresholds is
-#' valid.
-#'
-#' Every array has the same dimensions, in order:
-#' `breaks`, `disease`, `location`, and `signal`.
-#'
-#' Values of `breaks` are `very_low`, `low`,
-#' `moderate`, `high`, `very_high`, and `upper_bound`.
-#'
-#' Values of `signal` are:
+#' A [`tibble`][tibble::tibble()] of PRISM respiratory
+#' virus activity level thresholds (one row per
+#' combination of `as_of`, `signal`, `disease`, and
+#' `location`):
 #' \describe{
-#'   \item{nssp}{Emergency department visit thresholds,
-#'   as proportions of visits, bounded above by 1.}
-#'   \item{nhsn}{Hospital admission thresholds, as
-#'   weekly admissions per 100K population.}
+#'   \item{as_of}{Date from which the row's thresholds
+#'   are valid.}
+#'   \item{signal}{Surveillance signal, `nssp`
+#'   (emergency department visit thresholds, as
+#'   proportions of visits, bounded above by 1) or
+#'   `nhsn` (hospital admission thresholds, as weekly
+#'   admissions per 100K population).}
+#'   \item{disease}{`Influenza`, `COVID-19`, `RSV`, or
+#'   `ARI` (acute respiratory infections).}
+#'   \item{location}{US jurisdiction or the United
+#'   States as a whole, using two-letter codes (the
+#'   values of `abbr`) in [us_location_table].}
+#'   \item{values}{List column of named numeric vectors
+#'   of cutpoints, named `very_low`, `low`, `moderate`,
+#'   `high`, `very_high`, and `upper_bound`.}
 #' }
-#'
-#' Values of `disease` are `Influenza`, `COVID-19`,
-#' `RSV`, and `ARI` (acute respiratory infections) (
-#' `nhsn` provides no `ARI` thresholds).
-#'
-#' Values of `location` are US jurisdictions and the
-#' United States as a whole, using two-letter codes
-#' (the values of `abbr`) in [us_location_table].
-#' `nhsn` provides no thresholds for `GU`, `MO`, `WY`,
-#' or `US`.
-#'
-#' A given `as_of` array contains only the signals
-#' published on that date (`signal` coverage varies
-#' across the list).
 #'
 #' @source <data-raw/prism_thresholds.R>
 "prism_thresholds"

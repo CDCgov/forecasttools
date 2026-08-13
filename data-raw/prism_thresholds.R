@@ -32,37 +32,6 @@ normalize_thresholds <- function(dat, signal) {
 }
 
 
-thresholds_to_array <- function(dat) {
-  sorted <- dat |>
-    tidyr::complete(
-      .data$signal,
-      .data$location,
-      .data$disease,
-      .data$breaks
-    ) |>
-    dplyr::arrange(
-      .data$signal,
-      .data$location,
-      .data$disease,
-      .data$breaks
-    ) |>
-    dplyr::select("signal", "location", "disease", "breaks", "value")
-
-  dims <- sorted |>
-    dplyr::select(-"value") |>
-    purrr::map(unique) |>
-    purrr::map(as.character) |>
-    rev()
-
-  checkmate::assert_true(nrow(sorted) == prod(lengths(dims)))
-
-  return(array(
-    data = sorted$value,
-    dim = lengths(dims),
-    dimnames = dims
-  ))
-}
-
 prism_files <-
   tibble::tibble(
     "file_path" = fs::path("inst", "extdata", "prism_thresholds") |>
@@ -115,43 +84,49 @@ long_thresholds <-
 
 prism_thresholds <-
   long_thresholds |>
-  dplyr::arrange(.data$as_of) |>
-  tidyr::nest(.by = "as_of", .key = "thresholds") |>
-  dplyr::mutate(
-    thresholds = purrr::map(.data$thresholds, thresholds_to_array)
+  dplyr::arrange(
+    .data$as_of,
+    .data$signal,
+    .data$disease,
+    .data$location,
+    .data$breaks
   ) |>
-  tibble::deframe()
+  dplyr::summarise(
+    values = list(rlang::set_names(.data$value, .data$breaks)),
+    .by = c("as_of", "signal", "disease", "location")
+  )
 
-purrr::iwalk(prism_thresholds, \(thresholds, as_of_name) {
-  dat <- dplyr::filter(long_thresholds, .data$as_of == as.Date(as_of_name))
-  dims <- dimnames(thresholds)
+prism_thresholds |>
+  dplyr::count(
+    .data$as_of,
+    .data$signal,
+    .data$disease,
+    .data$location
+  ) |>
+  dplyr::pull("n") |>
+  checkmate::assert_set_equal(1)
 
-  testthat::expect_equal(sum(!is.na(thresholds)), nrow(dat))
-
-  purrr::walk(1:1000, \(i) {
-    tmp_sample <- dims |> purrr::map_chr(\(x) sample(x, 1))
-
-    actual <- thresholds[,
-      tmp_sample[["disease"]],
-      tmp_sample[["location"]],
-      tmp_sample[["signal"]]
-    ] |>
-      unname()
-
-    expected <- dat |>
-      dplyr::filter(
-        .data$signal == tmp_sample[["signal"]],
-        .data$disease == tmp_sample[["disease"]],
-        .data$location == tmp_sample[["location"]]
-      ) |>
-      dplyr::pull("value")
-
-    if (length(expected) == 0) {
-      testthat::expect_true(all(is.na(actual)))
-    } else {
-      testthat::expect_identical(actual, expected)
-    }
+prism_thresholds$values |>
+  purrr::walk(\(x) {
+    checkmate::assert_numeric(x, any.missing = FALSE, names = "unique")
   })
+
+prism_thresholds$values |>
+  purrr::map(names) |>
+  unique() |>
+  checkmate::assert_list(len = 1)
+
+purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
+  expected <- long_thresholds |>
+    dplyr::filter(
+      .data$as_of == !!as_of,
+      .data$signal == !!signal,
+      .data$disease == !!disease,
+      .data$location == !!location
+    ) |>
+    dplyr::pull("value")
+
+  testthat::expect_identical(unname(values), expected)
 })
 
 usethis::use_data(prism_thresholds, overwrite = TRUE)

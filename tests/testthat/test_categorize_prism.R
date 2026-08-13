@@ -19,26 +19,21 @@ break_names <- c(
   "upper_bound"
 )
 
-prism_as_ofs <- names(forecasttools::prism_thresholds)
-
-prism_signals <- forecasttools::prism_thresholds |>
-  purrr::map(\(x) dimnames(x)$signal) |>
-  unlist(use.names = FALSE) |>
-  unique()
+prism_signals <- unique(forecasttools::prism_thresholds$signal)
 
 as_ofs_for_signal <- function(signal) {
   forecasttools::prism_thresholds |>
-    purrr::keep(\(x) signal %in% dimnames(x)$signal) |>
-    names()
+    dplyr::filter(.data$signal == !!signal) |>
+    dplyr::pull("as_of") |>
+    unique()
 }
 
 latest_as_of_for_signal <- function(signal) {
-  max(lubridate::as_date(as_ofs_for_signal(signal))) |> as.character()
+  max(as_ofs_for_signal(signal))
 }
 
-query_date_for <- function(vintage) {
-  vintages <- prism_as_ofs |> lubridate::as_date() |> sort()
-  vintage <- lubridate::as_date(vintage)
+query_date_for <- function(signal, vintage) {
+  vintages <- sort(as_ofs_for_signal(signal))
   later_vintages <- vintages[vintages > vintage]
 
   offset <- if (length(later_vintages) == 0) {
@@ -50,33 +45,21 @@ query_date_for <- function(vintage) {
   return(vintage + offset)
 }
 
-covered_combinations <- function(vintage) {
-  thresholds <- forecasttools::prism_thresholds[[vintage]]
-  dims <- dimnames(thresholds)
-  vintage_query_date <- query_date_for(vintage)
+prism_rows <- forecasttools::prism_thresholds |>
+  dplyr::mutate(
+    query_date = purrr::map2_vec(
+      .data$signal,
+      .data$as_of,
+      query_date_for
+    )
+  )
 
-  tidyr::expand_grid(
-    as_of = vintage,
-    signal = dims$signal,
-    location = dims$location,
-    disease = dims$disease
+prism_params <- prism_rows |>
+  dplyr::filter(
+    .data$as_of == latest_as_of_for_signal(.data$signal),
+    .by = "signal"
   ) |>
-    dplyr::filter(purrr::pmap_lgl(
-      list(.data$disease, .data$location, .data$signal),
-      \(disease, location, signal) {
-        !anyNA(thresholds[, disease, location, signal])
-      }
-    )) |>
-    dplyr::mutate(query_date = vintage_query_date)
-}
-
-prism_params <- prism_signals |>
-  purrr::map(\(signal) {
-    covered_combinations(latest_as_of_for_signal(signal)) |>
-      dplyr::filter(.data$signal == !!signal) |>
-      dplyr::select("signal", "location", "disease")
-  }) |>
-  purrr::list_rbind()
+  dplyr::select("signal", "location", "disease")
 
 
 test_that(
@@ -85,24 +68,17 @@ test_that(
     "then reads identically to a manual read from the table "
   ),
   {
-    prism_as_ofs |>
-      purrr::map(covered_combinations) |>
-      purrr::list_rbind() |>
+    prism_rows |>
       dplyr::sample_n(100) |>
       purrr::pmap(
-        \(as_of, signal, location, disease, query_date) {
+        \(as_of, signal, disease, location, values, query_date) {
           result <- get_prism_cutpoints(
             location,
             disease,
             query_date,
             signal = signal
           )
-          expected <- forecasttools::prism_thresholds[[as_of]][,
-            disease,
-            location,
-            signal
-          ]
-          expect_equal(result, list(expected))
+          expect_equal(result, list(values))
         }
       )
   }
@@ -209,7 +185,7 @@ test_that("error is thrown for invalid as_of", {
         signal = signal
       ) |>
         suppressWarnings(),
-      regexp = "No available PRISM cutpoints"
+      regexp = "No PRISM"
     )
   })
 })

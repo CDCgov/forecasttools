@@ -3,9 +3,9 @@
 \docType{data}
 \name{prism_thresholds}
 \alias{prism_thresholds}
-\title{PRISM respiratory virus activity level thresholds}
+\title{PRISM respiratory virus activity level thresholds.}
 \format{
-An object of class \code{list} of length 3.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 571 rows and 5 columns.
 }
 \source{
 <data-raw/prism_thresholds.R>
@@ -14,39 +14,26 @@ An object of class \code{list} of length 3.
 prism_thresholds
 }
 \description{
-A named list of multi-dimensional arrays with PRISM
-respiratory virus activity level thresholds, one
-array per \code{as_of} date. The names of the list are
-the dates from which a given set of thresholds is
-valid.
-}
-\details{
-Every array has the same dimensions, in order:
-\code{breaks}, \code{disease}, \code{location}, and \code{signal}.
-
-Values of \code{breaks} are \code{very_low}, \code{low},
-\code{moderate}, \code{high}, \code{very_high}, and \code{upper_bound}.
-
-Values of \code{signal} are:
+A \code{\link[tibble:tibble]{tibble}} of PRISM respiratory
+virus activity level thresholds (one row per
+combination of \code{as_of}, \code{signal}, \code{disease}, and
+\code{location}):
 \describe{
-\item{nssp}{Emergency department visit thresholds,
-as proportions of visits, bounded above by 1.}
-\item{nhsn}{Hospital admission thresholds, as
-weekly admissions per 100K population.}
+\item{as_of}{Date from which the row's thresholds
+are valid.}
+\item{signal}{Surveillance signal, \code{nssp}
+(emergency department visit thresholds, as
+proportions of visits, bounded above by 1) or
+\code{nhsn} (hospital admission thresholds, as weekly
+admissions per 100K population).}
+\item{disease}{\code{Influenza}, \code{COVID-19}, \code{RSV}, or
+\code{ARI} (acute respiratory infections).}
+\item{location}{US jurisdiction or the United
+States as a whole, using two-letter codes (the
+values of \code{abbr}) in \link{us_location_table}.}
+\item{values}{List column of named numeric vectors
+of cutpoints, named \code{very_low}, \code{low}, \code{moderate},
+\code{high}, \code{very_high}, and \code{upper_bound}.}
 }
-
-Values of \code{disease} are \code{Influenza}, \code{COVID-19},
-\code{RSV}, and \code{ARI} (acute respiratory infections) (
-\code{nhsn} provides no \code{ARI} thresholds).
-
-Values of \code{location} are US jurisdictions and the
-United States as a whole, using two-letter codes
-(the values of \code{abbr}) in \link{us_location_table}.
-\code{nhsn} provides no thresholds for \code{GU}, \code{MO}, \code{WY},
-or \code{US}.
-
-A given \code{as_of} array contains only the signals
-published on that date (\code{signal} coverage varies
-across the list).
 }
 \keyword{datasets}

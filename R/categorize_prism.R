@@ -5,24 +5,28 @@ prism_signal_deprecation_details <- glue::glue(
   "PRISM thresholds are now available for both NSSP and NHSN."
 )
 
-resolve_prism_as_of <- function(as_of) {
-  available_as_ofs <- forecasttools::prism_thresholds |>
-    names() |>
-    lubridate::as_date()
+lookup_prism_cutpoints <- function(signal, disease, location, as_of) {
+  candidates <- forecasttools::prism_thresholds |>
+    dplyr::filter(
+      .data$signal == !!signal,
+      .data$disease == !!disease,
+      .data$location == !!location,
+      .data$as_of <= !!as_of
+    )
 
-  usable_as_ofs <- available_as_ofs[as_of >= available_as_ofs]
-
-  if (length(usable_as_ofs) == 0) {
-    stop(
-      "No available PRISM cutpoints for as_of date ",
-      as.character(as_of),
-      ". Earliest available date is ",
-      as.character(min(available_as_ofs)),
-      "."
+  if (nrow(candidates) == 0) {
+    cli::cli_abort(
+      "No PRISM {.val {signal}} cutpoints for disease {.val {disease}}
+       in location {.val {location}} as of {as_of}."
     )
   }
 
-  return(as.character(max(usable_as_ofs)))
+  matches <- candidates |>
+    dplyr::filter(.data$as_of == max(.data$as_of))
+
+  checkmate::assert_true(nrow(matches) == 1)
+
+  return(matches$values[[1]])
 }
 
 #' Get PRISM activity level cutpoints given
@@ -71,41 +75,20 @@ get_prism_cutpoints <- function(
   target_location <- stringr::str_to_lower(location)
   target_disease <- stringr::str_to_lower(disease)
 
+  checkmate::assert_names(
+    target_signal,
+    subset.of = unique(forecasttools::prism_thresholds$signal),
+    what = "signal"
+  )
+
   as_of <- lubridate::as_date(as_of)
 
   checkmate::assert_scalar(as_of)
 
-  thresholds <- forecasttools::prism_thresholds[[resolve_prism_as_of(as_of)]]
-
-  checkmate::assert_names(
-    target_disease,
-    subset.of = dimnames(thresholds)$disease,
-    what = "disease"
-  )
-  checkmate::assert_names(
-    target_location,
-    subset.of = dimnames(thresholds)$location,
-    what = "location"
-  )
-  checkmate::assert_names(
-    target_signal,
-    subset.of = dimnames(thresholds)$signal,
-    what = "signal"
-  )
-
   return(purrr::pmap(
     list(target_disease, target_location, target_signal),
     \(disease, location, signal) {
-      cutpoints <- thresholds[, disease, location, signal]
-
-      if (anyNA(cutpoints)) {
-        cli::cli_abort(
-          "No {signal} PRISM cutpoints for disease {.val {disease}}
-           in location {.val {location}} as of {as_of}."
-        )
-      }
-
-      cutpoints
+      lookup_prism_cutpoints(signal, disease, location, as_of)
     }
   ))
 }
