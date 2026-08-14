@@ -143,9 +143,10 @@ test_that("NSSP and NHSN thresholds are on their documented scales", {
   expect_named(nssp, break_names)
   expect_named(nhsn, break_names)
 
-  expect_equal(unname(nssp[["upper_bound"]]), 1)
-  expect_equal(unname(nhsn[["upper_bound"]]), Inf)
-  expect_true(all(nssp[1:5] <= 1))
+  checkmate::expect_numeric(nssp, upper = 1)
+
+  expect_equal(nssp[["upper_bound"]], 1)
+  expect_equal(nhsn[["upper_bound"]], Inf)
 })
 
 
@@ -162,11 +163,10 @@ test_that("flexible capitalization of signals, locations, and diseases works", {
     )
   ) |>
     dplyr::mutate(
-      cuts = purrr::pmap(
-        list(.data$location, .data$disease, .data$signal),
-        \(location, disease, signal) {
-          get_prism_cutpoints(location, disease, signal = signal)
-        }
+      cuts = get_prism_cutpoints(
+        .data$location,
+        .data$disease,
+        signal = .data$signal
       )
     ) |>
     dplyr::pull("cuts") |>

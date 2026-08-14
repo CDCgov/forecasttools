@@ -5,7 +5,21 @@ prism_signal_deprecation_details <- glue::glue(
   "PRISM thresholds are now available for both NSSP and NHSN."
 )
 
+prism_bin_names_from_cutpoints <- function(cutpoints) {
+  return(
+    names(cutpoints) |>
+      utils::head(-1) |>
+      stringr::str_replace_all("_", " ") |>
+      stringr::str_to_title()
+  )
+}
+
 get_single_prism_cutpoint <- function(signal, disease, location, as_of) {
+  checkmate::assert_string(signal)
+  checkmate::assert_string(disease)
+  checkmate::assert_string(location)
+  checkmate::assert_date(as_of, len = 1, any.missing = FALSE)
+
   candidates <- forecasttools::prism_thresholds |>
     dplyr::filter(
       .data$signal == !!signal,
@@ -16,8 +30,8 @@ get_single_prism_cutpoint <- function(signal, disease, location, as_of) {
 
   if (nrow(candidates) == 0) {
     cli::cli_abort(
-      "No PRISM {.val {signal}} cutpoints for disease {.val {disease}}
-       in location {.val {location}} as of {as_of}."
+      "No PRISM cutpoints for signal {.val {signal}}, disease
+       {.val {disease}}, and location {.val {location}} as of {as_of}."
     )
   }
 
@@ -75,15 +89,7 @@ get_prism_cutpoints <- function(
   target_location <- stringr::str_to_lower(location)
   target_disease <- stringr::str_to_lower(disease)
 
-  checkmate::assert_names(
-    target_signal,
-    subset.of = unique(forecasttools::prism_thresholds$signal),
-    what = "signal"
-  )
-
   as_of <- lubridate::as_date(as_of)
-
-  checkmate::assert_scalar(as_of)
 
   return(purrr::pmap(
     list(target_disease, target_location, target_signal),
@@ -103,14 +109,14 @@ get_prism_cutpoints <- function(
 #' to `value` or a single location for all `value`.
 #' @param disease vector of disease of length equal to
 #' `value` or a single disease for all `value`.
-#' @param as_of date for which to get the PRISM
-#' cutpoints. Defaults to today.
-#' @param prism_bin_names Bin names for the PRISM bins.
+#' @param prism_bin_names Bin names for the PRISM bins,
 #' in order from lowest to highest. Must be a vector of
 #' length 5. `list(prism_bin_names)` will be passed as
 #' the `label_sets` argument to [categorize_vector()].
-#' Defaults to the standard PRISM bin names in title
-#' case: `default_prism_bin_names`.
+#' If `NULL` (the default), derived from the cutpoint
+#' names by dropping the upper bound and converting to
+#' title case, giving `"Very Low"`, `"Low"`,
+#' `"Moderate"`, `"High"`, and `"Very High"`.
 #' @inheritParams get_prism_cutpoints
 #' @return A factor vector of category labels, equal in
 #' length to the input vector `value`.
@@ -121,7 +127,7 @@ categorize_prism <- function(
   location,
   disease,
   as_of = lubridate::today(),
-  prism_bin_names = default_prism_bin_names,
+  prism_bin_names = NULL,
   signal = lifecycle::deprecated()
 ) {
   if (!lifecycle::is_present(signal)) {
@@ -139,6 +145,10 @@ categorize_prism <- function(
     as_of,
     signal = signal
   )
+
+  if (is.null(prism_bin_names)) {
+    prism_bin_names <- prism_bin_names_from_cutpoints(cutpoints[[1]])
+  }
 
   return(categorize_vector(
     value,

@@ -10,7 +10,7 @@ categorize_prism(
   location,
   disease,
   as_of = lubridate::today(),
-  prism_bin_names = default_prism_bin_names,
+  prism_bin_names = NULL,
   signal = lifecycle::deprecated()
 )
 }
@@ -23,15 +23,18 @@ to \code{value} or a single location for all \code{value}.}
 \item{disease}{vector of disease of length equal to
 \code{value} or a single disease for all \code{value}.}
 
-\item{as_of}{date for which to get the PRISM
-cutpoints. Defaults to today.}
+\item{as_of}{single date for which the cutpoints are
+valid, applied to every \code{location}, \code{disease}, and
+\code{signal}. Defaults to today.}
 
-\item{prism_bin_names}{Bin names for the PRISM bins.
+\item{prism_bin_names}{Bin names for the PRISM bins,
 in order from lowest to highest. Must be a vector of
 length 5. \code{list(prism_bin_names)} will be passed as
 the \code{label_sets} argument to \code{\link[=categorize_vector]{categorize_vector()}}.
-Defaults to the standard PRISM bin names in title
-case: \code{default_prism_bin_names}.}
+If \code{NULL} (the default), derived from the cutpoint
+names by dropping the upper bound and converting to
+title case, giving \code{"Very Low"}, \code{"Low"},
+\code{"Moderate"}, \code{"High"}, and \code{"Very High"}.}
 
 \item{signal}{surveillance signal(s) for which to
 return the cutpoints. One of \code{"NSSP"} (proportions
