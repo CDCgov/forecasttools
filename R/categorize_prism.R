@@ -5,7 +5,7 @@ prism_signal_deprecation_details <- glue::glue(
   "PRISM thresholds are now available for both NSSP and NHSN."
 )
 
-lookup_prism_cutpoints <- function(signal, disease, location, as_of) {
+get_single_prism_cutpoint <- function(signal, disease, location, as_of) {
   candidates <- forecasttools::prism_thresholds |>
     dplyr::filter(
       .data$signal == !!signal,
@@ -88,7 +88,7 @@ get_prism_cutpoints <- function(
   return(purrr::pmap(
     list(target_disease, target_location, target_signal),
     \(disease, location, signal) {
-      lookup_prism_cutpoints(signal, disease, location, as_of)
+      get_single_prism_cutpoint(signal, disease, location, as_of)
     }
   ))
 }
