@@ -24,7 +24,7 @@ lookup_prism_cutpoints <- function(signal, disease, location, as_of) {
   matches <- candidates |>
     dplyr::filter(.data$as_of == max(.data$as_of))
 
-  checkmate::assert_true(nrow(matches) == 1)
+  checkmate::assert_data_frame(matches, nrows = 1)
 
   return(matches$values[[1]])
 }

@@ -92,7 +92,7 @@ prism_thresholds <-
     .data$breaks
   ) |>
   dplyr::summarise(
-    values = list(rlang::set_names(.data$value, .data$breaks)),
+    values = list(purrr::set_names(.data$value, .data$breaks)),
     .by = c("as_of", "signal", "disease", "location")
   )
 
@@ -111,10 +111,18 @@ prism_thresholds$values |>
     checkmate::assert_numeric(x, any.missing = FALSE, names = "unique")
   })
 
+expected_bin_names <- c(
+  "very_low",
+  "low",
+  "moderate",
+  "high",
+  "very_high",
+  "upper_bound"
+)
 prism_thresholds$values |>
-  purrr::map(names) |>
-  unique() |>
-  checkmate::assert_list(len = 1)
+  purrr::walk(\(x) {
+    checkmate::assert_names(names(x), identical.to = expected_names)
+  })
 
 purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
   expected <- long_thresholds |>
