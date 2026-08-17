@@ -4,9 +4,8 @@
 \alias{cdc_hub_std_colnames}
 \alias{covidhub_std_colnames}
 \alias{flusight_std_colnames}
-\title{Names of standard columns for the
-the CDC FluSight and COVID-19 Forecast Hubs, with
-convenient aliases.}
+\title{Names of standard columns for the CDC FluSight and
+COVID-19 Forecast Hubs, with convenient aliases.}
 \usage{
 cdc_hub_std_colnames
 
@@ -15,7 +14,6 @@ covidhub_std_colnames
 flusight_std_colnames
 }
 \description{
-Names of standard columns for the
-the CDC FluSight and COVID-19 Forecast Hubs, with
-convenient aliases.
+Names of standard columns for the CDC FluSight and
+COVID-19 Forecast Hubs, with convenient aliases.
 }

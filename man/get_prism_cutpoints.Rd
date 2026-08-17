@@ -3,32 +3,60 @@
 \name{get_prism_cutpoints}
 \alias{get_prism_cutpoints}
 \title{Get PRISM activity level cutpoints given
-disease and location}
+disease and location.}
 \usage{
-get_prism_cutpoints(location, disease, as_of = lubridate::today())
+get_prism_cutpoints(
+  location,
+  disease,
+  as_of = lubridate::today(),
+  signal = lifecycle::deprecated()
+)
 }
 \arguments{
-\item{location}{location(s) for which to return the cutpoints, as
-a two-letter abbreviation. Use \link{us_location_recode} with
-\code{location_output_format = "abbr"} to convert to this format.}
+\item{location}{location(s) for which to return the
+cutpoints, as a two-letter abbreviation. Use
+\link{us_location_recode} with
+\code{location_output_format = "abbr"} to convert to this
+format.}
 
-\item{disease}{disease(s) for which to return the cutpoints.
-One of \code{"ARI"}, \code{"COVID-19"}, \code{"Influenza"}, or \code{"RSV"}, or
-an array of those values.}
+\item{disease}{disease(s) for which to return the
+cutpoints. One of \code{"ARI"}, \code{"COVID-19"},
+\code{"Influenza"}, or \code{"RSV"}, or an array of those
+values. NHSN provides no \code{"ARI"} thresholds.}
 
-\item{as_of}{date for which the cutpoints are valid. Defaults to today.}
+\item{as_of}{single date for which the cutpoints are
+valid, applied to every \code{location}, \code{disease}, and
+\code{signal}. Defaults to today.}
+
+\item{signal}{surveillance signal(s) for which to
+return the cutpoints. One of \code{"NSSP"} (proportions
+of emergency department visits) or \code{"NHSN"} (weekly
+hospital admissions per 100k population), or an
+array of those values. If not given, defaults to
+\code{"NSSP"} with a deprecation warning (a future
+version will require it).}
 }
 \value{
-The cutpoints, as a list of vectors.
+The cutpoints, as a list of vectors, named
+\code{very_low}, \code{low}, \code{moderate}, \code{high}, \code{very_high},
+and \code{upper_bound} for every signal.
 }
 \description{
 Get PRISM activity level cutpoints given
-disease and location
+disease and location.
 }
 \examples{
-get_prism_cutpoints("WA", "Influenza")
+get_prism_cutpoints("WA", "Influenza", signal = "NHSN")
 
-get_prism_cutpoints(c("US", "WA"), "COVID-19")
+get_prism_cutpoints(c("US", "WA"), "COVID-19", signal = "NSSP")
 
-get_prism_cutpoints(c("US", "WA"), c("ARI", "RSV"), as.Date("2025-01-01"))
+get_prism_cutpoints(
+  c("US", "WA"),
+  c("COVID-19", "RSV"),
+  as.Date("2025-01-01"),
+  signal = "NSSP"
+)
+
+get_prism_cutpoints("WA", "Influenza", signal = c("NSSP", "NHSN"))
+
 }

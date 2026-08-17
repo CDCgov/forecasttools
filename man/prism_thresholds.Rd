@@ -3,9 +3,9 @@
 \docType{data}
 \name{prism_thresholds}
 \alias{prism_thresholds}
-\title{PRISM respiratory virus activity level thresholds}
+\title{PRISM respiratory virus activity level thresholds.}
 \format{
-An object of class \code{array} of dimension 6 x 4 x 53 x 2.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 571 rows and 5 columns.
 }
 \source{
 <data-raw/prism_thresholds.R>
@@ -14,22 +14,26 @@ An object of class \code{array} of dimension 6 x 4 x 53 x 2.
 prism_thresholds
 }
 \description{
-A multi-dimensional array with PRISM
-respiratory virus activity level thresholds.
-Dimensions, in order, are \code{location},
-\code{disease}, and \code{breaks}.
+A \code{\link[tibble:tibble]{tibble}} of PRISM respiratory
+virus activity level thresholds (one row per
+combination of \code{as_of}, \code{signal}, \code{disease}, and
+\code{location}):
+\describe{
+\item{as_of}{Date from which the row's thresholds
+are valid.}
+\item{signal}{Surveillance signal, \code{nssp}
+(emergency department visit thresholds, as
+proportions of visits, bounded above by 1) or
+\code{nhsn} (hospital admission thresholds, as weekly
+admissions per 100K population).}
+\item{disease}{\code{Influenza}, \code{COVID-19}, \code{RSV}, or
+\code{ARI} (acute respiratory infections).}
+\item{location}{US jurisdiction or the United
+States as a whole, using two-letter codes (the
+values of \code{abbr}) in \link{us_location_table}.}
+\item{values}{List column of named numeric vectors
+of cutpoints, named \code{very_low}, \code{low}, \code{moderate},
+\code{high}, \code{very_high}, and \code{upper_bound}.}
 }
-\details{
-Values of \code{disease} are \code{Influenza}, \code{COVID-19},
-\code{RSV}, and \code{ARI} (acute respiratory infections).
-
-Values of \code{breaks} are \code{prop_very_low},
-\code{prop_low}, \code{prop_moderate}, \code{prop_high},
-\code{prop_very_high}, and \code{prop_upper_bound}.
-
-Values of \code{location} are US jurisdictions
-and the United States as a whole, using
-USPS two-letter codes (the values of \code{abbr})
-in \link{us_location_table}.
 }
 \keyword{datasets}

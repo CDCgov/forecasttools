@@ -59,24 +59,29 @@
 #' @source <data-raw/ex_inferencedata_dataframe.R>
 "ex_inferencedata_dataframe"
 
-#' PRISM respiratory virus activity level thresholds
+#' PRISM respiratory virus activity level thresholds.
 #'
-#' A multi-dimensional array with PRISM
-#' respiratory virus activity level thresholds.
-#' Dimensions, in order, are `location`,
-#' `disease`, and `breaks`.
-#'
-#' Values of `disease` are `Influenza`, `COVID-19`,
-#' `RSV`, and `ARI` (acute respiratory infections).
-#'
-#' Values of `breaks` are `prop_very_low`,
-#' `prop_low`, `prop_moderate`, `prop_high`,
-#' `prop_very_high`, and `prop_upper_bound`.
-#'
-#' Values of `location` are US jurisdictions
-#' and the United States as a whole, using
-#' USPS two-letter codes (the values of `abbr`)
-#' in [us_location_table].
+#' A [`tibble`][tibble::tibble()] of PRISM respiratory
+#' virus activity level thresholds (one row per
+#' combination of `as_of`, `signal`, `disease`, and
+#' `location`):
+#' \describe{
+#'   \item{as_of}{Date from which the row's thresholds
+#'   are valid.}
+#'   \item{signal}{Surveillance signal, `nssp`
+#'   (emergency department visit thresholds, as
+#'   proportions of visits, bounded above by 1) or
+#'   `nhsn` (hospital admission thresholds, as weekly
+#'   admissions per 100K population).}
+#'   \item{disease}{`Influenza`, `COVID-19`, `RSV`, or
+#'   `ARI` (acute respiratory infections).}
+#'   \item{location}{US jurisdiction or the United
+#'   States as a whole, using two-letter codes (the
+#'   values of `abbr`) in [us_location_table].}
+#'   \item{values}{List column of named numeric vectors
+#'   of cutpoints, named `very_low`, `low`, `moderate`,
+#'   `high`, `very_high`, and `upper_bound`.}
+#' }
 #'
 #' @source <data-raw/prism_thresholds.R>
 "prism_thresholds"

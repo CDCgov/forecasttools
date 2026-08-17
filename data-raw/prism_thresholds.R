@@ -1,97 +1,140 @@
-prism_dfs <-
-  tibble::tibble(
-    "file_path" = fs::path("inst", "extdata") |>
-      fs::dir_ls()
-  ) |>
-  dplyr::filter(
-    file_path |>
-      fs::path_file() |>
-      stringr::str_detect(
-        "^prism_thresholds_\\d{4}-\\d{2}-\\d{2}\\.tsv$"
+prism_signal_specs <- list(
+  "nssp" = list(upper_bound = 1),
+  "nhsn" = list(upper_bound = Inf)
+)
+
+
+normalize_thresholds <- function(dat, signal) {
+  if (signal == "nssp") {
+    dat <- dat |>
+      dplyr::mutate(dplyr::across(
+        dplyr::starts_with("perc_level_"),
+        \(x) x / 100
+      )) |>
+      dplyr::rename_with(
+        \(x) stringr::str_remove(x, "^perc_"),
+        dplyr::starts_with("perc_level_")
       )
+  }
+
+  if (signal == "nhsn") {
+    dat <- dat |>
+      dplyr::filter(.data$unit == "rate") |>
+      dplyr::select(-"unit", -"total_population", -"hhs_region")
+  }
+
+  dat |>
+    dplyr::rename("location" = "state_abb") |>
+    dplyr::mutate("level_very_low" = 0, .before = "level_low") |>
+    dplyr::mutate(
+      "level_upper_bound" = prism_signal_specs[[signal]]$upper_bound
+    )
+}
+
+
+prism_files <-
+  tibble::tibble(
+    "file_path" = fs::path("inst", "extdata", "prism_thresholds") |>
+      fs::dir_ls(recurse = TRUE, glob = "*.tsv")
   ) |>
   dplyr::mutate(
-    as_of = file_path |>
+    signal = .data$file_path |>
+      fs::path_dir() |>
+      fs::path_file(),
+    as_of = .data$file_path |>
       fs::path_file() |>
-      stringr::str_extract("\\d{4}-\\d{2}-\\d{2}") |>
-      as.Date()
-  ) |>
-  dplyr::mutate(
-    dat = purrr::map(file_path, \(x) {
+      fs::path_ext_remove() |>
+      lubridate::ymd(),
+    dat = purrr::map(.data$file_path, \(x) {
       readr::read_tsv(x, show_col_types = FALSE) |>
         dplyr::arrange(.data$disease, .data$state_abb)
     })
   ) |>
-  dplyr::select(-file_path)
+  dplyr::select(-"file_path")
 
-# Expect constituent data frames are only different in their perc_levels.
-prism_dfs$dat |>
-  purrr::map(\(x) {
-    dplyr::mutate(x, dplyr::across(dplyr::starts_with("perc_level_"), \(y) NA))
-  }) |>
-  dplyr::n_distinct() |>
-  testthat::expect_equal(1)
+prism_files$as_of |>
+  checkmate::assert_date(any.missing = FALSE, .var.name = "as_of")
 
-prop_thresholds <-
-  prism_dfs |>
+
+prism_files$signal |>
+  unique() |>
+  testthat::expect_setequal(names(prism_signal_specs))
+
+
+long_thresholds <-
+  prism_files |>
+  dplyr::mutate(
+    dat = purrr::map2(.data$dat, .data$signal, normalize_thresholds)
+  ) |>
   tidyr::unnest("dat") |>
   dplyr::mutate(dplyr::across(
     dplyr::where(is.character),
     stringr::str_to_lower
   )) |>
-  dplyr::mutate(dplyr::across(
-    dplyr::starts_with("perc_level_"),
-    \(x) x / 100
-  )) |>
-  dplyr::rename_with(
-    \(x) stringr::str_replace(x, "perc_level_", "prop_"),
-    dplyr::starts_with("perc_level_")
-  ) |>
-  dplyr::rename("location" = "state_abb") |>
-  dplyr::mutate("prop_very_low" = 0, .after = "location") |>
-  dplyr::mutate("prop_upper_bound" = 1) |>
   tidyr::pivot_longer(
-    cols = dplyr::starts_with("prop_"),
+    cols = dplyr::starts_with("level_"),
     names_to = "breaks",
     values_to = "value"
   ) |>
-  dplyr::mutate(breaks = forcats::fct_inorder(breaks)) |>
-  dplyr::arrange(as_of, location, disease, breaks) |>
-  dplyr::select("as_of", "location", "disease", "breaks", dplyr::everything())
-
-# convert to array
-dims <- prop_thresholds |>
-  dplyr::select(-value) |>
-  purrr::map(unique) |>
-  purrr::map(as.character) |>
-  rev()
-
-prism_thresholds <- array(
-  data = prop_thresholds$value,
-  dim = lengths(dims),
-  dimnames = dims
-)
-
-# test that array construction is correct
-purrr::walk(1:1000, \(i) {
-  tmp_sample <- dims |> purrr::map_chr(\(x) sample(x, 1))
-
-  testthat::expect_identical(
-    prism_thresholds[,
-      tmp_sample[["disease"]],
-      tmp_sample[["location"]],
-      tmp_sample[["as_of"]]
-    ] |>
-      unname(),
-
-    prop_thresholds |>
-      dplyr::filter(
-        as_of == as.Date(tmp_sample[["as_of"]]),
-        disease == tmp_sample[["disease"]],
-        location == tmp_sample[["location"]]
-      ) |>
-      dplyr::pull(value)
+  dplyr::mutate(
+    breaks = .data$breaks |>
+      stringr::str_remove("^level_") |>
+      forcats::fct_inorder()
   )
+
+prism_thresholds <-
+  long_thresholds |>
+  dplyr::arrange(
+    .data$as_of,
+    .data$signal,
+    .data$disease,
+    .data$location,
+    .data$breaks
+  ) |>
+  dplyr::summarise(
+    values = list(purrr::set_names(.data$value, .data$breaks)),
+    .by = c("as_of", "signal", "disease", "location")
+  )
+
+prism_thresholds |>
+  dplyr::count(
+    .data$as_of,
+    .data$signal,
+    .data$disease,
+    .data$location
+  ) |>
+  dplyr::pull("n") |>
+  checkmate::assert_set_equal(1)
+
+prism_thresholds$values |>
+  purrr::walk(\(x) {
+    checkmate::assert_numeric(x, any.missing = FALSE, names = "unique")
+  })
+
+expected_bin_names <- c(
+  "very_low",
+  "low",
+  "moderate",
+  "high",
+  "very_high",
+  "upper_bound"
+)
+prism_thresholds$values |>
+  purrr::walk(\(x) {
+    checkmate::assert_names(names(x), identical.to = expected_names)
+  })
+
+purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
+  expected <- long_thresholds |>
+    dplyr::filter(
+      .data$as_of == !!as_of,
+      .data$signal == !!signal,
+      .data$disease == !!disease,
+      .data$location == !!location
+    ) |>
+    dplyr::pull("value")
+
+  testthat::expect_identical(unname(values), expected)
 })
 
 usethis::use_data(prism_thresholds, overwrite = TRUE)
