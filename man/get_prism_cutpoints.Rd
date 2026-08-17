@@ -40,6 +40,13 @@ version will require it).}
 The cutpoints, as a list of vectors, named
 \code{very_low}, \code{low}, \code{moderate}, \code{high}, \code{very_high},
 and \code{upper_bound} for every signal.
+
+#' @examples
+get_prism_cutpoints("WA", "Influenza", signal = "NHSN")
+
+get_prism_cutpoints(c("US", "WA"), "COVID-19")
+
+get_prism_cutpoints(c("US", "WA"), c("COVID-19", "RSV"), as.Date("2025-01-01"), signal = "NSSP")
 }
 \description{
 Get PRISM activity level cutpoints given

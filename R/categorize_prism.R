@@ -69,6 +69,13 @@ get_single_prism_cutpoint <- function(signal, disease, location, as_of) {
 #' `very_low`, `low`, `moderate`, `high`, `very_high`,
 #' and `upper_bound` for every signal.
 #'
+#' #' @examples
+#' get_prism_cutpoints("WA", "Influenza", signal = "NHSN")
+#'
+#' get_prism_cutpoints(c("US", "WA"), "COVID-19")
+#'
+#' get_prism_cutpoints(c("US", "WA"), c("COVID-19", "RSV"), as.Date("2025-01-01"), signal = "NSSP")
+#'
 #' @export
 get_prism_cutpoints <- function(
   location,
