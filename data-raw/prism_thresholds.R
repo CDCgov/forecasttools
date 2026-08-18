@@ -121,7 +121,7 @@ expected_bin_names <- c(
 )
 prism_thresholds$values |>
   purrr::walk(\(x) {
-    checkmate::assert_names(names(x), identical.to = expected_names)
+    checkmate::assert_names(names(x), identical.to = expected_bin_names)
   })
 
 purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
@@ -137,4 +137,63 @@ purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
   testthat::expect_identical(unname(values), expected)
 })
 
-usethis::use_data(prism_thresholds, overwrite = TRUE)
+prism_rate_reference_populations <-
+  prism_files |>
+  dplyr::mutate(
+    dat = purrr::map(.data$dat, \(x) {
+      if (!"total_population" %in% names(x)) {
+        return(NULL)
+      }
+      dplyr::distinct(
+        x,
+        location = .data$state_abb,
+        population = .data$total_population
+      )
+    })
+  ) |>
+  tidyr::unnest("dat") |>
+  dplyr::mutate(location = stringr::str_to_lower(.data$location)) |>
+  dplyr::select("location", "as_of", "population") |>
+  dplyr::arrange(.data$as_of, .data$location)
+
+
+prism_rate_reference_populations |>
+  dplyr::count(.data$location, .data$as_of) |>
+  dplyr::pull("n") |>
+  checkmate::assert_set_equal(1)
+
+prism_rate_reference_populations$population |>
+  checkmate::assert_integerish(lower = 1, any.missing = FALSE)
+
+rate_signals <- prism_files |>
+  dplyr::mutate(
+    has_pop = purrr::map_lgl(
+      .data$dat,
+      \(x) "total_population" %in% names(x)
+    )
+  ) |>
+  dplyr::filter(.data$has_pop) |>
+  dplyr::distinct(.data$signal, .data$as_of)
+
+purrr::pwalk(rate_signals, \(signal, as_of) {
+  population_locations <- prism_rate_reference_populations |>
+    dplyr::filter(.data$as_of == !!as_of) |>
+    dplyr::pull("location") |>
+    unique()
+
+  threshold_locations <- prism_thresholds |>
+    dplyr::filter(
+      .data$as_of == !!as_of,
+      .data$signal == !!signal
+    ) |>
+    dplyr::pull("location") |>
+    unique()
+
+  testthat::expect_setequal(population_locations, threshold_locations)
+})
+
+usethis::use_data(
+  prism_thresholds,
+  prism_rate_reference_populations,
+  overwrite = TRUE
+)
