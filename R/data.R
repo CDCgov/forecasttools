@@ -18,9 +18,17 @@
 
 #' Population estimates for US locations
 #'
-#' A table of population estimates for the United States as a whole
-#' and for US states, using the most recent Census Population Estimates
-#' Program vintage available when the dataset was generated.
+#' `r lifecycle::badge("deprecated")`
+#'
+#' A table of population estimates for the United States
+#' as a whole and for US states, using the most recent
+#' Census Population Estimates Program vintage available
+#' when the dataset was generated.
+#'
+#' @section Deprecation:
+#' This table is a single, unvintaged snapshot of
+#' whichever Census vintage was current when it was
+#' last generated (cannot be aligned to point in time).
 #'
 #' @format
 #' A tibble with 53 rows and 2 columns:
@@ -28,9 +36,31 @@
 #'   \item{name}{Full name of the location}
 #'   \item{population}{Estimated population count}
 #' }
-#' @source Census Population Estimates Program via `tidycensus::get_estimates()`
+#' @source Census Population Estimates Program via
+#' `tidycensus::get_estimates()`
 #' @source data-raw/us_location_pop.R
+#' @seealso [prism_rate_reference_populations],
+#' [get_prism_reference_population()]
 "us_location_pop"
+
+#' Reference populations underlying PRISM rate
+#' cutpoints.
+#'
+#' The population denominators PRISM used to derive its
+#' rate-scale activity level cutpoints, vintaged by
+#' `as_of` in the same way as [prism_thresholds].
+#'
+#' @format
+#' A tibble with 3 columns:
+#' \describe{
+#'   \item{location}{Two-letter location abbreviation, lowercase}
+#'   \item{as_of}{Date the reference population took effect}
+#'   \item{population}{Population denominator used by PRISM}
+#' }
+#' @source data-raw/prism_thresholds.R
+#' @seealso [get_prism_reference_population()],
+#' [prism_thresholds]
+"prism_rate_reference_populations"
 
 #' An example daily-resolution set of forecast trajectories for influenza.
 #'
