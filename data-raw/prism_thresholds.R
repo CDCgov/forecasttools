@@ -141,19 +141,14 @@ purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
 nhsn_population_rows <-
   prism_files |>
   dplyr::filter(.data$signal == "nhsn") |>
-  dplyr::mutate(
-    dat = purrr::map(.data$dat, \(x) {
-      x |>
-        dplyr::filter(.data$unit == "rate") |>
-        dplyr::select(
-          location = "state_abb",
-          population = "total_population"
-        )
-    })
-  ) |>
   tidyr::unnest("dat") |>
-  dplyr::mutate(location = stringr::str_to_lower(.data$location)) |>
-  dplyr::select("location", "as_of", "population")
+  dplyr::filter(.data$unit == "rate") |>
+  dplyr::select(
+    location = "state_abb",
+    "as_of",
+    population = "total_population"
+  ) |>
+  dplyr::mutate(location = stringr::str_to_lower(.data$location))
 
 nhsn_population_rows |>
   dplyr::summarise(
