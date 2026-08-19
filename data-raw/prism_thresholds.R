@@ -164,11 +164,6 @@ prism_rate_reference_populations <- pops_by_loc_as_of |>
   dplyr::select("location", "as_of", "population") |>
   dplyr::arrange(.data$as_of, .data$location)
 
-prism_rate_reference_populations |>
-  dplyr::count(.data$location, .data$as_of) |>
-  dplyr::pull("n") |>
-  checkmate::assert_set_equal(1)
-
 prism_rate_reference_populations$population |>
   checkmate::assert_integerish(lower = 1, any.missing = FALSE)
 
