@@ -1,27 +1,13 @@
-nhsn_source <- readr::read_tsv(
-  testthat::test_path(
-    "..",
-    "..",
-    "inst",
-    "extdata",
-    "prism_thresholds",
-    "nhsn",
-    "2026-08-06.tsv"
-  ),
-  show_col_types = FALSE
-)
+test_that("get_prism_reference_population matches the table it reads", {
+  latest_vintage <- max(prism_rate_reference_populations$as_of)
 
-test_that("get_prism_reference_population matches the published source", {
-  expected <- nhsn_source |>
-    dplyr::distinct(
-      location = .data$state_abb,
-      population = .data$total_population
-    ) |>
+  expected <- prism_rate_reference_populations |>
+    dplyr::filter(.data$as_of == !!latest_vintage) |>
     dplyr::arrange(.data$location)
 
   actual <- get_prism_reference_population(
     expected$location,
-    as_of = as.Date("2026-08-13")
+    as_of = latest_vintage
   )
 
   expect_identical(actual, as.double(expected$population))
@@ -29,7 +15,7 @@ test_that("get_prism_reference_population matches the published source", {
 
 
 test_that("get_prism_reference_population is vectorized over location", {
-  locations <- c("wa", "ca", "al")
+  locations <- c("wa", "ca", "wa", "al")
   actual <- get_prism_reference_population(locations)
 
   expect_length(actual, length(locations))
@@ -39,6 +25,7 @@ test_that("get_prism_reference_population is vectorized over location", {
     actual,
     purrr::map_dbl(locations, \(x) get_prism_reference_population(x))
   )
+  expect_identical(actual[[1]], actual[[3]])
 })
 
 
@@ -67,7 +54,14 @@ test_that("get_prism_reference_population uses the vintage in effect", {
 
 
 test_that("get_prism_reference_population errors without coverage", {
-  purrr::walk(c("us", "mo", "wy", "pr"), \(location) {
+  uncovered <- c("us", "mo", "wy", "pr")
+
+  expect_length(
+    intersect(uncovered, prism_rate_reference_populations$location),
+    0
+  )
+
+  purrr::walk(uncovered, \(location) {
     expect_error(
       get_prism_reference_population(location),
       "No PRISM reference population"
