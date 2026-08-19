@@ -154,12 +154,13 @@ pops_by_loc_as_of <-
   nhsn_population_rows |>
   dplyr::summarise(
     population = dplyr::first(.data$population),
-    n_pops = dplyr::n_distinct(.data$population)
+    n_pops = dplyr::n_distinct(.data$population),
     .by = c("as_of", "location")
   )
-  checkmate::assert_set_equal(prism_rate_reference_populations$n_pops, 1)
 
-  prism_rate_reference_populations <- pops_by_loc_as_of |>
+checkmate::assert_set_equal(pops_by_loc_as_of$n_pops, 1)
+
+prism_rate_reference_populations <- pops_by_loc_as_of |>
   dplyr::select("location", "as_of", "population") |>
   dplyr::arrange(.data$as_of, .data$location)
 
