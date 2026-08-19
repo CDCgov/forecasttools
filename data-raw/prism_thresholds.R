@@ -150,20 +150,16 @@ nhsn_population_rows <-
   ) |>
   dplyr::mutate(location = stringr::str_to_lower(.data$location))
 
-nhsn_population_rows |>
-  dplyr::summarise(
-    n_populations = dplyr::n_distinct(.data$population),
-    .by = c("as_of", "location")
-  ) |>
-  dplyr::pull("n_populations") |>
-  checkmate::assert_set_equal(1)
-
-prism_rate_reference_populations <-
+pops_by_loc_as_of <-
   nhsn_population_rows |>
   dplyr::summarise(
-    population = unique(.data$population),
+    population = dplyr::first(.data$population),
+    n_pops = dplyr::n_distinct(.data$population)
     .by = c("as_of", "location")
-  ) |>
+  )
+  checkmate::assert_set_equal(prism_rate_reference_populations$n_pops, 1)
+  
+  prism_rate_reference_populations <- pops_by_loc_as_of |>
   dplyr::select("location", "as_of", "population") |>
   dplyr::arrange(.data$as_of, .data$location)
 
