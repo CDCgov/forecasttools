@@ -137,25 +137,40 @@ purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
   testthat::expect_identical(unname(values), expected)
 })
 
-prism_rate_reference_populations <-
+
+nhsn_population_rows <-
   prism_files |>
+  dplyr::filter(.data$signal == "nhsn") |>
   dplyr::mutate(
     dat = purrr::map(.data$dat, \(x) {
-      if (!"total_population" %in% names(x)) {
-        return(NULL)
-      }
-      dplyr::distinct(
-        x,
-        location = .data$state_abb,
-        population = .data$total_population
-      )
+      x |>
+        dplyr::filter(.data$unit == "rate") |>
+        dplyr::select(
+          location = "state_abb",
+          population = "total_population"
+        )
     })
   ) |>
   tidyr::unnest("dat") |>
   dplyr::mutate(location = stringr::str_to_lower(.data$location)) |>
+  dplyr::select("location", "as_of", "population")
+
+nhsn_population_rows |>
+  dplyr::summarise(
+    n_populations = dplyr::n_distinct(.data$population),
+    .by = c("as_of", "location")
+  ) |>
+  dplyr::pull("n_populations") |>
+  checkmate::assert_set_equal(1)
+
+prism_rate_reference_populations <-
+  nhsn_population_rows |>
+  dplyr::summarise(
+    population = unique(.data$population),
+    .by = c("as_of", "location")
+  ) |>
   dplyr::select("location", "as_of", "population") |>
   dplyr::arrange(.data$as_of, .data$location)
-
 
 prism_rate_reference_populations |>
   dplyr::count(.data$location, .data$as_of) |>
@@ -165,26 +180,15 @@ prism_rate_reference_populations |>
 prism_rate_reference_populations$population |>
   checkmate::assert_integerish(lower = 1, any.missing = FALSE)
 
-rate_signals <- prism_files |>
-  dplyr::mutate(
-    has_pop = purrr::map_lgl(
-      .data$dat,
-      \(x) "total_population" %in% names(x)
-    )
-  ) |>
-  dplyr::filter(.data$has_pop) |>
-  dplyr::distinct(.data$signal, .data$as_of)
-
-purrr::pwalk(rate_signals, \(signal, as_of) {
+purrr::walk(unique(prism_rate_reference_populations$as_of), \(vintage) {
   population_locations <- prism_rate_reference_populations |>
-    dplyr::filter(.data$as_of == !!as_of) |>
-    dplyr::pull("location") |>
-    unique()
+    dplyr::filter(.data$as_of == !!vintage) |>
+    dplyr::pull("location")
 
   threshold_locations <- prism_thresholds |>
     dplyr::filter(
-      .data$as_of == !!as_of,
-      .data$signal == !!signal
+      .data$as_of == !!vintage,
+      .data$signal == "nhsn"
     ) |>
     dplyr::pull("location") |>
     unique()
