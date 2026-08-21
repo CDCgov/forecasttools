@@ -10,13 +10,13 @@ population.}
 pull_nhsn_hrd_admissions(disease, dataset = "nhsn_hrd_prelim", ...)
 }
 \arguments{
-\item{disease}{Character. One of \code{"covid"}, \code{"flu"}, or
-\code{"rsv"}.}
+\item{disease}{Character. One of \code{"covid"}, \code{"flu"},
+or \code{"rsv"}.}
 
-\item{dataset}{Character. Which HRD release to read, either
-\code{"nhsn_hrd_prelim"} (the preliminary Wednesday release,
-the default) or \code{"nhsn_hrd_final"} (the final Friday
-release).}
+\item{dataset}{Character. Which HRD release to read,
+either \code{"nhsn_hrd_prelim"} (the preliminary Wednesday
+release, the default) or \code{"nhsn_hrd_final"} (the
+final Friday release).}
 
 \item{...}{Additional arguments passed to
 \code{\link[=pull_data_cdc_gov_dataset]{pull_data_cdc_gov_dataset()}}, such as \code{start_date},
@@ -25,7 +25,8 @@ release).}
 \value{
 A \code{\link[tibble:tibble]{tibble}} with columns
 \code{weekendingdate}, \code{jurisdiction}, \code{count}, and \code{rate}.
-\code{rate} is admissions per 100,000 population, as published.
+\code{rate} is admissions per 100K population, as
+published.
 }
 \description{
 Pull weekly hospital admissions from NHSN HRD, as

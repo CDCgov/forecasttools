@@ -32,18 +32,19 @@ nhsn_hrd_admissions_column_names <- function(disease) {
 #' admissions both as counts and as a rate per 100K
 #' population.
 #'
-#' @param disease Character. One of `"covid"`, `"flu"`, or
-#' `"rsv"`.
-#' @param dataset Character. Which HRD release to read, either
-#' `"nhsn_hrd_prelim"` (the preliminary Wednesday release,
-#' the default) or `"nhsn_hrd_final"` (the final Friday
-#' release).
+#' @param disease Character. One of `"covid"`, `"flu"`,
+#' or `"rsv"`.
+#' @param dataset Character. Which HRD release to read,
+#' either `"nhsn_hrd_prelim"` (the preliminary Wednesday
+#' release, the default) or `"nhsn_hrd_final"` (the
+#' final Friday release).
 #' @param ... Additional arguments passed to
 #' [pull_data_cdc_gov_dataset()], such as `start_date`,
 #' `end_date`, `locations`, or `limit`.
 #' @return A [`tibble`][tibble::tibble()] with columns
 #' `weekendingdate`, `jurisdiction`, `count`, and `rate`.
-#' `rate` is admissions per 100,000 population, as published.
+#' `rate` is admissions per 100K population, as
+#' published.
 #'
 #' @seealso [pull_data_cdc_gov_dataset()],
 #' [nhsn_hrd_admissions_column_names()]
