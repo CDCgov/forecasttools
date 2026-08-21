@@ -56,7 +56,7 @@ get_prism_reference_population <- function(
   location,
   as_of = lubridate::today()
 ) {
-  target_location <- stringr::str_to_lower(location)
+  target_location <- stringr::str_to_upper(location)
 
   as_of <- lubridate::as_date(as_of)
 

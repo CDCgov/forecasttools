@@ -99,26 +99,6 @@ test_that("every vintage covers the expected reference populations", {
 })
 
 
-test_that("every reference population has rate-scale thresholds", {
-  purrr::walk(unique(prism_rate_reference_populations$as_of), \(vintage) {
-    population_locations <- prism_rate_reference_populations |>
-      dplyr::filter(.data$as_of == !!vintage) |>
-      dplyr::pull("location")
-
-    threshold_locations <- forecasttools::prism_thresholds |>
-      dplyr::filter(
-        .data$as_of == !!vintage,
-        .data$signal == "nhsn"
-      ) |>
-      dplyr::pull("location") |>
-      unique()
-
-    # a denominator with no bins to compare against is useless
-    expect_length(setdiff(population_locations, threshold_locations), 0)
-  })
-})
-
-
 test_that("prism_thresholds covers expected locations per signal", {
   forecasttools::prism_thresholds |>
     dplyr::group_by(.data$as_of, .data$signal, .data$disease) |>

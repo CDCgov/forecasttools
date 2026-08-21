@@ -46,6 +46,9 @@ prism_files <-
       lubridate::ymd(),
     dat = purrr::map(.data$file_path, \(x) {
       readr::read_tsv(x, show_col_types = FALSE) |>
+        dplyr::mutate(
+          state_abb = stringr::str_to_upper(.data$state_abb)
+        ) |>
         dplyr::arrange(.data$disease, .data$state_abb)
     })
   ) |>
@@ -66,10 +69,7 @@ long_thresholds <-
     dat = purrr::map2(.data$dat, .data$signal, normalize_thresholds)
   ) |>
   tidyr::unnest("dat") |>
-  dplyr::mutate(dplyr::across(
-    dplyr::where(is.character),
-    stringr::str_to_lower
-  )) |>
+  dplyr::mutate(disease = stringr::str_to_lower(.data$disease)) |>
   tidyr::pivot_longer(
     cols = dplyr::starts_with("level_"),
     names_to = "breaks",
@@ -145,8 +145,7 @@ nhsn_population_rows <-
     location = "state_abb",
     "as_of",
     population = "total_population"
-  ) |>
-  dplyr::mutate(location = stringr::str_to_lower(.data$location))
+  )
 
 pops_by_loc_as_of <-
   nhsn_population_rows |>

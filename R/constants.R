@@ -60,5 +60,4 @@ default_prism_bin_names <- c("Very Low", "Low", "Moderate", "High", "Very High")
 expected_prism_locations <- list(
   "nssp" = c(datasets::state.abb, "DC", "US"),
   "nhsn" = c(datasets::state.abb, "DC", "PR", "VI", "US")
-) |>
-  purrr::map(stringr::str_to_lower)
+)
