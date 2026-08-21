@@ -12,7 +12,8 @@ A tibble with 53 rows and 2 columns:
 }
 }
 \source{
-Census Population Estimates Program via \code{tidycensus::get_estimates()}
+Census Population Estimates Program via
+\code{tidycensus::get_estimates()}
 
 data-raw/us_location_pop.R
 }
@@ -20,8 +21,23 @@ data-raw/us_location_pop.R
 us_location_pop
 }
 \description{
-A table of population estimates for the United States as a whole
-and for US states, using the most recent Census Population Estimates
-Program vintage available when the dataset was generated.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+}
+\details{
+A table of population estimates for the United States
+as a whole and for US states, using the most recent
+Census Population Estimates Program vintage available
+when the dataset was generated.
+}
+\section{Deprecation}{
+
+This table is a single, unvintaged snapshot of
+whichever Census vintage was current when it was
+last generated (cannot be aligned to point in time).
+}
+
+\seealso{
+\link{prism_rate_reference_populations},
+\code{\link[=get_prism_reference_population]{get_prism_reference_population()}}
 }
 \keyword{datasets}

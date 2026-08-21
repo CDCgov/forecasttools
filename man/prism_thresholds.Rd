@@ -5,7 +5,7 @@
 \alias{prism_thresholds}
 \title{PRISM respiratory virus activity level thresholds.}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 571 rows and 5 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 589 rows and 5 columns.
 }
 \source{
 <data-raw/prism_thresholds.R>

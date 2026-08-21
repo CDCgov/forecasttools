@@ -100,7 +100,7 @@ get_prism_cutpoints <- function(
   }
 
   target_signal <- stringr::str_to_lower(signal)
-  target_location <- stringr::str_to_lower(location)
+  target_location <- stringr::str_to_upper(location)
   target_disease <- stringr::str_to_lower(disease)
 
   as_of <- lubridate::as_date(as_of)

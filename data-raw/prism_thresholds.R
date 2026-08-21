@@ -3,7 +3,6 @@ prism_signal_specs <- list(
   "nhsn" = list(upper_bound = Inf)
 )
 
-
 normalize_thresholds <- function(dat, signal) {
   if (signal == "nssp") {
     dat <- dat |>
@@ -47,6 +46,9 @@ prism_files <-
       lubridate::ymd(),
     dat = purrr::map(.data$file_path, \(x) {
       readr::read_tsv(x, show_col_types = FALSE) |>
+        dplyr::mutate(
+          state_abb = stringr::str_to_upper(.data$state_abb)
+        ) |>
         dplyr::arrange(.data$disease, .data$state_abb)
     })
   ) |>
@@ -67,10 +69,7 @@ long_thresholds <-
     dat = purrr::map2(.data$dat, .data$signal, normalize_thresholds)
   ) |>
   tidyr::unnest("dat") |>
-  dplyr::mutate(dplyr::across(
-    dplyr::where(is.character),
-    stringr::str_to_lower
-  )) |>
+  dplyr::mutate(disease = stringr::str_to_lower(.data$disease)) |>
   tidyr::pivot_longer(
     cols = dplyr::starts_with("level_"),
     names_to = "breaks",
@@ -121,7 +120,7 @@ expected_bin_names <- c(
 )
 prism_thresholds$values |>
   purrr::walk(\(x) {
-    checkmate::assert_names(names(x), identical.to = expected_names)
+    checkmate::assert_names(names(x), identical.to = expected_bin_names)
   })
 
 purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
@@ -137,4 +136,69 @@ purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
   testthat::expect_identical(unname(values), expected)
 })
 
-usethis::use_data(prism_thresholds, overwrite = TRUE)
+nhsn_population_rows <-
+  prism_files |>
+  dplyr::filter(.data$signal == "nhsn") |>
+  tidyr::unnest("dat") |>
+  dplyr::filter(.data$unit == "rate", !is.na(.data$total_population)) |>
+  dplyr::select(
+    location = "state_abb",
+    "as_of",
+    population = "total_population"
+  )
+
+pops_by_loc_as_of <-
+  nhsn_population_rows |>
+  dplyr::summarise(
+    population = dplyr::first(.data$population),
+    n_pops = dplyr::n_distinct(.data$population),
+    .by = c("as_of", "location")
+  )
+
+checkmate::assert_set_equal(pops_by_loc_as_of$n_pops, 1)
+
+prism_rate_reference_populations <- pops_by_loc_as_of |>
+  dplyr::select("location", "as_of", "population") |>
+  dplyr::arrange(.data$as_of, .data$location)
+
+prism_rate_reference_populations$population |>
+  checkmate::assert_integerish(lower = 1, any.missing = FALSE)
+
+
+prism_thresholds |>
+  dplyr::group_by(.data$as_of, .data$signal, .data$disease) |>
+  dplyr::group_walk(\(rows, key) {
+    missing <- setdiff(
+      expected_prism_locations[[key$signal]],
+      rows$location
+    )
+    if (length(missing) > 0) {
+      cli::cli_abort(
+        "PRISM {key$signal} thresholds for {key$disease} as of
+         {key$as_of} are missing location{?s} {.val {missing}}."
+      )
+    }
+  })
+
+purrr::walk(unique(prism_rate_reference_populations$as_of), \(vintage) {
+  population_locations <- prism_rate_reference_populations |>
+    dplyr::filter(.data$as_of == !!vintage) |>
+    dplyr::pull("location")
+
+  missing <- setdiff(
+    expected_prism_locations[["nhsn"]],
+    population_locations
+  )
+  if (length(missing) > 0) {
+    cli::cli_abort(
+      "PRISM reference populations as of {vintage} are missing
+       location{?s} {.val {missing}}."
+    )
+  }
+})
+
+usethis::use_data(
+  prism_thresholds,
+  prism_rate_reference_populations,
+  overwrite = TRUE
+)
