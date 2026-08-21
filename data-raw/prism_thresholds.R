@@ -136,11 +136,6 @@ purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
   testthat::expect_identical(unname(values), expected)
 })
 
-
-## a jurisdiction's population does not vary by disease, so a
-## disease that publishes no denominator should not veto the
-## ones that do. jurisdictions with no denominator from any
-## disease simply carry no reference population.
 nhsn_population_rows <-
   prism_files |>
   dplyr::filter(.data$signal == "nhsn") |>
