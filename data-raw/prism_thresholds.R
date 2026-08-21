@@ -3,17 +3,6 @@ prism_signal_specs <- list(
   "nhsn" = list(upper_bound = Inf)
 )
 
-## jurisdictions each signal is expected to cover. sources may
-## carry additional jurisdictions (both signals ship some
-## territories), but never fewer than these. NSSP publishes no
-## Puerto Rico or US Virgin Islands thresholds; NHSN does.
-expected_prism_locations <- list(
-  "nssp" = c(datasets::state.abb, "DC", "US"),
-  "nhsn" = c(datasets::state.abb, "DC", "PR", "VI", "US")
-) |>
-  purrr::map(stringr::str_to_lower)
-
-
 normalize_thresholds <- function(dat, signal) {
   if (signal == "nssp") {
     dat <- dat |>

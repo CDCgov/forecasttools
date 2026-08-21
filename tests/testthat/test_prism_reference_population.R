@@ -54,7 +54,7 @@ test_that("get_prism_reference_population uses the vintage in effect", {
 
 
 test_that("get_prism_reference_population covers expected locations", {
-  purrr::walk(expected_nhsn_locations, \(location) {
+  purrr::walk(expected_prism_locations[["nhsn"]], \(location) {
     population <- get_prism_reference_population(location)
     expect_true(is.finite(population))
     expect_gt(population, 0)
@@ -92,7 +92,7 @@ test_that("every vintage covers the expected reference populations", {
 
     # extras are allowed, absences are not
     expect_length(
-      setdiff(expected_nhsn_locations, population_locations),
+      setdiff(expected_prism_locations[["nhsn"]], population_locations),
       0
     )
   })

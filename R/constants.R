@@ -47,3 +47,18 @@ flusight_std_colnames <- cdc_hub_std_colnames
 #' Names of PRISM bins
 #' @export
 default_prism_bin_names <- c("Very Low", "Low", "Moderate", "High", "Very High")
+
+#' Jurisdictions each PRISM signal is expected to cover.
+#'
+#' The minimum coverage asserted when [prism_thresholds]
+#' is built. Sources may have additional jurisdictions,
+#' but never fewer than these. N.B.: NSSP publishes no
+#' Puerto Rico or US Virgin Islands thresholds while
+#' NHSN does.
+#'
+#' @export
+expected_prism_locations <- list(
+  "nssp" = c(datasets::state.abb, "DC", "US"),
+  "nhsn" = c(datasets::state.abb, "DC", "PR", "VI", "US")
+) |>
+  purrr::map(stringr::str_to_lower)
