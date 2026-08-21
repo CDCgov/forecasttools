@@ -3,6 +3,16 @@ prism_signal_specs <- list(
   "nhsn" = list(upper_bound = Inf)
 )
 
+## jurisdictions each signal is expected to cover. sources may
+## carry additional jurisdictions (both signals ship some
+## territories), but never fewer than these. NSSP publishes no
+## Puerto Rico or US Virgin Islands thresholds; NHSN does.
+expected_prism_locations <- list(
+  "nssp" = c(datasets::state.abb, "DC", "US"),
+  "nhsn" = c(datasets::state.abb, "DC", "PR", "VI", "US")
+) |>
+  purrr::map(stringr::str_to_lower)
+
 
 normalize_thresholds <- function(dat, signal) {
   if (signal == "nssp") {
@@ -138,11 +148,15 @@ purrr::pwalk(prism_thresholds, \(as_of, signal, disease, location, values) {
 })
 
 
+## a jurisdiction's population does not vary by disease, so a
+## disease that publishes no denominator should not veto the
+## ones that do. jurisdictions with no denominator from any
+## disease simply carry no reference population.
 nhsn_population_rows <-
   prism_files |>
   dplyr::filter(.data$signal == "nhsn") |>
   tidyr::unnest("dat") |>
-  dplyr::filter(.data$unit == "rate") |>
+  dplyr::filter(.data$unit == "rate", !is.na(.data$total_population)) |>
   dplyr::select(
     location = "state_abb",
     "as_of",
@@ -167,20 +181,37 @@ prism_rate_reference_populations <- pops_by_loc_as_of |>
 prism_rate_reference_populations$population |>
   checkmate::assert_integerish(lower = 1, any.missing = FALSE)
 
+
+prism_thresholds |>
+  dplyr::group_by(.data$as_of, .data$signal, .data$disease) |>
+  dplyr::group_walk(\(rows, key) {
+    missing <- setdiff(
+      expected_prism_locations[[key$signal]],
+      rows$location
+    )
+    if (length(missing) > 0) {
+      cli::cli_abort(
+        "PRISM {key$signal} thresholds for {key$disease} as of
+         {key$as_of} are missing location{?s} {.val {missing}}."
+      )
+    }
+  })
+
 purrr::walk(unique(prism_rate_reference_populations$as_of), \(vintage) {
   population_locations <- prism_rate_reference_populations |>
     dplyr::filter(.data$as_of == !!vintage) |>
     dplyr::pull("location")
 
-  threshold_locations <- prism_thresholds |>
-    dplyr::filter(
-      .data$as_of == !!vintage,
-      .data$signal == "nhsn"
-    ) |>
-    dplyr::pull("location") |>
-    unique()
-
-  testthat::expect_setequal(population_locations, threshold_locations)
+  missing <- setdiff(
+    expected_prism_locations[["nhsn"]],
+    population_locations
+  )
+  if (length(missing) > 0) {
+    cli::cli_abort(
+      "PRISM reference populations as of {vintage} are missing
+       location{?s} {.val {missing}}."
+    )
+  }
 })
 
 usethis::use_data(

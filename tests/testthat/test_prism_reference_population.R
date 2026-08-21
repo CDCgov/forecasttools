@@ -53,15 +53,18 @@ test_that("get_prism_reference_population uses the vintage in effect", {
 })
 
 
+test_that("get_prism_reference_population covers expected locations", {
+  purrr::walk(expected_nhsn_locations, \(location) {
+    population <- get_prism_reference_population(location)
+    expect_true(is.finite(population))
+    expect_gt(population, 0)
+  })
+})
+
+
 test_that("get_prism_reference_population errors without coverage", {
-  uncovered <- c("us", "mo", "wy", "pr")
-
-  expect_length(
-    intersect(uncovered, prism_rate_reference_populations$location),
-    0
-  )
-
-  purrr::walk(uncovered, \(location) {
+  # PRISM publishes no denominator for these territories
+  purrr::walk(c("as", "gu", "mp"), \(location) {
     expect_error(
       get_prism_reference_population(location),
       "No PRISM reference population"
@@ -81,7 +84,22 @@ test_that("get_prism_reference_population rejects a vectorized as_of", {
 })
 
 
-test_that("reference populations cover the rate-scale threshold locations", {
+test_that("every vintage covers the expected reference populations", {
+  purrr::walk(unique(prism_rate_reference_populations$as_of), \(vintage) {
+    population_locations <- prism_rate_reference_populations |>
+      dplyr::filter(.data$as_of == !!vintage) |>
+      dplyr::pull("location")
+
+    # extras are allowed, absences are not
+    expect_length(
+      setdiff(expected_nhsn_locations, population_locations),
+      0
+    )
+  })
+})
+
+
+test_that("every reference population has rate-scale thresholds", {
   purrr::walk(unique(prism_rate_reference_populations$as_of), \(vintage) {
     population_locations <- prism_rate_reference_populations |>
       dplyr::filter(.data$as_of == !!vintage) |>
@@ -95,6 +113,19 @@ test_that("reference populations cover the rate-scale threshold locations", {
       dplyr::pull("location") |>
       unique()
 
-    expect_setequal(population_locations, threshold_locations)
+    # a denominator with no bins to compare against is useless
+    expect_length(setdiff(population_locations, threshold_locations), 0)
   })
+})
+
+
+test_that("prism_thresholds covers expected locations per signal", {
+  forecasttools::prism_thresholds |>
+    dplyr::group_by(.data$as_of, .data$signal, .data$disease) |>
+    dplyr::group_walk(\(rows, key) {
+      expect_length(
+        setdiff(expected_prism_locations[[key$signal]], rows$location),
+        0
+      )
+    })
 })
