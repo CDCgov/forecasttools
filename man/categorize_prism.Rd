@@ -15,7 +15,7 @@ categorize_prism(
 )
 }
 \arguments{
-\item{value}{numeric vector of value(s) to categorize}
+\item{value}{numeric vector of values to categorize}
 
 \item{location}{vector of location of length equal
 to \code{value} or a single location for all \code{value}.}
