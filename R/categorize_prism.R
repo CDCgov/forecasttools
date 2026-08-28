@@ -118,7 +118,7 @@ get_prism_cutpoints <- function(
 #'
 #' Uses [categorize_vector()] and [get_prism_cutpoints()].
 #'
-#' @param value vNumeric vector of value(s) to categorize
+#' @param value numeric vector of value(s) to categorize
 #' @param location vector of location of length equal
 #' to `value` or a single location for all `value`.
 #' @param disease vector of disease of length equal to
