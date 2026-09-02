@@ -76,7 +76,7 @@ pull_nhsn_hrd_admissions <- function(
     dplyr::select(
       "weekendingdate",
       "jurisdiction",
-      count = tidyselect::all_of(admissions_columns[["count"]]),
-      rate = tidyselect::all_of(admissions_columns[["rate"]])
+      count = admissions_columns[["count"]],
+      rate = admissions_columns[["rate"]]
     )
 }
