@@ -84,7 +84,7 @@ epiweek_fn <- function(epiweek_standard) {
 
   checkmate::assert_names(
     epiweek_standard,
-    subset.of = names(epiweek_fns),
+    subset.of = names(epiweek_fns)
   )
 
   return(epiweek_fns[[epiweek_standard]])
@@ -116,7 +116,7 @@ epiyear_fn <- function(epiweek_standard) {
 
   checkmate::assert_names(
     epiweek_standard,
-    subset.of = names(epiyear_fns),
+    subset.of = names(epiyear_fns)
   )
 
   return(epiyear_fns[[epiweek_standard]])

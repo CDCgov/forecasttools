@@ -156,7 +156,7 @@ plot_pred_obs_by_forecast_date <- function(
   plot <- to_plot_forecast |>
     ggplot2::ggplot(ggplot2::aes(
       x = .data[[target_date_col]],
-      y = .data$q_2,
+      y = .data$q_2
     )) +
     ggplot2::geom_point(color = "blue") +
     ggplot2::geom_line(
@@ -395,7 +395,7 @@ plot_pred_obs_pointintervals <- function(
       mapping = ggplot2::aes(
         x = .data$target_end_date,
         y = .data$value,
-        shape = .data$type,
+        shape = .data$type
       )
     ) +
     ggdist::geom_pointinterval(
@@ -406,7 +406,7 @@ plot_pred_obs_pointintervals <- function(
       ),
       point_size = predicted_point_size,
       point_fill = predicted_point_fill,
-      interval_color = predicted_interval_color,
+      interval_color = predicted_interval_color
     ) +
     forecasttools::geom_line_point(
       data = obs,
