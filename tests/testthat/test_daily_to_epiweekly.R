@@ -164,7 +164,7 @@ test_that(
       id_cols = c(".draw", "location"),
       weekly_value_name = "weekly_hosp",
       with_epiweek_start_date = TRUE,
-      with_epiweek_end_date = FALSE,
+      with_epiweek_end_date = FALSE
     )
     expect_gt(nrow(result), 1)
     checkmate::expect_names(

@@ -56,7 +56,7 @@ plot_coverage_by_date <- function(
     data = summarized,
     mapping = ggplot2::aes(
       x = .data[[date_col]],
-      y = .data[[coverage_col]],
+      y = .data[[coverage_col]]
     )
   ) +
     ggplot2::geom_hline(yintercept = coverage_level) +
