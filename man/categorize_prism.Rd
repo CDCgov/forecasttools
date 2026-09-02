@@ -2,7 +2,7 @@
 % Please edit documentation in R/categorize_prism.R
 \name{categorize_prism}
 \alias{categorize_prism}
-\title{Categorize a vector of value into PRISM
+\title{Categorize a numeric vector into PRISM
 activity level bins.}
 \usage{
 categorize_prism(
@@ -15,7 +15,7 @@ categorize_prism(
 )
 }
 \arguments{
-\item{value}{value to categorize}
+\item{value}{numeric vector to categorize}
 
 \item{location}{vector of location of length equal
 to \code{value} or a single location for all \code{value}.}
