@@ -21,7 +21,7 @@ test_that(
     cdf <- quantiles_to_category_cdf(
       quantile_levels,
       values,
-      cutpoints,
+      cutpoints
     )
 
     # should be a true CDF

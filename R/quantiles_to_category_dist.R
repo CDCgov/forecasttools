@@ -65,13 +65,13 @@
 #' quantiles_to_category_cdf(
 #'      quantile_levels,
 #'      values,
-#'      cutpoints,
+#'      cutpoints
 #' )
 #'
 #' quantiles_to_category_pmf(
 #'      quantile_levels,
 #'      values,
-#'      cutpoints,
+#'      cutpoints
 #' )
 #'
 #' @export

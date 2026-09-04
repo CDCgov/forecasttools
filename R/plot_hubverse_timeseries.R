@@ -239,7 +239,7 @@ plot_hubverse_file_quantiles <- function(
     col_types = hubverse_cols
   ) |>
     dplyr::filter(
-      .data$output_type == "quantile",
+      .data$output_type == "quantile"
     ) |>
     dplyr::mutate(output_type_id = as.numeric(.data$output_type_id))
 
