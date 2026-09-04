@@ -1,3 +1,5 @@
+# forecasttools (development version)
+
 # forecasttools 0.1.8
 * Simplified of hubverse package installation
 * Added for approximating discrete category probabilities from continuous quantilies.
