@@ -1,6 +1,6 @@
 # forecasttools 0.1.8
-* Simplified of hubverse package installation 
-* Added for approximating discrete category probabilities from continuous quantilies. 
+* Simplified of hubverse package installation
+* Added for approximating discrete category probabilities from continuous quantilies.
 * Addded `quantiles_to_category_cdf()` and `quantiles_to_category_pmf()` functions to approximate discrete category probabilities from quantiles for an underlying continuous distribution.
 * Added support For NHSN PRISM thresholds to PRISM cutpoint handling
 * Added vintaged PRISM rate reference populations.
