@@ -1,3 +1,5 @@
+# forecasttools 0.1.8
+
 # forecasttools 0.1.7
 * New `ggplot2` helper functions and custom geometric objects: `sym_limits()`, `geom_path_point()`, `geom_line_point()`
 * New plotting function for forecast evaluation: `plot_pred_obs_pointintervals()`
