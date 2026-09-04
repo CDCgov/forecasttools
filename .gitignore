@@ -9,7 +9,8 @@
 *.xls
 *.xlsx
 # extdata tsvs are allowed
-!inst/extdata/*.tsv
+!inst/extdata/**/*.tsv
+
 
 # Documents
 *.doc
