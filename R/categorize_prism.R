@@ -113,12 +113,12 @@ get_prism_cutpoints <- function(
   ))
 }
 
-#' Categorize a vector of value into PRISM
+#' Categorize a numeric vector into PRISM
 #' activity level bins.
 #'
 #' Uses [categorize_vector()] and [get_prism_cutpoints()].
 #'
-#' @param value value to categorize
+#' @param value numeric vector to categorize
 #' @param location vector of location of length equal
 #' to `value` or a single location for all `value`.
 #' @param disease vector of disease of length equal to
