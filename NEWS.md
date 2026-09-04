@@ -1,3 +1,11 @@
+# forecasttools 0.1.8
+* Simplified of hubverse package installation
+* Added for approximating discrete category probabilities from continuous quantilies.
+* Addded `quantiles_to_category_cdf()` and `quantiles_to_category_pmf()` functions to approximate discrete category probabilities from quantiles for an underlying continuous distribution.
+* Added support For NHSN PRISM thresholds to PRISM cutpoint handling
+* Added vintaged PRISM rate reference populations.
+* Updated NSSP PRISM thresholds to 2026-27 values.
+
 # forecasttools 0.1.7
 * New `ggplot2` helper functions and custom geometric objects: `sym_limits()`, `geom_path_point()`, `geom_line_point()`
 * New plotting function for forecast evaluation: `plot_pred_obs_pointintervals()`
