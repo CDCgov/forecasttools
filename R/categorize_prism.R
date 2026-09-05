@@ -128,7 +128,7 @@ get_prism_cutpoints <- function(
   if (nrow(no_cutpoints) > 0) {
     rlang::abort(
       message = "At least one requested set of cutpoints not found in dataset for any as-of date",
-      body = c("Cutpoints not found:", capture.output(no_cutpoints))
+      body = c("Cutpoints not found:", utils::capture.output(no_cutpoints))
     )
   }
 
@@ -146,7 +146,7 @@ get_prism_cutpoints <- function(
     )
   rlang::abort(
     message = "At least one requested set of cutpoints does not have a vintage matching the target as-of date.",
-    body = c("Cutpoints missing a vintage:", capture.output(no_vintage))
+    body = c("Cutpoints missing a vintage:", utils::capture.output(no_vintage))
   )
 }
 
