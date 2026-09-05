@@ -6,12 +6,15 @@
 the largest value of that column that is
 less than or equal to specified maximum value.}
 \usage{
-filter_largest_lte(df, column, target, .by = NULL, .preserve = FALSE)
+filter_largest_lte(df, column, max_value, .by = NULL, .preserve = FALSE)
 }
 \arguments{
 \item{df}{data frame to filter}
 
 \item{column}{column to filter on.}
+
+\item{max_value}{Maximum value. Filter to the
+largest value in \code{column} less than or equal to \code{max_value}.}
 
 \item{.by}{Optional grouping columns in \code{df} for the
 filter. Passed as the \code{.by} argument to \code{\link[dplyr:filter]{dplyr::filter()}}.
@@ -20,9 +23,6 @@ Default \code{NULL}, matching the \code{\link[dplyr:filter]{dplyr::filter()}} de
 \item{.preserve}{Preserve all groups present in grouped input?
 Passed as the \code{.preverse} argument to \code{\link[dplyr:filter]{dplyr::filter()}}.
 Default \code{FALSE}, matching the \code{\link[dplyr:filter]{dplyr::filter()}} default.}
-
-\item{max_value}{Maximum value. Filter to the
-largest value in \code{column} less than or equal to \code{max_value}.}
 }
 \value{
 The filtered data frame.

@@ -366,7 +366,7 @@ sym_limits <- function(values, transform = "identity", center = NULL) {
 filter_largest_lte <- function(
   df,
   column,
-  target,
+  max_value,
   .by = NULL,
   .preserve = FALSE
 ) {
@@ -374,7 +374,7 @@ filter_largest_lte <- function(
   max_or_na <- function(x) if (length(x) == 0) NA else max(x)
   dplyr::filter(
     df,
-    {{ column }} <= {{ target }},
+    {{ column }} <= {{ max_value }},
     .by = {{ .by }},
     .preserve = .preserve
   ) |>
