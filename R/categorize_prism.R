@@ -105,6 +105,7 @@ get_prism_cutpoints <- function(
 
 #' Helper function for raising informative errors
 #' when [get_prism_cutpoints()] fails.
+#' @noRd
 .raise_prism_cutpoint_retrieval_error <- function(
   matches,
   candidates,
