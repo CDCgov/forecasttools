@@ -14,34 +14,6 @@ prism_bin_names_from_cutpoints <- function(cutpoints) {
   )
 }
 
-get_single_prism_cutpoint <- function(signal, disease, location, as_of) {
-  checkmate::assert_string(signal)
-  checkmate::assert_string(disease)
-  checkmate::assert_string(location)
-  checkmate::assert_date(as_of, len = 1, any.missing = FALSE)
-
-  candidates <- forecasttools::prism_thresholds |>
-    dplyr::filter(
-      .data$signal == !!signal,
-      .data$disease == !!disease,
-      .data$location == !!location,
-      .data$as_of <= !!as_of
-    )
-
-  if (nrow(candidates) == 0) {
-    cli::cli_abort(
-      "No PRISM cutpoints for signal {.val {signal}}, disease
-       {.val {disease}}, and location {.val {location}} as of {as_of}."
-    )
-  }
-
-  matches <- candidates |>
-    dplyr::filter(.data$as_of == max(.data$as_of))
-
-  checkmate::assert_data_frame(matches, nrows = 1)
-
-  return(matches$values[[1]])
-}
 
 #' Get PRISM activity level cutpoints given
 #' disease and location.
@@ -99,18 +71,82 @@ get_prism_cutpoints <- function(
     signal <- default_prism_signal
   }
 
-  target_signal <- stringr::str_to_lower(signal)
-  target_location <- stringr::str_to_upper(location)
-  target_disease <- stringr::str_to_lower(disease)
+  desired_cutpoints <- tibble::tibble(
+    signal = stringr::str_to_lower(signal),
+    location = stringr::str_to_upper(location),
+    disease = stringr::str_to_lower(disease),
+    target_as_of = lubridate::as_date(as_of)
+  )
 
-  as_of <- lubridate::as_date(as_of)
+  candidates <- dplyr::inner_join(
+    desired_cutpoints,
+    forecasttools::prism_thresholds,
+    by = c("signal", "location", "disease")
+  ) |>
+    dplyr::group_by(
+      .data$signal,
+      .data$location,
+      .data$disease,
+      .data$target_as_of
+    )
 
-  return(purrr::pmap(
-    list(target_disease, target_location, target_signal),
-    \(disease, location, signal) {
-      get_single_prism_cutpoint(signal, disease, location, as_of)
-    }
-  ))
+  matches <- candidates |>
+    filter_largest_lte(.data$as_of, dplyr::cur_group()$target_as_of)
+
+  if (nrow(matches) != nrow(desired_cutpoints)) {
+    .raise_prism_cutpoint_retrieval_error(
+      matches,
+      candidates,
+      desired_cutpoints
+    )
+  }
+  return(matches$values)
+}
+
+#' Helper function for raising informative errors
+#' when [get_prism_cutpoints()] fails.
+.raise_prism_cutpoint_retrieval_error <- function(
+  matches,
+  candidates,
+  desired_cutpoints
+) {
+  if (nrow(matches) > nrow(desired_cutpoints)) {
+    cli::cli_abort(paste0(
+      "Found more rows of matched cutpoints ",
+      "than requested sets of cutpoints. This ",
+      "should not occur, and suggests a duplicated ",
+      "data vintage in ",
+      "{.var forecasttools::prism_thresholds}"
+    ))
+  }
+  no_cutpoints <- desired_cutpoints |>
+    dplyr::anti_join(candidates, by = c("signal", "location", "disease")) |>
+    dplyr::select(-"target_as_of")
+  ## cli::cli_abort doesn't yet print tibbles nicely
+  ## https://github.com/r-lib/cli/issues/699
+  if (nrow(no_cutpoints) > 0) {
+    rlang::abort(
+      message = "At least one requested set of cutpoints not found in dataset for any as-of date",
+      body = c("Cutpoints not found:", capture.output(no_cutpoints))
+    )
+  }
+
+  no_vintage <- candidates |>
+    dplyr::ungroup() |>
+    dplyr::anti_join(
+      matches,
+      by = c("signal", "location", "disease", "target_as_of")
+    ) |>
+    dplyr::distinct(
+      .data$signal,
+      .data$location,
+      .data$disease,
+      .data$target_as_of
+    )
+  rlang::abort(
+    message = "At least one requested set of cutpoints does not have a vintage matching the target as-of date.",
+    body = c("Cutpoints missing a vintage:", capture.output(no_vintage))
+  )
 }
 
 #' Categorize a numeric vector into PRISM
