@@ -120,49 +120,53 @@ get_prism_cutpoints <- function(
   candidates,
   desired_cutpoints
 ) {
-  if (nrow(matches) != nrow(desired_cutpoints)) {
-    if (nrow(matches) > nrow(desired_cutpoints)) {
-      cli::cli_abort(paste0(
-        "Found more rows of matched cutpoints ",
-        "than requested sets of cutpoints. This ",
-        "should not occur, and suggests a duplicated ",
-        "data vintage in ",
-        "{.var forecasttools::prism_thresholds}"
-      ))
-    }
-    no_cutpoints <- desired_cutpoints |>
-      dplyr::anti_join(candidates, by = c("signal", "location", "disease")) |>
-      dplyr::select(-"target_as_of")
-    ## cli::cli_abort doesn't yet print tibbles nicely
-    ## https://github.com/r-lib/cli/issues/699
-    if (nrow(no_cutpoints) > 0) {
-      rlang::abort(
-        message = "At least one requested set of cutpoints not found in dataset for any as-of date",
-        body = c("Cutpoints not found:", utils::capture.output(no_cutpoints))
-      )
-    }
+  if (nrow(matches) == nrow(desired_cutpoints)) {
+    return(invisible())
+  }
 
-    no_vintage <- candidates |>
-      dplyr::ungroup() |>
-      dplyr::anti_join(
-        matches,
-        by = c("signal", "location", "disease", "target_as_of")
-      ) |>
-      dplyr::distinct(
-        .data$signal,
-        .data$location,
-        .data$disease,
-        .data$target_as_of
-      )
+  if (nrow(matches) > nrow(desired_cutpoints)) {
+    cli::cli_abort(paste0(
+      "Found more rows of matched cutpoints ",
+      "than requested sets of cutpoints. This ",
+      "should not occur, and suggests a duplicated ",
+      "data vintage in ",
+      "{.var forecasttools::prism_thresholds}"
+    ))
+  }
+
+  # otherwise fewer matches than cutpoints; find which are missing
+
+  # globally missing or just for the requested vintage?
+  no_cutpoints <- desired_cutpoints |>
+    dplyr::anti_join(candidates, by = c("signal", "location", "disease")) |>
+    dplyr::select(-"target_as_of")
+
+  ## cli::cli_abort doesn't yet print tibbles nicely
+  ## https://github.com/r-lib/cli/issues/699
+  if (nrow(no_cutpoints) > 0) {
     rlang::abort(
-      message = "At least one requested set of cutpoints does not have a vintage matching the target as-of date.",
-      body = c(
-        "Cutpoints missing a vintage:",
-        utils::capture.output(no_vintage)
-      )
+      message = "At least one requested set of cutpoints not found in dataset for any as-of date",
+      body = c("Cutpoints not found:", utils::capture.output(no_cutpoints))
     )
   }
-  invisible()
+
+  # else missing for the requested vintage
+  no_vintage <- candidates |>
+    dplyr::ungroup() |>
+    dplyr::anti_join(
+      matches,
+      by = c("signal", "location", "disease", "target_as_of")
+    ) |>
+    dplyr::distinct(
+      .data$signal,
+      .data$location,
+      .data$disease,
+      .data$target_as_of
+    )
+  rlang::abort(
+    message = "At least one requested set of cutpoints does not have a vintage matching the target as-of date.",
+    body = c("Cutpoints missing a vintage:", utils::capture.output(no_vintage))
+  )
 }
 
 #' Categorize a numeric vector into PRISM
