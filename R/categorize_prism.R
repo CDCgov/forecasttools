@@ -44,7 +44,7 @@ prism_bin_names_from_cutpoints <- function(cutpoints) {
 #' If not specified, default to `"NSSP"` with a
 #' deprecation warning.
 #' @param as_of Retrieve cutpoints that were in place as of
-#' this date. Defaults to today (current cuptoints).
+#' this date. Defaults to today (current cutpoints).
 #' @return The cutpoints, as a list of vectors, named
 #' `very_low`, `low`, `moderate`, `high`, `very_high`,
 #' and `upper_bound` for every signal.
