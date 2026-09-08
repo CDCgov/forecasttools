@@ -86,24 +86,19 @@ get_prism_cutpoints <- function(
     target_as_of = lubridate::as_date(as_of)
   )
 
-  candidates <- dplyr::inner_join(
+  matches <- dplyr::inner_join(
     desired_cutpoints,
     forecasttools::prism_thresholds,
-    by = c("signal", "location", "disease")
-  ) |>
-    dplyr::group_by(
-      .data$signal,
-      .data$location,
-      .data$disease,
-      .data$target_as_of
+    by = dplyr::join_by(
+      "signal",
+      "location",
+      "disease",
+      dplyr::closest(x$target_as_of >= y$as_of)
     )
-
-  matches <- candidates |>
-    filter_largest_lte(.data$as_of, dplyr::cur_group()$target_as_of)
+  )
 
   .validate_prism_cutpoint_matches(
     matches,
-    candidates,
     desired_cutpoints
   )
 
@@ -117,7 +112,6 @@ get_prism_cutpoints <- function(
 #' @noRd
 .validate_prism_cutpoint_matches <- function(
   matches,
-  candidates,
   desired_cutpoints
 ) {
   if (nrow(matches) == nrow(desired_cutpoints)) {
@@ -138,9 +132,10 @@ get_prism_cutpoints <- function(
 
   # globally missing or just for the requested vintage?
   no_cutpoints <- desired_cutpoints |>
-    dplyr::anti_join(candidates, by = c("signal", "location", "disease")) |>
-    dplyr::select(-"target_as_of")
-
+    dplyr::anti_join(
+      forecasttools::prism_thresholds,
+      by = c("signal", "location", "disease")
+    )
   ## cli::cli_abort doesn't yet print tibbles nicely
   ## https://github.com/r-lib/cli/issues/699
   if (nrow(no_cutpoints) > 0) {
@@ -151,11 +146,15 @@ get_prism_cutpoints <- function(
   }
 
   # else missing for the requested vintage
-  no_vintage <- candidates |>
-    dplyr::ungroup() |>
+  no_vintage <- desired_cutpoints |>
     dplyr::anti_join(
-      matches,
-      by = c("signal", "location", "disease", "target_as_of")
+      forecasttools::prism_thresholds,
+      by = dplyr::join_by(
+        "signal",
+        "location",
+        "disease",
+        dplyr::closest(x$target_as_of >= y$as_of)
+      )
     ) |>
     dplyr::distinct(
       .data$signal,
