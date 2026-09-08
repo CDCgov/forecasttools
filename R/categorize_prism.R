@@ -15,28 +15,36 @@ prism_bin_names_from_cutpoints <- function(cutpoints) {
 }
 
 
-#' Get PRISM activity level cutpoints given
-#' disease and location.
+#' Get PRISM activity level cutpoint sets.
 #'
-#' @param disease disease(s) for which to return the
-#' cutpoints. One of `"ARI"`, `"COVID-19"`,
-#' `"Influenza"`, or `"RSV"`, or an array of those
-#' values. NHSN provides no `"ARI"` thresholds.
-#' @param location location(s) for which to return the
+#' Cutpoint sets are specific to a particular
+#' combination of disease, location, and signal.
+#' They are also vintaged; you can look up the set of
+#' cutpoints that were in place for a given disease,
+#' location, and signal as of any particular date (with
+#' an error if none were defined as of that date).
+#'
+#' This function is vectorized. It recycles
+#' the `disease`, `location`, `signal``, and `as_of`
+#' arguments to a common length and returns a
+#' corresponding list of cutpoint vectors.
+#'
+#' @param disease disease for which to return the
+#' cutpoints. Options are `"ARI"` (NSSP-only),
+#' `"COVID-19"`, `"Influenza"`, and `"RSV"`.
+#' @param location location for which to return the
 #' cutpoints, as a two-letter abbreviation. Use
 #' [forecasttools::us_location_recode] with
 #' `location_output_format = "abbr"` to convert to this
 #' format.
-#' @param as_of single date for which the cutpoints are
-#' valid, applied to every `location`, `disease`, and
-#' `signal`. Defaults to today.
-#' @param signal surveillance signal(s) for which to
-#' return the cutpoints. One of `"NSSP"` (proportions
-#' of emergency department visits) or `"NHSN"` (weekly
-#' hospital admissions per 100k population), or an
-#' array of those values. If not given, defaults to
-#' `"NSSP"` with a deprecation warning (a future
-#' version will require it).
+#' @param signal surveillance signal for which to
+#' return the cutpoints. Options are `"NSSP"` (proportions
+#' of emergency department visits) and `"NHSN"` (weekly
+#' hospital admissions per 100k population).
+#' If not specified, default to `"NSSP"` with a
+#' deprecation warning.
+#' @param as_of Retrieve cutpoints that were in place as of
+#' this date. Defaults to today (current cuptoints).
 #' @return The cutpoints, as a list of vectors, named
 #' `very_low`, `low`, `moderate`, `high`, `very_high`,
 #' and `upper_bound` for every signal.
@@ -49,8 +57,8 @@ prism_bin_names_from_cutpoints <- function(cutpoints) {
 #' get_prism_cutpoints(
 #'   c("US", "WA"),
 #'   c("COVID-19", "RSV"),
-#'   as.Date("2025-01-01"),
 #'   signal = "NSSP"
+#'   as_of = as.Date("2025-01-01"),
 #' )
 #'
 #' get_prism_cutpoints("WA", "Influenza", signal = c("NSSP", "NHSN"))
@@ -59,8 +67,8 @@ prism_bin_names_from_cutpoints <- function(cutpoints) {
 get_prism_cutpoints <- function(
   location,
   disease,
-  as_of = lubridate::today(),
-  signal = lifecycle::deprecated()
+  signal = lifecycle::deprecated(),
+  as_of = lubridate::today()
 ) {
   if (!lifecycle::is_present(signal)) {
     lifecycle::deprecate_warn(
