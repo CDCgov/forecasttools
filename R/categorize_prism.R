@@ -86,87 +86,79 @@ get_prism_cutpoints <- function(
     target_as_of = lubridate::as_date(as_of)
   )
 
-  matches <- dplyr::inner_join(
-    desired_cutpoints,
-    forecasttools::prism_thresholds,
-    by = dplyr::join_by(
-      "signal",
-      "location",
-      "disease",
-      dplyr::closest(x$target_as_of >= y$as_of)
-    )
-  )
-
-  .validate_prism_cutpoint_matches(
-    matches,
-    desired_cutpoints
+  matches <- rlang::try_fetch(
+    dplyr::inner_join(
+      desired_cutpoints,
+      forecasttools::prism_thresholds,
+      by = dplyr::join_by(
+        "location",
+        "disease",
+        "signal",
+        dplyr::closest(x$target_as_of >= y$as_of)
+      ),
+      unmatched = c("error", "drop"),
+      relationship = "many-to-one"
+    ),
+    error = function(cnd) {
+      .raise_prism_cutpoint_lookup_error(
+        desired_cutpoints,
+        cnd
+      )
+    }
   )
 
   return(matches$values)
 }
 
-#' Helper function for checking that retrieved PRISM cutpoints
-#' have a unique match for each requested value, and raising an
-#' informative errors if not.
+#' Raise a more informative error when PRISM cutpoint lookup
+#' fails. In particular, flag the missing cutpoints when possible.
 #'
 #' @noRd
-.validate_prism_cutpoint_matches <- function(
-  matches,
-  desired_cutpoints
-) {
-  if (nrow(matches) == nrow(desired_cutpoints)) {
-    return(invisible())
-  }
+.raise_prism_cutpoint_lookup_error <- function(desired_cutpoints, cnd) {
+  fully_missing_cutpoints <- dplyr::anti_join(
+    desired_cutpoints,
+    forecasttools::prism_thresholds,
+    by = c("location", "disease", "signal")
+  )
 
-  if (nrow(matches) > nrow(desired_cutpoints)) {
-    cli::cli_abort(paste0(
-      "Found more rows of matched cutpoints ",
-      "than requested sets of cutpoints. This ",
-      "should not occur, and suggests a duplicated ",
-      "data vintage in ",
-      "{.var forecasttools::prism_thresholds}"
-    ))
-  }
-
-  # otherwise fewer matches than cutpoints; find which are missing
-
-  # globally missing or just for the requested vintage?
-  no_cutpoints <- desired_cutpoints |>
-    dplyr::anti_join(
-      forecasttools::prism_thresholds,
-      by = c("signal", "location", "disease")
-    )
-  ## cli::cli_abort doesn't yet print tibbles nicely
-  ## https://github.com/r-lib/cli/issues/699
-  if (nrow(no_cutpoints) > 0) {
+  if (nrow(fully_missing_cutpoints) > 0) {
+    ## cli::cli_abort doesn't yet print tibbles nicely
+    ## https://github.com/r-lib/cli/issues/699
     rlang::abort(
-      message = "At least one requested set of cutpoints not found in dataset for any as-of date",
-      body = c("Cutpoints not found:", utils::capture.output(no_cutpoints))
+      message = "At least one requested set of cutpoints not found for any as-of date",
+      body = c(
+        "Cutpoints not found:",
+        utils::capture.output(fully_missing_cutpoints)
+      ),
+      parent = cnd
     )
   }
 
-  # else missing for the requested vintage
   no_vintage <- desired_cutpoints |>
     dplyr::anti_join(
       forecasttools::prism_thresholds,
       by = dplyr::join_by(
-        "signal",
         "location",
         "disease",
+        "signal",
         dplyr::closest(x$target_as_of >= y$as_of)
       )
-    ) |>
-    dplyr::distinct(
-      .data$signal,
-      .data$location,
-      .data$disease,
-      .data$target_as_of
     )
-  rlang::abort(
-    message = "At least one requested set of cutpoints does not have a vintage matching the target as-of date.",
-    body = c("Cutpoints missing a vintage:", utils::capture.output(no_vintage))
-  )
+
+  if (nrow(no_vintage > 0)) {
+    rlang::abort(
+      message = "At least one requested set of cutpoints does not have a vintage matching the requested as-of date.",
+      body = c(
+        "Cutpoints missing a requested vintage:",
+        utils::capture.output(no_vintage)
+      ),
+      parent = cnd
+    )
+  }
+
+  rlang::abort("Unexpected error retrieving PRISM cutpoints", parent = cnd)
 }
+
 
 #' Categorize a numeric vector into PRISM
 #' activity level bins.
