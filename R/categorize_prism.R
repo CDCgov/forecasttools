@@ -145,7 +145,7 @@ get_prism_cutpoints <- function(
       )
     )
 
-  if (nrow(no_vintage > 0)) {
+  if (nrow(no_vintage) > 0) {
     rlang::abort(
       message = "At least one requested set of cutpoints does not have a vintage matching the requested as-of date.",
       body = c(
