@@ -176,7 +176,7 @@ test_that("error is thrown for invalid as_of", {
         as_of = "1900-01-01",
         signal = signal
       ),
-      regexp = "does not have a vintage"
+      regexp = "does not have a vintage matching the requested"
     )
   })
 })
