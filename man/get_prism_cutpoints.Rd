@@ -2,39 +2,35 @@
 % Please edit documentation in R/categorize_prism.R
 \name{get_prism_cutpoints}
 \alias{get_prism_cutpoints}
-\title{Get PRISM activity level cutpoints given
-disease and location.}
+\title{Get PRISM activity level cutpoint sets.}
 \usage{
 get_prism_cutpoints(
   location,
   disease,
-  as_of = lubridate::today(),
-  signal = lifecycle::deprecated()
+  signal = lifecycle::deprecated(),
+  as_of = lubridate::today()
 )
 }
 \arguments{
-\item{location}{location(s) for which to return the
+\item{location}{location for which to return the
 cutpoints, as a two-letter abbreviation. Use
 \link{us_location_recode} with
 \code{location_output_format = "abbr"} to convert to this
 format.}
 
-\item{disease}{disease(s) for which to return the
-cutpoints. One of \code{"ARI"}, \code{"COVID-19"},
-\code{"Influenza"}, or \code{"RSV"}, or an array of those
-values. NHSN provides no \code{"ARI"} thresholds.}
+\item{disease}{disease for which to return the
+cutpoints. Options are \code{"ARI"} (NSSP-only),
+\code{"COVID-19"}, \code{"Influenza"}, and \code{"RSV"}.}
 
-\item{as_of}{single date for which the cutpoints are
-valid, applied to every \code{location}, \code{disease}, and
-\code{signal}. Defaults to today.}
+\item{signal}{surveillance signal for which to
+return the cutpoints. Options are \code{"NSSP"} (proportions
+of emergency department visits) and \code{"NHSN"} (weekly
+hospital admissions per 100k population).
+If not specified, default to \code{"NSSP"} with a
+deprecation warning.}
 
-\item{signal}{surveillance signal(s) for which to
-return the cutpoints. One of \code{"NSSP"} (proportions
-of emergency department visits) or \code{"NHSN"} (weekly
-hospital admissions per 100k population), or an
-array of those values. If not given, defaults to
-\code{"NSSP"} with a deprecation warning (a future
-version will require it).}
+\item{as_of}{Retrieve cutpoints that were in place as of
+this date. Defaults to today (current cutpoints).}
 }
 \value{
 The cutpoints, as a list of vectors, named
@@ -42,8 +38,18 @@ The cutpoints, as a list of vectors, named
 and \code{upper_bound} for every signal.
 }
 \description{
-Get PRISM activity level cutpoints given
-disease and location.
+Cutpoint sets are specific to a particular
+combination of disease, location, and signal.
+They are also vintaged; you can look up the set of
+cutpoints that were in place for a given disease,
+location, and signal as of any particular date (with
+an error if none were defined as of that date).
+}
+\details{
+This function is vectorized. It recycles
+the \code{disease}, \code{location}, \verb{signal``, and }as_of`
+arguments to a common length and returns a
+corresponding list of cutpoint vectors.
 }
 \examples{
 get_prism_cutpoints("WA", "Influenza", signal = "NHSN")
@@ -53,8 +59,8 @@ get_prism_cutpoints(c("US", "WA"), "COVID-19", signal = "NSSP")
 get_prism_cutpoints(
   c("US", "WA"),
   c("COVID-19", "RSV"),
-  as.Date("2025-01-01"),
-  signal = "NSSP"
+  signal = "NSSP",
+  as_of = as.Date("2025-01-01")
 )
 
 get_prism_cutpoints("WA", "Influenza", signal = c("NSSP", "NHSN"))

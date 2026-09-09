@@ -208,3 +208,101 @@ test_that("sym_limits functions argument checks work", {
   expect_error(sym_limits(c(1.3, "a")), "character")
   expect_error(sym_limits(c()), "NULL")
 })
+
+test_filter_lte_df <- tibble::tibble(
+  number = c(-1, 1, 1, 3),
+  letter = c("A", "N", "Y", "Y"),
+  date = as.Date(c("2026-07-01", "2026-07-01", "2026-07-05", "2026-07-09"))
+)
+
+test_that("filter_largest_lte treats values above the bound equally to the bound", {
+  expect_equal(
+    test_filter_lte_df |> filter_largest_lte(date, as.Date("2027-01-01")),
+    test_filter_lte_df |> filter_largest_lte(date, as.Date("2026-07-09"))
+  )
+
+  expect_equal(
+    test_filter_lte_df |> filter_largest_lte(number, 5000),
+    test_filter_lte_df |> filter_largest_lte(number, 3)
+  )
+
+  expect_equal(
+    test_filter_lte_df |> filter_largest_lte(letter, "Z"),
+    test_filter_lte_df |> filter_largest_lte(letter, "Y")
+  )
+})
+
+test_that(
+  paste0(
+    "filter_largest_lte returns a length 0 tibble without a ",
+    "warning when the lower bound is below all values"
+  ),
+  {
+    expected_empty <- test_filter_lte_df |> dplyr::filter_out(TRUE)
+    expect_no_warning(expect_equal(
+      test_filter_lte_df |> filter_largest_lte(date, as.Date("1900-01-01")),
+      expected_empty
+    ))
+
+    expect_no_warning(expect_equal(
+      test_filter_lte_df |> filter_largest_lte(number, -2),
+      expected_empty
+    ))
+
+    expect_no_warning(expect_equal(
+      test_filter_lte_df |> filter_largest_lte(letter, ""),
+      expected_empty
+    ))
+  }
+)
+
+test_that(
+  paste0(
+    "filter_largest_lte agrees with manual expectation on internal ",
+    "values and preserves multiple row matches"
+  ),
+  {
+    expect_equal(
+      test_filter_lte_df |> filter_largest_lte(date, as.Date("2026-07-02")),
+      test_filter_lte_df |> dplyr::filter(date == as.Date("2026-07-01"))
+    )
+
+    expect_equal(
+      test_filter_lte_df |> filter_largest_lte(number, 2),
+      test_filter_lte_df |> dplyr::filter(number == 1)
+    )
+
+    expect_equal(
+      test_filter_lte_df |> filter_largest_lte(letter, "O"),
+      test_filter_lte_df |> dplyr::filter(letter == "N")
+    )
+  }
+)
+
+test_that("filter_largest_lte works grouped", {
+  # .by and piping in a grouped df are equivalent
+  expect_equal(
+    test_filter_lte_df |>
+      dplyr::group_by(.data$letter) |>
+      filter_largest_lte(date, as.Date("2026-07-02")) |>
+      dplyr::ungroup(),
+    test_filter_lte_df |>
+      filter_largest_lte(date, as.Date("2026-07-02"), .by = "letter")
+  )
+  ## .preserve is respected, so if we set it to true even the group
+  ## that gets filtered to size 0 ("Y") is retained.
+  expect_equal(
+    test_filter_lte_df |>
+      dplyr::group_by(letter) |>
+      filter_largest_lte(date, as.Date("2026-07-02")) |>
+      dplyr::n_groups(),
+    2
+  )
+  expect_equal(
+    test_filter_lte_df |>
+      dplyr::group_by(letter) |>
+      filter_largest_lte(date, as.Date("2026-07-02"), .preserve = TRUE) |>
+      dplyr::n_groups(),
+    3
+  )
+})
