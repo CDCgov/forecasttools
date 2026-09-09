@@ -326,3 +326,61 @@ sym_limits <- function(values, transform = "identity", center = NULL) {
 
   return(transform_fn$inverse(transformed_center + c(-span, span)))
 }
+
+
+#' Filter a data frame by a column to rows with
+#' the largest value of that column that is
+#' less than or equal to specified maximum value.
+#'
+#' Useful for getting the last date prior to or on
+#' a given target date (e.g. matching data vintages).
+#'
+#' Uses [dplyr::filter()] syntax, and accepts data-masked
+#' expressions for `column` and `max_value`.
+#'
+#' Returns a 0-row tibble if no rows match the criteria.
+#'
+#' @param df data frame to filter
+#' @param column column to filter on.
+#' @param max_value Maximum value. Filter to the
+#' largest value in `column` less than or equal to `max_value`.
+#' @param .by Optional grouping columns in `df` for the
+#' filter. Passed as the `.by` argument to [dplyr::filter()].
+#' Default `NULL`, matching the [dplyr::filter()] default.
+#' @param .preserve Preserve all groups present in grouped input?
+#' Passed as the `.preverse` argument to [dplyr::filter()].
+#' Default `FALSE`, matching the [dplyr::filter()] default.
+#' @return The filtered data frame.
+#'
+#' @examples
+#' some_dates <- tibble::tibble(
+#'    row_no = 1:3,
+#'    date = as.Date(c("2026-01-01", "2026-07-02", "2026-07-03"))
+#' )
+#'
+#' some_dates |> filter_largest_lte(date, as.Date("2026-07-02"))
+#' some_dates |> filter_largest_lte(date, as.Date("2026-07-03"))
+#' some_dates |> filter_largest_lte(date, as.Date("2026-07-01"))
+#'
+#' @export
+filter_largest_lte <- function(
+  df,
+  column,
+  max_value,
+  .by = NULL,
+  .preserve = FALSE
+) {
+  # avoid warning when filtering groups of size 0
+  max_or_na <- function(x) if (length(x) == 0) NA else max(x)
+  dplyr::filter(
+    df,
+    {{ column }} <= {{ max_value }},
+    .by = {{ .by }},
+    .preserve = .preserve
+  ) |>
+    dplyr::filter(
+      {{ column }} == max_or_na({{ column }}),
+      .by = {{ .by }},
+      .preserve = .preserve
+    )
+}

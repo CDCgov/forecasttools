@@ -28,10 +28,6 @@ as_ofs_for_signal <- function(signal) {
     unique()
 }
 
-latest_as_of_for_signal <- function(signal) {
-  max(as_ofs_for_signal(signal))
-}
-
 query_date_for <- function(signal, vintage) {
   vintages <- sort(as_ofs_for_signal(signal))
   later_vintages <- vintages[vintages > vintage]
@@ -55,11 +51,7 @@ prism_rows <- forecasttools::prism_thresholds |>
   )
 
 prism_params <- prism_rows |>
-  dplyr::filter(
-    .data$as_of == latest_as_of_for_signal(.data$signal),
-    .by = "signal"
-  ) |>
-  dplyr::select("signal", "location", "disease")
+  dplyr::distinct(.data$signal, .data$location, .data$disease)
 
 
 test_that(
@@ -183,9 +175,8 @@ test_that("error is thrown for invalid as_of", {
         "Influenza",
         as_of = "1900-01-01",
         signal = signal
-      ) |>
-        suppressWarnings(),
-      regexp = "No PRISM"
+      ),
+      regexp = "does not have a vintage matching the requested"
     )
   })
 })
@@ -193,7 +184,21 @@ test_that("error is thrown for invalid as_of", {
 test_that("error is thrown for an unknown signal", {
   expect_error(
     get_prism_cutpoints("WA", "Influenza", signal = "NREVSS"),
-    regexp = "signal"
+    regexp = "for any as-of date"
+  )
+})
+
+test_that("unknown location errors", {
+  expect_error(
+    get_prism_cutpoints("ZZ", "Influenza", signal = "NSSP"),
+    regexp = "for any as-of date"
+  )
+})
+
+test_that("unknown disease errors", {
+  expect_error(
+    get_prism_cutpoints("WA", "Norovirus", signal = "NSSP"),
+    regexp = "for any as-of date"
   )
 })
 

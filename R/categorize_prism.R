@@ -5,6 +5,10 @@ prism_signal_deprecation_details <- glue::glue(
   "PRISM thresholds are now available for both NSSP and NHSN."
 )
 
+## current dplyr guidance for handling join_by expressions
+## https://dplyr.tidyverse.org/articles/in-packages.html#join-helpers
+utils::globalVariables(c("closest", "x", "y"))
+
 prism_bin_names_from_cutpoints <- function(cutpoints) {
   return(
     names(cutpoints) |>
@@ -14,57 +18,37 @@ prism_bin_names_from_cutpoints <- function(cutpoints) {
   )
 }
 
-get_single_prism_cutpoint <- function(signal, disease, location, as_of) {
-  checkmate::assert_string(signal)
-  checkmate::assert_string(disease)
-  checkmate::assert_string(location)
-  checkmate::assert_date(as_of, len = 1, any.missing = FALSE)
 
-  candidates <- forecasttools::prism_thresholds |>
-    dplyr::filter(
-      .data$signal == !!signal,
-      .data$disease == !!disease,
-      .data$location == !!location,
-      .data$as_of <= !!as_of
-    )
-
-  if (nrow(candidates) == 0) {
-    cli::cli_abort(
-      "No PRISM cutpoints for signal {.val {signal}}, disease
-       {.val {disease}}, and location {.val {location}} as of {as_of}."
-    )
-  }
-
-  matches <- candidates |>
-    dplyr::filter(.data$as_of == max(.data$as_of))
-
-  checkmate::assert_data_frame(matches, nrows = 1)
-
-  return(matches$values[[1]])
-}
-
-#' Get PRISM activity level cutpoints given
-#' disease and location.
+#' Get PRISM activity level cutpoint sets.
 #'
-#' @param disease disease(s) for which to return the
-#' cutpoints. One of `"ARI"`, `"COVID-19"`,
-#' `"Influenza"`, or `"RSV"`, or an array of those
-#' values. NHSN provides no `"ARI"` thresholds.
-#' @param location location(s) for which to return the
+#' Cutpoint sets are specific to a particular
+#' combination of disease, location, and signal.
+#' They are also vintaged; you can look up the set of
+#' cutpoints that were in place for a given disease,
+#' location, and signal as of any particular date (with
+#' an error if none were defined as of that date).
+#'
+#' This function is vectorized. It recycles
+#' the `disease`, `location`, `signal``, and `as_of`
+#' arguments to a common length and returns a
+#' corresponding list of cutpoint vectors.
+#'
+#' @param disease disease for which to return the
+#' cutpoints. Options are `"ARI"` (NSSP-only),
+#' `"COVID-19"`, `"Influenza"`, and `"RSV"`.
+#' @param location location for which to return the
 #' cutpoints, as a two-letter abbreviation. Use
 #' [forecasttools::us_location_recode] with
 #' `location_output_format = "abbr"` to convert to this
 #' format.
-#' @param as_of single date for which the cutpoints are
-#' valid, applied to every `location`, `disease`, and
-#' `signal`. Defaults to today.
-#' @param signal surveillance signal(s) for which to
-#' return the cutpoints. One of `"NSSP"` (proportions
-#' of emergency department visits) or `"NHSN"` (weekly
-#' hospital admissions per 100k population), or an
-#' array of those values. If not given, defaults to
-#' `"NSSP"` with a deprecation warning (a future
-#' version will require it).
+#' @param signal surveillance signal for which to
+#' return the cutpoints. Options are `"NSSP"` (proportions
+#' of emergency department visits) and `"NHSN"` (weekly
+#' hospital admissions per 100k population).
+#' If not specified, default to `"NSSP"` with a
+#' deprecation warning.
+#' @param as_of Retrieve cutpoints that were in place as of
+#' this date. Defaults to today (current cutpoints).
 #' @return The cutpoints, as a list of vectors, named
 #' `very_low`, `low`, `moderate`, `high`, `very_high`,
 #' and `upper_bound` for every signal.
@@ -77,8 +61,8 @@ get_single_prism_cutpoint <- function(signal, disease, location, as_of) {
 #' get_prism_cutpoints(
 #'   c("US", "WA"),
 #'   c("COVID-19", "RSV"),
-#'   as.Date("2025-01-01"),
-#'   signal = "NSSP"
+#'   signal = "NSSP",
+#'   as_of = as.Date("2025-01-01")
 #' )
 #'
 #' get_prism_cutpoints("WA", "Influenza", signal = c("NSSP", "NHSN"))
@@ -87,8 +71,8 @@ get_single_prism_cutpoint <- function(signal, disease, location, as_of) {
 get_prism_cutpoints <- function(
   location,
   disease,
-  as_of = lubridate::today(),
-  signal = lifecycle::deprecated()
+  signal = lifecycle::deprecated(),
+  as_of = lubridate::today()
 ) {
   if (!lifecycle::is_present(signal)) {
     lifecycle::deprecate_warn(
@@ -99,19 +83,86 @@ get_prism_cutpoints <- function(
     signal <- default_prism_signal
   }
 
-  target_signal <- stringr::str_to_lower(signal)
-  target_location <- stringr::str_to_upper(location)
-  target_disease <- stringr::str_to_lower(disease)
+  desired_cutpoints <- tibble::tibble(
+    signal = stringr::str_to_lower(signal),
+    location = stringr::str_to_upper(location),
+    disease = stringr::str_to_lower(disease),
+    target_as_of = lubridate::as_date(as_of)
+  )
 
-  as_of <- lubridate::as_date(as_of)
-
-  return(purrr::pmap(
-    list(target_disease, target_location, target_signal),
-    \(disease, location, signal) {
-      get_single_prism_cutpoint(signal, disease, location, as_of)
+  matches <- rlang::try_fetch(
+    dplyr::inner_join(
+      desired_cutpoints,
+      forecasttools::prism_thresholds,
+      by = dplyr::join_by(
+        "location",
+        "disease",
+        "signal",
+        closest(x$target_as_of >= y$as_of)
+      ),
+      unmatched = c("error", "drop"),
+      relationship = "many-to-one"
+    ),
+    error = function(cnd) {
+      .raise_prism_cutpoint_lookup_error(
+        desired_cutpoints,
+        cnd
+      )
     }
-  ))
+  )
+
+  return(matches$values)
 }
+
+#' Raise a more informative error when PRISM cutpoint lookup
+#' fails. In particular, flag the missing cutpoints when possible.
+#'
+#' @noRd
+.raise_prism_cutpoint_lookup_error <- function(desired_cutpoints, cnd) {
+  fully_missing_cutpoints <- dplyr::anti_join(
+    desired_cutpoints,
+    forecasttools::prism_thresholds,
+    by = c("location", "disease", "signal")
+  )
+
+  if (nrow(fully_missing_cutpoints) > 0) {
+    ## cli::cli_abort doesn't yet print tibbles nicely
+    ## https://github.com/r-lib/cli/issues/699
+    rlang::abort(
+      message = "At least one requested set of cutpoints not found for any as-of date",
+      body = c(
+        "Cutpoints not found:",
+        utils::capture.output(fully_missing_cutpoints)
+      ),
+      parent = cnd
+    )
+  }
+
+  no_vintage <- desired_cutpoints |>
+    dplyr::anti_join(
+      forecasttools::prism_thresholds,
+      by = dplyr::join_by(
+        "location",
+        "disease",
+        "signal",
+        closest(x$target_as_of >= y$as_of)
+      )
+    )
+
+  if (nrow(no_vintage) > 0) {
+    rlang::abort(
+      message = "At least one requested set of cutpoints does not have a vintage matching the requested as-of date.",
+      body = c(
+        "Cutpoints missing a requested vintage:",
+        utils::capture.output(no_vintage)
+      ),
+      parent = cnd
+    )
+  }
+
+  rlang::abort("Unexpected error retrieving PRISM cutpoints", parent = cnd)
+}
+
 
 #' Categorize a numeric vector into PRISM
 #' activity level bins.

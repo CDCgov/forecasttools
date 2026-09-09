@@ -23,9 +23,8 @@ to \code{value} or a single location for all \code{value}.}
 \item{disease}{vector of disease of length equal to
 \code{value} or a single disease for all \code{value}.}
 
-\item{as_of}{single date for which the cutpoints are
-valid, applied to every \code{location}, \code{disease}, and
-\code{signal}. Defaults to today.}
+\item{as_of}{Retrieve cutpoints that were in place as of
+this date. Defaults to today (current cutpoints).}
 
 \item{prism_bin_names}{Bin names for the PRISM bins,
 in order from lowest to highest. Must be a vector of
@@ -36,13 +35,12 @@ names by dropping the upper bound and converting to
 title case, giving \code{"Very Low"}, \code{"Low"},
 \code{"Moderate"}, \code{"High"}, and \code{"Very High"}.}
 
-\item{signal}{surveillance signal(s) for which to
-return the cutpoints. One of \code{"NSSP"} (proportions
-of emergency department visits) or \code{"NHSN"} (weekly
-hospital admissions per 100k population), or an
-array of those values. If not given, defaults to
-\code{"NSSP"} with a deprecation warning (a future
-version will require it).}
+\item{signal}{surveillance signal for which to
+return the cutpoints. Options are \code{"NSSP"} (proportions
+of emergency department visits) and \code{"NHSN"} (weekly
+hospital admissions per 100k population).
+If not specified, default to \code{"NSSP"} with a
+deprecation warning.}
 }
 \value{
 A factor vector of category labels, equal in
