@@ -95,13 +95,13 @@ values <- c(0.05, 0.2, 0.3)
 quantiles_to_category_cdf(
      quantile_levels,
      values,
-     cutpoints,
+     cutpoints
 )
 
 quantiles_to_category_pmf(
      quantile_levels,
      values,
-     cutpoints,
+     cutpoints
 )
 
 }

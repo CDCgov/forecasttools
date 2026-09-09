@@ -28,7 +28,7 @@ Imports:
     checkmate,
     cli,
     copula,
-    dplyr,
+    dplyr (>= 1.2.0),
     fs,
     gert,
     ggdist,
