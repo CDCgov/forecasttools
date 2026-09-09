@@ -57,8 +57,8 @@ prism_bin_names_from_cutpoints <- function(cutpoints) {
 #' get_prism_cutpoints(
 #'   c("US", "WA"),
 #'   c("COVID-19", "RSV"),
-#'   signal = "NSSP"
-#'   as_of = as.Date("2025-01-01"),
+#'   signal = "NSSP",
+#'   as_of = as.Date("2025-01-01")
 #' )
 #'
 #' get_prism_cutpoints("WA", "Influenza", signal = c("NSSP", "NHSN"))

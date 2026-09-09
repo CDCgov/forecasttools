@@ -30,7 +30,7 @@ If not specified, default to \code{"NSSP"} with a
 deprecation warning.}
 
 \item{as_of}{Retrieve cutpoints that were in place as of
-this date. Defaults to today (current cuptoints).}
+this date. Defaults to today (current cutpoints).}
 }
 \value{
 The cutpoints, as a list of vectors, named
@@ -59,8 +59,8 @@ get_prism_cutpoints(c("US", "WA"), "COVID-19", signal = "NSSP")
 get_prism_cutpoints(
   c("US", "WA"),
   c("COVID-19", "RSV"),
-  signal = "NSSP"
-  as_of = as.Date("2025-01-01"),
+  signal = "NSSP",
+  as_of = as.Date("2025-01-01")
 )
 
 get_prism_cutpoints("WA", "Influenza", signal = c("NSSP", "NHSN"))

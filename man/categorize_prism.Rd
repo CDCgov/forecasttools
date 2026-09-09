@@ -24,7 +24,7 @@ to \code{value} or a single location for all \code{value}.}
 \code{value} or a single disease for all \code{value}.}
 
 \item{as_of}{Retrieve cutpoints that were in place as of
-this date. Defaults to today (current cuptoints).}
+this date. Defaults to today (current cutpoints).}
 
 \item{prism_bin_names}{Bin names for the PRISM bins,
 in order from lowest to highest. Must be a vector of
