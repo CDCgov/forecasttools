@@ -5,6 +5,10 @@ prism_signal_deprecation_details <- glue::glue(
   "PRISM thresholds are now available for both NSSP and NHSN."
 )
 
+## current dplyr guidance for handling join_by expressions
+## https://dplyr.tidyverse.org/articles/in-packages.html#join-helpers
+utils::globalVariables("closest", "x", "y")
+
 prism_bin_names_from_cutpoints <- function(cutpoints) {
   return(
     names(cutpoints) |>
@@ -94,7 +98,7 @@ get_prism_cutpoints <- function(
         "location",
         "disease",
         "signal",
-        dplyr::closest(x$target_as_of >= y$as_of)
+        closest(x$target_as_of >= y$as_of)
       ),
       unmatched = c("error", "drop"),
       relationship = "many-to-one"
@@ -141,7 +145,7 @@ get_prism_cutpoints <- function(
         "location",
         "disease",
         "signal",
-        dplyr::closest(x$target_as_of >= y$as_of)
+        closest(x$target_as_of >= y$as_of)
       )
     )
 
