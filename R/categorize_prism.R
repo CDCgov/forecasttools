@@ -7,7 +7,7 @@ prism_signal_deprecation_details <- glue::glue(
 
 ## current dplyr guidance for handling join_by expressions
 ## https://dplyr.tidyverse.org/articles/in-packages.html#join-helpers
-utils::globalVariables("closest", "x", "y")
+utils::globalVariables(c("closest", "x", "y"))
 
 prism_bin_names_from_cutpoints <- function(cutpoints) {
   return(
