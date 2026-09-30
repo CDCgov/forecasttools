@@ -143,7 +143,7 @@ quantiles_to_category_pmf <- function(
   quantile_levels,
   values,
   category_cutpoints,
-  labels = names(head(category_cutpoints, -1)),
+  labels = names(utils::head(category_cutpoints, -1)),
   ...
 ) {
   if (
