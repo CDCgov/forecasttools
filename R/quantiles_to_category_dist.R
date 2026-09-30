@@ -19,6 +19,10 @@
 #' The function will error if the input quantile values include
 #' values outside this support.
 #'
+#' Quantile values exactly equal to a finite support boundary are shifted to
+#' the immediately adjacent representable value inside the support before
+#' transformation. This prevents infinite values during interpolation.
+#'
 #' The approximate continuous CDF will be estimated on the unconstrained
 #' real interval \eqn{(-\infty, \infty)} with an appropriate monotonic
 #' transform for the support, picked via [get_transform_to_real_line()].
@@ -116,6 +120,13 @@ quantiles_to_category_cdf <- function(
         "in length to the {.arg category_cutpoints} vector."
       )
     )
+  }
+
+  if (is.finite(support_lb)) {
+    values[values == support_lb] <- round::nextafter(support_lb, support_ub)
+  }
+  if (is.finite(support_ub)) {
+    values[values == support_ub] <- round::nextafter(support_ub, support_lb)
   }
 
   transform <- get_transform_to_real_line(support_lb, support_ub)

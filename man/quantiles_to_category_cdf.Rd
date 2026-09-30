@@ -81,6 +81,10 @@ be the upper bound of the support.
 The function will error if the input quantile values include
 values outside this support.
 
+Quantile values exactly equal to a finite support boundary are shifted to
+the immediately adjacent representable value inside the support before
+transformation. This prevents infinite values during interpolation.
+
 The approximate continuous CDF will be estimated on the unconstrained
 real interval \eqn{(-\infty, \infty)} with an appropriate monotonic
 transform for the support, picked via \code{\link[=get_transform_to_real_line]{get_transform_to_real_line()}}.
