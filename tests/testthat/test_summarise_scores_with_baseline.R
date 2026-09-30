@@ -122,6 +122,17 @@ test_that("Summarise scores with baseline agrees with manual calculation", {
   )
   expect_error(
     summary_test_case(
+      scoringutils::example_sample_discrete,
+      "EuroCOVIDhub-baseline",
+      "unavailable_column_to_compare",
+      "crps",
+      "target_type",
+      metrics = discrete_sample_metrics
+    ),
+    "unavailable_column_to_compare"
+  )
+  expect_error(
+    summary_test_case(
       scoringutils::example_sample_discrete |>
         dplyr::filter(.data$model == "EuroCOVIDhub-baseline"),
       "EuroCOVIDhub-baseline",
@@ -133,16 +144,6 @@ test_that("Summarise scores with baseline agrees with manual calculation", {
     "not enough comparators"
   )
 
-  expect_error(
-    summary_test_case(
-      scoringutils::example_sample_discrete,
-      "EuroCOVIDhub-baseline",
-      "new_model_name",
-      "crps",
-      "target_type",
-      metrics = discrete_sample_metrics
-    )
-  )
   summary_test_case(
     scoringutils::example_sample_discrete,
     "EuroCOVIDhub-ensemble",
