@@ -141,8 +141,7 @@ test_that("Summarise scores with baseline agrees with manual calculation", {
       "crps",
       "target_type",
       metrics = discrete_sample_metrics
-    ),
-    "not found in data"
+    )
   )
   summary_test_case(
     scoringutils::example_sample_discrete,

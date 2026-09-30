@@ -19,7 +19,7 @@ quantiles_to_category_pmf(
   quantile_levels,
   values,
   category_cutpoints,
-  labels = names(head(category_cutpoints, -1)),
+  labels = names(utils::head(category_cutpoints, -1)),
   ...
 )
 }
@@ -80,6 +80,10 @@ be the upper bound of the support.
 
 The function will error if the input quantile values include
 values outside this support.
+
+Quantile values exactly equal to a finite support boundary are shifted to
+the immediately adjacent representable value inside the support before
+transformation. This prevents infinite values during interpolation.
 
 The approximate continuous CDF will be estimated on the unconstrained
 real interval \eqn{(-\infty, \infty)} with an appropriate monotonic

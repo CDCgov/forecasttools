@@ -108,6 +108,20 @@ test_that("support validation logic rejects invalid inputs", {
   )
 })
 
+test_that("PMF handles quantile values at finite support boundaries", {
+  expect_no_error(
+    pmf <- quantiles_to_category_pmf(
+      quantile_levels = c(0.01, 0.25, 0.5),
+      values = c(0, 0.3, 1),
+      category_cutpoints = c(a = 0, b = 0.2, c = 1)
+    )
+  )
+
+  checkmate::expect_numeric(pmf, lower = 0, upper = 1)
+  expect_named(pmf, c("a", "b"))
+  expect_equal(sum(pmf), 1)
+})
+
 test_that("transform inference works as expected", {
   levels <- c(0.001, 0.5, 0.9)
   values <- c(5, 10, 15)

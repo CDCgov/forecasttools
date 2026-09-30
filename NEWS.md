@@ -1,5 +1,8 @@
 # forecasttools (development version)
 
+* Fixed `quantiles_to_category_cdf()` and `quantiles_to_category_pmf()` to
+  handle quantile values at finite support boundaries.
+
 # forecasttools 0.1.8
 * Simplified of hubverse package installation
 * Added for approximating discrete category probabilities from continuous quantilies.
