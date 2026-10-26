@@ -1,4 +1,3 @@
-# jarl-ignore-file internal_function: okay for testing
 test_that("Summarise scores with baseline agrees with manual calculation", {
   discrete_sample_metrics <- scoringutils::get_metrics(
     scoringutils::example_sample_discrete
