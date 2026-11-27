@@ -151,7 +151,20 @@ get_cols_wo_tz_from_arrow_tbl <- function(arrow_tbl) {
 }
 
 read_pq_with_tz_correction <- function(file, ...) {
-  arrow_tbl <- arrow::read_parquet(file, ..., as_data_frame = FALSE)
+  # read without memory-mapping. a memory-mapped parquet file stays mapped for
+  # as long as the arrow table referencing it is around, and the table is only
+  # made free at garbage collection, which is non-deterministic. on windows, an
+  # open mapping makes any later write to the same path fail with "[Windows
+  # error 1224] the requested operation cannot be performed on a file with a
+  # user-mapped section open", so read-then-write-the-same-path callers break
+  # there is no memory cost here, since the table is converted to a tibble
+  # before being returned.
+  arrow_tbl <- arrow::read_parquet(
+    file,
+    ...,
+    as_data_frame = FALSE,
+    mmap = FALSE
+  )
 
   arrow_tbl |>
     tibble::as_tibble() |>

@@ -1,7 +1,7 @@
 # forecasttools (development version)
 
-* Fixed `quantiles_to_category_cdf()` and `quantiles_to_category_pmf()` to
-  handle quantile values at finite support boundaries.
+* Fixed `read_tabular()`, leaving a parquet file memory-mapped after reading it. This mapping was released only at garbage collection, so on Windows a later write to the same path usually fails with `[Windows error 1224] The requested operation cannot be performed on a file with a user-mapped section open`.  Parquet reads now pass `mmap = FALSE`.
+* Fixed `quantiles_to_category_cdf()` and `quantiles_to_category_pmf()` to handle quantile values at finite support boundaries.
 
 # forecasttools 0.1.8
 * Simplified of hubverse package installation
